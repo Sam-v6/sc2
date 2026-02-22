@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import yaml
+from path import SC2_VOID_BOT_HOME
 
 class Plotter:
 
@@ -26,7 +27,7 @@ class Plotter:
 
         # Get the plot constants into a dict from the yaml
         try:
-            plot_yaml_file_path = os.path.join(os.getenv("VOID_BOT_HOME"), "config", "plot.yaml")
+            plot_yaml_file_path = os.path.join(SC2_VOID_BOT_HOME, "config", "plot.yaml")
             with open(plot_yaml_file_path, 'r') as file:
                 self._plot_csts = yaml.safe_load(file)
         except FileNotFoundError:
@@ -200,12 +201,7 @@ class Plotter:
         self._log_columns()
 
 if __name__ == "__main__":
-
-    # Path
-    path = os.path.join(os.getenv("VOID_BOT_HOME"), "logs", "master_results.csv")
-
-    # Load a parquet file
-    path = "/home/sam/repos/sc2-repos/sc2-void-bot/logs"
+    path = os.path.join(SC2_VOID_BOT_HOME, "logs")
 
     # Data
     plotter = Plotter(path)

@@ -23,7 +23,7 @@ from bots.proxy_rax import ProxyRaxBot
 from bots.mass_reaper import MassReaperBot
 from bots.one_base_battlecruiser import BCRushBot
 from bots.zerg_rush import ZergRushBot
-import pandas as pd
+from path import SC2_VOID_BOT_HOME, SC2_GAME_PATH
 
 
 TIMEOUT = (60*5)  # seconds
@@ -36,7 +36,7 @@ def run_single_game(bot_class_name, bot_race, strat_name, opponent_race, difficu
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     replay_name = f"{strat_name}_{map_name}_{timestamp}.SC2Replay"
-    replay_path = os.path.join(os.getenv("VOID_BOT_HOME"), "replays", replay_name)
+    replay_path = os.path.join(SC2_VOID_BOT_HOME, "replays", replay_name)
 
     try:
         print(f'Running {strat_name} on {map_name} vs {opponent_race}-{difficulty}...')
@@ -107,16 +107,16 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Create the log and replay dirs
-    os.makedirs(os.path.join(os.getenv("VOID_BOT_HOME"), "logs"), exist_ok=True)
-    os.makedirs(os.path.join(os.getenv("VOID_BOT_HOME"), "replays"), exist_ok=True)
+    os.makedirs(os.path.join(SC2_VOID_BOT_HOME, "logs"), exist_ok=True)
+    os.makedirs(os.path.join(SC2_VOID_BOT_HOME, "replays"), exist_ok=True)
 
     # List of bots (bot class, race, name)
     bots = [
         (WarpGateBot, Race.Protoss, "warpgate_push"),
-        (ProxyRaxBot, Race.Terran, "proxy_rax"),
-        (MassReaperBot, Race.Terran, "reaper_rush"),
-        (BCRushBot, Race.Terran, "bc_rush"),
-        (ZergRushBot, Race.Zerg, "zergling_rush"),
+        # (ProxyRaxBot, Race.Terran, "proxy_rax"),
+        # (MassReaperBot, Race.Terran, "reaper_rush"),
+        # (BCRushBot, Race.Terran, "bc_rush"),
+        # (ZergRushBot, Race.Zerg, "zergling_rush"),
     ]
 
     # Races
@@ -125,14 +125,13 @@ if __name__ == "__main__":
     # Difficulty
     difficulties = [
         Difficulty.VeryEasy,
-        Difficulty.Easy,
-        Difficulty.Medium,
-        Difficulty.MediumHard,
-        Difficulty.Hard,
-        Difficulty.Harder,
-        Difficulty.VeryHard
+        # Difficulty.Easy,
+        # Difficulty.Medium,
+        # Difficulty.MediumHard,
+        # Difficulty.Hard,
+        # Difficulty.Harder,
+        # Difficulty.VeryHard
         ]
-
 
     # Simple
     bots = [
@@ -149,7 +148,7 @@ if __name__ == "__main__":
 
     # Get map list
     ladder_maps = []
-    map_path = os.path.join(os.getenv("SC2PATH"), "Maps", "2025S2Maps")
+    map_path = os.path.join(SC2_GAME_PATH, "Maps", "2025S2Maps")
     for f in os.listdir(map_path):
         if f.endswith(".SC2Map"):
             ladder_maps.append(f.split(".")[0])
@@ -165,7 +164,7 @@ if __name__ == "__main__":
     ##############################################################
     # Multiprocessing
     ##############################################################
-    cpus = max(1,os.cpu_count()//2)
+    cpus = max(1, os.cpu_count()//2)
 
     # This general approach works by:
     # -> Having 16 threads that work as lightweight supervisors, for each thread
@@ -184,7 +183,6 @@ if __name__ == "__main__":
     finally:
         # Always persist what we have
         df = pd.DataFrame(results, columns=['bot_strategy','opponent_race','difficulty','map','result'])
-        out = os.path.join(os.getenv("VOID_BOT_HOME"), "logs", "master_results.csv")
+        out = os.path.join(SC2_VOID_BOT_HOME, "logs", "master_results.csv")
         os.makedirs(os.path.dirname(out), exist_ok=True)
         df.to_csv(out, index=False)
-

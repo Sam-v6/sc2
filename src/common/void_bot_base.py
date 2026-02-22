@@ -9,6 +9,7 @@ import json
 
 # Additional imports
 import pandas as pd
+from path import SC2_VOID_BOT_HOME
 
 class VoidBotBase(BotAI):
 
@@ -24,7 +25,7 @@ class VoidBotBase(BotAI):
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             map_name = self.game_info.map_name.replace(" ", "_")
             base_filename = f"{self.__class__.__name__}_{map_name}_{self.enemy_race}_{timestamp}"
-            log_dir = os.path.join(os.getenv("VOID_BOT_HOME"), "logs")
+            log_dir = os.path.join(SC2_VOID_BOT_HOME, "logs")
             os.makedirs(log_dir, exist_ok=True)
             self.pandas_csv_path = os.path.join(log_dir, base_filename + ".csv")
 
