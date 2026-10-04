@@ -97,3 +97,46 @@ forcing OPENBLAS_NUM_THREADS=1 (single-state median 0.036 vs 0.049 ms; batch of
 512 states 7.4 vs 14.7 ms). These are local kernel timings during ongoing games,
 not simulation throughput or a broad guarantee; they do not support changing
 the current threading setting. No dependency was installed for this check.
+
+
+All four frozen Hard6 runs completed with six defeats each, zero failures and
+unchanged checkpoint hashes; schedules match. Control greedy army peaks were
+22/16/9/27/23/28 and it selected Marine/attack commands. Net-event greedy army
+peaks were zero in every game, with no Marines or attack selections. Both sampled
+policies exercised some production but lost. This is a concrete loss of military
+production, not simply too small a validation set. The net-event objective can
+prefer cheap unarmed defeats over costly losing engagements; no continuation or
+promotion of this candidate is justified by current behavior. Preserve control
+and candidate independently. Results: logs/audit/combat-events-hard6-results.json.
+
+Independent review checked all 83,203 Easy transitions and full returns from
+every decision (maximum identity error 1.41e-14). Candidate training exposure had
+1,661 positive and 2,622 negative event increments. Event wins by ten-game blocks
+were 1/0/1/1, versus control 1/2/1/2; the event hypothesis is not scientifically
+rejected, but no strength improvement has been demonstrated.
+
+Next investigate the direct proxy incentive: a kills-only increment rewards
+combat without charging own deaths (retain losses as diagnostics). Keep the same
+initial actor, reset control and all other context for a bounded comparison; do
+not simultaneously alter micro/representation/temperature/cadence. Separately,
+full-return potential shaping gives a state-only return offset; a zero reset
+critic has not yet learned that offset. An analytic potential baseline or removal
+of potential shaping could reduce that variance without changing the win/event
+objective, but that is a separate intervention requiring its own tests/control.
+Neither change is implemented yet.
+
+
+Replay proof: logs/replay-proof/combat-event-hard-loss.mp4 is a complete rendered
+Terran Rush Hard defeat from this net-event greedy checkpoint (seed 10000):
+416 frames, 960x720, 4 fps, 104 video seconds covering 406.79 game seconds.
+Exporter completed without frame cutoff; ffprobe verified duration/frames and a
+late frame was inspected. Omniscience is for replay viewing only.
+
+Review supports the isolated kills-only countermeasure, leaving the potential
+estimator unchanged. The new source lives in logs/audit/ppo-combat-kills-source/.
+Two tests failed before removing the loss term; losses remain in component logs.
+It will use the same untouched zero-critic/zero-optimizer/RNG/counter initial
+state as the already completed net-event comparison. Reuse that recorded net
+control, retaining hashes/schedules, rather than silently rerunning or replacing
+it. Validate initial traces before comparing diverged outcomes. Neither candidate
+is promoted without real frozen Hard improvement.
