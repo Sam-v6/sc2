@@ -109,3 +109,46 @@ class CapacityTests(unittest.TestCase):
         home = encode({'army_distance_home': 5, 'army_distance_enemy_start': 95, 'stance_seconds': 1})
         for feature in ('army_distance_home', 'army_distance_enemy_start', 'stance_seconds'):
             self.assertNotEqual(outbound[FEATURES.index(feature)], home[FEATURES.index(feature)])
+
+
+class CompositionTests(unittest.TestCase):
+    def snapshot(self, kinds):
+        from types import SimpleNamespace
+        from sc2.position import Point2
+        from sc2.units import Units
+        from sc2.ids.unit_typeid import UnitTypeId as U
+        from unittest.mock import Mock
+        origin = Point2((0, 0))
+        units = Units([SimpleNamespace(type_id=kind, position=origin, _proto=SimpleNamespace(pos=origin)) for kind in kinds], None)
+        empty = Units([], None)
+        bot = SimpleNamespace(army_units=lambda: units, units=units, enemy_units=empty,
+                              townhalls=empty, start_location=origin, time=100, minerals=500,
+                              vespene=200, supply_left=10, supply_workers=12, supply_army=10,
+                              structures=empty, gas_buildings=empty, attacking=False,
+                              already_pending=Mock(return_value=0), state=SimpleNamespace(upgrades=set()),
+                              enemy_start_locations=[Point2((100, 0))], stance_changed_at=0)
+        return TerranLearner.snapshot(bot)
+
+    def test_equal_supply_armies_are_distinguished_in_live_state(self):
+        from sc2.ids.unit_typeid import UnitTypeId as U
+        hellions = self.snapshot([U.HELLION] * 5)
+        vikings = self.snapshot([U.VIKINGFIGHTER] * 5)
+        self.assertFalse(np.array_equal(encode(hellions), encode(vikings)))
+        self.assertEqual(hellions['hellions'], 5)
+        self.assertEqual(vikings['vikings'], 5)
+
+    def test_live_counts_include_transformed_units_and_reapers(self):
+        from sc2.ids.unit_typeid import UnitTypeId as U
+        state = self.snapshot([U.REAPER, U.HELLION, U.HELLIONTANK, U.VIKINGFIGHTER, U.VIKINGASSAULT])
+        self.assertEqual((state['reapers'], state['hellions'], state['vikings']), (1, 2, 2))
+
+    def test_prior_schema_requires_explicit_checkpoint_migration(self):
+        import tempfile
+        from pathlib import Path
+        from src.rl.actor_critic import ActorCritic
+        old = [key for key in FEATURES if key not in ('reapers', 'hellions', 'vikings')]
+        with tempfile.TemporaryDirectory() as folder:
+            checkpoint = Path(folder) / 'old.npz'
+            ActorCritic(old, ACTIONS).save(checkpoint)
+            with self.assertRaisesRegex(ValueError, 'schema'):
+                ActorCritic.load(checkpoint, FEATURES, ACTIONS)

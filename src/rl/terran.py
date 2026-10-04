@@ -9,7 +9,7 @@ from sc2.ids.ability_id import AbilityId as A
 from sc2.ids.unit_typeid import UnitTypeId as U
 from sc2.ids.upgrade_id import UpgradeId as G
 
-# Values are observed during play. Enemy counts contain visible units only.
+# Live observations respect fog; SC2 can retain previously scouted snapshots.
 SCALES = {'time': 1200, 'minerals': 1000, 'gas': 1000, 'supply_left': 30,
           'workers': 80, 'army': 100, 'bases': 5, 'barracks': 8, 'factory': 4,
           'starport': 4, 'refinery': 8, 'marines': 80, 'marauders': 40,
@@ -19,7 +19,8 @@ SCALES = {'time': 1200, 'minerals': 1000, 'gas': 1000, 'supply_left': 30,
           'pending_depot': 1, 'pending_barracks': 1, 'techlab': 4,
           'engineeringbay': 1, 'fusioncore': 1, 'infantry_weapons': 1,
           'idle_barracks': 8, 'idle_townhalls': 5, 'army_distance_home': 100,
-          'army_distance_enemy_start': 100, 'stance_seconds': 20}
+          'army_distance_enemy_start': 100, 'stance_seconds': 20,
+          'reapers': 40, 'hellions': 40, 'vikings': 20}
 FEATURES = ['bias', *SCALES]
 REWARD_VERSION = 'capacity-v1'
 BUILDINGS = {'depot': U.SUPPLYDEPOT, 'barracks': U.BARRACKS, 'refinery': U.REFINERY,
@@ -98,6 +99,9 @@ class TerranLearner(VoidBotBase):
                 'tanks': self.units.of_type({U.SIEGETANK, U.SIEGETANKSIEGED}).amount,
                 'medivacs': self.units(U.MEDIVAC).amount,
                 'battlecruisers': self.units(U.BATTLECRUISER).amount,
+                'reapers': self.units(U.REAPER).amount,
+                'hellions': self.units.of_type({U.HELLION, U.HELLIONTANK}).amount,
+                'vikings': self.units.of_type({U.VIKINGFIGHTER, U.VIKINGASSAULT}).amount,
                 'enemy_ground': enemies.not_flying.amount, 'enemy_air': enemies.flying.amount,
                 'enemy_near_base': enemies.closer_than(20, home).amount,
                 'enemy_near_army': enemies.closer_than(15, center).amount,

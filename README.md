@@ -79,7 +79,11 @@ policies have won individual Hard games, but the broader DQN check earned only
 
 ## Terran learning experiment
 
-The NumPy Double-DQN consumes live economy, production, army, and visible-enemy features.
+The NumPy Double-DQN consumes live economy, production, army, and observed-enemy features. Enemy input comes
+from SC2 observations, which can include last-scouted snapshots under fog.
+Army counts include every trainable combat unit and its transformed forms.
+Checkpoints from the earlier count schema require an explicit recorded migration
+or a matching older checkout; the loader rejects silent schema changes.
 It chooses atomic build/train/tech/expand/attack/retreat actions. There is no scripted
 build order or fixed army mix. Gathering, placement, depot lowering, MULE execution,
 defense and combat execution are primitives. The first feature representation is
