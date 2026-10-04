@@ -80,3 +80,20 @@ traces across the branches, with matched opponent/context/game-time receipts.
 Reward components differ by the intended event term. This proves initial behavior
 parity and schedule matching before divergent learning, not reward improvement.
 Receipt: logs/audit/combat-events-first-batch.json. Easy40 jobs remain running.
+
+
+Paired Easy40 completed with zero failures: control 6 wins/14 defeats/20 cutoffs;
+event 3 wins/15 defeats/22 cutoffs. All forty opponent/context schedules match.
+The all-game audit verified monotonic counter attribution, recorded component
+rewards, finite endpoint treatment and exact discounted-return identity including
+events. Optimizer steps are 656 control/688 event (different trajectory lengths),
+with 144 episodes/attempts each. This batch does not demonstrate improved strength.
+Frozen greedy and sampled Hard6 checks for each checkpoint are now running;
+keep acceptance seeds reserved. Artifacts: combat-events-easy40-results.json and
+audit-combat-events.py under logs/audit/; frozen-easy40.npz under each branch.
+
+A separate offline NumPy kernel benchmark found default threading faster than
+forcing OPENBLAS_NUM_THREADS=1 (single-state median 0.036 vs 0.049 ms; batch of
+512 states 7.4 vs 14.7 ms). These are local kernel timings during ongoing games,
+not simulation throughput or a broad guarantee; they do not support changing
+the current threading setting. No dependency was installed for this check.
