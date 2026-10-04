@@ -1,11 +1,12 @@
 # Base imports
 import os
+from src.path import SC2_VOID_BOT_HOME
+os.environ.setdefault("MPLCONFIGDIR", os.path.join(SC2_VOID_BOT_HOME, "logs", ".matplotlib"))
 
 # Additional imports
 import pandas as pd
 import matplotlib.pyplot as plt
 import yaml
-from src.path import SC2_VOID_BOT_HOME
 
 class Plotter:
 

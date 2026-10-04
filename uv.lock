@@ -1066,7 +1066,6 @@ dependencies = [
     { name = "pyarrow" },
     { name = "pyyaml" },
     { name = "s2clientprotocol" },
-    { name = "sc2reader" },
 ]
 
 [package.metadata]
@@ -1083,19 +1082,6 @@ requires-dist = [
     { name = "pyarrow", specifier = "==21.0.0" },
     { name = "pyyaml", specifier = "==6.0.2" },
     { name = "s2clientprotocol", specifier = "==5.0.14.93333.0" },
-    { name = "sc2reader", specifier = "==1.8.0" },
-]
-
-[[package]]
-name = "sc2reader"
-version = "1.8.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "mpyq" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/e7/30/785ed415214dc9c8abfdaa94dbb189158bcedcf2037be48e91acf25d738b/sc2reader-1.8.0.tar.gz", hash = "sha256:8c0872f8e8daa5b7b8cd9d4542e12df0a7109a03c494bbe32b81f5384c27c396", size = 247046 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/23/dd/b39107c44056ae081206d7cfd306f680fcb15cb0bbda8434b82cf442a26d/sc2reader-1.8.0-py3-none-any.whl", hash = "sha256:b86b3e967dcbc33c35e7ef300b3ec4a70a80bcf56df964f92086fd87c4fd5205", size = 329125 },
 ]
 
 [[package]]

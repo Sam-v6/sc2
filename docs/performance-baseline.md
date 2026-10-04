@@ -80,5 +80,6 @@ paths and are measurements, not intended user-facing commands.
 Files: `reaper-step8.json`, `reaper-step16.json`, `reaper-step32.json`,
 `contention.json`, `logging-benchmark.json`, `benchmark.py`, `contention.py`.
 
-Implementation remains pending review of the proposed training plan. No learning
-parameters or production bot logic were changed to generate these results.
+These baseline measurements precede the implementation. The training/replay commands
+and later learning results are documented in README.md and experiment-results.md.
+No learning parameters or production bot logic were changed to generate this baseline.
