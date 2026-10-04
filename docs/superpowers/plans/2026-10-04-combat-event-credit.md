@@ -243,3 +243,13 @@ Separate smoke artifacts under logs/main-spatial-proof and
 logs/main-spatial-train-smoke; combined audit main-spatial-integration.json.
 Independent review found no consolidation blocker and independently passed
 80 tests; gameplay and learning files match the validated archive.
+
+
+A matched Hard40 curriculum branch now starts from the same frozen Easy40
+bytes as Medium40, using the same source, four workers, seed base 30000,
+maps/builds/cadence/horizon/reward/optimizer settings. Only computer difficulty
+differs. Maximum eight game clients while the two branches overlap. Preserve
+and audit each final snapshot, then compare frozen Hard development results.
+This differs from the earlier finite-reward Hard training: current parent has
+verified all-race wins and current objective provides kill-event credit.
+Receipt: logs/ppo-combat-kills-hard/experiment.json.
