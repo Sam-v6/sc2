@@ -72,8 +72,10 @@ The audit successfully replayed a saved game using the installed OSMesa library
 and exported RGB frames to an MP4 using the already-installed ffmpeg. The diagnostic
 video and receipts live in the implementation worktree's `logs/audit/`.
 Reusable training and replay-export commands are below.
-The scripted-bot examples do not establish learned strength. A frozen experimental
-policy has now won one of six development Hard games; see the experiment report.
+The scripted-bot examples do not establish learned strength. Frozen experimental
+policies have won individual Hard games, but the broader DQN check earned only
+1 win in 30 games. Reliable Hard strength remains unmet; see
+[experiment results](docs/experiment-results.md).
 
 ## Terran learning experiment
 

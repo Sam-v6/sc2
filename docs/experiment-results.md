@@ -233,5 +233,26 @@ resume and fail-closed helper behavior.
 
 PPO resume then completed 20 full VeryEasy games: 20 wins, no cutoffs or failures.
 The initial frozen two-game 180-second Hard smoke produced two cutoffs and left
-its checkpoint unchanged. Full frozen Hard evaluation remains pending; easier
-training wins do not establish greedy-policy strength.
+its checkpoint unchanged. The subsequent full frozen Hard check (all three races, Rush and Macro on
+Simple64, development seeds 10000–10005) lost all six games, with valid replays
+and no failures. Its checkpoint stayed unchanged. Easier training wins do not
+establish greedy-policy strength. A broader Medium curriculum run follows;
+these are development experiments, not the reserved acceptance seed bank.
+
+PPO's subsequent 40-game Medium curriculum (Simple64/TritonLE, all races and
+five builds) completed with 2 victories, 29 defeats and 9 cutoffs, no failures.
+The two victories are sampled training results. The saved post-Medium snapshot
+is being checked separately with greedy inference and seeded categorical
+sampling on the same six Hard development matchups. The sampled probe preserves
+an archived source copy and explicit changes; it does not replace the greedy
+protocol. A bounded 120-game Hard training batch then resumes the canonical PPO
+checkpoint across both maps and all five builds.
+
+The paired six-game post-Medium checks finished: greedy PPO earned 1 victory,
+4 defeats and 1 cutoff; categorical sampling lost all 6. Neither had failures
+or changed the frozen snapshot (SHA-256
+`4219cc29117ba39d067732cffdf34b22bbeb9cf175f70aec1b1ded350a695af4`).
+The greedy victory was Protoss/Rush on Simple64, seed 10001, lasting
+896.79 game seconds (`fddcc961b01b40ceb0ae2f38080c48eb`). A broader
+30-game greedy development evaluation uses seeds 34000–34029 and both maps.
+The initial 12 Hard PPO training games were all losses.
