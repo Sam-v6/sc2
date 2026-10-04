@@ -149,3 +149,10 @@ failures; frozen bytes were unchanged. Kill-only reward components recomputed
 exactly, while own losses remained logged. The smoke model reached 108 episodes
 and attempts with actual optimizer updates; it is separate from untouched input.
 The new matched Easy40 uses four workers and the same retained control schedule.
+
+
+Kills-only first-batch parity is verified across 4,393 decisions and all four
+seed/race/build/map/duration/action-RNG/outcome receipts, including snapshots,
+legal masks and command execution. Rewards differ only by the removed loss
+term. Receipt: logs/audit/combat-kills-first-batch.json. A separate all-game audit
+script is prepared for final results; do not use partial outcomes as acceptance.
