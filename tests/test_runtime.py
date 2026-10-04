@@ -67,6 +67,20 @@ class RuntimeTests(unittest.TestCase):
             pid = int(pid_file.read_text())
             self.assertTrue(wait_stopped(pid))
 
+    def test_cancellation_stops_worker_and_descendant(self):
+        import threading
+        stop = threading.Event()
+        timer = threading.Timer(1, stop.set)
+        with tempfile.TemporaryDirectory() as directory:
+            pid_file = Path(directory) / 'pid'
+            timer.start()
+            try:
+                receipt = runtime.supervise(spawn_descendant, (str(pid_file),), timeout=30, stop_event=stop)
+            finally:
+                timer.cancel()
+            self.assertEqual(receipt['status'], 'cancelled')
+            self.assertTrue(wait_stopped(int(pid_file.read_text())))
+
     def test_finished_worker_leaves_no_descendant(self):
         receipt = runtime.supervise(leave_descendant, (), timeout=3)
         pid = receipt['pid']

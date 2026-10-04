@@ -20,6 +20,8 @@ class Policy:
         self.epsilon = 0.5
         self.updates = 0
         self.episodes = 0
+        self.attempts = 0
+        self.macro_seconds = None
         self.experience = deque(maxlen=20000)
 
     @property
@@ -77,7 +79,7 @@ class Policy:
         path.parent.mkdir(parents=True, exist_ok=True)
         metadata = {'version': 2, 'features': self.features, 'actions': self.actions,
                     'gamma': self.gamma, 'epsilon': self.epsilon, 'updates': self.updates,
-                    'episodes': self.episodes, 'rng': self.rng.bit_generator.state}
+                    'episodes': self.episodes, 'attempts': self.attempts, 'macro_seconds': self.macro_seconds, 'rng': self.rng.bit_generator.state}
         data = {'metadata': np.array(json.dumps(metadata))}
         for name in ('network', 'target', 'm', 'v'):
             for i, array in enumerate(getattr(self, name)):
@@ -103,6 +105,8 @@ class Policy:
                 setattr(policy, name, [data[f'{name}{i}'].copy() for i in range(4)])
             for key in ('gamma', 'epsilon', 'updates', 'episodes'):
                 setattr(policy, key, metadata[key])
+            policy.attempts = metadata.get('attempts', policy.episodes)
+            policy.macro_seconds = metadata.get('macro_seconds')
             policy.rng.bit_generator.state = metadata['rng']
             discounts = data['discounts'] if metadata['version'] == 2 else np.full(len(data['actions']), policy.gamma)
             for state, action, reward, nxt, mask, terminal, discount in zip(

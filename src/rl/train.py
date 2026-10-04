@@ -1,5 +1,8 @@
 """Bounded training, resume, and frozen evaluation against SC2 computers."""
 import argparse
+from concurrent.futures import ThreadPoolExecutor
+import threading
+import numpy as np
 import hashlib
 import json
 from pathlib import Path
@@ -22,6 +25,15 @@ def digest(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def check_training_cadence(policy, requested, legacy):
+    stored = policy.macro_seconds if policy.macro_seconds is not None else legacy
+    if stored is None:
+        raise ValueError('Legacy checkpoint has no cadence; declare its original --legacy-macro-seconds')
+    if requested != stored:
+        raise ValueError(f'Training cadence mismatch: checkpoint {stored}s, requested {requested}s; use a fresh checkpoint')
+    policy.macro_seconds = stored
+
+
 def episode(job):
     from loguru import logger
     logger.remove()
@@ -29,6 +41,8 @@ def episode(job):
     random.seed(job['seed'])
     policy = Policy.load(job['checkpoint'], FEATURES, ACTIONS)
     before = policy.updates
+    if job['mode'] != 'evaluate':
+        policy.rng = np.random.default_rng(job['policy_seed'])
     if job['mode'] == 'random':
         policy.epsilon = 1
     bot = TerranLearner(policy, training=job['mode'] == 'train', action_log=job['actions'],
@@ -42,28 +56,42 @@ def episode(job):
     replay = Path(job['replay'])
     if not replay.is_file() or not replay.stat().st_size:
         raise RuntimeError('No replay was saved')
-    losses = []
     if job['mode'] == 'train':
+        policy.experience.clear()
+        policy.macro_seconds = job['macro_seconds']
         remember_episode(policy, bot.transitions)
-        for _ in bot.transitions:
-            losses.append(policy.learn())
-        policy.episodes += 1
-        policy.epsilon = max(.05, .5 * (.995 ** policy.episodes))
         policy.save(job['candidate'])
     return {'status': 'truncated' if result.name == 'Tie' else 'completed', 'result': result.name,
             'game_seconds': bot.time, 'engine_wall_seconds': round(time.monotonic() - started, 3),
             'decisions': len(bot.decisions), 'transitions': len(bot.transitions),
             'updates_before': before, 'updates_after': policy.updates, 'epsilon': policy.epsilon,
-            'mean_loss': sum(losses) / len(losses) if losses else None,
             'reward': sum(t[2] for t in bot.transitions), 'replay_bytes': replay.stat().st_size,
             'replay_version': get_replay_version(str(replay)),
             'workers': bot.workers.amount, 'army_supply': bot.supply_army, 'bases': bot.townhalls.amount}
+
+
+def learn_candidate(policy, path):
+    collected = Policy.load(path, policy.features, policy.actions)
+    before = policy.updates
+    policy.experience.extend(collected.experience)
+    losses = [policy.learn() for _ in collected.experience]
+    policy.episodes += 1
+    policy.epsilon = max(.05, .5 * (.995 ** policy.episodes))
+    return {'learner_updates_before': before, 'learner_updates_after': policy.updates,
+            'mean_loss': sum(losses) / len(losses) if losses else None}
+
+
+def remove_candidate(path):
+    path = Path(path)
+    path.unlink(missing_ok=True)
+    path.with_name(path.name + '.tmp').unlink(missing_ok=True)
 
 
 def parser():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--mode', choices=['train', 'evaluate', 'random'], default='train')
     p.add_argument('--episodes', type=positive, default=10)
+    p.add_argument('--workers', type=positive, default=4)
     p.add_argument('--checkpoint', type=Path, default=Path(SC2_VOID_BOT_HOME) / 'logs/rl/policy.npz')
     p.add_argument('--output', type=Path, default=Path(SC2_VOID_BOT_HOME) / 'logs/rl')
     p.add_argument('--maps', nargs='+', default=['Simple64'])
@@ -73,7 +101,8 @@ def parser():
     p.add_argument('--seed', type=int, default=None)
     p.add_argument('--game-seconds', type=positive, default=1200)
     p.add_argument('--wall-seconds', type=positive, default=300)
-    p.add_argument('--macro-seconds', type=positive, default=5)
+    p.add_argument('--macro-seconds', type=positive, default=None)
+    p.add_argument('--legacy-macro-seconds', type=positive, default=None, help='Declare the original cadence only for checkpoints missing that metadata')
     return p
 
 
@@ -86,48 +115,77 @@ def main():
     if not checkpoint.exists():
         if args.mode != 'train':
             raise FileNotFoundError(f'Checkpoint not found: {checkpoint}')
+        args.macro_seconds = args.macro_seconds or 5
         initial = Policy(FEATURES, ACTIONS, seed=args.seed if args.seed is not None else 7)
+        initial.macro_seconds = args.macro_seconds
         initial.gamma = .99 ** (args.macro_seconds / 5)
         initial.save(checkpoint)
     policy = Policy.load(checkpoint, FEATURES, ACTIONS)
-    offset = policy.episodes if args.mode == 'train' else 0
+    args.macro_seconds = args.macro_seconds or policy.macro_seconds or args.legacy_macro_seconds or 5
+    if args.mode == 'train':
+        check_training_cadence(policy, args.macro_seconds, args.legacy_macro_seconds)
+    offset = policy.attempts if args.mode == 'train' else 0
     seed_start = args.seed if args.seed is not None else (7 if args.mode == 'train' else 10000)
-    provenance = {str(path.relative_to(Path(__file__).parents[2])): digest(path)
-                  for path in (Path(__file__), Path(__file__).with_name('terran.py'),
-                               Path(__file__).with_name('policy.py'), Path(__file__).with_name('returns.py'), Path(__file__).parents[1] / 'runtime.py')}
+    source_root = Path(__file__).parents[2]
+    provenance = {str(path.relative_to(source_root)): digest(path) for path in sorted((source_root / 'src').rglob('*.py'))}
     receipts = []
     run_id = match_id()
     checkpoint_before = digest(checkpoint)
+    started = time.monotonic()
+    stop = threading.Event()
+    pool = ThreadPoolExecutor(max_workers=args.workers)
+    active_jobs = []
+    failed = ('error', 'wall_timeout', 'cancelled')
     try:
-        for index in range(args.episodes):
-            episode_index = offset + index
-            identity = match_id()
-            base = args.output.resolve() / identity
-            job = {'id': identity, 'run': run_id, 'mode': args.mode, 'checkpoint': str(checkpoint),
-                   'source_sha256': provenance, 'map_sha256': digest(validate_map(args.maps[(episode_index // (len(args.races) * len(args.builds))) % len(args.maps)]).path),
-                   'checkpoint_before': digest(checkpoint), 'candidate': str(base.with_suffix('.candidate.npz')),
-                   'actions': str(base.with_suffix('.actions.jsonl')), 'replay': str(base.with_suffix('.SC2Replay')),
-                   'race': args.races[episode_index % len(args.races)],
-                   'build': args.builds[(episode_index // len(args.races)) % len(args.builds)],
-                   'map': args.maps[(episode_index // (len(args.races) * len(args.builds))) % len(args.maps)],
-                   'difficulty': args.difficulty, 'seed': seed_start + episode_index,
-                   'game_limit': args.game_seconds, 'macro_seconds': args.macro_seconds}
-            receipt = {**job, **supervise(episode, (job,), args.wall_seconds)}
-            if args.mode == 'train' and receipt['status'] in ('completed', 'truncated'):
-                Path(job['candidate']).replace(checkpoint)
-            else:
-                Path(job['candidate']).unlink(missing_ok=True)
-            receipt['checkpoint_after'] = digest(checkpoint)
-            base.with_suffix('.json').write_text(json.dumps(receipt, indent=2) + '\n')
-            receipts.append(receipt)
-            print(json.dumps(receipt), flush=True)
-            if receipt['status'] in ('error', 'wall_timeout'):
+        for start in range(0, args.episodes, args.workers):
+            active_jobs = []
+            for index in range(start, min(start + args.workers, args.episodes)):
+                episode_index = offset + index
+                identity = match_id()
+                base = args.output.resolve() / identity
+                game_map = args.maps[(episode_index // (len(args.races) * len(args.builds))) % len(args.maps)]
+                game_seed = seed_start + episode_index
+                policy_seed = int(policy.rng.integers(2**63)) if args.mode == 'train' else game_seed
+                job = {'id': identity, 'run': run_id, 'mode': args.mode, 'checkpoint': str(checkpoint),
+                       'source_sha256': provenance, 'map_sha256': digest(validate_map(game_map).path),
+                       'behavior_checkpoint_sha256': digest(checkpoint),
+                       'checkpoint_before': digest(checkpoint), 'candidate': str(base.with_suffix('.candidate.npz')),
+                       'actions': str(base.with_suffix('.actions.jsonl')), 'replay': str(base.with_suffix('.SC2Replay')),
+                       'race': args.races[episode_index % len(args.races)],
+                       'build': args.builds[(episode_index // len(args.races)) % len(args.builds)],
+                       'map': game_map, 'difficulty': args.difficulty, 'seed': game_seed, 'policy_seed': policy_seed,
+                       'game_limit': args.game_seconds, 'macro_seconds': args.macro_seconds}
+                active_jobs.append(job)
+            futures = [pool.submit(supervise, episode, (job,), args.wall_seconds, stop_event=stop) for job in active_jobs]
+            # Collect the entire batch before replacing its shared behavior checkpoint.
+            results = [future.result() for future in futures]
+            for job, result in zip(active_jobs, results):
+                receipt = {**job, **result}
+                if args.mode == 'train' and receipt['status'] in ('completed', 'truncated'):
+                    receipt.update(learn_candidate(policy, job['candidate']))
+                    receipt['updates_after'] = policy.updates
+                    receipt['epsilon_after'] = policy.epsilon
+                    policy.attempts = offset + start + len(active_jobs)
+                    policy.save(checkpoint)
+                remove_candidate(job['candidate'])
+                receipt['checkpoint_after'] = digest(checkpoint)
+                Path(job['replay']).with_suffix('.json').write_text(json.dumps(receipt, indent=2) + '\n')
+                receipts.append(receipt)
+                print(json.dumps(receipt), flush=True)
+            active_jobs = []
+            if any(r['status'] in failed for r in receipts):
                 break
     finally:
+        stop.set()
+        pool.shutdown(wait=True, cancel_futures=True)
+        for job in active_jobs:
+            remove_candidate(job['candidate'])
         counts = {name: sum(r['result'] == name for r in receipts) for name in ('Victory', 'Defeat', 'Tie')}
         summary = {'run': run_id, 'mode': args.mode, 'requested': args.episodes, 'finished': len(receipts),
-                   'interrupted': len(receipts) < args.episodes and not any(r['status'] in ('error', 'wall_timeout') for r in receipts),
-                   'source_sha256': provenance, 'counts': counts, 'failures': sum(r['status'] in ('error', 'wall_timeout') for r in receipts),
+                   'workers': args.workers, 'wall_seconds': round(time.monotonic() - started, 3),
+                   'simulated_seconds': sum(r.get('game_seconds', 0) for r in receipts),
+                   'interrupted': len(receipts) < args.episodes and not any(r['status'] in failed for r in receipts),
+                   'source_sha256': provenance, 'counts': counts, 'failures': sum(r['status'] in failed for r in receipts),
                    'checkpoint_before': checkpoint_before, 'checkpoint_after': digest(checkpoint),
                    'receipts': [r['id'] for r in receipts]}
         (args.output / f'{run_id}.summary.json').write_text(json.dumps(summary, indent=2) + '\n')

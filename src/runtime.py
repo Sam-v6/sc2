@@ -52,7 +52,7 @@ def _stop(process):
         pass
 
 
-def supervise(function, args, timeout):
+def supervise(function, args, timeout, stop_event=None):
     context = mp.get_context('spawn')
     receive, send = context.Pipe(duplex=False)
     process = context.Process(target=_child, args=(send, function, args))
@@ -60,14 +60,21 @@ def supervise(function, args, timeout):
     process.start()
     send.close()
     try:
-        if receive.poll(timeout):
-            try:
-                result = receive.recv()
-            except EOFError:
-                result = {'status': 'error', 'result': None, 'error': 'Worker exited without a result'}
-            process.join(3)
-        else:
-            result = {'status': 'wall_timeout', 'result': None}
+        while True:
+            remaining = timeout - (time.monotonic() - start)
+            if stop_event is not None and stop_event.is_set():
+                result = {'status': 'cancelled', 'result': None}
+                break
+            if remaining <= 0:
+                result = {'status': 'wall_timeout', 'result': None}
+                break
+            if receive.poll(min(remaining, .1) if stop_event is not None else remaining):
+                try:
+                    result = receive.recv()
+                except EOFError:
+                    result = {'status': 'error', 'result': None, 'error': 'Worker exited without a result'}
+                process.join(3)
+                break
     finally:
         _stop(process)
         receive.close()

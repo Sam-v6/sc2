@@ -72,7 +72,8 @@ The audit successfully replayed a saved game using the installed OSMesa library
 and exported RGB frames to an MP4 using the already-installed ffmpeg. The diagnostic
 video and receipts live in the implementation worktree's `logs/audit/`.
 Reusable training and replay-export commands are below.
-No learned Hard-opponent win is claimed by the scripted-bot examples.
+The scripted-bot examples do not establish learned strength. A frozen experimental
+policy has now won one of six development Hard games; see the experiment report.
 
 ## Terran learning experiment
 
@@ -83,18 +84,21 @@ defense and combat execution are primitives. The first feature representation is
 limited; spatial observations and broader actions remain future experiments.
 
 ```bash
-uv run python -m src.rl.train --episodes 2 --game-seconds 120 --checkpoint logs/my-run/policy.npz --output logs/my-run
-uv run python -m src.rl.train --episodes 20 --checkpoint logs/my-run/policy.npz --output logs/my-run
+uv run python -m src.rl.train --episodes 2 --workers 4 --macro-seconds 1 --game-seconds 120 --checkpoint logs/my-run/policy.npz --output logs/my-run
+uv run python -m src.rl.train --episodes 20 --workers 4 --checkpoint logs/my-run/policy.npz --output logs/my-run
 uv run python -m src.rl.train --mode evaluate --episodes 30 --seed 50000 --builds Rush Timing Power Macro Air --checkpoint logs/my-run/frozen.npz --output logs/my-evaluation
 ```
 
 For evaluation, first copy the desired checkpoint to `frozen.npz` and retain that
 snapshot. Training resumes an existing checkpoint including network/target weights,
-optimizer, experience, RNG and episode count. Defaults advance training seeds on
-resume; evaluation defaults to seeds starting at 10000. Use a new seed bank for final
+optimizer, experience, RNG and episode count. A separate attempt cursor advances training seeds/opponents on
+resume, including mixed-success batches; evaluation defaults to seeds starting at 10000. Use a new seed bank for final
 acceptance after inspecting development evaluations. `--maps`, `--races`, `--builds`
 and `--difficulty` select computer opponents; `--macro-seconds` controls decision
-cadence. Each macro action attempts one operation, so slower cadence also limits
+cadence. Resume infers the stored cadence and rejects a changed training cadence.
+Legacy checkpoints lacking this metadata require their known original
+`--legacy-macro-seconds` value. New runs default to five seconds; the one-second
+experiment above gives the atomic actions more production opportunities. Each macro action attempts one operation, so slower cadence also limits
 production throughput. Do not run multiple trainers against the same checkpoint.
 
 Actions are legal at the observed resource/tech level. A logged `executed` value
@@ -105,11 +109,19 @@ components. Potential shaping rewards state changes; terminal wins/losses receiv
 +100/-100. Replay learning uses up to 32 macro rewards with the actual bootstrap
 discount. New-checkpoint discounting accounts for macro cadence. Time-limit ties bootstrap instead of being labeled defeats.
 
-Each game writes a replay, JSON receipt and JSONL decisions. Failed/timed-out games
-do not promote a candidate checkpoint. Training updates occur only after successful
+Four workers collect games from a shared frozen behavior checkpoint by default.
+The parent merges successful games in launch order and learns from their experience;
+worker weights and optimizer state never replace the parent. Set `--workers 1` for
+serial collection. A clean interruption stops owned game workers and preserves the
+last promoted checkpoint.
+
+Each game writes a replay, JSON receipt and JSONL decisions. Receipts identify source
+and map hashes, game build, action RNG seed and behavior checkpoint hash. Failed/timed-out games
+do not promote a candidate checkpoint. Training updates occur in the parent only after successful
 game execution; frozen evaluation performs no updates and checks the checkpoint hash.
-A smoke-test update is not evidence of a strong policy. The first full batch of twenty
-Hard training games produced zero wins; see [the experiment report](docs/experiment-results.md) for progress.
+A smoke-test update is not evidence of a strong policy. The initial batches failed against Hard. An economic-potential probe subsequently
+won one of six frozen Hard games, against Protoss Rush. This is preliminary;
+see [the experiment report](docs/experiment-results.md) for progress.
 
 ## Watch a saved replay on Linux
 

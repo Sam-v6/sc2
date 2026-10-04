@@ -80,3 +80,50 @@ check whether this credits waiting for later exploratory actions.
 A learned exploratory VeryEasy Terran win exported fully: 512 frames, 501.79 game
 seconds, 128-second MP4. The viewed frame shows excessive infrastructure, reinforcing
 that easy wins alone do not establish useful macro strategy or Hard strength.
+
+## Spatial primitives and parallel collection
+
+Independent review traced one frozen game to357 failed expansions out of358
+selections, and another to repeated queued tech-lab commands without construction.
+Expansion now requires an eligible builder, a reachable and placeable destination;
+execution uses that same builder/destination. Add-on choices use feasible producers,
+and later construction preserves vacant add-on footprints. These are execution
+constraints, not a prescribed expansion timing or technology strategy.
+
+The earlier Easy curriculum finished30 games:17 wins,4 losses,9 cutoffs. The repaired
+v5 Medium batch finished40 games:8 wins,25 losses,7 cutoffs, no engine failures.
+Its starting and post-Medium frozen Hard evaluations each lost six games.
+Replay experience from the earlier spatial defects was cleared while retaining
+weights/target/optimizer/RNG; that migration is recorded in `logs/learning-v5/`.
+
+The current trainer collects four games per behavior snapshot, then the parent
+learns from successful episode samples in launch order. Worker models never
+replace newer parent weights.46 unit tests pass, including mixed-failure schedule
+resume and cancellation. Real short collection measured3.39x throughput with four
+workers; details are in performance-baseline.md. A real four-engine interruption
+preserved the canonical checkpoint, removed candidate saves and left no descendants.
+
+## First frozen Hard victory
+
+A separate frozen-only economic-capacity shaping probe replayed the same20-game
+v3 observation buffer, using32-step returns and10000 Double-DQN updates from fresh
+seed19 weights. Its potential is:
+
+`max(0, .5*workers + .2*army_supply + 2*bases - .002*resource_bank)`
+
+Resource bank uses the encoder's clipped mineral/gas values; terminal results
+remain+100/-100. There is no scripted macro build order or army mix. This diagnostic
+checkpoint must not resume under the trainer's older reward potential.
+
+Frozen Hard evaluation on the reused development bank won1/6 games, with5 terminal
+losses and no failures. The win was Terran versus Hard Protoss Rush, Simple64,
+seed10001,851.79 game seconds. The selected actions included44 SCVs and44 marine
+commands; peak observed workforce54, army supply47, marines30. Evaluation performed
+no updates; SHA-256 before/after remained:
+`5b335bde6c0593980cbdd0139f40d8362af8f9babb4a49996e25000ac3446251`.
+
+The descriptive Wilson95% interval for1/6 is approximately3%–56%; these seeds have
+been used for development selection, so fresh holdout evaluation is still required.
+One victory does not meet the all-race/reliable Hard target. Raw evidence is in
+`logs/economy-hard-eval/`, the frozen probe and its objective receipt in
+`logs/economy-probe/`, and the probe script in `logs/audit/economy-potential-probe.py`.

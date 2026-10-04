@@ -83,3 +83,26 @@ Files: `reaper-step8.json`, `reaper-step16.json`, `reaper-step32.json`,
 These baseline measurements precede the implementation. The training/replay commands
 and later learning results are documented in README.md and experiment-results.md.
 No learning parameters or production bot logic were changed to generate this baseline.
+
+## Parallel learning collection
+
+The implemented parent learner was also measured with four real180-second VeryEasy
+smoke episodes, same initial seed7, one-second macro cadence and game step8.
+Run groups sequentially without another SC2 experiment during this measurement:
+
+| Collection workers | Run wall seconds | Simulated seconds | Updates | Failures |
+| --- | ---: | ---: | ---: | ---: |
+| 1 | 35.997 | 720 | 676 | 0 |
+| 4 | 10.619 | 720 | 676 | 0 |
+
+The four-worker run was3.39 times faster in this short workload. Every game saved
+its replay and was a cutoff Tie, not a win. Serial collection updates behavior
+between each game, while the parallel batch shares its starting behavior snapshot;
+these are throughput measurements, not equal trajectory or strength comparisons.
+Both checkpoints advanced to four episodes and676 parent learner updates.
+Receipts/checkpoints are in `logs/parallel-benchmark/{one,four}/`.
+
+A separate real interruption test observed four running SC2 binaries, interrupted
+only its own trainer, and confirmed no surviving descendants, unchanged canonical
+checkpoint and no candidate/temporary saves. Linux names the engine process
+`Main_Thread`; executable identity was used to count the engines correctly.

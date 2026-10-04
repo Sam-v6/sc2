@@ -31,7 +31,13 @@ UNITS = {'scv': (U.SCV, U.COMMANDCENTER, False), 'marine': (U.MARINE, U.BARRACKS
 ADDONS = {'barracks_techlab': (U.BARRACKSTECHLAB, U.BARRACKS),
           'factory_techlab': (U.FACTORYTECHLAB, U.FACTORY),
           'starport_techlab': (U.STARPORTTECHLAB, U.STARPORT)}
+PRODUCTION = {U.BARRACKS, U.FACTORY, U.STARPORT}
 ACTIONS = ['wait', *BUILDINGS, *UNITS, *ADDONS, 'orbital', 'infantry_weapons', 'attack', 'retreat']
+
+
+def avoids_addons(position, radius, reserved):
+    return all(abs(position.x - site.x) >= radius + 1 or abs(position.y - site.y) >= radius + 1
+               for site in reserved)
 
 
 def encode(snapshot):
@@ -57,6 +63,10 @@ class TerranLearner(VoidBotBase):
         self.previous = None
         self.transitions = []
         self.decisions = []
+        self.expansion_target = None
+        self.expansion_builder = None
+        self.addon_candidates = {}
+        self.execution_details = {}
 
     async def custom_on_start(self):
         self.client.game_step = 8
@@ -103,7 +113,7 @@ class TerranLearner(VoidBotBase):
         return self.vespene_geyser.filter(lambda g: any(g.distance_to(b) < 12 for b in self.townhalls.ready)
                                          and not self.gas_buildings.closer_than(1, g))
 
-    def legal_mask(self):
+    def legal_mask(self, spatial=True):
         legal = {'wait': True}
         for name, unit in BUILDINGS.items():
             legal[name] = bool(self.workers and self.townhalls and self.can_afford(unit)
@@ -123,13 +133,68 @@ class TerranLearner(VoidBotBase):
                                           and self.already_pending_upgrade(upgrade) == 0)
         legal['attack'] = bool(self.army_units()) and not self.attacking
         legal['retreat'] = bool(self.army_units()) and self.attacking
+        if spatial:
+            legal['expand'] &= self.expansion_target is not None
+            for name in ADDONS:
+                legal[name] &= bool(self.addon_candidates.get(name))
         return np.array([legal[name] for name in ACTIONS])
+
+    async def prepare_macro_options(self):
+        raw = self.legal_mask(spatial=False)
+        self.expansion_target = None
+        self.expansion_builder = None
+        if raw[ACTIONS.index('expand')]:
+            reserved = self.reserved_addons()
+            radius = self.game_data.units[U.COMMANDCENTER.value].footprint_radius
+            sites = [site for site in self.expansion_locations_list
+                     if avoids_addons(site, radius, reserved)
+                     and not any(base.distance_to(site) < self.EXPANSION_GAP_THRESHOLD for base in self.townhalls)]
+            if sites:
+                placement = await self.client._query_building_placement_fast(A.TERRANBUILD_COMMANDCENTER, sites)
+                eligible = [(site, self.select_build_worker(site)) for site, valid in zip(sites, placement) if valid]
+                eligible = [(site, builder) for site, builder in eligible if builder]
+                if eligible:
+                    distances = await self.client.query_pathings([[builder.position, site] for site, builder in eligible])
+                    feasible = [(distance, site, builder) for (site, builder), distance in zip(eligible, distances) if distance > 0]
+                    if feasible:
+                        _, self.expansion_target, self.expansion_builder = min(feasible, key=lambda item: item[0])
+        self.addon_candidates = {}
+        for name, (_, producer) in ADDONS.items():
+            feasible = []
+            if raw[ACTIONS.index(name)]:
+                for candidate in self.structures(producer).ready.idle.filter(lambda p: not p.has_add_on):
+                    if await self.can_place_single(U.SUPPLYDEPOT, candidate.add_on_position):
+                        feasible.append(candidate)
+            self.addon_candidates[name] = feasible
+
+    def reserved_addons(self):
+        return [p.add_on_position for p in self.structures.of_type(PRODUCTION) if not p.has_add_on]
+
+    async def build_location(self, unit, near):
+        # Keep empty add-on footprints clear when any later structure is placed.
+        reserved = self.reserved_addons()
+        radius = self.game_data.units[unit.value].footprint_radius
+        positions = [near.offset((x, y)) for x in range(-18, 19, 3) for y in range(-18, 19, 3)]
+        positions = [p for p in positions if avoids_addons(p, radius, reserved)]
+        if unit in PRODUCTION:
+            positions = [p for p in positions if avoids_addons(p.offset((2.5, -.5)), 1, reserved)]
+        if not positions:
+            return None
+        ability = self.game_data.units[unit.value].creation_ability.id
+        valid = await self.client._query_building_placement_fast(ability, positions)
+        positions = [p for p, allowed in zip(positions, valid) if allowed]
+        if unit in PRODUCTION and positions:
+            valid = await self.client._query_building_placement_fast(A.TERRANBUILD_SUPPLYDEPOT,
+                                                                    [p.offset((2.5, -.5)) for p in positions])
+            positions = [p for p, allowed in zip(positions, valid) if allowed]
+        return min(positions, key=lambda p: p.distance_to(near)) if positions else None
 
     def potential(self):
         # Potential shaping, rather than repeated reward for unchanged stockpiles.
         return .02 * self.supply_workers + .08 * self.supply_army + .3 * self.townhalls.amount + .0005 * (self.state.score.killed_value_units + self.state.score.killed_value_structures)
 
     async def execute(self, name):
+        self.execution_details = {}
         if name in ('attack', 'retreat'):
             self.attacking = name == 'attack'
             self.stance_changed = True
@@ -142,18 +207,20 @@ class TerranLearner(VoidBotBase):
             if producers:
                 return bool(producers.first.train(unit))
         elif name in ADDONS:
-            unit, producer = ADDONS[name]
-            candidates = self.structures(producer).ready.idle.filter(lambda p: not p.has_add_on)
+            unit, _ = ADDONS[name]
+            candidates = self.addon_candidates.get(name, [])
             if candidates:
-                return bool(candidates.first.build(unit))
+                self.execution_details = {'producer': getattr(candidates[0], 'tag', None)}
+                return bool(candidates[0].build(unit))
         elif name == 'orbital':
             return bool(self.townhalls(U.COMMANDCENTER).ready.idle.first(A.UPGRADETOORBITAL_ORBITALCOMMAND))
         elif name == 'infantry_weapons':
             return bool(self.research(G.TERRANINFANTRYWEAPONSLEVEL1))
         elif name == 'expand':
-            location = await self.get_next_expansion()
+            location = self.expansion_target
             if location:
-                return bool(await self.build(U.COMMANDCENTER, near=location, max_distance=2, random_alternative=False))
+                self.execution_details = {'destination': list(location), 'builder': self.expansion_builder.tag}
+                return bool(await self.build(U.COMMANDCENTER, near=location, max_distance=0, build_worker=self.expansion_builder))
         elif name == 'refinery':
             geysers = self.geysers()
             if geysers:
@@ -162,7 +229,11 @@ class TerranLearner(VoidBotBase):
                     return bool(worker.build_gas(geysers.first))
         elif name in BUILDINGS and self.townhalls:
             base = self.townhalls.ready.first if self.townhalls.ready else self.townhalls.first
-            return bool(await self.build(BUILDINGS[name], near=base.position.towards(self.game_info.map_center, 8), placement_step=3))
+            location = await self.build_location(BUILDINGS[name], base.position.towards(self.game_info.map_center, 8))
+            if location:
+                self.execution_details = {'destination': list(location)}
+                return bool(await self.build(BUILDINGS[name], near=location, max_distance=0))
+            self.execution_details = {'reason': 'no placement with reserved add-on clearance'}
         return False
 
     async def micro(self):
@@ -207,12 +278,13 @@ class TerranLearner(VoidBotBase):
         # Gather first so redistribution cannot overwrite a newly selected builder.
         await self.micro()
         if self.time >= self.next_macro:
+            await self.prepare_macro_options()
             snapshot = self.snapshot()
             state, mask, potential = encode(snapshot), self.legal_mask(), self.potential()
             self.transition(state, mask, potential)
             action = self.policy.act(state, mask, explore=self.training or self.random_policy)
             executed = await self.execute(ACTIONS[action])
-            self.decisions.append({'time': self.time, 'action': ACTIONS[action], 'executed': executed,
+            self.decisions.append({'time': self.time, 'action': ACTIONS[action], 'executed': executed, 'execution': self.execution_details,
                                    'snapshot': snapshot, 'legal': [name for name, allowed in zip(ACTIONS, mask) if allowed]})
             self.previous = (state, action, potential)
             self.next_macro = self.time + self.macro_seconds
