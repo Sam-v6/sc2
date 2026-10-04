@@ -352,3 +352,30 @@ The trainer now retains the exact behavior checkpoint per training batch.
 Real DQN and PPO short train/resume/evaluate tests succeeded, including receipt
 hash checks, six-episode resume state and unchanged frozen checkpoints. All were
 120-second cutoffs and are infrastructure checks, not strength evidence.
+
+The live composition correction appends Reaper, Hellion/Hellbat and Viking
+fighter/assault counts without changing reward, action or learner settings.
+Before the fix, equal-supply five-Hellion and five-Viking armies encoded identically.
+A recorded zero-input-row warm start preserved old outputs and optimizer/RNG
+state. All 63 tests and an independent review pass; real train/resume/frozen
+120-second smoke games had no failures and preserved frozen checkpoint bytes.
+
+The matched 40-game Easy composition comparison produced 1 win, 3 losses and
+36 cutoffs, no failures. All schedules matched the previous first-stage control,
+and all first-eight frozen-policy games had identical chosen actions/times.
+Thirty-nine of 40 outcomes and game durations matched. The new features were
+actually exercised (peak Reapers 48, Hellions 16, Vikings 1), but this run did not
+show a strength improvement. Its preserved snapshot then lost all six frozen
+Hard development cases, no failures and unchanged hash. Artifacts are in the
+`terran-training-history` worktree's `logs/ppo-composition-curriculum/` and
+`logs/ppo-composition-hard6/`. The schema correction remains useful independently
+of a training-strength claim. Matching pre-composition source for old models is
+retained in `logs/audit/ppo-pre-composition-source/`.
+
+A separate archived-source probe jointly adds observed destroyed-asset score
+features and potential shaping. The mathematical tests, metadata guards and
+65-test archived suite pass. It starts from retained pre-smoke bytes, so its
+40-game schedule and initial actor match the composition control; its change
+is both observation and reward, not a reward-only intervention. See
+`docs/superpowers/plans/2026-10-04-combat-credit-probe.md`. No default reward or
+strength acceptance criterion is changed.
