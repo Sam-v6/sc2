@@ -328,3 +328,12 @@ seconds,≈897 game seconds, no frame cap. ffprobe verified the MP4 and a late
 frame was inspected. Replay viewing removes fog; training remains limited to
 observed enemy units. The game receipt establishes Victory; the replay export
 receipt's null result alone is not win evidence.
+
+The 30-second stance probe completed 40 Easy games: 4 wins, 18 losses, 18 cutoffs,
+no failures, versus 1/3/36 in the matched unrestricted first stage. The 40
+seed/race/build/map schedules match; both used eight workers and the same
+initial checkpoint. Its frozen six-game Hard test lost all six. The final
+original-settings 120-Hard-game snapshot also lost all six frozen tests.
+Neither candidate was promoted. A separately labeled unrestricted-execution
+transfer check evaluates the stance-trained weights without the 30-second
+constraint; it does not replace the matched-context result.
