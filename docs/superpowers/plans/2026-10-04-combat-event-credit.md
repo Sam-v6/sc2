@@ -268,3 +268,31 @@ Easy80 on those same old states changes production selection, but these are
 conditional observations, not newly simulated behavior. Do not infer improved
 performance from confidence or diagnose a sole cause of regression.
 Artifact: kills-policy-concentration-old-win-states.json.
+
+
+Hard40 completed 2 wins/36 defeats/2 cutoffs, no failures. Audit verified all
+28,053 transitions and state returns (max error 9.11e-15). Final metadata
+184 attempts/episodes, 1128 steps. Frozen hash
+b17108652f7ab79c9128788a489e5561c2a237435bc895b82a3c28095aeaa153.
+The frozen snapshot now runs matched seed-20000 Hard30.
+Combined audit: combat-kills-curricula-results.json.
+
+The two training branches match initial checkpoint/source/settings and all
+opponent seeds/races/builds/maps/horizons/cadences. First-batch sampling seeds
+also match. Later sampling seeds diverge because PPO consumes the parent's
+RNG when shuffling different-length rollouts, before drawing next-batch action
+seeds. This is a matched-opponent curriculum comparison, not identical action
+noise across all 40 games. The strict audit exposed that distinction; no data
+or trajectories were replaced. Frozen evaluations use the same case seeds.
+
+Current existing Torch runtime reports CUDA unavailable and zero CUDA devices.
+CPU updates remain the measured supported path; no installation attempted.
+
+
+Medium40 frozen Hard30 completed 2 wins/26 defeats/2 cutoffs, no failures or
+checkpoint mutation. Terran 0/10, Protoss 1/10, Zerg 1/10. All 30 cases match
+the retained Easy40 parent schedule. No curriculum strength gain is established.
+Audit: combat-kills-medium40-hard30-results.json. A complete overview replay
+export of Medium seed-20000 Hard Terran Rush loss is underway for engagement
+inspection; viewing only uses omniscience. Hard40 frozen evaluation remains
+in progress. Keep the Easy40 parent and reserved final seeds untouched.

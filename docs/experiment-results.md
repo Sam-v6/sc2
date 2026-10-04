@@ -33,8 +33,10 @@ Easy80 snapshot scored 2/30 on the same Hard cases (23 defeats, 5 cutoffs, no
 failures): Terran 0/10, Protoss 1/10, Zerg 1/10. Frozen hashes remained unchanged.
 Easy40 stays the stronger parent. Medium40 completed 2 wins/33 defeats/5
 cutoffs with no failures and passed the transition audit; its frozen Hard30
-evaluation is running. A matched Hard40 curriculum from the same parent is
-also running. This
+check scored 2 wins/26 defeats/2 cutoffs (Terran 0/10, Protoss 1/10, Zerg 1/10),
+with no failures or checkpoint mutation. The matched Hard40 curriculum
+finished 2 wins/36 defeats/2 cutoffs and passed its reward audit; its frozen
+Hard30 evaluation is running. This
 is a learning trajectory, not an equal-budget comparison against net-event Easy40.
 
 All counts refer to development, and cutoffs/failures are distinct from losses.
