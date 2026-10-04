@@ -37,5 +37,38 @@ therefore keep it an explicit experiment and judge only real game victories.
    show valid event components and useful action exposure. Do not broaden to the
    reserved acceptance bank on weak development performance.
 
-No event reward code or trained event policy has been implemented yet. The
-reliable Hard win-rate goal remains open.
+The archived event source now passes 80 tests. Three event path checks failed
+before implementation; the return identity check includes a nonconstant critic.
+Migration preserves the actor/shared weights and RNG/counters/gamma/cadence,
+but resets the critic head, every Adam moment and optimizer step to zero in
+both control and candidate. The historical parent update count remains in the
+migration receipt, not as a stale Adam step. Initial actor logits match exactly
+across 128 contexts; no rollout is carried forward. Control retains finite-win-v1,
+candidate uses combat-events-v1, and candidate training rejects control context.
+
+Additional engine fixtures validate valuation: a gas-bearing enemy kill produced
+25 gas credit, with killed unit+structure values equal to killed minerals+gas on
+every observed row. A separate own gas-bearing loss produced exactly 125 total
+loss and 25 gas loss. These debug fixtures are neither RL data nor strength
+evidence. Field semantics match Blizzard's score.proto:
+https://github.com/Blizzard/s2client-proto/blob/master/s2clientprotocol/score.proto
+
+Untouched migrated candidates live under logs/ppo-combat-events{,-control}/;
+separate smoke copies live in logs/ppo-combat-events-smoke/. Source and migration
+script are archived in logs/audit/ppo-combat-events-source/. A matched Easy40
+comparison will use four workers per branch concurrently (eight engine clients
+total), both maps, all three races, Rush/Timing/Power/Macro/Air builds, game limit
+1200 seconds, macro cadence one second, same attempt/seed schedule. Preserve
+first-batch actor parity until rewards differ, receipts and pre-batch weights.
+
+The reliable Hard win-rate goal remains open.
+
+
+Independent review verified 80 tests and migration arrays/hashes/context. Real
+smoke train4 (120-second cutoffs), resume2 Hard (both defeats) and frozen sampled2
+(120-second cutoffs) completed with zero failures; frozen bytes stayed identical.
+The resume games contain 5 positive combat events and 96 negative events.
+Every logged reward was recomputed from its recorded components successfully.
+These demonstrate genuine score feedback and pipeline semantics, not improvement.
+Untouched initial hashes were rechecked before copying the matched Easy40 parents.
+Keep both archived sources frozen until their run handles are terminal.
