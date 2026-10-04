@@ -256,3 +256,75 @@ The greedy victory was Protoss/Rush on Simple64, seed 10001, lasting
 896.79 game seconds (`fddcc961b01b40ceb0ae2f38080c48eb`). A broader
 30-game greedy development evaluation uses seeds 34000–34029 and both maps.
 The initial 12 Hard PPO training games were all losses.
+
+## Paired longer-credit probe
+
+Read-only review found no sampling, reward-sign, GAE-boundary or gradient bug.
+The actor remained weakly discriminative: on the greedy winning Hard seed10001,
+initial SCV probability was .518 versus wait .482; some later attack choices were
+also about .51/.49. Categorical sampling can delay those slightly favored actions.
+With one-second decisions (actual 1.071 seconds), gamma≈.998 and lambda=.95 give
+the direct GAE contribution a roughly 13.9-game-second half-life. Longer credit
+therefore depends on critic bootstrap estimates. Across six sampled Hard losses,
+the initial critic estimate was -.0422 versus realized discounted shaped returns
+-.2547 to -.4267. These outcomes suggest optimism on Hard, not a proven expected
+value error. Discounted capacity-shaping telescoping identities held to ≈1e-15.
+
+A separately archived source probe changes only GAE lambda from .95 to .99.
+It starts from the exact post-Medium network, Adam state, RNG, attempt cursor,
+reward, cadence and action schema. Its first 40 Hard matchups match the baseline
+batch's first 40 seeds/maps/races/builds. The source and explicit checkpoint
+metadata migration are retained in `logs/audit/ppo-long-trace-source/` and
+`logs/audit/ppo-long-trace-probe.py`, with SHA-256 provenance. The baseline source
+and canonical model are unchanged. Because settings are validated, this candidate
+must use its matching archived source for inference or resume. This is an
+algorithm experiment, not a correctness repair or a production-default change.
+
+The post-Medium frozen 30-game development evaluation completed with 2 victories,
+17 defeats and 11 cutoffs, no failures; its checkpoint stayed unchanged. The
+victories were Zerg/Rush and Protoss/Rush on Simple64 (seeds 34002 and 34001).
+There were no victories on TritonLE or against Terran in this batch. The 11
+cutoffs are not wins. This candidate does not meet the acceptance target.
+
+The paired 40-game training comparison finished: baseline 0 wins/39 losses/1
+cutoff; longer trace 0 wins/38 losses/2 cutoffs. Both schedules matched exactly,
+and the first four games had identical chosen actions/times before any updates
+differed. Evidence is retained in `logs/audit/ppo-long-trace-pairing.json`. This
+does not justify promoting the longer trace; its frozen test follows. Meanwhile
+a separate original-settings curriculum resumes the preserved post-Medium model
+for 200 Easy games, eight workers, five 40-game stages with retained snapshots.
+It aims to collect more winning trajectories before revisiting Hard. Easy wins
+remain training evidence only; all races, builds and both maps stay in scope.
+
+The longer-trace frozen six-game test lost all six; this variant was not
+promoted. The original-settings Easy curriculum's first 40 games produced 1
+win, 3 losses and 36 cutoffs. Sampled traces showed median stance dwell ≈2.14
+seconds. In one TritonLE cutoff (seed 92), peak army supply was 87, while the
+army center never got closer than 132.87 to the enemy spawn from an initial
+152.79 distance. This is evidence of limited travel, not proof that no individual
+unit reached the enemy.
+
+A separate action-interface probe keeps a chosen stance for at least 30 seconds
+while economy decisions still occur every second. It starts from the same
+post-Medium snapshot, with 40 Easy matchups/eight workers matching the curriculum
+first stage. The archived source is `logs/audit/ppo-stance-source/`; three checks
+verify both stances, the exact 30-second boundary, and unchanged economy-action
+availability. This temporarily restricts retreat responsiveness and is only a
+controlled temporal-exploration experiment. No scripted build order or unit mix
+is added. Matching archived execution is required for evaluation.
+
+The original-settings 120-game Hard PPO batch completed with 1 victory, 110
+defeats and 9 cutoffs, no failures (2436.782 wall seconds). Its training victory
+was Terran/Power on Simple64, seed 163, 892.86 game seconds
+(`d06ddd8480704de1bb4c1973d2822f6e`). The final frozen snapshot is
+`logs/ppo-v1/frozen-after-hard120.npz`, SHA-256
+`476f09ade238e6a1d27caccf50d9b59be6f825837da915f4fc100c88e1a36d73`;
+its frozen evaluation is still pending. An earlier snapshot after 56 Hard games
+lost all six frozen development matchups.
+
+The frozen post-Medium PPO Hard Protoss/Rush win was exported locally as
+`logs/replay-proof/ppo-hard-win.mp4`: 915 frames at 960×720, 4 fps, 228.75 video
+seconds,≈897 game seconds, no frame cap. ffprobe verified the MP4 and a late
+frame was inspected. Replay viewing removes fog; training remains limited to
+observed enemy units. The game receipt establishes Victory; the replay export
+receipt's null result alone is not win evidence.
