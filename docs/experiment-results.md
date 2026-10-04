@@ -547,3 +547,32 @@ all eight were 120-second cutoffs and frozen checkpoint bytes are unchanged.
 The equal-training 40-game control/candidate continuations are now running from
 untouched finite Easy40 bytes and the matching migration. Results are pending.
 Sources and initial checkpoints remain retained independently of smoke models.
+
+The equal training continuation finished 40 additional Easy games per branch: the
+finite control won 3, lost 19 and cut off 18; the richer-observation branch won 6,
+lost 19 and cut off 15. Neither had failures. All opponent schedules match, and
+initial 8 games have identical old observations/actions/times/outcomes/durations
+and policy seeds across 8,183 decisions. Later RNG can diverge with rollout length.
+This is modest training evidence, not frozen Hard acceptance. Both immutable
+Easy80 snapshots now run matching Hard6 cases. Receipts:
+`logs/audit/ppo-finite-spatial-first-batch.json`,
+`logs/audit/ppo-finite-spatial-pairing.json`, and the continuation directories.
+
+A separate exact-state counterfactual found that allowing the current stance
+changes many frozen choices from switching to retaining it, but can also replace
+unit production choices. It does not simulate the resulting new trajectories or
+establish wins. The idempotent-stance archive now passes 71 tests, including two
+red-to-green checks: both stances are legal with an army, and repeated selections
+preserve the timer/pending orders. Actual switches still request orders. It adds
+no attack schedule or hold period. A separate frozen six-game probe uses identical
+finite Easy40 policy bytes, changing only stance-mask/command semantics.
+Artifacts: `logs/audit/stance-mask-counterfactual.json`,
+`logs/audit/ppo-idempotent-stance-source/`, `logs/ppo-idempotent-stance-hard6/`.
+
+All three frozen Hard6 probes finished with six losses, no failures and unchanged
+checkpoint bytes: finite-control Easy80, finite/spatial Easy80 and idempotent
+stance with the original finite Easy40 weights. The modest Easy training gain
+did not establish transfer to Hard. None is promoted as stronger than the
+retained finite Easy40 snapshot. The stance counterfactual did not predict wins.
+The next experiment should train directly on Hard and compare controlled
+exploration, preserving richer live observations and the original acceptance scope.
