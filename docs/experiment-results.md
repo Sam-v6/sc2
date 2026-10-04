@@ -31,7 +31,10 @@ in another 40 Easy games, with zero failures. All 35,931 transitions and every
 state return passed the reward audit (maximum identity error 7.55e-15). Its
 Easy80 snapshot scored 2/30 on the same Hard cases (23 defeats, 5 cutoffs, no
 failures): Terran 0/10, Protoss 1/10, Zerg 1/10. Frozen hashes remained unchanged.
-Easy40 stays the stronger parent for a bounded 40-game Medium experiment. This
+Easy40 stays the stronger parent. Medium40 completed 2 wins/33 defeats/5
+cutoffs with no failures and passed the transition audit; its frozen Hard30
+evaluation is running. A matched Hard40 curriculum from the same parent is
+also running. This
 is a learning trajectory, not an equal-budget comparison against net-event Easy40.
 
 All counts refer to development, and cutoffs/failures are distinct from losses.

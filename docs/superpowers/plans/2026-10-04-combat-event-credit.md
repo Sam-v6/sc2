@@ -253,3 +253,18 @@ and audit each final snapshot, then compare frozen Hard development results.
 This differs from the earlier finite-reward Hard training: current parent has
 verified all-race wins and current objective provides kill-event credit.
 Receipt: logs/ppo-combat-kills-hard/experiment.json.
+
+
+Medium40 completed 2 wins/33 defeats/5 cutoffs, no failures. Audit verified
+33,315 transitions, counter attribution, finite endpoints, and every state
+return (max error 4.44e-15). Final metadata: 184 attempts/episodes, 1224 steps.
+Frozen hash d45006c659eb052a8b2ec8d52f3e021bfcafa67dd09b88045f1fc2cc63a96cdc.
+The frozen snapshot is now undergoing the matched seed-20000 Hard30 check.
+Artifact: combat-kills-medium40-results.json.
+
+Offline diagnostic on three retained Easy40 winning trajectories found mean
+top-action probabilities 0.5505/0.5223/0.5546 (entropy 0.9025/0.9673/0.8747).
+Easy80 on those same old states changes production selection, but these are
+conditional observations, not newly simulated behavior. Do not infer improved
+performance from confidence or diagnose a sole cause of regression.
+Artifact: kills-policy-concentration-old-win-states.json.
