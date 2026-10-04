@@ -397,3 +397,19 @@ The verified workflow has been integrated into the original checkout. Its
 existing Python environment passed all 63 tests and two real DQN training games
 completed with 224 updates, two episodes/attempts and no failures. Both were
 120-second cutoffs, so these are delivery checks only (`logs/delivery-smoke/`).
+
+The combat-credit snapshot lost all six frozen Hard development games with no
+failures and an unchanged checkpoint hash (`logs/ppo-combat-hard6/`). It is not
+promoted. Extra destruction feedback did not establish a strength gain in this
+bounded comparison; a broader evaluation would not rescue the six-case failure
+as a success claim. The default objective remains capacity-v1.
+
+After vector normalization was integrated, the original checkout resumed for two
+more real games without failures, advancing to four episodes/four attempts/448
+updates. Two frozen games then completed without failures, preserved checkpoint
+bytes, and produced nonempty replays with matching receipt model hashes. All six
+delivery games are 120-second cutoffs and are infrastructure evidence only.
+The original checkout's existing environment and the worktree environment each
+passed 63 tests; experimental matching sources and replay/model artifacts remain
+retained in their original worktrees. The reliable all-race Hard target remains
+unmet and the goal remains active.
