@@ -524,3 +524,26 @@ The next declared experiment combines the validated unit observations with the
 finite-win objective and compares equal40-game training continuations from the
 same immutable finite Easy40 model. Neither candidate changes the main default
 or establishes acceptance. See the finite-spatial-continuation plan.
+
+The unit-state curriculum exposed observed enemies in all 40 games, covering 94
+protocol unit/structure identities, including different flying/ground combat
+units, production/tech structures, detectors and workers. The largest sparse
+unit-state record had 201 nonzero fields. The observations included both current
+visibility and previously scouted snapshots; they do not reveal hidden totals.
+Exposure receipt: `logs/audit/unit-state-exposure.json`.
+
+The combined finite/spatial continuation source passes 72 tests. Its migration
+appends the exact previously validated encoder to the immutable finite Easy40
+model, preserving all old parameters/moments/RNG/reward/settings/horizon. The
+resulting schema has 5,460 features. Independent review confirmed 1,000 snapshot
+old-prefix/capacity-potential parity, sparse JSON reconstruction and all migration
+arrays/hashes. The first real four-game training smoke completed without failures,
+all 120-second cutoffs. Resume/frozen verification is next, separate from the
+untouched input checkpoint. Artifact roots: `logs/ppo-finite-spatial/`,
+`logs/ppo-finite-spatial-smoke/`, `logs/audit/ppo-finite-spatial-source/`.
+
+Combined train4/resume2/frozen2 smoke verification completed without failures;
+all eight were 120-second cutoffs and frozen checkpoint bytes are unchanged.
+The equal-training 40-game control/candidate continuations are now running from
+untouched finite Easy40 bytes and the matching migration. Results are pending.
+Sources and initial checkpoints remain retained independently of smoke models.

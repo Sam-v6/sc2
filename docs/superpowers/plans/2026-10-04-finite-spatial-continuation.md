@@ -23,7 +23,19 @@ not an acceptance claim or a replacement for unit-level final perception.
    promising candidate to both maps/all five builds/all races. Reserve acceptance
    seeds and keep the existing frozen30 win-rate target. No scripted macro recipes.
 
-Sources and combined migration are not implemented yet. Compare checkpoints
+The combined source and migration are implemented in a separate archive. Compare checkpoints
 rather than picking isolated winning replays as proof of strength. If the
 combination remains weak, inspect recorded choices/observed enemy exposure and
 execution failures before choosing another intervention.
+
+Verification: 72 tests pass. Independent review confirmed migration parameters/
+moments/RNG/context/hashes and exact old-prefix/potential parity over 1,000 states.
+Real train4/resume2/frozen2 smoke completed without failures, all 120-second cutoffs.
+Frozen evaluation preserved checkpoint bytes. The paired initial files are copied from untouched
+finite Easy40/migrated bytes, not the smoke models. Source remains frozen during
+batches; full curriculum starts only after frozen verification succeeds.
+
+Both 40-game continuations are now running, each with eight workers, full 1200-second
+match limit, matched build order and identical initial attempt/RNG state. The
+control uses logs/ppo-finite-control-continuation/; the candidate uses
+logs/ppo-finite-spatial-continuation/. Sources stay frozen until both batches end.
