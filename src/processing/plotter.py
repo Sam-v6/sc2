@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import yaml
-from path import SC2_VOID_BOT_HOME
+from src.path import SC2_VOID_BOT_HOME
 
 class Plotter:
 
@@ -82,10 +82,10 @@ class Plotter:
         ax.set_ylabel("Minerals Rate", fontsize=self._plot_csts["label_font_size"])
 
         # Limits
-        ax.set_xlim(min(self._data[game]["game_time"].min() for self._data[game] in self._data.values()),
-                    max(self._data[game]["game_time"].max() for self._data[game] in self._data.values()))
-        ax.set_ylim(min(self._data[game]["collection_rate_minerals"].min() for self._data[game] in self._data.values()),
-                    max(self._data[game]["collection_rate_minerals"].max() for self._data[game] in self._data.values()))
+        ax.set_xlim(min(frame["game_time"].min() for frame in self._data.values()),
+                    max(frame["game_time"].max() for frame in self._data.values()))
+        ax.set_ylim(min(frame["collection_rate_minerals"].min() for frame in self._data.values()),
+                    max(frame["collection_rate_minerals"].max() for frame in self._data.values()))
         
         # Legend below the axes, fully outside
         ax.legend(
@@ -102,7 +102,8 @@ class Plotter:
         # Final spacing
         fig.subplots_adjust(bottom=0.25)
         fig.tight_layout()
-        plt.savefig(os.path.join(self._plot_dir, "minerals_rate.png"))
+        fig.savefig(os.path.join(self._plot_dir, "minerals_rate.png"))
+        plt.close(fig)
 
     def _plot_gas_rate(self) -> None:
         # Setup
@@ -118,10 +119,10 @@ class Plotter:
         ax.set_ylabel("Gas Rate", fontsize=self._plot_csts["label_font_size"])
 
         # Limits
-        ax.set_xlim(min(self._data[game]["game_time"].min() for self._data[game] in self._data.values()),
-                    max(self._data[game]["game_time"].max() for self._data[game] in self._data.values()))
-        ax.set_ylim(min(self._data[game]["collection_rate_vespene"].min() for self._data[game] in self._data.values()),
-                    max(self._data[game]["collection_rate_vespene"].max() for self._data[game] in self._data.values()))
+        ax.set_xlim(min(frame["game_time"].min() for frame in self._data.values()),
+                    max(frame["game_time"].max() for frame in self._data.values()))
+        ax.set_ylim(min(frame["collection_rate_vespene"].min() for frame in self._data.values()),
+                    max(frame["collection_rate_vespene"].max() for frame in self._data.values()))
         
         # Legend below the axes, fully outside
         ax.legend(
@@ -138,7 +139,8 @@ class Plotter:
         # Final spacing
         fig.subplots_adjust(bottom=0.25)
         fig.tight_layout()
-        plt.savefig(os.path.join(self._plot_dir, "gas_rate.png"))
+        fig.savefig(os.path.join(self._plot_dir, "gas_rate.png"))
+        plt.close(fig)
 
     def _plot_apm(self) -> None:
         # Setup
@@ -154,10 +156,10 @@ class Plotter:
         ax.set_ylabel("APM", fontsize=self._plot_csts["label_font_size"])
 
         # Limits
-        ax.set_xlim(min(self._data[game]["game_time"].min() for self._data[game] in self._data.values()),
-                    max(self._data[game]["game_time"].max() for self._data[game] in self._data.values()))
-        ax.set_ylim(min(self._data[game]["current_apm"].min() for self._data[game] in self._data.values()),
-                    max(self._data[game]["current_apm"].max() for self._data[game] in self._data.values()))
+        ax.set_xlim(min(frame["game_time"].min() for frame in self._data.values()),
+                    max(frame["game_time"].max() for frame in self._data.values()))
+        ax.set_ylim(min(frame["current_apm"].min() for frame in self._data.values()),
+                    max(frame["current_apm"].max() for frame in self._data.values()))
         
         # Legend below the axes, fully outside
         ax.legend(
@@ -174,7 +176,8 @@ class Plotter:
         # Final spacing
         fig.subplots_adjust(bottom=0.25)
         fig.tight_layout()
-        plt.savefig(os.path.join(self._plot_dir, "apm.png"))
+        fig.savefig(os.path.join(self._plot_dir, "apm.png"))
+        plt.close(fig)
 
     def _plot_army_size(self) -> None:
         pass
@@ -185,7 +188,7 @@ class Plotter:
     def _log_columns(self) -> None:
         # Save columns to text file
         first_key = next(iter(self._data))
-        with open('columns.txt', 'w') as f:
+        with open(os.path.join(self._plot_dir, 'columns.txt'), 'w') as f:
             for col in self._data[first_key].columns:
                 f.write(f"{col}\n")
 

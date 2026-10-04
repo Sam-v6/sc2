@@ -10,7 +10,7 @@ from sc2.unit import Unit
 from sc2.units import Units
 
 # Local imports
-from common.void_bot_base import VoidBotBase
+from src.common.void_bot_base import VoidBotBase
 
 class ProxyRaxBot(VoidBotBase):
 
