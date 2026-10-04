@@ -110,7 +110,7 @@ production throughput. Do not run multiple trainers against the same checkpoint.
 retains a unique `.behavior.npz` file in its output directory. A game receipt
 links `behavior_checkpoint` and its SHA-256 to the exact input model. These
 snapshots can be evaluated later even after the canonical model advances;
-evaluation and random comparisons use the supplied frozen file directly.
+evaluation, sampled PPO evaluation and random comparisons use the supplied frozen file directly.
 
 Actions are legal at the observed resource/tech level. A logged `executed` value
 means a command was issued successfully by the Python client; SC2 may still reject
@@ -159,7 +159,7 @@ Rollouts are discarded after updating; they are not DQN replay experience.
 Game workers and frozen inference use NumPy. Only CPU gradient updates launch the
 existing Torch interpreter. Receipts identify the backend/version, source, shared
 rollout batch and update count. Helper failures/timeouts preserve the canonical
-checkpoint. Frozen evaluation uses greedy actor choices and requires no Torch
+checkpoint. Frozen `--mode evaluate` uses greedy actor choices; `--mode sample` samples the learned PPO distribution with a reproducible seed per game. Both preserve checkpoint bytes and require no Torch
 backend; successful smoke updates do not establish Hard strength.
 
 ## Watch a saved replay on Linux

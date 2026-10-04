@@ -53,8 +53,10 @@ def episode(job):
         policy.rng = np.random.default_rng(job['policy_seed'])
     if job['mode'] == 'random':
         policy.epsilon = 1
+    elif job['mode'] == 'sample':
+        policy.epsilon = 0
     bot = TerranLearner(policy, training=job['mode'] == 'train', action_log=job['actions'],
-                        macro_seconds=job['macro_seconds'], random_policy=job['mode'] == 'random')
+                        macro_seconds=job['macro_seconds'], random_policy=job['mode'] in ('sample', 'random'))
     started = time.monotonic()
     result = run_game(validate_map(job['map']),
                       [Bot(Race.Terran, bot), Computer(Race[job['race']], Difficulty[job['difficulty']], AIBuild[job['build']])],
@@ -144,7 +146,7 @@ def parser():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--algorithm', choices=['dqn', 'ppo'], default=None, help='New experiment algorithm; existing checkpoints infer and validate their algorithm')
     p.add_argument('--torch-python', type=Path, default=None, help='Existing Torch interpreter, required only for PPO training')
-    p.add_argument('--mode', choices=['train', 'evaluate', 'random'], default='train')
+    p.add_argument('--mode', choices=['train', 'evaluate', 'sample', 'random'], default='train', help='evaluate uses greedy choices; sample freezes and samples the learned PPO distribution; random is uniform')
     p.add_argument('--episodes', type=positive, default=10)
     p.add_argument('--workers', type=positive, default=4)
     p.add_argument('--checkpoint', type=Path, default=Path(SC2_VOID_BOT_HOME) / 'logs/rl/policy.npz')
@@ -178,6 +180,8 @@ def main():
         initial.gamma = .99 ** (args.macro_seconds / 5)
         initial.save(checkpoint)
     policy = load_policy(checkpoint, FEATURES, ACTIONS)
+    if args.mode == 'sample' and policy.algorithm != 'ppo':
+        raise ValueError('Frozen sampling requires a PPO categorical policy')
     if args.algorithm is not None and args.algorithm != policy.algorithm:
         raise ValueError('Checkpoint algorithm differs from the requested experiment')
     if args.mode == 'train' and policy.algorithm == 'ppo':
@@ -279,7 +283,7 @@ def main():
         (args.output / f'{run_id}.summary.json').write_text(json.dumps(summary, indent=2) + '\n')
     if summary['failures']:
         raise SystemExit(1)
-    if args.mode == 'evaluate' and summary['checkpoint_before'] != summary['checkpoint_after']:
+    if args.mode in ('evaluate', 'sample') and summary['checkpoint_before'] != summary['checkpoint_after']:
         raise RuntimeError('Frozen evaluation changed the checkpoint')
 
 
