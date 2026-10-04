@@ -86,8 +86,10 @@ Checkpoints from the earlier count schema require an explicit recorded migration
 or a matching older checkout; the loader rejects silent schema changes.
 It chooses atomic build/train/tech/expand/attack/retreat actions. There is no scripted
 build order or fixed army mix. Gathering, placement, depot lowering, MULE execution,
-defense and combat execution are primitives. The first feature representation is
-limited; spatial observations and broader actions remain future experiments.
+defense and combat execution are primitives. The main CLI uses the compact first representation. Retained spatial experiments
+now encode observed unit identities and map grids; they have not established
+reliable Hard strength. Use the matching archived source for those checkpoints;
+see the [current experiment status](docs/experiment-results.md#current-development-status).
 
 ```bash
 uv run python -m src.rl.train --episodes 2 --workers 4 --macro-seconds 1 --game-seconds 120 --checkpoint logs/my-run/policy.npz --output logs/my-run
@@ -138,6 +140,21 @@ won one of six frozen Hard games against Protoss Rush; a separate capacity probe
 won one of six against Terran Macro. Broader economic-probe evaluation won only
 one of thirty games. These are preliminary results;
 see [the experiment report](docs/experiment-results.md) for progress.
+
+The execution and learning loop is:
+
+```mermaid
+flowchart LR
+    Game[Headless SC2 game] --> State[Observed live state]
+    State --> Policy[Learned macro policy]
+    Policy --> Primitive[Worker and combat primitives]
+    Primitive --> Game
+    Game --> Evidence[Replay and decision receipts]
+    Evidence --> Learner[Parent DQN or CPU PPO update]
+    Learner --> Policy
+    Policy --> Frozen[Frozen development and acceptance checks]
+    Evidence --> Video[Linux replay to MP4]
+```
 
 ## PPO comparison using the existing Torch runtime
 

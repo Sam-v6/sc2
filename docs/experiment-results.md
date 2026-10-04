@@ -6,6 +6,41 @@ action observations, checkpoint snapshots and JSON receipts are retained under
 The final target remains frozen evaluation against all three races and varied
 builds/maps, using a fresh seed bank after development choices are finished.
 
+## Current development status
+
+The main CLI is a working compact DQN/PPO experiment, not an accepted Hard bot.
+Richer observations have been implemented in retained experimental sources:
+unit identities and an 8x8 grid of observed positions, health, weapons, flying,
+structures, detectors, cloak and visibility. This respects fog and last-scouted
+snapshots; it is broader than end-game statistics and still not the final agent.
+Checkpoint feature/reward/settings metadata require matching source versions.
+
+| Retained experiment | Training evidence | Frozen Hard development evidence | Status |
+| --- | --- | --- | --- |
+| Finite Easy40 | 4/40 Easy wins | 2/30 broad cases, both Zerg Air | Earlier retained reference; weak |
+| Equal finite/spatial Easy continuation | 3 vs 6/40 wins | Both 0/6 | Representation works; no Hard gain |
+| Direct Hard, temperature 1 vs 2 | 0 wins each; T2 has one retained engine startup failure | Both greedy and sampled 0/6 each | No improvement |
+| Reset finite control vs net combat-event reward | 6 vs 3/40 Easy wins | Both greedy and sampled 0/6 each | Net-event greedy built no army; not promoted |
+| Kills-only combat-event reward | Real train/resume smoke passed; matched Easy40 running | Pending | Experimental countermeasure only |
+
+All counts refer to development, and cutoffs/failures are distinct from losses.
+No reliable all-race Hard model has been accepted. The reserved final bank stays
+untouched until development supports a promising frozen candidate.
+
+The net-event comparison audited 83,203 transitions and every discounted return,
+with source/checkpoint hashes and matching schedules. Removing the loss penalty
+is the only change in the next experiment; losses remain diagnostics. The
+potential estimator, micro, observations, cadence and optimizer settings stay
+fixed. See [combat event protocol](superpowers/plans/2026-10-04-combat-event-credit.md)
+and [Hard exploration protocol](superpowers/plans/2026-10-04-hard-exploration.md).
+
+Complete Linux videos include an earlier genuine Hard Zerg win and the latest
+net-event Hard Terran defeat:
+`logs/replay-proof/finite-hard-zerg-win.mp4` and
+`logs/replay-proof/combat-event-hard-loss.mp4` in the retained worktree. The latter
+contains all 406.79 game seconds, with 416 frames and no export cutoff. Viewing
+uses omniscience only for the replay; training uses SC2 observations.
+
 ## Infrastructure evidence
 
 - Real 120-second training smoke games produced updates, saved checkpoints and

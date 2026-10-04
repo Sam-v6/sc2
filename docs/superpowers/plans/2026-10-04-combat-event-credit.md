@@ -140,3 +140,12 @@ state as the already completed net-event comparison. Reuse that recorded net
 control, retaining hashes/schedules, rather than silently rerunning or replacing
 it. Validate initial traces before comparing diverged outcomes. Neither candidate
 is promoted without real frozen Hard improvement.
+
+
+Kills-only source and migration independently reviewed; 80 tests passed. Real
+train2 Hard600 produced one defeat and one cutoff; resume2 Hard600 produced two
+cutoffs, and frozen sampled2 Easy120 produced two cutoffs. All six had zero
+failures; frozen bytes were unchanged. Kill-only reward components recomputed
+exactly, while own losses remained logged. The smoke model reached 108 episodes
+and attempts with actual optimizer updates; it is separate from untouched input.
+The new matched Easy40 uses four workers and the same retained control schedule.
