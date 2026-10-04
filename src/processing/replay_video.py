@@ -1,6 +1,7 @@
 """Render a matching Linux SC2 replay to a portable MP4 after simulation."""
 import argparse
 import asyncio
+from contextlib import suppress
 import json
 from pathlib import Path
 import shutil
@@ -118,7 +119,8 @@ async def render(job):
         except BaseException:
             encoder.kill()
             encoder.wait()
-            encoder.stdin.close()
+            with suppress(BrokenPipeError):
+                encoder.stdin.close()
             raise
         frames = len(telemetry)
         if not frames:

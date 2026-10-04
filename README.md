@@ -76,7 +76,7 @@ No learned Hard-opponent win is claimed by the scripted-bot examples.
 
 ## Terran learning experiment
 
-The NumPy DQN consumes live economy, production, army, and visible-enemy features.
+The NumPy Double-DQN consumes live economy, production, army, and visible-enemy features.
 It chooses atomic build/train/tech/expand/attack/retreat actions. There is no scripted
 build order or fixed army mix. Gathering, placement, depot lowering, MULE execution,
 defense and combat execution are primitives. The first feature representation is
@@ -102,7 +102,8 @@ means a command was issued successfully by the Python client; SC2 may still reje
 it or construction may subsequently fail. Inspect replay/state changes to establish
 actual completion. The logs contain chosen actions, legal masks, snapshots and reward
 components. Potential shaping rewards state changes; terminal wins/losses receive
-+100/-100. Time-limit ties bootstrap instead of being labeled defeats.
++100/-100. Replay learning uses up to 32 macro rewards with the actual bootstrap
+discount. New-checkpoint discounting accounts for macro cadence. Time-limit ties bootstrap instead of being labeled defeats.
 
 Each game writes a replay, JSON receipt and JSONL decisions. Failed/timed-out games
 do not promote a candidate checkpoint. Training updates occur only after successful

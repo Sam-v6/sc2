@@ -64,3 +64,55 @@ class LearningTests(unittest.TestCase):
             self.make_policy().save(path)
             with self.assertRaises(ValueError):
                 Policy.load(path, ['wrong'], ['wait', 'produce'])
+
+    def test_double_q_uses_online_choice_with_target_value(self):
+        policy = self.make_policy()
+        policy.network[3][:] = [30, 10]
+        policy.target[3][:] = [10, 20]
+        policy.network[2][:] = 0
+        policy.target[2][:] = 0
+        actual = policy.targets(np.array([0.]), np.array([[1., 0.]]), np.array([[True, True]]), np.array([False]))
+        self.assertAlmostEqual(float(actual[0]), policy.gamma * 10)
+
+    def test_multistep_discount_is_preserved_in_checkpoint(self):
+        policy = self.make_policy()
+        policy.remember([1, 0], 1, 2, [1, 1], [True, True], False, discount=.5)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'policy.npz'
+            policy.save(path)
+            loaded = Policy.load(path, policy.features, policy.actions)
+        self.assertEqual(loaded.experience[0][-1], .5)
+        expected = 2 + .5 * loaded.values([[1, 1]], target=True)[0, loaded.act([1, 1], [True, True], False)]
+        actual = loaded.targets(np.array([2.]), np.array([[1., 1.]]), np.array([[True, True]]), np.array([False]), np.array([.5]))
+        self.assertAlmostEqual(float(actual[0]), expected)
+
+    def test_old_single_step_checkpoint_remains_readable(self):
+        import json
+        policy = self.make_policy()
+        policy.remember([1, 0], 1, 1, [1, 1], [True, True], False)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'old.npz'
+            policy.save(path)
+            with np.load(path) as saved:
+                arrays = {name: saved[name].copy() for name in saved.files if name != 'discounts'}
+            metadata = json.loads(str(arrays['metadata']))
+            metadata['version'] = 1
+            arrays['metadata'] = np.array(json.dumps(metadata))
+            np.savez(path, **arrays)
+            loaded = Policy.load(path, policy.features, policy.actions)
+        self.assertEqual(loaded.experience[0][-1], loaded.gamma)
+
+    def test_delayed_large_outcome_learns_to_advance_instead_of_wait(self):
+        from src.rl.returns import remember_episode
+        policy = Policy(['bias', 's0', 's1', 's2', 's3'], ['wait', 'advance'], seed=4)
+        states = np.column_stack((np.ones(4), np.eye(4)))
+        trajectory = []
+        for index in range(4):
+            trajectory.append((states[index], 0, -.1, states[index], np.array([True, True]), False))
+            trajectory.append((states[index], 1, 100 if index == 3 else 0,
+                               states[min(index + 1, 3)], np.array([True, True]), index == 3))
+        remember_episode(policy, trajectory)
+        policy.remember(states[-1], 0, -100, states[-1], [True, True], True)
+        for _ in range(2000):
+            policy.learn()
+        self.assertEqual([policy.act(state, [True, True], False) for state in states], [1, 1, 1, 1])

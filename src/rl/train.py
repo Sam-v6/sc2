@@ -10,6 +10,7 @@ import time
 from src.path import SC2_VOID_BOT_HOME
 from src.runtime import match_id, supervise
 from src.runner import positive, validate_map
+from src.rl.returns import remember_episode
 from src.rl.policy import Policy
 from src.rl.terran import ACTIONS, FEATURES, TerranLearner
 from sc2.data import AIBuild, Difficulty, Race
@@ -43,8 +44,7 @@ def episode(job):
         raise RuntimeError('No replay was saved')
     losses = []
     if job['mode'] == 'train':
-        for state, action, r, nxt, mask, terminal in bot.transitions:
-            policy.remember(state, action, r, nxt, mask, terminal)
+        remember_episode(policy, bot.transitions)
         for _ in bot.transitions:
             losses.append(policy.learn())
         policy.episodes += 1
@@ -86,13 +86,15 @@ def main():
     if not checkpoint.exists():
         if args.mode != 'train':
             raise FileNotFoundError(f'Checkpoint not found: {checkpoint}')
-        Policy(FEATURES, ACTIONS, seed=args.seed if args.seed is not None else 7).save(checkpoint)
+        initial = Policy(FEATURES, ACTIONS, seed=args.seed if args.seed is not None else 7)
+        initial.gamma = .99 ** (args.macro_seconds / 5)
+        initial.save(checkpoint)
     policy = Policy.load(checkpoint, FEATURES, ACTIONS)
     offset = policy.episodes if args.mode == 'train' else 0
     seed_start = args.seed if args.seed is not None else (7 if args.mode == 'train' else 10000)
     provenance = {str(path.relative_to(Path(__file__).parents[2])): digest(path)
                   for path in (Path(__file__), Path(__file__).with_name('terran.py'),
-                               Path(__file__).with_name('policy.py'), Path(__file__).parents[1] / 'runtime.py')}
+                               Path(__file__).with_name('policy.py'), Path(__file__).with_name('returns.py'), Path(__file__).parents[1] / 'runtime.py')}
     receipts = []
     run_id = match_id()
     checkpoint_before = digest(checkpoint)

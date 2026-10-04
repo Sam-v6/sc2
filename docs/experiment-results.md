@@ -54,3 +54,29 @@ Visible enemy counts and distances are observed during play, but the compact
 encoder loses unit identities, terrain and detailed positions. This is not the
 end state requested by the user. Broader perception should be evaluated after
 this first experiment establishes a reliable learning and replay workflow.
+
+## Repaired executor and learning diagnostics
+
+The fresh one-second, gamma .99 v2 batch completed 20 VeryEasy games: 16 wins,
+1 loss, 3 cutoffs, no failures. An early frozen development snapshot lost all six
+VeryEasy games by repeatedly choosing wait; exploratory training wins were not
+reliable greedy-policy strength. The separate gamma .998 v3 batch completed
+20 VeryEasy games: 16 wins and 4 cutoffs, no failures.
+
+A controlled offline probe trained 32-step returns and masked Double-DQN from an
+eight-game v3 snapshot: frozen VeryEasy evaluation yielded 4 wins and 2 cutoffs;
+frozen Hard evaluation yielded 6 losses. These probes use development seeds
+10000–10005, Simple64, Rush/Macro, all three races. Their buffers are diagnostic
+artifacts and explicitly cannot be resumed with the earlier one-step trainer.
+
+The current trainer uses up to 32 decision rewards, records the actual bootstrap
+discount, and uses online action selection with target-network valuation. Version2
+checkpoints retain these discounts and load version1 experience as one-step.
+Partial cutoff horizons bootstrap; terminal horizons stop. For a new checkpoint,
+gamma=.99**(macro_seconds/5) preserves the initial physical discount horizon.
+Uncorrected long returns include exploratory continuation; frozen evaluation must
+check whether this credits waiting for later exploratory actions.
+
+A learned exploratory VeryEasy Terran win exported fully: 512 frames, 501.79 game
+seconds, 128-second MP4. The viewed frame shows excessive infrastructure, reinforcing
+that easy wins alone do not establish useful macro strategy or Hard strength.

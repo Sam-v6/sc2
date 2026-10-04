@@ -77,6 +77,7 @@ class ReplayLifecycleTests(unittest.IsolatedAsyncioTestCase):
             process.__aexit__ = AsyncMock(return_value=False)
             encoder = Mock()
             encoder.wait.return_value = -9
+            encoder.stdin.close.side_effect = BrokenPipeError("cleanup pipe flush")
             job = {'replay': str(replay), 'map': str(replay), 'library': '/fake/library', 'width': 2,
                    'height': 2, 'output': str(Path(directory) / 'game.mp4'), 'player': 1,
                    'omniscient': False, 'camera': 'base', 'fps': 4}
