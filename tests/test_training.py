@@ -2,6 +2,7 @@ import tempfile
 from pathlib import Path
 import unittest
 from src.rl.policy import Policy
+from src.rl.terran import REWARD_VERSION
 
 
 class CadenceTests(unittest.TestCase):
@@ -9,7 +10,7 @@ class CadenceTests(unittest.TestCase):
         from src.rl.train import check_training_cadence
         policy = Policy(['state'], ['wait'])
         policy.macro_seconds = 1
-        policy.reward_version = 'capacity-v1'
+        policy.reward_version = REWARD_VERSION
         with tempfile.TemporaryDirectory() as directory:
             checkpoint = Path(directory) / 'policy.npz'
             policy.save(checkpoint)
@@ -61,7 +62,7 @@ class CollectionTests(unittest.TestCase):
             checkpoint = root / 'policy.npz'
             policy = Policy(FEATURES, ACTIONS)
             policy.macro_seconds = 1
-            policy.reward_version = 'capacity-v1'
+            policy.reward_version = REWARD_VERSION
             policy.save(checkpoint)
             before = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
             game_map = root / 'test.SC2Map'
@@ -92,7 +93,7 @@ class CollectionTests(unittest.TestCase):
             checkpoint = root / 'policy.npz'
             policy = Policy(FEATURES, ACTIONS)
             policy.macro_seconds = 1
-            policy.reward_version = 'capacity-v1'
+            policy.reward_version = REWARD_VERSION
             policy.save(checkpoint)
             game_map = root / 'test.SC2Map'
             game_map.write_bytes(b'test')
@@ -133,7 +134,7 @@ class BehaviorHistoryTests(unittest.TestCase):
             checkpoint = root / 'policy.npz'
             policy = Policy(train.FEATURES, train.ACTIONS)
             policy.macro_seconds = 1
-            policy.reward_version = 'capacity-v1'
+            policy.reward_version = REWARD_VERSION
             policy.save(checkpoint)
             initial = train.digest(checkpoint)
             game_map = root / 'test.SC2Map'
@@ -221,13 +222,13 @@ class PPOCollectionTests(unittest.TestCase):
         from src.rl.train import learn_ppo_batch
         policy = ActorCritic(['state'], ['wait'])
         policy.macro_seconds = 1
-        policy.reward_version = 'capacity-v1'
+        policy.reward_version = REWARD_VERSION
         before = policy.parameters.copy()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             candidate = ActorCritic(policy.features, policy.actions)
             candidate.macro_seconds = 1
-            candidate.reward_version = 'capacity-v1'
+            candidate.reward_version = REWARD_VERSION
             candidate.collect_episode([(np.array([1.]), 0, 1, np.array([1.]), np.array([True]), True)], [np.array([True])])
             candidate.save(root / 'episode.npz')
             with patch('src.rl.train.supervise', return_value={'status': 'error', 'error': 'backend failed'}):

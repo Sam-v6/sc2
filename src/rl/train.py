@@ -56,7 +56,7 @@ def episode(job):
     elif job['mode'] == 'sample':
         policy.epsilon = 0
     bot = TerranLearner(policy, training=job['mode'] == 'train', action_log=job['actions'],
-                        macro_seconds=job['macro_seconds'], random_policy=job['mode'] in ('sample', 'random'))
+                        macro_seconds=job['macro_seconds'], random_policy=job['mode'] in ('sample', 'random'), game_seconds=job['game_limit'])
     started = time.monotonic()
     result = run_game(validate_map(job['map']),
                       [Bot(Race.Terran, bot), Computer(Race[job['race']], Difficulty[job['difficulty']], AIBuild[job['build']])],

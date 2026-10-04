@@ -8,12 +8,15 @@ builds/maps, using a fresh seed bank after development choices are finished.
 
 ## Current development status
 
-The main CLI is a working compact DQN/PPO experiment, not an accepted Hard bot.
-Richer observations have been implemented in retained experimental sources:
+The main CLI now contains the tested richer DQN/PPO experiment, not an accepted
+Hard bot. Richer observations encode:
 unit identities and an 8x8 grid of observed positions, health, weapons, flying,
 structures, detectors, cloak and visibility. This respects fog and last-scouted
 snapshots; it is broader than end-game statistics and still not the final agent.
 Checkpoint feature/reward/settings metadata require matching source versions.
+The current CLI accepts combat-kills-v1 spatial checkpoints. Older compact or
+different-reward checkpoints need their matching retained source/Git version;
+no silent model conversion is performed.
 
 | Retained experiment | Training evidence | Frozen Hard development evidence | Status |
 | --- | --- | --- | --- |
@@ -26,7 +29,9 @@ Checkpoint feature/reward/settings metadata require matching source versions.
 The unchanged kills-only continuation produced 18 wins, 14 defeats and 8 cutoffs
 in another 40 Easy games, with zero failures. All 35,931 transitions and every
 state return passed the reward audit (maximum identity error 7.55e-15). Its
-Easy80 snapshot is being evaluated on the same 30 Hard development cases. This
+Easy80 snapshot scored 2/30 on the same Hard cases (23 defeats, 5 cutoffs, no
+failures): Terran 0/10, Protoss 1/10, Zerg 1/10. Frozen hashes remained unchanged.
+Easy40 stays the stronger parent for a bounded 40-game Medium experiment. This
 is a learning trajectory, not an equal-budget comparison against net-event Easy40.
 
 All counts refer to development, and cutoffs/failures are distinct from losses.

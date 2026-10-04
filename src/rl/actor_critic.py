@@ -8,7 +8,7 @@ class ActorCritic:
     algorithm = 'ppo'
     reward_scale = .01
     settings = {'clip': .2, 'epochs': 4, 'batch_size': 256, 'learning_rate': .0003,
-                'entropy': .01, 'value': .5, 'max_grad_norm': .5, 'gae_lambda': .95}
+                'entropy': .01, 'value': .5, 'max_grad_norm': .5, 'gae_lambda': 1.}
 
     def __init__(self, features, actions, seed=7):
         self.features, self.actions = list(features), list(actions)

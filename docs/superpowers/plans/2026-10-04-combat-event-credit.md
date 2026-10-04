@@ -218,3 +218,28 @@ Easy40, with unchanged source/reward/settings/actions, four workers and seed
 base 30000. The old frozen snapshots are untouched. Training receipt:
 logs/ppo-combat-kills-medium/experiment.json. Evaluate its final snapshot
 separately before drawing any strength conclusion.
+
+
+Easy80 frozen Hard30 finished 2 wins/23 defeats/5 cutoffs, zero failures.
+Per race: Terran 0/10, Protoss 1/10, Zerg 1/10. Schedule matched Easy40's
+30 cases exactly and frozen hash remained unchanged. Retain both models, with
+Easy40 as the stronger candidate. Audit: combat-kills-easy80-hard30-results.json.
+
+Consolidation: normal src now contains the unchanged tested richer kills-only
+implementation (5460 features/27 actions, finite returns, observed units/grid),
+with maintrain passing game_limit to observations. The existing main CLI help
+and frozen-mode guard remain. Old compact models require matching Git source
+(8c3c697) and are preserved; no automatic migration. All 80 tests passed.
+Main-source real inference and train/resume proofs are separate smoke artifacts,
+not added to model strength estimates or promoted into the curriculum parent.
+
+
+Main-source verification completed: frozen seed-20013 Hard Protoss Air won,
+433.93 game seconds, unchanged checkpoint hash, decision trace byte-identical
+to the archived winning run. Two 120-second training cutoff games and two
+resume games completed without failures; promoted hashes chained correctly,
+148 attempts/episodes, 684 optimizer steps, inferred one-second cadence.
+Separate smoke artifacts under logs/main-spatial-proof and
+logs/main-spatial-train-smoke; combined audit main-spatial-integration.json.
+Independent review found no consolidation blocker and independently passed
+80 tests; gameplay and learning files match the validated archive.

@@ -22,7 +22,7 @@ class ActorCriticTests(unittest.TestCase):
         transitions = [(np.array([0]), 0, 1, np.array([1]), np.array([True]), False),
                        (np.array([1]), 0, 2, np.array([2]), np.array([True]), True)]
         policy.collect_episode(transitions, [np.array([True])] * 2)
-        self.assertAlmostEqual(policy.rollout[0][4], .75 + .5 * .95 * 1.5)
+        self.assertAlmostEqual(policy.rollout[0][4], .75 + .5 * 1. * 1.5)
         self.assertAlmostEqual(policy.rollout[1][5], 2)
         policy.rollout.clear()
         policy.collect_episode(transitions[:1], [np.array([True])])

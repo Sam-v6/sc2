@@ -72,24 +72,27 @@ The audit successfully replayed a saved game using the installed OSMesa library
 and exported RGB frames to an MP4 using the already-installed ffmpeg. The diagnostic
 video and receipts live in the implementation worktree's `logs/audit/`.
 Reusable training and replay-export commands are below.
-The scripted-bot examples do not establish learned strength. Frozen experimental
-policies have won individual Hard games, but the broader DQN check earned only
-1 win in 30 games. Reliable Hard strength remains unmet; see
+The scripted-bot examples do not establish learned strength. The retained richer PPO checkpoint won 12 of 30 Hard development games,
+including all three races. Reliable Hard strength remains unmet; see
 [experiment results](docs/experiment-results.md).
 
 ## Terran learning experiment
 
-The NumPy Double-DQN consumes live economy, production, army, and observed-enemy features. Enemy input comes
+The NumPy game policy consumes live economy, production, army, and observed-enemy features. Enemy input comes
 from SC2 observations, which can include last-scouted snapshots under fog.
 Army counts include every trainable combat unit and its transformed forms.
 Checkpoints from the earlier count schema require an explicit recorded migration
 or a matching older checkout; the loader rejects silent schema changes.
 It chooses atomic build/train/tech/expand/attack/retreat actions. There is no scripted
 build order or fixed army mix. Gathering, placement, depot lowering, MULE execution,
-defense and combat execution are primitives. The main CLI uses the compact first representation. Retained spatial experiments
-now encode observed unit identities and map grids; they have not established
-reliable Hard strength. Use the matching archived source for those checkpoints;
-see the [current experiment status](docs/experiment-results.md#current-development-status).
+defense and combat execution are primitives. The main CLI now uses the tested
+spatial experiment: observed unit identities and an 8x8 map grid of health,
+weapons, flying, structures, detectors, cloak, visibility and snapshots. Its
+5,460 features and 27 actions are still an experimental representation.
+Compact checkpoints require the matching earlier Git checkout (for example
+`8c3c697`); current loaders reject their incompatible schema/settings. The retained
+`combat-kills-v1` PPO checkpoints use the current CLI directly. See the
+[current experiment status](docs/experiment-results.md#current-development-status).
 
 ```bash
 uv run python -m src.rl.train --episodes 2 --workers 4 --macro-seconds 1 --game-seconds 120 --checkpoint logs/my-run/policy.npz --output logs/my-run
@@ -120,10 +123,14 @@ it or construction may subsequently fail. Inspect replay/state changes to establ
 actual completion. The logs contain chosen actions, legal masks, snapshots and reward
 components. The current capacity potential uses .5 per worker, .2 per army supply and 2 per
 base, capped by the observation encoder. Spending resources alone earns no reward;
-terminal wins/losses receive +100/-100. Checkpoints identify their reward objective,
+terminal wins receive +100, defeats/cutoffs receive zero, and newly killed
+enemy mineral-plus-gas value contributes value/100 once per increment. Our
+losses remain diagnostics. Checkpoints identify their reward objective,
 and incompatible or unknown objectives are rejected for training resume.
 Replay learning uses up to 32 macro rewards with the actual bootstrap discount,
-stopping before a later nongreedy action from the frozen worker policy. New-checkpoint discounting accounts for macro cadence. Time-limit ties bootstrap instead of being labeled defeats.
+stopping before a later nongreedy action from the frozen worker policy. New-checkpoint discounting accounts for macro cadence. The declared finite match horizon is observed; time-limit ties end the learning
+episode with zero final potential and no bootstrap, while the game receipt
+keeps them distinct from defeats.
 
 Four workers collect games from a shared frozen behavior checkpoint by default.
 The parent merges successful games in launch order and learns from their experience;
@@ -158,7 +165,8 @@ flowchart LR
 
 ## PPO comparison using the existing Torch runtime
 
-The default learner remains DQN. A separate PPO experiment reuses Torch already
+The default learner remains DQN for dependency-free experiments. The retained
+Hard wins use PPO, which reuses Torch already
 installed in the sibling SC2RL environment, without installing it in game workers:
 
 ```bash
@@ -166,10 +174,22 @@ uv run python -m src.rl.train --algorithm ppo --torch-python /home/sam/repos/sc2
 uv run python -m src.rl.train --torch-python /home/sam/repos/sc2-repos/SC2RL/.venv/bin/python --episodes 20 --difficulty VeryEasy --checkpoint logs/my-ppo/policy.npz --output logs/my-ppo
 ```
 
+On this machine, the retained 12/30 development checkpoint can be evaluated from
+the repository root with the current source:
+
+```bash
+uv run python -m src.rl.train --mode evaluate --checkpoint .worktrees/terran-rl/logs/ppo-combat-kills/frozen-easy40.npz --episodes 30 --workers 4 --difficulty Hard --maps Simple64 TritonLE --builds Rush Timing Power Macro Air --seed 20000 --macro-seconds 1 --output logs/retained-hard-check
+```
+
+This repeats development cases, not final acceptance. The checkpoint is a retained
+local artifact outside Git. To continue it, copy it to a new experiment path and
+use that copy with the training command and existing Torch interpreter above.
+
 Keep the virtualenv interpreter path; resolving its symlink bypasses that
 environment. The helper disables bytecode writes and leaves the sibling runtime
 unchanged. Saved models infer and validate their algorithm. PPO uses a masked
-categorical actor and value head, normalized capacity rewards (.01 scale), GAE,
+categorical actor and value head, normalized combat-kills rewards (.01 scale),
+finite-episode returns (GAE lambda 1),
 and one clipped update over each batch's valid complete game trajectories.
 Rollouts are discarded after updating; they are not DQN replay experience.
 

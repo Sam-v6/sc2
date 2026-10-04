@@ -1,7 +1,9 @@
 """Live state and atomic macro actions; no scripted build order or unit mix."""
 import json
+from itertools import chain
 from pathlib import Path
 import numpy as np
+from src.rl.unit_observation import observe_units, FEATURES as UNIT_FEATURES
 from src.path import SC2_GAME_PATH
 from src.common.void_bot_base import VoidBotBase
 from sc2.data import Result
@@ -20,18 +22,21 @@ SCALES = {'time': 1200, 'minerals': 1000, 'gas': 1000, 'supply_left': 30,
           'engineeringbay': 1, 'fusioncore': 1, 'infantry_weapons': 1,
           'idle_barracks': 8, 'idle_townhalls': 5, 'army_distance_home': 100,
           'army_distance_enemy_start': 100, 'stance_seconds': 20,
-          'reapers': 40, 'hellions': 40, 'vikings': 20}
-FEATURES = ['bias', *SCALES]
+          'reapers': 40, 'hellions': 40, 'vikings': 20,
+          'ravens': 10, 'turrets': 10, 'enemy_cloaked': 10,
+          'match_limit': 1200, 'remaining_time': 1200}
+FEATURES = ['bias', *SCALES, *UNIT_FEATURES]
 NORMALIZATION = np.array(list(SCALES.values()), dtype=float)
-REWARD_VERSION = 'capacity-v1'
+REWARD_VERSION = 'combat-kills-v1'
 BUILDINGS = {'depot': U.SUPPLYDEPOT, 'barracks': U.BARRACKS, 'refinery': U.REFINERY,
              'factory': U.FACTORY, 'starport': U.STARPORT, 'engineeringbay': U.ENGINEERINGBAY,
-             'fusioncore': U.FUSIONCORE, 'expand': U.COMMANDCENTER}
+             'fusioncore': U.FUSIONCORE, 'expand': U.COMMANDCENTER, 'turret': U.MISSILETURRET}
 UNITS = {'scv': (U.SCV, U.COMMANDCENTER, False), 'marine': (U.MARINE, U.BARRACKS, False),
          'marauder': (U.MARAUDER, U.BARRACKS, True), 'reaper': (U.REAPER, U.BARRACKS, False),
          'tank': (U.SIEGETANK, U.FACTORY, True), 'hellion': (U.HELLION, U.FACTORY, False),
          'medivac': (U.MEDIVAC, U.STARPORT, False), 'viking': (U.VIKINGFIGHTER, U.STARPORT, False),
-         'battlecruiser': (U.BATTLECRUISER, U.STARPORT, True)}
+         'battlecruiser': (U.BATTLECRUISER, U.STARPORT, True),
+         'raven': (U.RAVEN, U.STARPORT, True)}
 ADDONS = {'barracks_techlab': (U.BARRACKSTECHLAB, U.BARRACKS),
           'factory_techlab': (U.FACTORYTECHLAB, U.FACTORY),
           'starport_techlab': (U.STARPORTTECHLAB, U.STARPORT)}
@@ -46,12 +51,15 @@ def avoids_addons(position, radius, reserved):
 
 def encode(snapshot):
     values = np.fromiter((snapshot.get(key, 0) for key in SCALES), dtype=float, count=len(SCALES))
-    return np.concatenate(([1.], np.clip(values / NORMALIZATION, 0, 2)))
+    units = np.zeros(len(UNIT_FEATURES))
+    for index, value in snapshot.get('unit_state', {}).items():
+        units[int(index)] = value
+    return np.concatenate(([1.], np.clip(values / NORMALIZATION, 0, 2), units))
 
 
 def capacity_potential(observation):
-    values = dict(zip(FEATURES, observation))
-    return .5 * SCALES['workers'] * values['workers'] + .2 * SCALES['army'] * values['army'] + 2 * SCALES['bases'] * values['bases']
+    return sum(weight * SCALES[name] * observation[FEATURES.index(name)]
+               for name, weight in (('workers', .5), ('army', .2), ('bases', 2)))
 
 
 def reward(previous_potential, next_potential, gamma, terminal_reward=0):
@@ -59,12 +67,13 @@ def reward(previous_potential, next_potential, gamma, terminal_reward=0):
 
 
 class TerranLearner(VoidBotBase):
-    def __init__(self, policy, training, action_log, macro_seconds=5, random_policy=False):
+    def __init__(self, policy, training, action_log, macro_seconds=5, random_policy=False, game_seconds=1200):
         super().__init__()
         self.policy = policy
         self.training = training
         self.action_log = Path(action_log)
         self.macro_seconds = macro_seconds
+        self.game_seconds = game_seconds
         self.random_policy = random_policy
         self.attacking = False
         self.stance_changed = False
@@ -72,6 +81,7 @@ class TerranLearner(VoidBotBase):
         self.next_macro = 0
         self.next_gather = 0
         self.previous = None
+        self.previous_score = None
         self.transitions = []
         self.decisions = []
         self.expansion_target = None
@@ -90,7 +100,10 @@ class TerranLearner(VoidBotBase):
         enemies = self.enemy_units
         home = self.townhalls.first.position if self.townhalls else self.start_location
         center = army.center if army else home
-        return {'time': self.time, 'minerals': self.minerals, 'gas': self.vespene,
+        unit_state = observe_units(chain(self.units, self.structures),
+                    chain(self.enemy_units, self.enemy_structures), self.game_info.playable_area)
+        return {'unit_state': {int(i): float(unit_state[i]) for i in np.flatnonzero(unit_state)},
+                'time': self.time, 'minerals': self.minerals, 'gas': self.vespene,
                 'supply_left': self.supply_left, 'workers': self.supply_workers,
                 'army': self.supply_army, 'bases': self.townhalls.amount,
                 'barracks': self.structures(U.BARRACKS).amount,
@@ -104,6 +117,10 @@ class TerranLearner(VoidBotBase):
                 'reapers': self.units(U.REAPER).amount,
                 'hellions': self.units.of_type({U.HELLION, U.HELLIONTANK}).amount,
                 'vikings': self.units.of_type({U.VIKINGFIGHTER, U.VIKINGASSAULT}).amount,
+                'ravens': self.units(U.RAVEN).amount,
+                'turrets': self.structures(U.MISSILETURRET).ready.amount,
+                'enemy_cloaked': enemies.filter(lambda unit: unit.is_cloaked).amount,
+                'match_limit': self.game_seconds, 'remaining_time': max(0, self.game_seconds - self.time),
                 'enemy_ground': enemies.not_flying.amount, 'enemy_air': enemies.flying.amount,
                 'enemy_near_base': enemies.closer_than(20, home).amount,
                 'enemy_near_army': enemies.closer_than(15, center).amount,
@@ -276,21 +293,33 @@ class TerranLearner(VoidBotBase):
                 unit(A.SIEGEMODE_SIEGEMODE)
             elif unit.type_id == U.SIEGETANKSIEGED and not self.enemy_units.closer_than(14, unit):
                 unit(A.UNSIEGE_UNSIEGE)
-            elif unit.type_id == U.MEDIVAC:
-                if army.exclude_type({U.MEDIVAC}):
-                    unit.move(army.exclude_type({U.MEDIVAC}).center)
+            elif unit.type_id in {U.MEDIVAC, U.RAVEN}:
+                combat = army.exclude_type({U.MEDIVAC, U.RAVEN})
+                if combat:
+                    unit.move(combat.center)
             elif unit.type_id != U.SIEGETANKSIEGED:
                 if self.stance_changed or unit.is_idle or (unit.order_target != target and not unit.is_attacking):
                     unit.attack(target)
         self.stance_changed = False
 
+    def combat_score(self):
+        score = self.state.score
+        return {'killed': score.killed_value_units + score.killed_value_structures,
+                'lost': sum(getattr(score, f'lost_{resource}_{category}')
+                            for resource in ('minerals', 'vespene')
+                            for category in ('none', 'army', 'economy', 'technology', 'upgrade'))}
+
     def transition(self, observation, mask, potential, terminal=False, terminal_reward=0):
+        score = self.combat_score()
         if self.previous is not None:
             state, action, old_potential = self.previous
-            shaped = self.policy.reward_scale * reward(old_potential, potential, self.policy.gamma, terminal_reward)
+            event = (score['killed'] - self.previous_score['killed']) / 100
+            shaped = self.policy.reward_scale * (reward(old_potential, potential, self.policy.gamma, terminal_reward) + event)
             self.transitions.append((state, action, shaped, observation, mask, terminal))
             self.decisions[-1]['reward'] = shaped
-            self.decisions[-1]['reward_components'] = {'terminal': terminal_reward, 'potential_previous': old_potential, 'potential_next': potential, 'scale': self.policy.reward_scale}
+            self.decisions[-1]['reward_components'] = {'terminal': terminal_reward, 'potential_previous': old_potential, 'potential_next': potential, 'scale': self.policy.reward_scale,
+                                                     'combat_previous': self.previous_score, 'combat_next': score, 'combat_event': event}
+        self.previous_score = score
 
     async def custom_on_step(self, iteration):
         # Gather first so redistribution cannot overwrite a newly selected builder.
@@ -309,9 +338,9 @@ class TerranLearner(VoidBotBase):
 
     async def custom_on_end(self, result):
         if self.started and not self.callback_error:
-            terminal = result != Result.Tie
-            bonus = 100 if result == Result.Victory else (-100 if result == Result.Defeat else 0)
-            self.transition(encode(self.snapshot()), self.legal_mask(), 0 if terminal else self.potential(), terminal, bonus)
+            # Finite-match objective: time-limit ties end this task, with no win payoff.
+            bonus = 100 if result == Result.Victory else 0
+            self.transition(encode(self.snapshot()), self.legal_mask(), 0, True, bonus)
         self.action_log.parent.mkdir(parents=True, exist_ok=True)
         with self.action_log.open('w') as file:
             for decision in self.decisions:
