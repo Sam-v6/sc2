@@ -156,3 +156,20 @@ seed/race/build/map/duration/action-RNG/outcome receipts, including snapshots,
 legal masks and command execution. Rewards differ only by the removed loss
 term. Receipt: logs/audit/combat-kills-first-batch.json. A separate all-game audit
 script is prepared for final results; do not use partial outcomes as acceptance.
+
+
+Kills-only Easy40 completed: 8 wins, 8 defeats, 24 cutoffs, zero failures. The
+recorded net control has 3/15/22. All opponent schedules match, first-batch traces
+match and the all-game audit verifies counter attribution/rewards/finite endpoints
+and full returns. Kills checkpoint has 144 episodes/attempts and 676 optimizer
+steps; net control has 688 steps because its trajectories differ in length.
+Every initial parameter/moment/RNG/context was matched except reward-version.
+This is a training improvement in one controlled run, not Hard acceptance.
+
+An offline fixed-state diagnostic at the 32-game behavior snapshot selects
+Barracks/Marines on some old observations. It is conditional on old trajectories,
+not evidence of new game behavior or wins. Immutable final weights now run both
+six-game greedy and sampled Hard checks. Keep sources frozen while these handles
+are live. Artifacts: logs/audit/combat-kills-easy40-results.json,
+audit-combat-kills.py, combat-kills-fixed-contexts.json; model and evaluation
+roots under logs/ppo-combat-kills/.

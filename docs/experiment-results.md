@@ -21,7 +21,7 @@ Checkpoint feature/reward/settings metadata require matching source versions.
 | Equal finite/spatial Easy continuation | 3 vs 6/40 wins | Both 0/6 | Representation works; no Hard gain |
 | Direct Hard, temperature 1 vs 2 | 0 wins each; T2 has one retained engine startup failure | Both greedy and sampled 0/6 each | No improvement |
 | Reset finite control vs net combat-event reward | 6 vs 3/40 Easy wins | Both greedy and sampled 0/6 each | Net-event greedy built no army; not promoted |
-| Kills-only combat-event reward | Real train/resume smoke passed; matched Easy40 running | Pending | Experimental countermeasure only |
+| Kills-only combat-event reward | 8/40 Easy wins vs net-event 3/40; audited, zero failures | Greedy/sampled checks running | Experimental countermeasure only |
 
 All counts refer to development, and cutoffs/failures are distinct from losses.
 No reliable all-race Hard model has been accepted. The reserved final bank stays
