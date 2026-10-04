@@ -173,3 +173,23 @@ six-game greedy and sampled Hard checks. Keep sources frozen while these handles
 are live. Artifacts: logs/audit/combat-kills-easy40-results.json,
 audit-combat-kills.py, combat-kills-fixed-contexts.json; model and evaluation
 roots under logs/ppo-combat-kills/.
+
+
+Kills-only frozen Easy40 greedy Hard6: 2 wins/4 defeats, both wins Zerg
+(Rush seed 10002, Macro seed 10005); sampled Hard6: 0 wins/6 defeats.
+Both runs had zero failures, matching schedules and unchanged checkpoint hash
+0f3e05d9efd5eba4fd238a6282e462599ffc675f008b98fd42925e99f6bb16c6.
+Greedy army peaks were 19/17/44/18/18/52 by seed order, versus zero throughout
+the net-event greedy run. Military production has returned in actual games;
+Terran and Protoss Hard remain undefeated by this snapshot in these cases.
+
+Independent review checked all 84,393 training transitions and per-state returns,
+with maximum identity error 1.41e-14. Kills-only training wins by ten-game blocks
+were 2/1/0/5, compared with net 1/0/1/1. This supports a bounded unchanged-source
+continuation after the demonstrated behavioral recovery; it is not a statistical
+or general strength claim. The retained Easy40 greedy snapshot now runs 30 Hard
+development cases at seed 20000, with all races/five fixed builds/both maps.
+Another 40 Easy games continue the canonical kills-only model from attempt 144,
+with four workers. Eight clients total. Preserve Easy40 and evaluate Easy80
+separately. Kills80 versus net40 would measure learning trajectory, not a matched
+reward comparison. The reserved acceptance bank remains untouched.
