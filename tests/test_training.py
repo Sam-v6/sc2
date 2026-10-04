@@ -76,6 +76,9 @@ class CollectionTests(unittest.TestCase):
             summaries = list((root / 'output').glob('*.summary.json'))
             self.assertEqual(len(summaries), 1)
             self.assertEqual(json.loads(summaries[0].read_text())['failures'], 2)
+            histories = list((root / 'output').glob('*.behavior.npz'))
+            self.assertEqual(len(histories), 1)
+            self.assertEqual(hashlib.sha256(histories[0].read_bytes()).hexdigest(), before)
 
     def test_mixed_batch_resume_advances_schedule_past_all_attempts(self):
         import numpy as np
@@ -116,6 +119,79 @@ class CollectionTests(unittest.TestCase):
             records = [json.loads(p.read_text()) for p in (root / 'resume').glob('*.json') if not p.name.endswith('summary.json')]
             self.assertEqual(records[0]['seed'], 9)
             self.assertEqual(records[0]['race'], 'Zerg')
+
+
+class BehaviorHistoryTests(unittest.TestCase):
+    def test_batches_keep_the_exact_models_used_by_workers(self):
+        import json
+        import numpy as np
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from src.rl import train
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            checkpoint = root / 'policy.npz'
+            policy = Policy(train.FEATURES, train.ACTIONS)
+            policy.macro_seconds = 1
+            policy.reward_version = 'capacity-v1'
+            policy.save(checkpoint)
+            initial = train.digest(checkpoint)
+            game_map = root / 'test.SC2Map'
+            game_map.write_bytes(b'test')
+            jobs = []
+            def collect(function, args, timeout, **kwargs):
+                job = args[0]
+                jobs.append(job)
+                child = Policy.load(job['behavior_checkpoint'], train.FEATURES, train.ACTIONS)
+                self.assertEqual(train.digest(job['behavior_checkpoint']), job['behavior_checkpoint_sha256'])
+                state = np.ones(len(train.FEATURES))
+                child.remember(state, 0, 1, state, np.ones(len(train.ACTIONS), dtype=bool), True)
+                child.save(job['candidate'])
+                return {'status': 'completed', 'result': 'Victory'}
+            argv = ['train', '--episodes', '4', '--workers', '2', '--checkpoint', str(checkpoint),
+                    '--output', str(root / 'output')]
+            with patch('sys.argv', argv), patch.object(train, 'validate_map', return_value=SimpleNamespace(path=game_map)), \
+                 patch.object(train, 'supervise', side_effect=collect), patch('builtins.print'):
+                train.main()
+            jobs.sort(key=lambda job: job['seed'])
+            self.assertEqual(jobs[0]['behavior_checkpoint'], jobs[1]['behavior_checkpoint'])
+            self.assertEqual(jobs[2]['behavior_checkpoint'], jobs[3]['behavior_checkpoint'])
+            self.assertNotEqual(jobs[0]['behavior_checkpoint'], jobs[2]['behavior_checkpoint'])
+            self.assertEqual(train.digest(jobs[0]['behavior_checkpoint']), initial)
+            self.assertNotEqual(train.digest(jobs[2]['behavior_checkpoint']), initial)
+            loaded = Policy.load(checkpoint, train.FEATURES, train.ACTIONS)
+            self.assertEqual((loaded.episodes, loaded.attempts), (4, 4))
+            for path in (root / 'output').glob('*.json'):
+                receipt = json.loads(path.read_text())
+                if 'result' in receipt:
+                    self.assertEqual(receipt['checkpoint'], str(checkpoint))
+                    self.assertEqual(train.digest(receipt['behavior_checkpoint']), receipt['behavior_checkpoint_sha256'])
+            self.assertFalse(list((root / 'output').glob('*.candidate.npz')))
+
+    def test_frozen_evaluation_keeps_its_supplied_file_without_training_history(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from src.rl import train
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            checkpoint = root / 'frozen.npz'
+            policy = Policy(train.FEATURES, train.ACTIONS)
+            policy.macro_seconds = 1
+            policy.save(checkpoint)
+            before = train.digest(checkpoint)
+            game_map = root / 'test.SC2Map'
+            game_map.write_bytes(b'test')
+            def collect(function, args, timeout, **kwargs):
+                job = args[0]
+                self.assertEqual(job['behavior_checkpoint'], str(checkpoint))
+                return {'status': 'completed', 'result': 'Victory'}
+            argv = ['train', '--mode', 'evaluate', '--episodes', '2', '--workers', '2',
+                    '--checkpoint', str(checkpoint), '--output', str(root / 'output')]
+            with patch('sys.argv', argv), patch.object(train, 'validate_map', return_value=SimpleNamespace(path=game_map)), \
+                 patch.object(train, 'supervise', side_effect=collect), patch('builtins.print'):
+                train.main()
+            self.assertEqual(train.digest(checkpoint), before)
+            self.assertFalse(list((root / 'output').glob('*.behavior.npz')))
 
 
 class RewardSchemaTests(unittest.TestCase):

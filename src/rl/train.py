@@ -47,7 +47,7 @@ def episode(job):
     logger.remove()
     logger.add(sys.stderr, level='WARNING')
     random.seed(job['seed'])
-    policy = load_policy(job['checkpoint'], FEATURES, ACTIONS)
+    policy = load_policy(job['behavior_checkpoint'], FEATURES, ACTIONS)
     before = policy.updates
     if job['mode'] != 'evaluate':
         policy.rng = np.random.default_rng(job['policy_seed'])
@@ -203,6 +203,10 @@ def main():
     try:
         for start in range(0, args.episodes, args.workers):
             active_jobs = []
+            behavior = checkpoint
+            if args.mode == 'train':
+                behavior = args.output.resolve() / f'{run_id}.{start}.behavior.npz'
+                behavior.write_bytes(checkpoint.read_bytes())
             for index in range(start, min(start + args.workers, args.episodes)):
                 episode_index = offset + index
                 identity = match_id()
@@ -212,7 +216,7 @@ def main():
                 policy_seed = int(policy.rng.integers(2**63)) if args.mode == 'train' else game_seed
                 job = {'id': identity, 'run': run_id, 'mode': args.mode, 'checkpoint': str(checkpoint),
                        'source_sha256': provenance, 'map_sha256': digest(validate_map(game_map).path),
-                       'behavior_checkpoint_sha256': digest(checkpoint),
+                       'behavior_checkpoint': str(behavior), 'behavior_checkpoint_sha256': digest(behavior),
                        'checkpoint_before': digest(checkpoint), 'candidate': str(base.with_suffix('.candidate.npz')),
                        'algorithm': policy.algorithm, 'reward_version': policy.reward_version, 'reward_scale': policy.reward_scale,
                        'actions': str(base.with_suffix('.actions.jsonl')), 'replay': str(base.with_suffix('.SC2Replay')),

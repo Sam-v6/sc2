@@ -102,7 +102,11 @@ help distinguish movement even when enemies are hidden. Resume infers the stored
 Legacy checkpoints lacking this metadata require their known original
 `--legacy-macro-seconds` value. New runs default to five seconds; the one-second
 experiment above gives the atomic actions more production opportunities. Each macro action attempts one operation, so slower cadence also limits
-production throughput. Do not run multiple trainers against the same checkpoint.
+production throughput. Do not run multiple trainers against the same checkpoint. Each training batch also
+retains a unique `.behavior.npz` file in its output directory. A game receipt
+links `behavior_checkpoint` and its SHA-256 to the exact input model. These
+snapshots can be evaluated later even after the canonical model advances;
+evaluation and random comparisons use the supplied frozen file directly.
 
 Actions are legal at the observed resource/tech level. A logged `executed` value
 means a command was issued successfully by the Python client; SC2 may still reject
