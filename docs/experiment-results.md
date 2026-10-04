@@ -484,3 +484,18 @@ to test encoding only and establishes no production or strength claim. A 40-game
 unit-state curriculum starts from untouched migrated input bytes. Artifact roots:
 `logs/ppo-unit-state/`, `logs/ppo-unit-state-smoke/`,
 `logs/ppo-unit-state-curriculum/`, `logs/audit/ppo-unit-state-source/`.
+
+The finite-match Zerg Rush win has a complete local Linux MP4 at
+`logs/replay-proof/finite-hard-zerg-win.mp4`: 686 frames, 960x720, 4 fps, 171.5 video
+seconds, covering 672.77 game seconds without a frame cutoff. Export completed,
+ffprobe confirmed the media, and a late frame was visually inspected. Replay
+viewing is omniscient; the training policy receives only SC2-observed information.
+The exporter result is null; the game receipt, not that null value, proves Victory.
+
+The first full-length unit-state PPO batch collected 8,239 samples and completed
+its CPU helper update in 3.94 seconds, within its 120-second supervision limit.
+A later live Linux memory snapshot reported parent high-water 916,316 KiB and
+active Python game workers around 187,000 KiB each. This snapshot is not the total
+job memory peak. Concurrent Hard evaluation and replay rendering mean these
+wall timings are not a controlled throughput comparison. Receipts:
+`logs/audit/unit-state-memory.json` and `unit-state-benchmark.json`.
