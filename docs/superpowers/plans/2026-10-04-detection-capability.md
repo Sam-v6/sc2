@@ -28,3 +28,28 @@ This is capability work, not evidence of learning or a scripted strategy.
 This still uses compact live features as the explicitly accepted first experiment.
 Later perception work should include observed unit type/health/position and spatial
 information; global summary counts must not be described as the final agent.
+
+Capability evidence: controlled two-client engine games made a stationary cloaked
+Dark Templar unattackable before detection and attackable after either a Raven or
+turret appeared. Both detectors reported range 11. A second fixture invoked the
+actual archived legal-mask/placement/execute/micro code: Raven was unavailable
+before the tech lab, turret was available with the Engineering Bay, and real
+turret, tech lab and Raven construction/production completed. All three new live
+features were exercised. Fixtures use injected resources/units only to test
+execution; none of these games establishes learned macro or Hard strength.
+Artifacts: `logs/audit/detection-engine-probe.json`, `detection-production.json`,
+matching SC2Replay files, and archived `ppo-detection-source/production_probe.py`.
+
+The archived source passes 65 tests, including two new red-to-green checks.
+Migration from the retained pre-smoke post-Medium/composition model preserves old
+logits/value exactly over 128 contexts and old-action probabilities within 1e-12
+when new choices are masked. New columns and input rows use zero weights/moments;
+old action/optimizer columns are mapped by name. Reward/learner settings remain
+unchanged. The immutable initial bytes and script/source-hash migration receipt
+are retained in `logs/ppo-detection/`. A separate copied checkpoint runs smoke
+training, so it cannot accidentally shift the later experiment's starting point.
+
+Matched Easy40 finished 1 Victory/8 Defeat/31 Tie, no failures. Observations
+exercised both detector types and cloak. Frozen Hard6 finished 0/5/1, no failures
+and unchanged model hash. No strength gain is established; retain the separate
+source/checkpoint, do not promote. See experiment-results for artifact locations.

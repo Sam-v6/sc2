@@ -413,3 +413,74 @@ The original checkout's existing environment and the worktree environment each
 passed 63 tests; experimental matching sources and replay/model artifacts remain
 retained in their original worktrees. The reliable all-race Hard target remains
 unmet and the goal remains active.
+
+The detector-capability experiment completed 40 matched Easy games with one win,
+eight losses and 31 cutoffs, without failures. The policy issued Raven production
+22 times and turret construction 551 times; these counts describe issued commands.
+Live observations reached three Ravens, 19 completed turrets and three observed
+cloaked enemy units. Frozen Hard development evaluation then produced zero wins,
+five losses and one cutoff, without failures or checkpoint mutation. Detection
+execution works in controlled engine fixtures, but this comparison establishes no
+strength gain. The combined detector action/observation/support-micro candidate
+is retained separately and is not promoted. See `logs/ppo-detection-curriculum/`,
+`logs/ppo-detection-hard6/` and `logs/audit/ppo-detection-pairing.json`.
+
+A separate finite-match objective experiment treats normal game-limit ties as
+learning endpoints, gives only true wins a terminal payoff, and uses complete
+discounted returns (GAE lambda 1). Runtime failures remain failures. Live match
+limit/remaining-time inputs make the horizon observable. Migration preserves the
+actor, shared parameters, optimizer history and RNG, appends zero input rows and
+resets the critic head/moments for the changed target. This jointly changes
+payoff, endpoint treatment, credit horizon and horizon observations; it is not
+a proven bootstrap bug or a controlled single-factor intervention.
+
+All 68 archived tests pass, including finite-outcome and telescoping-return
+checks. Real training (four games), resume (two) and frozen evaluation (two)
+completed without failures; all eight were 120-second cutoffs. Training advanced
+the inherited counters to 70 episodes/attempts and 812 updates; frozen evaluation
+preserved checkpoint bytes. An independent review confirmed the return identity
+and migration arrays/moments/RNG/hashes. The 40-game comparison starts from the
+untouched migrated initial checkpoint, separately from these smoke models.
+Artifacts: `logs/audit/ppo-finite-win-source/`, `logs/ppo-finite-win/`,
+`logs/ppo-finite-win-smoke/` and `logs/ppo-finite-win-paired/`. Results are pending.
+The first attempted curriculum used an incorrect build order, was interrupted
+with 24 completed receipts (six losses/18 cutoffs), and is excluded from paired
+strength comparisons. The reviewer identified this confound and independently
+verified actor probability/action parity on 16,596 logged decisions. A restart
+whose initial-copy preparation failed was stopped before any game completed;
+its fresh model is also excluded. Both partial directories are retained for audit.
+The paired restart explicitly uses Rush/Timing/Power/Macro/Air and untouched
+migrated initial bytes; no parameters from excluded runs are reused.
+
+The corrected finite-match curriculum completed 40 games with four wins, 14 losses
+and 22 cutoffs, without failures, versus detector-control 1/8/31. Every opponent
+seed/map/race/build/cadence matches, and the first eight pre-update games have
+identical sampled actions/times. Later policy seeds can diverge because PPO
+shuffling consumes parent RNG according to rollout length. The pairing receipt
+is `logs/audit/ppo-finite-win-pairing.json`. Frozen Hard6 then produced one win,
+four losses and one cutoff, without failures and with unchanged checkpoint bytes.
+The win was Zerg Rush, seed 10002, 672.5 game seconds. This is an isolated learned
+win, not reliable all-race Hard strength. A retained frozen snapshot now runs a
+30-game development evaluation covering both maps/all five fixed builds, seed
+20000; the fresh acceptance bank remains reserved.
+
+An observation-only experiment now adds protocol type counts and observed unit
+health/shields/capabilities/positions on an eight-by-eight map grid. Its reward,
+actions, micro and learner settings match the detector initial control. All 69
+tests pass; an independent review verified input order/scales, sparse JSON
+reconstruction, fog-respecting source lists, and parameter/moment/RNG migration.
+Actor/critic/probability parity is exact over 128 recorded live observations.
+Type and position are aggregated separately, and scouted snapshots can be stale;
+this remains an intermediate perception experiment. Dense training observations
+for eight full games alone take about 373 MiB before additional copies.
+
+Real unit-state train4/resume2/frozen2 smoke games completed without failures,
+all 120-second cutoffs. Frozen bytes are unchanged and all replays are nonempty.
+A controlled two-client engine fixture exercised observed cloaked enemies, Raven
+and turret types, health, capability and spatial inputs (`unit-observation-production.json`).
+An earlier copied production fixture failed its add-on placement command; that
+failed receipt is retained separately. The revised fixture injects observed units
+to test encoding only and establishes no production or strength claim. A 40-game
+unit-state curriculum starts from untouched migrated input bytes. Artifact roots:
+`logs/ppo-unit-state/`, `logs/ppo-unit-state-smoke/`,
+`logs/ppo-unit-state-curriculum/`, `logs/audit/ppo-unit-state-source/`.
