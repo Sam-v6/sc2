@@ -106,3 +106,16 @@ A separate real interruption test observed four running SC2 binaries, interrupte
 only its own trainer, and confirmed no surviving descendants, unchanged canonical
 checkpoint and no candidate/temporary saves. Linux names the engine process
 `Main_Thread`; executable identity was used to count the engines correctly.
+
+## Live encoder normalization
+
+The scalar encoder invoked NumPy clipping once per feature. Normalization now
+uses one vector operation, preserving feature order, bias, scaling and clipping.
+The output is bitwise identical to the previous formula on 128 seeded varied
+snapshots plus the empty state, including below-zero and above-cap values. All
+63 checks pass. A 20,000-call microbenchmark of the 38-feature encoder took
+1.1859 seconds before and 0.0733 seconds after (16.17×). The machine was also
+running the combat probe, so this is a local encoder measurement, not an
+end-to-end game-speed claim. Raw timing is retained in
+`logs/audit/encoder-vectorization.json`. The measured simulation speedup remains
+the earlier worker comparison.

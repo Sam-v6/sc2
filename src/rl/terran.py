@@ -22,6 +22,7 @@ SCALES = {'time': 1200, 'minerals': 1000, 'gas': 1000, 'supply_left': 30,
           'army_distance_enemy_start': 100, 'stance_seconds': 20,
           'reapers': 40, 'hellions': 40, 'vikings': 20}
 FEATURES = ['bias', *SCALES]
+NORMALIZATION = np.array(list(SCALES.values()), dtype=float)
 REWARD_VERSION = 'capacity-v1'
 BUILDINGS = {'depot': U.SUPPLYDEPOT, 'barracks': U.BARRACKS, 'refinery': U.REFINERY,
              'factory': U.FACTORY, 'starport': U.STARPORT, 'engineeringbay': U.ENGINEERINGBAY,
@@ -44,7 +45,8 @@ def avoids_addons(position, radius, reserved):
 
 
 def encode(snapshot):
-    return np.array([1., *(np.clip(snapshot.get(key, 0) / scale, 0, 2) for key, scale in SCALES.items())])
+    values = np.fromiter((snapshot.get(key, 0) for key in SCALES), dtype=float, count=len(SCALES))
+    return np.concatenate(([1.], np.clip(values / NORMALIZATION, 0, 2)))
 
 
 def capacity_potential(observation):

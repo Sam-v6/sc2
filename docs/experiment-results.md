@@ -379,3 +379,21 @@ features and potential shaping. The mathematical tests, metadata guards and
 is both observation and reward, not a reward-only intervention. See
 `docs/superpowers/plans/2026-10-04-combat-credit-probe.md`. No default reward or
 strength acceptance criterion is changed.
+
+The combat-credit comparison completed 40 Easy games: 1 win, 7 losses, 32
+cutoffs, no failures, versus the composition control's 1/3/36. All 40 schedules
+match, and the first eight frozen-input games chose identical actions at identical
+times. Observed kill counters were exercised (peak unit value 13,400, structure
+value 5,925), though the potential clips each at 10,000. An independent native
+asset-destruction probe also confirmed nonzero engine unit and structure counters
+(950 and 500). The debug-spawned-building diagnostic yielded zero structure
+value, so that earlier diagnostic alone did not establish the structure signal.
+Pairing evidence is retained in `logs/audit/ppo-combat-pairing.json`; the native
+API diagnostic is `logs/audit/score-probe-native.json`. No strength improvement
+is established; frozen Hard evaluation is pending. This remains an archived
+combined-observation/reward probe rather than the default objective.
+
+The verified workflow has been integrated into the original checkout. Its
+existing Python environment passed all 63 tests and two real DQN training games
+completed with 224 updates, two episodes/attempts and no failures. Both were
+120-second cutoffs, so these are delivery checks only (`logs/delivery-smoke/`).
