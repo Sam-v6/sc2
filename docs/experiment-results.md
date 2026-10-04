@@ -2,7 +2,7 @@
 
 All results below are development experiments, not final acceptance. Replays,
 action observations, checkpoint snapshots and JSON receipts are retained under
-`logs/` in `.worktrees/terran-rl`. A first frozen Hard victory is established; reliable all-race Hard strength is not.
+`logs/` in `.worktrees/terran-rl`. Frozen Hard victories against every race are established; reliable all-race Hard strength is not.
 The final target remains frozen evaluation against all three races and varied
 builds/maps, using a fresh seed bank after development choices are finished.
 
@@ -21,7 +21,13 @@ Checkpoint feature/reward/settings metadata require matching source versions.
 | Equal finite/spatial Easy continuation | 3 vs 6/40 wins | Both 0/6 | Representation works; no Hard gain |
 | Direct Hard, temperature 1 vs 2 | 0 wins each; T2 has one retained engine startup failure | Both greedy and sampled 0/6 each | No improvement |
 | Reset finite control vs net combat-event reward | 6 vs 3/40 Easy wins | Both greedy and sampled 0/6 each | Net-event greedy built no army; not promoted |
-| Kills-only combat-event reward | 8/40 Easy wins vs net-event 3/40; audited, zero failures | Greedy 2/6 (Zerg Rush/Macro); sampled 0/6; broad check running | Early wins; all-race goal unmet |
+| Kills-only combat-event reward | 8/40 Easy wins vs net-event 3/40; audited, zero failures | Greedy 2/6; sampled 0/6; broad greedy 12/30 (Terran 4/10, Protoss 2/10, Zerg 6/10) | Wins across all races; reliability goal unmet |
+
+The unchanged kills-only continuation produced 18 wins, 14 defeats and 8 cutoffs
+in another 40 Easy games, with zero failures. All 35,931 transitions and every
+state return passed the reward audit (maximum identity error 7.55e-15). Its
+Easy80 snapshot is being evaluated on the same 30 Hard development cases. This
+is a learning trajectory, not an equal-budget comparison against net-event Easy40.
 
 All counts refer to development, and cutoffs/failures are distinct from losses.
 No reliable all-race Hard model has been accepted. The reserved final bank stays
@@ -38,8 +44,11 @@ Complete Linux videos include an earlier genuine Hard Zerg win and the latest
 net-event Hard Terran defeat:
 `logs/replay-proof/finite-hard-zerg-win.mp4` and
 `logs/replay-proof/combat-event-hard-loss.mp4` in the retained worktree. The latter
-contains all 406.79 game seconds, with 416 frames and no export cutoff. Viewing
-uses omniscience only for the replay; training uses SC2 observations.
+contains all 406.79 game seconds, with 416 frames and no export cutoff. The kills-only Hard Protoss Air victory is also exported as
+`logs/replay-proof/combat-kills-hard-protoss-win.mp4`: all 434.11 game seconds,
+443 frames at 960x720, no frame cutoff. The game receipt confirms Victory; the
+export receipt describes rendering. Viewing uses omniscience only for the replay;
+training uses SC2 observations.
 
 ## Infrastructure evidence
 

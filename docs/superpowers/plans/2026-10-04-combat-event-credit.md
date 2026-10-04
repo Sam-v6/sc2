@@ -193,3 +193,19 @@ Another 40 Easy games continue the canonical kills-only model from attempt 144,
 with four workers. Eight clients total. Preserve Easy40 and evaluate Easy80
 separately. Kills80 versus net40 would measure learning trajectory, not a matched
 reward comparison. The reserved acceptance bank remains untouched.
+
+
+Kills-only Easy40 broad greedy Hard30 completed: 12 wins/18 defeats, no cutoffs
+or failures. Terran 4/10, Protoss 2/10, Zerg 6/10; all 30 race/build/map
+combinations are distinct. The checkpoint hash stayed 0f3e05d9efd5eba4fd238a6282e462599ffc675f008b98fd42925e99f6bb16c6.
+This establishes wins against each race, below the 70% reliability criterion.
+Artifact: logs/audit/combat-kills-hard30-results.json.
+
+The unchanged second Easy40 batch completed 18 wins/14 defeats/8 cutoffs,
+zero failures, 35,931 audited transitions; every state-return identity passed
+with maximum error 7.55e-15. Final metadata: 184 episodes/attempts, 1260 optimizer
+steps. Frozen Easy80 hash: 2500e39230198a86a7755323efbe2fe99d4b6d671259b86fd1b69e33ddf0818f.
+Artifact: logs/audit/combat-kills-easy80-results.json. The Easy80 frozen snapshot
+now runs the same seed-20000 Hard30 development schedule as Easy40. No new
+training or source change runs alongside that evaluation. The reserved final
+seed bank remains untouched.
