@@ -72,3 +72,11 @@ Every logged reward was recomputed from its recorded components successfully.
 These demonstrate genuine score feedback and pipeline semantics, not improvement.
 Untouched initial hashes were rechecked before copying the matched Easy40 parents.
 Keep both archived sources frozen until their run handles are terminal.
+
+
+First matched batch: seeds 111-114 produced one Victory and three cutoffs in both
+branches. All 4,393 decisions have identical time/action/execution/legal/snapshot
+traces across the branches, with matched opponent/context/game-time receipts.
+Reward components differ by the intended event term. This proves initial behavior
+parity and schedule matching before divergent learning, not reward improvement.
+Receipt: logs/audit/combat-events-first-batch.json. Easy40 jobs remain running.
