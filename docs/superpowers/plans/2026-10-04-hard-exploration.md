@@ -72,3 +72,26 @@ The untouched initial policy's frozen sampled Hard six all lost, with no failure
 and identical checkpoint hashes. Next freeze both direct-Hard trained candidates
 and evaluate six greedy and six sampled games each on the same development
 seeds/races/Rush-Macro cases. No model is promoted on these training outcomes.
+
+
+Frozen direct-Hard40 results: T1 greedy 0/6, T1 sampled 0/6, T2 greedy
+0/6 and T2 sampled 0/6. Every game was a defeat; all four runs had zero
+failures and unchanged checkpoint hashes. The six seed/race/build/map/cadence
+schedules match exactly across all four runs. The forty training attempt
+schedules also match, including the retained T2 startup failure. A resume is
+not a replacement game or a complete clean pairing.
+
+Logged T1 greedy decisions never selected Barracks/Factory/Marine/Tank/Starport;
+T1 sampling selected 31/18/51/4/4 respectively but still lost. T2 greedy selected
+only two Barracks commands and 27 Marine commands; T2 sampling exercised more
+choices but did not win. These are selected commands, not completed structures
+or units. More sampling/temperature alone did not establish improvement.
+Keep both direct-Hard continuations experimental and preserve the earlier finite
+snapshot. Main sampled-mode delivery is separate from playing-strength claims.
+
+Artifacts: logs/audit/direct-hard-exploration-results.json,
+direct-hard-frozen-action-exposure.json, ppo-hard-control-sampler-source/ and
+ppo-hard-temperature-sampler-source/ (76 and 79 tests passed, respectively).
+The first sampler suite runs lacked copied config/plot.yaml and failed a plotter
+test; restoring the unchanged archived config resolved that fixture error.
+No game was launched from those incomplete source copies.
