@@ -337,3 +337,18 @@ original-settings 120-Hard-game snapshot also lost all six frozen tests.
 Neither candidate was promoted. A separately labeled unrestricted-execution
 transfer check evaluates the stance-trained weights without the 30-second
 constraint; it does not replace the matched-context result.
+
+The unrestricted execution transfer of the stance-trained model also lost all
+six Hard cases, with no failures. The original Easy curriculum finished all 200
+games: 19 wins, 20 losses, 161 cutoffs, no failures. Per-40-game stages were
+1/3/36, 0/5/35, 0/2/38, 10/6/24 and 8/4/28 (wins/losses/cutoffs). Each stage's
+model is retained in `logs/ppo-easy-curriculum/frozen-easy{40,80,120,160,200}.npz`.
+The 160- and 200-game models each lost all six frozen Hard development cases,
+with no failures and unchanged checkpoint hashes (`logs/ppo-easy160-frozen/`,
+`logs/ppo-easy200-frozen/`). These results do not establish curriculum improvement
+or justify promoting either checkpoint.
+
+The trainer now retains the exact behavior checkpoint per training batch.
+Real DQN and PPO short train/resume/evaluate tests succeeded, including receipt
+hash checks, six-episode resume state and unchanged frozen checkpoints. All were
+120-second cutoffs and are infrastructure checks, not strength evidence.
