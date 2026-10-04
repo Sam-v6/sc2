@@ -51,3 +51,9 @@ its receipt remains retained, and no encoder change was needed for that failure.
 Independent review verified 69 tests, real-context actor/critic/probability parity
 and migration arrays/moments/RNG/hashes. The full Easy40 batch is now running from
 untouched initial bytes with exact control build order Rush/Timing/Power/Macro/Air.
+
+Easy40 finished2wins/14losses/24cutoffs with no failures. All opponent schedules
+match and initial eight choices/times/policy seeds are identical. Full-game PPO
+helpers stayed within5.22seconds. Frozen Hard6 then lost all six, no failures
+or model mutation. Retain this validated encoder experiment separately; no
+strength gain is established. See the combined continuation plan for next work.

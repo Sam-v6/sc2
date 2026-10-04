@@ -499,3 +499,28 @@ active Python game workers around 187,000 KiB each. This snapshot is not the tot
 job memory peak. Concurrent Hard evaluation and replay rendering mean these
 wall timings are not a controlled throughput comparison. Receipts:
 `logs/audit/unit-state-memory.json` and `unit-state-benchmark.json`.
+
+The finite-match frozen30 development evaluation finished with two wins, 19 losses
+and nine cutoffs, no failures and unchanged checkpoint bytes. This fails the
+reliable all-race Hard target; neither isolated wins nor smoke checks establish
+acceptance. The candidate remains separately retained, not the default objective.
+Artifacts are `logs/ppo-finite-win-hard30/`; seed 20000 is a development bank.
+
+The unit-state Easy40 comparison finished with two wins, 14 losses and 24 cutoffs,
+without failures, versus detector control 1/8/31. All 40 opponent schedules match
+and the first eight games have identical actions/times/policy seeds. Its five
+full-game PPO helpers each completed within 5.22 seconds (8,037–8,968 samples); no
+learner limit or memory failure occurred. The 40 games took 507.36 wall seconds with
+other evaluation/rendering jobs running, so this is not controlled throughput.
+Its immutable frozen snapshot now runs six Hard development cases. No strength
+gain is established and the main compact experiment remains the default.
+Artifacts: `logs/audit/ppo-unit-state-pairing.json`,
+`logs/ppo-unit-state-curriculum/`, `logs/ppo-unit-state-hard6/`.
+
+The unit-state snapshot lost all six frozen Hard development games, with no
+failures and unchanged checkpoint bytes. The representation/encoding capability
+is verified, but no learned strength improvement is established by this run.
+The next declared experiment combines the validated unit observations with the
+finite-win objective and compares equal40-game training continuations from the
+same immutable finite Easy40 model. Neither candidate changes the main default
+or establishes acceptance. See the finite-spatial-continuation plan.
