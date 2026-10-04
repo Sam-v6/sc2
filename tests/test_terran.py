@@ -23,10 +23,13 @@ class TerranTests(unittest.TestCase):
 class StanceTests(unittest.IsolatedAsyncioTestCase):
     async def test_retreat_requires_new_combat_orders(self):
         bot = TerranLearner(Policy(FEATURES, ACTIONS), False, '/tmp/unused-actions.jsonl')
+        from types import SimpleNamespace
+        bot.state = SimpleNamespace(game_loop=224)
         bot.attacking = True
         await bot.execute('retreat')
         self.assertFalse(bot.attacking)
         self.assertTrue(bot.stance_changed)
+        self.assertEqual(bot.stance_changed_at, bot.time)
 
     async def test_gathering_precedes_macro_command(self):
         from types import SimpleNamespace
@@ -89,3 +92,20 @@ class SpatialTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(avoids_addons(site, 1, [site]))
         self.assertFalse(avoids_addons(site.offset((1.9, 0)), 1, [site]))
         self.assertTrue(avoids_addons(site.offset((2, 0)), 1, [site]))
+
+
+class CapacityTests(unittest.TestCase):
+    def test_capacity_rewards_worker_progress_but_not_spending_without_progress(self):
+        from src.rl.terran import capacity_potential
+        before = capacity_potential(encode({'workers': 12, 'bases': 1, 'minerals': 500}))
+        spent = capacity_potential(encode({'workers': 12, 'bases': 1, 'minerals': 0}))
+        worker = capacity_potential(encode({'workers': 13, 'bases': 1, 'minerals': 450}))
+        self.assertLessEqual(reward(before, spent, .998), 0)
+        self.assertGreater(reward(before, worker, .998), 0)
+        self.assertAlmostEqual(before, 8)
+
+    def test_encoder_distinguishes_travel_and_stance_age_under_fog(self):
+        outbound = encode({'army_distance_home': 80, 'army_distance_enemy_start': 20, 'stance_seconds': 15})
+        home = encode({'army_distance_home': 5, 'army_distance_enemy_start': 95, 'stance_seconds': 1})
+        for feature in ('army_distance_home', 'army_distance_enemy_start', 'stance_seconds'):
+            self.assertNotEqual(outbound[FEATURES.index(feature)], home[FEATURES.index(feature)])

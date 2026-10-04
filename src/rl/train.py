@@ -15,7 +15,7 @@ from src.runtime import match_id, supervise
 from src.runner import positive, validate_map
 from src.rl.returns import remember_episode
 from src.rl.policy import Policy
-from src.rl.terran import ACTIONS, FEATURES, TerranLearner
+from src.rl.terran import ACTIONS, FEATURES, REWARD_VERSION, TerranLearner
 from sc2.data import AIBuild, Difficulty, Race
 from sc2.main import run_game, get_replay_version
 from sc2.player import Bot, Computer
@@ -32,6 +32,11 @@ def check_training_cadence(policy, requested, legacy):
     if requested != stored:
         raise ValueError(f'Training cadence mismatch: checkpoint {stored}s, requested {requested}s; use a fresh checkpoint')
     policy.macro_seconds = stored
+
+
+def check_training_reward(policy):
+    if policy.reward_version != REWARD_VERSION:
+        raise ValueError('Checkpoint reward objective differs or is unknown; use a fresh checkpoint or an explicitly recorded migration')
 
 
 def episode(job):
@@ -118,12 +123,14 @@ def main():
         args.macro_seconds = args.macro_seconds or 5
         initial = Policy(FEATURES, ACTIONS, seed=args.seed if args.seed is not None else 7)
         initial.macro_seconds = args.macro_seconds
+        initial.reward_version = REWARD_VERSION
         initial.gamma = .99 ** (args.macro_seconds / 5)
         initial.save(checkpoint)
     policy = Policy.load(checkpoint, FEATURES, ACTIONS)
     args.macro_seconds = args.macro_seconds or policy.macro_seconds or args.legacy_macro_seconds or 5
     if args.mode == 'train':
         check_training_cadence(policy, args.macro_seconds, args.legacy_macro_seconds)
+        check_training_reward(policy)
     offset = policy.attempts if args.mode == 'train' else 0
     seed_start = args.seed if args.seed is not None else (7 if args.mode == 'train' else 10000)
     source_root = Path(__file__).parents[2]
@@ -150,6 +157,7 @@ def main():
                        'source_sha256': provenance, 'map_sha256': digest(validate_map(game_map).path),
                        'behavior_checkpoint_sha256': digest(checkpoint),
                        'checkpoint_before': digest(checkpoint), 'candidate': str(base.with_suffix('.candidate.npz')),
+                       'reward_version': policy.reward_version,
                        'actions': str(base.with_suffix('.actions.jsonl')), 'replay': str(base.with_suffix('.SC2Replay')),
                        'race': args.races[episode_index % len(args.races)],
                        'build': args.builds[(episode_index // len(args.races)) % len(args.builds)],

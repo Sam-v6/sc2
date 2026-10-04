@@ -2,7 +2,7 @@
 
 All results below are development experiments, not final acceptance. Replays,
 action observations, checkpoint snapshots and JSON receipts are retained under
-`logs/` in `.worktrees/terran-rl`. No learned Hard strength has been established.
+`logs/` in `.worktrees/terran-rl`. A first frozen Hard victory is established; reliable all-race Hard strength is not.
 The final target remains frozen evaluation against all three races and varied
 builds/maps, using a fresh seed bank after development choices are finished.
 
@@ -70,8 +70,8 @@ frozen Hard evaluation yielded 6 losses. These probes use development seeds
 artifacts and explicitly cannot be resumed with the earlier one-step trainer.
 
 The current trainer uses up to 32 decision rewards, records the actual bootstrap
-discount, and uses online action selection with target-network valuation. Version2
-checkpoints retain these discounts and load version1 experience as one-step.
+discount, and uses online action selection with target-network valuation. Version 2
+checkpoints retain these discounts and load version 1 experience as one-step.
 Partial cutoff horizons bootstrap; terminal horizons stop. For a new checkpoint,
 gamma=.99**(macro_seconds/5) preserves the initial physical discount horizon.
 Uncorrected long returns include exploratory continuation; frozen evaluation must
@@ -83,47 +83,106 @@ that easy wins alone do not establish useful macro strategy or Hard strength.
 
 ## Spatial primitives and parallel collection
 
-Independent review traced one frozen game to357 failed expansions out of358
+Independent review traced one frozen game to 357 failed expansions out of 358
 selections, and another to repeated queued tech-lab commands without construction.
 Expansion now requires an eligible builder, a reachable and placeable destination;
 execution uses that same builder/destination. Add-on choices use feasible producers,
 and later construction preserves vacant add-on footprints. These are execution
 constraints, not a prescribed expansion timing or technology strategy.
 
-The earlier Easy curriculum finished30 games:17 wins,4 losses,9 cutoffs. The repaired
-v5 Medium batch finished40 games:8 wins,25 losses,7 cutoffs, no engine failures.
+The earlier Easy curriculum finished 30 games: 17 wins, 4 losses, 9 cutoffs. The repaired
+v5 Medium batch finished 40 games: 8 wins, 25 losses, 7 cutoffs, no engine failures.
 Its starting and post-Medium frozen Hard evaluations each lost six games.
 Replay experience from the earlier spatial defects was cleared while retaining
 weights/target/optimizer/RNG; that migration is recorded in `logs/learning-v5/`.
 
 The current trainer collects four games per behavior snapshot, then the parent
 learns from successful episode samples in launch order. Worker models never
-replace newer parent weights.46 unit tests pass, including mixed-failure schedule
-resume and cancellation. Real short collection measured3.39x throughput with four
+replace newer parent weights. 46 unit tests pass, including mixed-failure schedule
+resume and cancellation. Real short collection measured 3.39x throughput with four
 workers; details are in performance-baseline.md. A real four-engine interruption
 preserved the canonical checkpoint, removed candidate saves and left no descendants.
 
 ## First frozen Hard victory
 
-A separate frozen-only economic-capacity shaping probe replayed the same20-game
-v3 observation buffer, using32-step returns and10000 Double-DQN updates from fresh
-seed19 weights. Its potential is:
+A separate frozen-only economic-capacity shaping probe replayed the same 20-game
+v3 observation buffer, using 32-step returns and 10000 Double-DQN updates from fresh
+seed 19 weights. Its potential is:
 
 `max(0, .5*workers + .2*army_supply + 2*bases - .002*resource_bank)`
 
 Resource bank uses the encoder's clipped mineral/gas values; terminal results
-remain+100/-100. There is no scripted macro build order or army mix. This diagnostic
+remain +100/-100. There is no scripted macro build order or army mix. This diagnostic
 checkpoint must not resume under the trainer's older reward potential.
 
-Frozen Hard evaluation on the reused development bank won1/6 games, with5 terminal
+Frozen Hard evaluation on the reused development bank won 1/6 games, with 5 terminal
 losses and no failures. The win was Terran versus Hard Protoss Rush, Simple64,
-seed10001,851.79 game seconds. The selected actions included44 SCVs and44 marine
-commands; peak observed workforce54, army supply47, marines30. Evaluation performed
+seed 10001, 851.79 game seconds. The selected actions included 44 SCVs and 44 marine
+commands; peak observed workforce 54, army supply 47, marines 30. Evaluation performed
 no updates; SHA-256 before/after remained:
 `5b335bde6c0593980cbdd0139f40d8362af8f9babb4a49996e25000ac3446251`.
 
-The descriptive Wilson95% interval for1/6 is approximately3%–56%; these seeds have
+The descriptive Wilson 95% interval for 1/6 is approximately 3%–56%; these seeds have
 been used for development selection, so fresh holdout evaluation is still required.
 One victory does not meet the all-race/reliable Hard target. Raw evidence is in
 `logs/economy-hard-eval/`, the frozen probe and its objective receipt in
 `logs/economy-probe/`, and the probe script in `logs/audit/economy-potential-probe.py`.
+
+## Broader Hard training
+
+The repaired v5 policy completed 100 Hard training games across Rush, Timing,
+Power, Macro and Air builds: 5 wins, 90 losses and 5 cutoffs, with no engine
+failures. Exploratory victories included Terran and Zerg opponents. A frozen
+snapshot after 72 games lost all six development evaluations; training wins
+therefore did not establish dependable greedy-policy strength. The batch took
+1088.97 wall seconds for 78083.21 simulated game seconds across four workers.
+
+The first frozen Hard victory is watchable in
+`logs/replay-proof/first-hard-win.mp4`: 869 frames at 960x720, 217.25 video
+seconds representing the full 851.79-second game. Its export receipt confirms
+that the frame limit did not truncate the replay.
+
+## Reward probes and next learning correction
+
+The economic probe's separate 30-game development evaluation used Simple64 and
+TritonLE, all three races and Rush/Timing/Power/Macro/Air, seeds 20000–20029.
+It earned 1 victory (Zerg Rush, Simple64), 28 defeats and 1 cutoff, no failures;
+its checkpoint hash remained unchanged. The eight-step version of that probe
+lost all six initial development games. These results do not meet the target.
+
+Removing the stockpile penalty while retaining the same capacity coefficients,
+source corpus, seed 19 initialization, gamma and 10000 updates yielded 1 victory,
+4 defeats and 1 cutoff in the original six-game bank. The win was against Hard
+Terran Macro, Simple64 seed 10003, 657.86 game seconds. Checkpoint SHA-256 remained
+`47f49791f07d484adc93d794ea61c9666435ae97d5a4ff093f3ea246ad23017e`.
+Frozen victories now exist against each race across these separate reward probes;
+there is still no single reliably strong policy. A 30-game capacity evaluation
+uses an archived copy of the old source under `logs/audit/capacity-eval-source/`
+so its schema and source hashes remain stable during further development.
+
+Review found eight successive attack/retreat choices with army supply 4 and no
+visible enemies, while the old encoder could not distinguish army travel from
+standing near home. The next encoder adds distance from home, distance from known
+enemy spawn, and time since the last stance change. It retains policy control
+of attack/retreat and imposes no attack timing recipe.
+
+The collector now truncates a return before a later action differs from the
+frozen worker's legal greedy action, avoiding direct credit for a nongreedy
+continuation's reward. This is inspired by trace cutting in
+[off-policy return methods](https://arxiv.org/html/1606.02647v2).
+It reduces collection-time exploration contamination; it is not an exact
+correction after subsequent parent-weight updates, nor a convergence guarantee
+for this neural approximation.
+
+The current `capacity-v1` reward objective is recorded in checkpoints and required
+for training resume. Its potential is `.5*workers + .2*army_supply + 2*bases`, using
+encoder caps; spending without capacity growth does not earn positive shaping.
+The recorded v6 migration retains the capacity probe's learned weights, target,
+Adam and RNG, appends zero input rows for the new features, and clears old replay
+experience whose positional features are missing. It does not relabel data with
+invented positions. Four real migrated 180-second smoke games completed with
+four cutoffs, saved replays and policy updates, no failures. 51 unit tests pass.
+A numerical equality check in the first migration attempt differed by less than
+2e-15 after zero-row padding; a tolerance-based check replaced exact equality.
+The unintended fresh-model smoke run from that attempt is retained separately
+under `logs/learning-v6-fresh-smoke/` and is excluded from strength comparisons.

@@ -9,6 +9,7 @@ class CadenceTests(unittest.TestCase):
         from src.rl.train import check_training_cadence
         policy = Policy(['state'], ['wait'])
         policy.macro_seconds = 1
+        policy.reward_version = 'capacity-v1'
         with tempfile.TemporaryDirectory() as directory:
             checkpoint = Path(directory) / 'policy.npz'
             policy.save(checkpoint)
@@ -60,6 +61,7 @@ class CollectionTests(unittest.TestCase):
             checkpoint = root / 'policy.npz'
             policy = Policy(FEATURES, ACTIONS)
             policy.macro_seconds = 1
+            policy.reward_version = 'capacity-v1'
             policy.save(checkpoint)
             before = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
             game_map = root / 'test.SC2Map'
@@ -87,6 +89,7 @@ class CollectionTests(unittest.TestCase):
             checkpoint = root / 'policy.npz'
             policy = Policy(FEATURES, ACTIONS)
             policy.macro_seconds = 1
+            policy.reward_version = 'capacity-v1'
             policy.save(checkpoint)
             game_map = root / 'test.SC2Map'
             game_map.write_bytes(b'test')
@@ -113,3 +116,22 @@ class CollectionTests(unittest.TestCase):
             records = [json.loads(p.read_text()) for p in (root / 'resume').glob('*.json') if not p.name.endswith('summary.json')]
             self.assertEqual(records[0]['seed'], 9)
             self.assertEqual(records[0]['race'], 'Zerg')
+
+
+class RewardSchemaTests(unittest.TestCase):
+    def test_reward_objective_is_saved_and_incompatible_training_is_rejected(self):
+        from src.rl.train import check_training_reward
+        from src.rl.terran import REWARD_VERSION
+        policy = Policy(['state'], ['wait'])
+        with self.assertRaisesRegex(ValueError, 'reward'):
+            check_training_reward(policy)
+        policy.reward_version = 'old-objective'
+        with self.assertRaisesRegex(ValueError, 'reward'):
+            check_training_reward(policy)
+        policy.reward_version = REWARD_VERSION
+        with tempfile.TemporaryDirectory() as directory:
+            checkpoint = Path(directory) / 'policy.npz'
+            policy.save(checkpoint)
+            loaded = Policy.load(checkpoint, policy.features, policy.actions)
+        self.assertEqual(loaded.reward_version, REWARD_VERSION)
+        check_training_reward(loaded)

@@ -95,7 +95,8 @@ optimizer, experience, RNG and episode count. A separate attempt cursor advances
 resume, including mixed-success batches; evaluation defaults to seeds starting at 10000. Use a new seed bank for final
 acceptance after inspecting development evaluations. `--maps`, `--races`, `--builds`
 and `--difficulty` select computer opponents; `--macro-seconds` controls decision
-cadence. Resume infers the stored cadence and rejects a changed training cadence.
+cadence. Army distance from home/enemy spawn and time since the last stance change
+help distinguish movement even when enemies are hidden. Resume infers the stored cadence and rejects a changed training cadence.
 Legacy checkpoints lacking this metadata require their known original
 `--legacy-macro-seconds` value. New runs default to five seconds; the one-second
 experiment above gives the atomic actions more production opportunities. Each macro action attempts one operation, so slower cadence also limits
@@ -105,9 +106,12 @@ Actions are legal at the observed resource/tech level. A logged `executed` value
 means a command was issued successfully by the Python client; SC2 may still reject
 it or construction may subsequently fail. Inspect replay/state changes to establish
 actual completion. The logs contain chosen actions, legal masks, snapshots and reward
-components. Potential shaping rewards state changes; terminal wins/losses receive
-+100/-100. Replay learning uses up to 32 macro rewards with the actual bootstrap
-discount. New-checkpoint discounting accounts for macro cadence. Time-limit ties bootstrap instead of being labeled defeats.
+components. The current capacity potential uses .5 per worker, .2 per army supply and 2 per
+base, capped by the observation encoder. Spending resources alone earns no reward;
+terminal wins/losses receive +100/-100. Checkpoints identify their reward objective,
+and incompatible or unknown objectives are rejected for training resume.
+Replay learning uses up to 32 macro rewards with the actual bootstrap discount,
+stopping before a later nongreedy action from the frozen worker policy. New-checkpoint discounting accounts for macro cadence. Time-limit ties bootstrap instead of being labeled defeats.
 
 Four workers collect games from a shared frozen behavior checkpoint by default.
 The parent merges successful games in launch order and learns from their experience;
@@ -120,7 +124,9 @@ and map hashes, game build, action RNG seed and behavior checkpoint hash. Failed
 do not promote a candidate checkpoint. Training updates occur in the parent only after successful
 game execution; frozen evaluation performs no updates and checks the checkpoint hash.
 A smoke-test update is not evidence of a strong policy. The initial batches failed against Hard. An economic-potential probe subsequently
-won one of six frozen Hard games, against Protoss Rush. This is preliminary;
+won one of six frozen Hard games against Protoss Rush; a separate capacity probe
+won one of six against Terran Macro. Broader economic-probe evaluation won only
+one of thirty games. These are preliminary results;
 see [the experiment report](docs/experiment-results.md) for progress.
 
 ## Watch a saved replay on Linux

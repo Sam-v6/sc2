@@ -18,8 +18,10 @@ SCALES = {'time': 1200, 'minerals': 1000, 'gas': 1000, 'supply_left': 30,
           'enemy_near_army': 20, 'enemy_distance': 100, 'attacking': 1,
           'pending_depot': 1, 'pending_barracks': 1, 'techlab': 4,
           'engineeringbay': 1, 'fusioncore': 1, 'infantry_weapons': 1,
-          'idle_barracks': 8, 'idle_townhalls': 5}
+          'idle_barracks': 8, 'idle_townhalls': 5, 'army_distance_home': 100,
+          'army_distance_enemy_start': 100, 'stance_seconds': 20}
 FEATURES = ['bias', *SCALES]
+REWARD_VERSION = 'capacity-v1'
 BUILDINGS = {'depot': U.SUPPLYDEPOT, 'barracks': U.BARRACKS, 'refinery': U.REFINERY,
              'factory': U.FACTORY, 'starport': U.STARPORT, 'engineeringbay': U.ENGINEERINGBAY,
              'fusioncore': U.FUSIONCORE, 'expand': U.COMMANDCENTER}
@@ -44,6 +46,11 @@ def encode(snapshot):
     return np.array([1., *(np.clip(snapshot.get(key, 0) / scale, 0, 2) for key, scale in SCALES.items())])
 
 
+def capacity_potential(observation):
+    values = dict(zip(FEATURES, observation))
+    return .5 * SCALES['workers'] * values['workers'] + .2 * SCALES['army'] * values['army'] + 2 * SCALES['bases'] * values['bases']
+
+
 def reward(previous_potential, next_potential, gamma, terminal_reward=0):
     return terminal_reward + gamma * next_potential - previous_potential
 
@@ -58,6 +65,7 @@ class TerranLearner(VoidBotBase):
         self.random_policy = random_policy
         self.attacking = False
         self.stance_changed = False
+        self.stance_changed_at = 0
         self.next_macro = 0
         self.next_gather = 0
         self.previous = None
@@ -102,7 +110,10 @@ class TerranLearner(VoidBotBase):
                 'fusioncore': self.structures(U.FUSIONCORE).ready.amount,
                 'infantry_weapons': float(G.TERRANINFANTRYWEAPONSLEVEL1 in self.state.upgrades),
                 'idle_barracks': self.structures(U.BARRACKS).ready.idle.amount,
-                'idle_townhalls': self.townhalls.ready.idle.amount}
+                'idle_townhalls': self.townhalls.ready.idle.amount,
+                'army_distance_home': center.distance_to(home),
+                'army_distance_enemy_start': center.distance_to(self.enemy_start_locations[0]),
+                'stance_seconds': self.time - self.stance_changed_at}
 
     def producers(self, unit, producer, needs_lab):
         structures = self.townhalls if unit == U.SCV else self.structures(producer)
@@ -191,13 +202,14 @@ class TerranLearner(VoidBotBase):
 
     def potential(self):
         # Potential shaping, rather than repeated reward for unchanged stockpiles.
-        return .02 * self.supply_workers + .08 * self.supply_army + .3 * self.townhalls.amount + .0005 * (self.state.score.killed_value_units + self.state.score.killed_value_structures)
+        return capacity_potential(encode({'workers': self.supply_workers, 'army': self.supply_army, 'bases': self.townhalls.amount}))
 
     async def execute(self, name):
         self.execution_details = {}
         if name in ('attack', 'retreat'):
             self.attacking = name == 'attack'
             self.stance_changed = True
+            self.stance_changed_at = self.time
             return True
         if name == 'wait':
             return True
