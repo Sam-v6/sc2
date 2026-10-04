@@ -135,3 +135,72 @@ class RewardSchemaTests(unittest.TestCase):
             loaded = Policy.load(checkpoint, policy.features, policy.actions)
         self.assertEqual(loaded.reward_version, REWARD_VERSION)
         check_training_reward(loaded)
+
+
+class PPOCollectionTests(unittest.TestCase):
+    def test_failed_helper_preserves_parent_and_removes_scratch(self):
+        from unittest.mock import patch
+        import numpy as np
+        from src.rl.actor_critic import ActorCritic
+        from src.rl.train import learn_ppo_batch
+        policy = ActorCritic(['state'], ['wait'])
+        policy.macro_seconds = 1
+        policy.reward_version = 'capacity-v1'
+        before = policy.parameters.copy()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            candidate = ActorCritic(policy.features, policy.actions)
+            candidate.macro_seconds = 1
+            candidate.reward_version = 'capacity-v1'
+            candidate.collect_episode([(np.array([1.]), 0, 1, np.array([1.]), np.array([True]), True)], [np.array([True])])
+            candidate.save(root / 'episode.npz')
+            with patch('src.rl.train.supervise', return_value={'status': 'error', 'error': 'backend failed'}):
+                with self.assertRaisesRegex(RuntimeError, 'backend failed'):
+                    learn_ppo_batch(policy, [root / 'episode.npz'], '/missing/python', root / 'update.npz', 1)
+            self.assertFalse((root / 'update.npz').exists())
+        np.testing.assert_array_equal(before, policy.parameters)
+        self.assertEqual(policy.episodes, 0)
+
+    def test_cli_preserves_virtualenv_interpreter_symlink(self):
+        import copy
+        import sys
+        import numpy as np
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from src.rl import train
+        from src.rl.actor_critic import ActorCritic
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            interpreter = root / 'venv-python'
+            interpreter.symlink_to(sys.executable)
+            game_map = root / 'test.SC2Map'
+            game_map.write_bytes(b'test')
+            def collect(function, args, timeout, **kwargs):
+                job = args[0]
+                candidate = ActorCritic.load(job['checkpoint'], train.FEATURES, train.ACTIONS)
+                mask = np.array([True] + [False] * (len(train.ACTIONS) - 1))
+                state = np.ones(len(train.FEATURES))
+                candidate.collect_episode([(state, 0, 1, state, mask, True)], [mask])
+                candidate.save(job['candidate'])
+                return {'status': 'completed', 'result': 'Victory'}
+            def learn(policy, candidates, backend, scratch, attempts):
+                self.assertEqual(backend, interpreter.absolute())
+                self.assertTrue(backend.is_symlink())
+                updated = copy.deepcopy(policy)
+                updated.updates += 1
+                updated.episodes += 1
+                updated.attempts = attempts
+                return updated, {'status': 'completed'}
+            argv = ['train', '--algorithm', 'ppo', '--torch-python', str(interpreter), '--episodes', '1',
+                    '--checkpoint', str(root / 'policy.npz'), '--output', str(root / 'output')]
+            with patch('sys.argv', argv), patch.object(train, 'validate_map', return_value=SimpleNamespace(path=game_map)), \
+                 patch.object(train, 'supervise', side_effect=collect), patch.object(train, 'learn_ppo_batch', side_effect=learn), patch('builtins.print'):
+                train.main()
+
+    def test_helper_failure_reports_its_original_stderr(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from src.rl.train import run_torch_update
+        with patch('src.rl.train.subprocess.run', return_value=SimpleNamespace(returncode=1, stderr='Torch missing', stdout='')):
+            with self.assertRaisesRegex(RuntimeError, 'Torch missing'):
+                run_torch_update('/python', '/checkpoint')

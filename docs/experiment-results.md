@@ -186,3 +186,52 @@ A numerical equality check in the first migration attempt differed by less than
 2e-15 after zero-row padding; a tolerance-based check replaced exact equality.
 The unintended fresh-model smoke run from that attempt is retained separately
 under `logs/learning-v6-fresh-smoke/` and is excluded from strength comparisons.
+
+The capacity probe's broader 30-game check earned 1 victory (Zerg Power, Simple64),
+27 defeats and 2 cutoffs, no failures. Its hash remained unchanged. The separate
+six-game paired combat-interface test used the same frozen v6 checkpoint and
+seeds 31000–31005, with source snapshots preserving each interface. Both the
+original stance-change interface and the idempotent hold-stance variant lost all
+six games. The variant therefore remains a diagnostic source snapshot; it was
+not promoted into the trainer. Unavailable-action Q extrapolation does not prove
+that the original mask is wrong, because wait already preserves the stance.
+
+A normalized capacity probe used one-step returns, the same old v3 corpus,
+seed 19 and 10000 updates, with all capacity/terminal rewards multiplied by .01.
+It lost all six original development evaluations. Its objective differs from
+the current trainer, so it is retained for frozen evaluation only. This did not
+provide evidence to promote reward normalization or change the trainer again.
+
+## Completed v6 batch and PPO workflow comparison
+
+The v6 DQN experiment ultimately completed 60 valid Hard games: 2 victories,
+57 defeats and 1 cutoff. One additional attempt disconnected during engine
+startup, was excluded from training, and was retried; the remaining games then
+completed. Its separate frozen 30-game development evaluation (seeds 32000–32029,
+both maps, all races and five builds) earned 1 victory, 28 defeats and 1 cutoff,
+no failures. SHA-256 remained
+`ea8bcf9825766d4f2ce0b6f62fe433f6998d28ed15fca6aa29a308b0da80515b`.
+The broader strength target remains unmet.
+
+An existing PyTorch 2.7.1 CPU-capable runtime was found in the sibling SC2RL
+Python 3.11 environment. The new bounded PPO comparison keeps NumPy inference in
+Python 3.12 game workers and invokes that existing runtime only for gradients.
+It does not install Torch or reuse the old Protoss model. Actor/critic inference,
+masked probabilities/log probabilities, episode-boundary GAE, clipping, Adam
+resume, RNG, schema and reward scale have explicit checks. One update uses the
+whole collection batch; valid frozen behavior probabilities are retained.
+
+The first real PPO smoke completed four games but exposed a launch-path bug:
+resolving the virtualenv Python symlink selected the base interpreter without
+Torch. The learner failed without changing the canonical checkpoint; its
+trajectories were discarded. A trainer-level regression reproduced that failure.
+The corrected launcher preserves the interpreter path and original helper stderr.
+Four repeated real 180-second smoke games then completed with no failures, valid
+replays and policy updates. Their cutoff ties are infrastructure evidence only.
+The local suite now passes 58 tests, including real CPU Torch learning/optimizer
+resume and fail-closed helper behavior.
+
+PPO resume then completed 20 full VeryEasy games: 20 wins, no cutoffs or failures.
+The initial frozen two-game 180-second Hard smoke produced two cutoffs and left
+its checkpoint unchanged. Full frozen Hard evaluation remains pending; easier
+training wins do not establish greedy-policy strength.

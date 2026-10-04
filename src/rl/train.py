@@ -1,5 +1,7 @@
 """Bounded training, resume, and frozen evaluation against SC2 computers."""
 import argparse
+import copy
+import subprocess
 from concurrent.futures import ThreadPoolExecutor
 import threading
 import numpy as np
@@ -14,7 +16,8 @@ from src.path import SC2_VOID_BOT_HOME
 from src.runtime import match_id, supervise
 from src.runner import positive, validate_map
 from src.rl.returns import remember_episode
-from src.rl.policy import Policy
+from src.rl.policy import Policy, load_policy
+from src.rl.actor_critic import ActorCritic
 from src.rl.terran import ACTIONS, FEATURES, REWARD_VERSION, TerranLearner
 from sc2.data import AIBuild, Difficulty, Race
 from sc2.main import run_game, get_replay_version
@@ -44,7 +47,7 @@ def episode(job):
     logger.remove()
     logger.add(sys.stderr, level='WARNING')
     random.seed(job['seed'])
-    policy = Policy.load(job['checkpoint'], FEATURES, ACTIONS)
+    policy = load_policy(job['checkpoint'], FEATURES, ACTIONS)
     before = policy.updates
     if job['mode'] != 'evaluate':
         policy.rng = np.random.default_rng(job['policy_seed'])
@@ -62,9 +65,14 @@ def episode(job):
     if not replay.is_file() or not replay.stat().st_size:
         raise RuntimeError('No replay was saved')
     if job['mode'] == 'train':
-        policy.experience.clear()
         policy.macro_seconds = job['macro_seconds']
-        remember_episode(policy, bot.transitions)
+        if policy.algorithm == 'ppo':
+            policy.rollout.clear()
+            masks = [np.array([name in row['legal'] for name in ACTIONS]) for row in bot.decisions]
+            policy.collect_episode(bot.transitions, masks)
+        else:
+            policy.experience.clear()
+            remember_episode(policy, bot.transitions)
         policy.save(job['candidate'])
     return {'status': 'truncated' if result.name == 'Tie' else 'completed', 'result': result.name,
             'game_seconds': bot.time, 'engine_wall_seconds': round(time.monotonic() - started, 3),
@@ -86,6 +94,46 @@ def learn_candidate(policy, path):
             'mean_loss': sum(losses) / len(losses) if losses else None}
 
 
+def run_torch_update(interpreter, path):
+    result = subprocess.run([str(interpreter), '-B', '-m', 'src.rl.ppo_update', str(path)],
+                            cwd=Path(__file__).parents[2], capture_output=True, text=True)
+    if result.returncode:
+        raise RuntimeError(f'Torch helper exited {result.returncode}: {result.stderr}')
+    return {'status': 'completed', **json.loads(result.stdout)}
+
+
+def learn_ppo_batch(policy, candidates, interpreter, scratch, attempts):
+    collected = copy.deepcopy(policy)
+    collected.rollout.clear()
+    for path in candidates:
+        episode_policy = ActorCritic.load(path, policy.features, policy.actions)
+        if (episode_policy.gamma != policy.gamma or episode_policy.macro_seconds != policy.macro_seconds
+                or episode_policy.reward_version != policy.reward_version
+                or any(not np.array_equal(a, b) for a, b in zip(episode_policy.network, policy.network))):
+            raise ValueError('PPO batch must share the frozen behavior policy and reward context')
+        collected.rollout.extend(episode_policy.rollout)
+    if not collected.rollout:
+        raise ValueError('No successful PPO episode samples')
+    collected.episodes += len(candidates)
+    collected.attempts = attempts
+    before = policy.updates
+    try:
+        collected.save(scratch)
+        metrics = supervise(run_torch_update, (interpreter, scratch), 120)
+        if metrics['status'] != 'completed':
+            raise RuntimeError(metrics.get('error', metrics['status']))
+        updated = ActorCritic.load(scratch, policy.features, policy.actions)
+        if (updated.updates <= before or updated.rollout or updated.episodes != collected.episodes
+                or updated.attempts != attempts or updated.gamma != policy.gamma
+                or updated.macro_seconds != policy.macro_seconds or updated.reward_version != policy.reward_version):
+            raise ValueError('Invalid PPO learner candidate')
+        metrics['learner_wall_seconds'] = metrics.pop('wall_seconds', None)
+        return updated, {**metrics, 'learner_updates_before': before, 'learner_updates_after': updated.updates,
+                         'backend_python': str(interpreter)}
+    finally:
+        remove_candidate(scratch)
+
+
 def remove_candidate(path):
     path = Path(path)
     path.unlink(missing_ok=True)
@@ -94,6 +142,8 @@ def remove_candidate(path):
 
 def parser():
     p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--algorithm', choices=['dqn', 'ppo'], default=None, help='New experiment algorithm; existing checkpoints infer and validate their algorithm')
+    p.add_argument('--torch-python', type=Path, default=None, help='Existing Torch interpreter, required only for PPO training')
     p.add_argument('--mode', choices=['train', 'evaluate', 'random'], default='train')
     p.add_argument('--episodes', type=positive, default=10)
     p.add_argument('--workers', type=positive, default=4)
@@ -121,12 +171,19 @@ def main():
         if args.mode != 'train':
             raise FileNotFoundError(f'Checkpoint not found: {checkpoint}')
         args.macro_seconds = args.macro_seconds or 5
-        initial = Policy(FEATURES, ACTIONS, seed=args.seed if args.seed is not None else 7)
+        policy_class = ActorCritic if args.algorithm == 'ppo' else Policy
+        initial = policy_class(FEATURES, ACTIONS, seed=args.seed if args.seed is not None else 7)
         initial.macro_seconds = args.macro_seconds
         initial.reward_version = REWARD_VERSION
         initial.gamma = .99 ** (args.macro_seconds / 5)
         initial.save(checkpoint)
-    policy = Policy.load(checkpoint, FEATURES, ACTIONS)
+    policy = load_policy(checkpoint, FEATURES, ACTIONS)
+    if args.algorithm is not None and args.algorithm != policy.algorithm:
+        raise ValueError('Checkpoint algorithm differs from the requested experiment')
+    if args.mode == 'train' and policy.algorithm == 'ppo':
+        if args.torch_python is None or not args.torch_python.is_file():
+            raise ValueError('PPO training requires --torch-python pointing to an existing Torch interpreter')
+        args.torch_python = args.torch_python.absolute()
     args.macro_seconds = args.macro_seconds or policy.macro_seconds or args.legacy_macro_seconds or 5
     if args.mode == 'train':
         check_training_cadence(policy, args.macro_seconds, args.legacy_macro_seconds)
@@ -142,7 +199,7 @@ def main():
     stop = threading.Event()
     pool = ThreadPoolExecutor(max_workers=args.workers)
     active_jobs = []
-    failed = ('error', 'wall_timeout', 'cancelled')
+    failed = ('error', 'wall_timeout', 'cancelled', 'learner_error')
     try:
         for start in range(0, args.episodes, args.workers):
             active_jobs = []
@@ -157,7 +214,7 @@ def main():
                        'source_sha256': provenance, 'map_sha256': digest(validate_map(game_map).path),
                        'behavior_checkpoint_sha256': digest(checkpoint),
                        'checkpoint_before': digest(checkpoint), 'candidate': str(base.with_suffix('.candidate.npz')),
-                       'reward_version': policy.reward_version,
+                       'algorithm': policy.algorithm, 'reward_version': policy.reward_version, 'reward_scale': policy.reward_scale,
                        'actions': str(base.with_suffix('.actions.jsonl')), 'replay': str(base.with_suffix('.SC2Replay')),
                        'race': args.races[episode_index % len(args.races)],
                        'build': args.builds[(episode_index // len(args.races)) % len(args.builds)],
@@ -167,14 +224,33 @@ def main():
             futures = [pool.submit(supervise, episode, (job,), args.wall_seconds, stop_event=stop) for job in active_jobs]
             # Collect the entire batch before replacing its shared behavior checkpoint.
             results = [future.result() for future in futures]
+            batch_metrics, learner_error = None, None
+            if args.mode == 'train' and policy.algorithm == 'ppo':
+                valid = [job['candidate'] for job, result in zip(active_jobs, results) if result['status'] in ('completed', 'truncated')]
+                if valid:
+                    try:
+                        updated, batch_metrics = learn_ppo_batch(policy, valid, args.torch_python,
+                            args.output / f'{run_id}.{start}.learner.npz', offset + start + len(active_jobs))
+                        updated.save(checkpoint)
+                        policy = updated
+                        batch_metrics.pop('status')
+                        batch_metrics['learner_batch'] = f'{run_id}.{start}'
+                    except (RuntimeError, ValueError) as error:
+                        learner_error = str(error)
             for job, result in zip(active_jobs, results):
                 receipt = {**job, **result}
                 if args.mode == 'train' and receipt['status'] in ('completed', 'truncated'):
-                    receipt.update(learn_candidate(policy, job['candidate']))
+                    if policy.algorithm == 'ppo':
+                        if learner_error is not None:
+                            receipt.update(game_status=receipt['status'], status='learner_error', error=learner_error)
+                        else:
+                            receipt.update(batch_metrics)
+                    else:
+                        receipt.update(learn_candidate(policy, job['candidate']))
+                        policy.attempts = offset + start + len(active_jobs)
+                        policy.save(checkpoint)
                     receipt['updates_after'] = policy.updates
                     receipt['epsilon_after'] = policy.epsilon
-                    policy.attempts = offset + start + len(active_jobs)
-                    policy.save(checkpoint)
                 remove_candidate(job['candidate'])
                 receipt['checkpoint_after'] = digest(checkpoint)
                 Path(job['replay']).with_suffix('.json').write_text(json.dumps(receipt, indent=2) + '\n')

@@ -6,6 +6,9 @@ import numpy as np
 
 
 class Policy:
+    algorithm = 'dqn'
+    reward_scale = 1
+
     def __init__(self, features, actions, seed=7):
         self.features = list(features)
         self.actions = list(actions)
@@ -78,7 +81,7 @@ class Policy:
     def save(self, path):
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        metadata = {'version': 2, 'features': self.features, 'actions': self.actions,
+        metadata = {'version': 2, 'algorithm': self.algorithm, 'reward_scale': self.reward_scale, 'features': self.features, 'actions': self.actions,
                     'gamma': self.gamma, 'epsilon': self.epsilon, 'updates': self.updates,
                     'episodes': self.episodes, 'attempts': self.attempts, 'macro_seconds': self.macro_seconds, 'reward_version': self.reward_version, 'rng': self.rng.bit_generator.state}
         data = {'metadata': np.array(json.dumps(metadata))}
@@ -99,7 +102,7 @@ class Policy:
     def load(cls, path, features, actions):
         with np.load(path, allow_pickle=False) as data:
             metadata = json.loads(str(data['metadata']))
-            if metadata['version'] not in (1, 2) or metadata['features'] != list(features) or metadata['actions'] != list(actions):
+            if metadata.get('algorithm', 'dqn') != cls.algorithm or metadata.get('reward_scale', 1) != cls.reward_scale or metadata['version'] not in (1, 2) or metadata['features'] != list(features) or metadata['actions'] != list(actions):
                 raise ValueError('Checkpoint observation/action schema mismatch')
             policy = cls(features, actions)
             for name in ('network', 'target', 'm', 'v'):
@@ -115,3 +118,14 @@ class Policy:
                     *(data[key] for key in ('states', 'actions', 'rewards', 'next_states', 'masks', 'terminals')), discounts):
                 policy.remember(state, action, reward, nxt, mask, terminal, discount)
         return policy
+
+
+def load_policy(path, features, actions):
+    with np.load(path, allow_pickle=False) as data:
+        algorithm = json.loads(str(data['metadata'])).get('algorithm', 'dqn')
+    if algorithm == 'ppo':
+        from src.rl.actor_critic import ActorCritic
+        return ActorCritic.load(path, features, actions)
+    if algorithm != 'dqn':
+        raise ValueError('Unknown checkpoint algorithm')
+    return Policy.load(path, features, actions)

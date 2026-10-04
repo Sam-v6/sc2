@@ -129,6 +129,29 @@ won one of six against Terran Macro. Broader economic-probe evaluation won only
 one of thirty games. These are preliminary results;
 see [the experiment report](docs/experiment-results.md) for progress.
 
+## PPO comparison using the existing Torch runtime
+
+The default learner remains DQN. A separate PPO experiment reuses Torch already
+installed in the sibling SC2RL environment, without installing it in game workers:
+
+```bash
+uv run python -m src.rl.train --algorithm ppo --torch-python /home/sam/repos/sc2-repos/SC2RL/.venv/bin/python --macro-seconds 1 --episodes 4 --game-seconds 180 --difficulty VeryEasy --checkpoint logs/my-ppo/policy.npz --output logs/my-ppo
+uv run python -m src.rl.train --torch-python /home/sam/repos/sc2-repos/SC2RL/.venv/bin/python --episodes 20 --difficulty VeryEasy --checkpoint logs/my-ppo/policy.npz --output logs/my-ppo
+```
+
+Keep the virtualenv interpreter path; resolving its symlink bypasses that
+environment. The helper disables bytecode writes and leaves the sibling runtime
+unchanged. Saved models infer and validate their algorithm. PPO uses a masked
+categorical actor and value head, normalized capacity rewards (.01 scale), GAE,
+and one clipped update over each batch's valid complete game trajectories.
+Rollouts are discarded after updating; they are not DQN replay experience.
+
+Game workers and frozen inference use NumPy. Only CPU gradient updates launch the
+existing Torch interpreter. Receipts identify the backend/version, source, shared
+rollout batch and update count. Helper failures/timeouts preserve the canonical
+checkpoint. Frozen evaluation uses greedy actor choices and requires no Torch
+backend; successful smoke updates do not establish Hard strength.
+
 ## Watch a saved replay on Linux
 
 The installed OSMesa library and ffmpeg are sufficient here; no VM is needed for MP4

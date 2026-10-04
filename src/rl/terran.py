@@ -281,10 +281,10 @@ class TerranLearner(VoidBotBase):
     def transition(self, observation, mask, potential, terminal=False, terminal_reward=0):
         if self.previous is not None:
             state, action, old_potential = self.previous
-            shaped = reward(old_potential, potential, self.policy.gamma, terminal_reward)
+            shaped = self.policy.reward_scale * reward(old_potential, potential, self.policy.gamma, terminal_reward)
             self.transitions.append((state, action, shaped, observation, mask, terminal))
             self.decisions[-1]['reward'] = shaped
-            self.decisions[-1]['reward_components'] = {'terminal': terminal_reward, 'potential_previous': old_potential, 'potential_next': potential}
+            self.decisions[-1]['reward_components'] = {'terminal': terminal_reward, 'potential_previous': old_potential, 'potential_next': potential, 'scale': self.policy.reward_scale}
 
     async def custom_on_step(self, iteration):
         # Gather first so redistribution cannot overwrite a newly selected builder.
