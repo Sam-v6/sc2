@@ -206,6 +206,15 @@ zero failures, 35,931 audited transitions; every state-return identity passed
 with maximum error 7.55e-15. Final metadata: 184 episodes/attempts, 1260 optimizer
 steps. Frozen Easy80 hash: 2500e39230198a86a7755323efbe2fe99d4b6d671259b86fd1b69e33ddf0818f.
 Artifact: logs/audit/combat-kills-easy80-results.json. The Easy80 frozen snapshot
-now runs the same seed-20000 Hard30 development schedule as Easy40. No new
-training or source change runs alongside that evaluation. The reserved final
+now runs the same seed-20000 Hard30 development schedule as Easy40. Source remains frozen. The reserved final
 seed bank remains untouched.
+
+
+At 20 completed Easy80 Hard cases, the snapshot had one win/19 defeats. Even
+winning every remaining case would leave it below Easy40's 12/30. Retain
+Easy40 as the stronger parent while the full Easy80 evaluation finishes.
+A bounded 40-game Medium curriculum now starts from an exact copy of frozen
+Easy40, with unchanged source/reward/settings/actions, four workers and seed
+base 30000. The old frozen snapshots are untouched. Training receipt:
+logs/ppo-combat-kills-medium/experiment.json. Evaluate its final snapshot
+separately before drawing any strength conclusion.
