@@ -36,7 +36,9 @@ cutoffs with no failures and passed the transition audit; its frozen Hard30
 check scored 2 wins/26 defeats/2 cutoffs (Terran 0/10, Protoss 1/10, Zerg 1/10),
 with no failures or checkpoint mutation. The matched Hard40 curriculum
 finished 2 wins/36 defeats/2 cutoffs and passed its reward audit; its frozen
-Hard30 evaluation is running. This
+Hard30 check scored 8 wins/17 defeats/5 cutoffs (Terran 2/10, Protoss 2/10,
+Zerg 4/10), with no failures or model mutation. Both curricula regressed
+against the retained 12/30 parent. This
 is a learning trajectory, not an equal-budget comparison against net-event Easy40.
 
 All counts refer to development, and cutoffs/failures are distinct from losses.

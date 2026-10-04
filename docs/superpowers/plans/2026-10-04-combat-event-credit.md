@@ -296,3 +296,22 @@ Audit: combat-kills-medium40-hard30-results.json. A complete overview replay
 export of Medium seed-20000 Hard Terran Rush loss is underway for engagement
 inspection; viewing only uses omniscience. Hard40 frozen evaluation remains
 in progress. Keep the Easy40 parent and reserved final seeds untouched.
+
+
+Hard40 frozen Hard30 finished 8 wins/17 defeats/5 cutoffs, no failures or
+checkpoint mutation. Terran 2/10, Protoss 2/10, Zerg 4/10. Full opponent
+schedule matches the parent. Audit: combat-kills-hard40-hard30-results.json.
+Both curricula remain below the retained Easy40 parent's 12/30. No model
+promotion or acceptance-seed use.
+
+Medium Terran loss video completed: 993 frames, 960x720, 248.25 video seconds,
+all 974.29 game seconds and no cutoff. Raw replay-order inspection then
+completed separately for game seconds 460-520 (31 samples). At 480.09 seconds
+own observed forces included 33 Marines, 10 Hellions, 2 Marauders; at 496.16
+seconds 28 Marines, 2 Hellions, 1 Marauder. Observed opposing Marines/Marauders
+fell from 10/5 to 1/4 in those samples. Own attack orders changed from a common
+point to acquired enemy targets. Thus this engagement also damaged the opponent;
+army loss alone does not establish a broken micro primitive. These omniscient
+replay diagnostics are never fed into training. Artifacts:
+medium-hard-terran-loss.mp4, replay-engagement-orders.py,
+medium-terran-engagement-orders.json under retained logs.
