@@ -4,6 +4,10 @@ Headless StarCraft II computer-opponent experiments on Linux. The current script
 bots are baselines. The Terran macro learner is an explicit first experiment;
 its observation/action representation is not the project's final design.
 
+**Future learning direction:** [Terran learning roadmap](docs/learning-roadmap.md)
+— broad gameplay controls, professional replay imitation, learned micro and RL.
+Training remains paused; the roadmap is not an instruction to launch jobs.
+
 ## Setup
 
 Python 3.12 and uv are used locally. Install the locked Python dependencies:

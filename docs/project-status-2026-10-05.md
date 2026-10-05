@@ -4,6 +4,10 @@ No simulations or training are running. The six-case physical batch is terminal;
 the reviewed24game matched comparison has not been prepared or started.
 The goal is paused at the user's request, not achieved.
 
+The subsequent [learning roadmap](learning-roadmap.md) records the agreed new
+direction. It supersedes the narrow macro-only architecture and defers the
+unstarted scripted-teacher comparison unless a future experiment needs it.
+
 ## What is working
 
 - Repository/package/environment discovery, supervised headless execution,
