@@ -35,10 +35,12 @@ passes six tests and independent review. A read-only audit of 80 completed
 training games reconstructs all 77,763 sampled choices and ordinary returns;
 13,157 transitions have positive advantage under the retained critic. All 272
 inputs/source hashes were verified. Support is dominated by wait/stance changes
-and is sparse for advanced production. This is eligibility evidence, with zero
-optimizer updates or new games; it does not establish gameplay improvement.
-Gradient analysis, a bounded fitting declaration and fresh paired evaluation
-remain required. The unfinished saving probe is deferred with its foundation
+and is sparse for advanced production. The subsequent [bounded bootstrap](superpowers/plans/2026-10-05-self-imitation-bootstrap-results.md)
+completed304 actual Adam updates and passed an independent full reconstruction.
+The mean training-state parent KL is .00019215 and919/77,763 greedy choices
+change; fixed-parent-advantage actor loss improves only slightly. These are
+training-state results, not gameplay improvement. No new games have started;
+the evaluation controller/validator and independent runtime review remain required. The unfinished saving probe is deferred with its foundation
 preserved. Replays stay saved without showing videos until the goal is complete.
 
 The [combined combat and collection experiment](superpowers/plans/2026-10-05-combined-combat-collection-results.md)
