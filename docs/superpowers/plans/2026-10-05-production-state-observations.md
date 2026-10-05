@@ -35,3 +35,13 @@ Progress requires frozen sensory-arm improvement over both unchanged parent and 
 If sensing fails its comparison, defer further exposure/architecture additions and investigate time-normalized bootstrapped advantage estimation with independently validated critic. Do not combine hypotheses.
 
 Resource constraints: no installs/sudo, eight CPUs/nice+10/BLAS1/softwareGL/CPU-only, at most four supervised game workers, wall180/game1200seconds, preserve interruption/failure receipts. No probe has started at predeclaration.
+
+## Verified probe and information ledger
+
+Four observation tests fail before implementation, then pass. First synthetic fixture omitted Command Center protocol data; corrected fixture only and preserved failed output. Archived full85tests pass. Independent reviewer checks generic-remapped creation/order abilities, same executor lab-tag semantics, cached-only reads and spawn patch; no material defect. Six observational games finish with zero failures, immutable0f3weights and frozen sources. Full3183decision traces match baseline after removing only production_state, including snapshot/mask/choice/execution/reward fields, outcomes and exact durations. Independent parity reconstruction passes. `logs/production-state-probe/parity-audit.json`.
+
+Observed coverage:1652townhall/2134Barracks/817Factory queue states,1260unfinishedBarracks/200unfinishedFactory/171unfinishedtownhall states,1511attachedreadyFactoryLab/153BarracksLab states and1672pending-supply states. Starports unexposed. This is logged exposure and consistency, not independent raw-order reconstruction.
+
+Five predictor tests pass for signal/sign-independent fit, class-balanced accuracy, training-only normalization/constant-column removal, whole-game holdout and current-features/next-label alignment. No hyperparameter selection. Information gate passes narrowly: weightedBrier .2375390161673737to.2127471894668375,10.4369493percent reduction;5of6folds improve (one only5.76e-6). Balanced-accuracy gains exceed3points for BarracksIdle3.97,FactoryIdle15.51,FactoryIdleLab14.40 andBarracksIdleLab6.07points; latter onlytwoeligiblefolds.78fold/label exclusions explicitly reported, including absentStarport conditions.
+
+Independent reviewer reconstructs training-only means/scales/columns, saved ridge models/predictions, all exclusions and metrics; maximum normal-equation residual1.73e-11. No held-out normalization leakage or outcome labels. `logs/production-state-probe/information/results.json`. Narrow diagnostic support permits the separately declared matched observation comparison; no playing-strength claim or production default change.
