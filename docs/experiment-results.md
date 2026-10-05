@@ -45,7 +45,11 @@ exactly. Fresh appended-row Adam clocks reduce excess first-update probe KL by
 optimizer minibatches completed with zero new games. This is a learning-dynamics
 result, not improved strength or proof of the later collapse's cause. A separately
 declared [fresh-clock training experiment](superpowers/plans/2026-10-05-production-input-fresh-adam.md)
-will test actual play; no diagnostic weights are promoted.
+is now testing actual play. Its93source tests, optimizer resume checks, six
+disposable smoke games and independent review pass. The firstfouractual Medium
+games reproduce all3898original decision traces and the corrected offline
+network/moment/RNG update exactly. The remaining36training games and30frozen
+cases are pending; no strength result or promotion is established.
 
 The main CLI now contains the tested richer DQN/PPO experiment, not an accepted
 Hard bot. Richer observations encode:

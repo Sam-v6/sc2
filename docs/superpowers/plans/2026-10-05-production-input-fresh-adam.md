@@ -73,4 +73,42 @@ Torch, absolute non-resolved interpreter/Python-B, low_load eightCPUs/nice10,
 BLAS/Torch1thread, at most four total SC2 engines. Sample active host load and
 keep it below the user's40% whole-machine CPU preference. No sudo/downloads.
 
-Status: predeclared; implementation and games have not begun.
+## Implementation and first actual batch
+
+The isolated source passes93tests plus two focused Torch checks. Tests first
+failed for missing metadata/optimizer restoration and then passed; two additional
+corruption tests protect worker context and helper promotion. Independent review
+caught and verified that promotion guard fix. All source files are frozen under
+`logs/ppo-production-fresh-adam/source-manifest.json`; the original freeze is
+retained, and the refreeze changes only the guard and its tests. No repeated
+full-batch optimizer check was needed: updater/inference sources remain unchanged.
+
+The metadata-only migration has hash
+0d878a28e8f84abddef10f068163354c5bcd6fefc03f46b65aeebda04897dc31.
+All numeric arrays and old metadata fields are exact. One64-minibatch real-helper
+check reproduces all18offline-Bnetwork/moment arrays bitwise, updates740 and
+exact RNG. Six disposable train/resume/frozen smoke games complete without
+failures:224decisions per phase, updates680/684/684, final episodes/attempts148,
+birth676 preserved, exposed new-row moments nonzero, frozen bytes unchanged.
+Setup path/import failures and the earlier missing-initial test output are
+preserved separately; they are not successful checks or gameplay evidence.
+
+The actual continuation starts untouched migrated initial bytes. Its firstfour
+Medium cases finish1Victory/3Defeats with zero failures. All3898decision traces
+match the original games byte for byte. The actual promoted checkpoint matches
+the corrected offline update exactly, including all18arrays, counters, RNG and
+the whole checkpoint hash885f7a498dfc40ea4b16dfc9d636aa147eb0e21fb28ce7d622458c64ad66fbcb.
+The first-batch gate therefore passes before the remaining36training games.
+Splitting the command at this gate preserves the original four-game update
+grouping, episode schedule, seed draws and settings.
+
+The active four-engine host sample measures13.248–13.827% whole-machine CPU,
+roughly12.4–12.5% owned CPU; all owned processes use24–31affinity/nice10.
+GPU is13%/21.54W/40C; the learner uses CPU only. Resource receipt:
+`logs/audit/production-fresh-adam-learning-resource-load.json`.
+
+Status: remaining36training games and subsequent30frozen Medium cases are
+running sequentially under the frozen driver. Full recorded-choice/reward/
+checkpoint-chain audit and independent review remain required. No Hard games,
+new strength claim or promotion. Live artifacts and phase ledger are under
+`logs/ppo-production-fresh-adam/`; source/smoke review receipts are in `logs/audit/`.
