@@ -71,6 +71,31 @@ two-game train/resume/frozen sampled checks finished with zero failures (all six
 finite arrays, context/cadence and unchanged experiment inputs were verified.
 Receipt: `logs/audit/near-greedy-small-update-smoke-results.json`.
 
-The bounded Hard40 continuation is now running from the untouched experiment
-initial, not the smoke model. Production source and the retained baseline remain
-unchanged.
+Hard40 completed from the untouched initial with 14 wins/26 losses and zero
+failures, versus original-rate control 10/30. All 22,913 transitions and discounted
+returns passed audit (maximum return error 3.56e-14); schedules match, and only
+the learning-rate source file differs. First four games are byte-identical across
+2,573 decisions; the first actual smaller-rate update reproduces the offline
+result to at most 5.56e-17 with exact RNG. Receipts:
+`logs/audit/near-greedy-small-update-first-batch-parity.json`,
+`logs/audit/near-greedy-small-update-first-update-parity.json`, and
+`logs/audit/near-greedy-small-update-hard-1-results.json`.
+
+The immutable final SHA-256 is
+4186e3c04c26aa181e79da211d66b9f71e84dfda9bf016187dce6fb4d6d54bf9.
+Its two frozen greedy development-bank evaluations are running. Production source
+and the retained baseline remain unchanged; training wins alone do not establish
+improved strength.
+
+The frozen final scored 14 wins/15 losses/one horizon tie on bank20000 and
+12 wins/18 losses on bank40000, with no failures and unchanged checkpoint bytes.
+All 16,778 and 16,937 transitions, returns and greedy choices passed audit;
+maximum return error is 4.45e-14. It failed the required 13 newer-bank wins.
+Do not promote or extend this arm. The baseline remains retained. Receipts:
+`logs/audit/near-greedy-small-update-final-evaluate-hard30-results.json` and
+`logs/audit/near-greedy-small-update-validation-final-greedy-hard30-results.json`.
+
+The smaller update did reduce observed distribution movement: batch KL ranged
+0.0000245–0.00140, clip fraction 0–2.26%, greedy flips 0.19–1.15%. This did not
+establish the required broader improvement. Receipt:
+`logs/audit/near-greedy-small-update-drift.json`.

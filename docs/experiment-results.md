@@ -30,7 +30,8 @@ no silent model conversion is performed.
 | Stronger victory payoff, same kills-only parent | Hard40: 3 wins/34 losses/3 cutoffs; all rewards/returns audited, zero failures | Greedy Hard30: 0 wins/27 losses/3 cutoffs; zero failures, unchanged bytes | Regressed; not promoted |
 | Block direct critic gradients into actor features | 82 tests; Hard40: 2 wins/35 losses/3 cutoffs; reward/return audits passed, zero failures | Greedy Hard30: 4 wins/25 losses/1 cutoff; zero failures, unchanged bytes | Below retained 12/30; not promoted |
 | Near-greedy collection temperature 0.05 | 85 tests; numeric parent state exact, metadata migration only; train/resume/frozen smoke passed; Hard40 10 wins/30 losses, zero failures | Matched sampled Hard30: T1 0 wins/28 losses/2 cutoffs; T0.05 10 wins/20 losses, zero failures | Final greedy 14 wins/16 losses (T5/P3/Z6); sampled 8 wins/22 losses; new-bank parent 13/30 vs candidate 11/30 plus one cutoff; zero failures; not promoted |
-| Smaller near-greedy update | Fixed-batch control reproduced to 2.78e-16; 20x lower learning rate reduced distribution movement; 86 tests pass; train/resume/frozen smoke passed; Hard40 running | No gameplay strength evidence yet | Diagnostic supports one bounded comparison; no promotion |
+| Smaller near-greedy update | Fixed-batch control reproduced to 2.78e-16; 20x lower learning rate reduced distribution movement; 86 tests pass; train/resume/frozen smoke passed; Hard40 14 wins/26 losses, zero failures | Frozen greedy: reused 14 wins/15 losses/1 cutoff; newer 12 wins/18 losses; audits passed | Required newer-bank13 wins missed; not promoted |
+| Eight-game frozen collection batches | Eight-worker smoke passed; Hard40 16 wins/24 losses; reward/return audit passed | Greedy reused bank10 wins/20 losses; newer bank11 wins/19 losses; zero failures, unchanged hashes | Both continuation thresholds missed; not promoted |
 
 The unchanged kills-only continuation produced 18 wins, 14 defeats and 8 cutoffs
 in another 40 Easy games, with zero failures. All 35,931 transitions and every
@@ -53,6 +54,15 @@ Its initial model reproduces all 30 parent gameplay traces exactly. Although
 training exercised all three upgrades, its frozen final policy regressed to
 0/30. Production source and the strongest checkpoint remain unchanged. See
 [infantry experiment evidence](superpowers/plans/2026-10-04-infantry-tech.md).
+
+The retained baseline's60-game behavior audit found Marines in every game and
+Hellions in59, but no Marauders, Reapers, Tanks, Medivacs, Vikings, Battlecruisers
+or Ravens; it never built a Starport. Median first visible enemy was230.36 game
+seconds; median first enemy near home231.43 seconds. Median first observed enemy
+structure was319.29 seconds (54 games had one). These are trajectory observations,
+not proof that a scouting change would improve wins. The neural input does not
+currently include declared opponent race directly. Receipt:
+`logs/audit/retained-information-and-actions.json`.
 
 All counts refer to development, and cutoffs/failures are distinct from losses.
 No reliable all-race Hard model has been accepted. The reserved final bank stays
