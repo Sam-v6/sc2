@@ -1,3 +1,12 @@
+The independent value-network arm passed90 tests, migration/inference parity,
+real optimizer resume and independent review. It trained to15/40 Hard wins;
+immutable greedy checks won10/30 and13/30 on the development banks. It fails
+the joint14/13 gate and is not promoted or extended. Improved critic fit on
+collected states is not improved gameplay. Subsequent work now focuses on
+primitive/affordance, perception and RL-design diagnostics under the user's
+below40% CPU preference. See
+[Independent value network](superpowers/plans/2026-10-04-independent-value-network.md).
+
 Declared requested-race observations passed88 tests, real train/resume/frozen
 checks and independent review. A pre-game SC2 server disconnect made the first
 Hard continuation incomplete; it is retained and excluded. A full repeat from

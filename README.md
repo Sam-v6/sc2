@@ -138,6 +138,18 @@ worker weights and optimizer state never replace the parent. Set `--workers 1` f
 serial collection. A clean interruption stops owned game workers and preserves the
 last promoted checkpoint.
 
+For quieter Linux runs, prefix the command with `python tools/low_load.py`
+and use `--workers 4`. The wrapper restricts this job and its descendants to
+eight allowed logical CPUs, adds nice +10, limits numerical-library threads
+to one, hides CUDA devices, and requests software OpenGL. On this32-thread
+machine the CPU affinity bounds this task to25% of logical CPU capacity,
+leaving headroom for a40% whole-machine target. Other applications remain
+independent; monitor whole-machine load during runs. Example:
+
+```bash
+.venv/bin/python tools/low_load.py .venv/bin/python -B -m src.rl.train --mode evaluate --checkpoint .worktrees/terran-rl/logs/ppo-combat-kills/frozen-easy40.npz --episodes 4 --workers 4 --difficulty Hard --maps Simple64 --builds Air --races Protoss --seed 20013 --macro-seconds 1 --output logs/quiet-hard-check
+```
+
 Each game writes a replay, JSON receipt and JSONL decisions. Receipts identify source
 and map hashes, game build, action RNG seed and behavior checkpoint hash. Failed/timed-out games
 do not promote a candidate checkpoint. Training updates occur in the parent only after successful

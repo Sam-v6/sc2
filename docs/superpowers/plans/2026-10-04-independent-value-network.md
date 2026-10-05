@@ -65,3 +65,33 @@ resume, three frozen), each reaching the120-second cutoff. Resume reached
 Both canonical initial files remain untouched. Receipt:
 `logs/audit/independent-value-smoke-results.json`. The predeclared40-game
 Hard continuation is running from the untouched migrated canonical initial.
+
+The continuation finished15 wins/25 losses, with no failures. All21,928
+transitions and finite returns were checked (maximum error3.20e-14). Initial
+eight actual gameplay traces match the control byte for byte across4,767
+decisions. Final counters:184 episodes/attempts,1032 actor updates,356 critic
+updates; the offset676 is preserved across all five optimizer boundaries.
+Independent review verified source/behavior/frozen hashes, terminal endpoints,
+combat counters and actual critic-fit calculations. Final frozen SHA-256:
+`20d6a73cd52219d3022a20cf747cd398fcc3b71559084f58d9c1a7e7a94f664c`.
+
+Frozen greedy evaluation finished10 wins/20 losses on bank20000 and13 wins/17
+losses on bank40000, without failures or checkpoint changes. All17,536/16,622
+transitions, greedy choices and returns were reconstructed. The joint14/13
+gate fails on the first bank: do not promote or extend this arm. Post-update
+value explained variance ranges0.220–0.405 on collected training states;
+these differing trajectories do not establish held-out accuracy or a causal
+win benefit. Better critic fit did not pass the gameplay gate. Receipts:
+`logs/audit/independent-value-*-results.json`,
+`logs/audit/independent-value-first-eight-parity.json`,
+`logs/audit/independent-value-value-fit.json`.
+
+User steering now prioritizes primitives, sensory information and the overall
+RL approach over additional ungrounded training variants. Future local jobs
+use the quiet profile: at most four concurrent games, eight allowed logical
+CPUs, nice+10, numerical-library threads1, CPU-only learning/software graphics.
+This bounds this task to25% nominal logical CPU capacity on the32-thread host,
+leaving room for the user's below40% whole-machine preference. Monitor live
+load; unrelated applications are independent. The earlier GPU98% load belonged
+to Blender; the user stopped that job. Astra may be consulted for ideas if
+useful evidence stalls and concrete next steps run out; not invoked yet.
