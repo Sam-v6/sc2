@@ -80,6 +80,19 @@ also shows collateral changes from each specified minimum-Euclidean-norm correct
 These results motivate checking geometry-aware directions, without claiming that
 all bounded corrections are impossible or changing the existing stability limits.
 
+The [geometry results](superpowers/plans/2026-10-05-paired-head-geometry-results.md)
+show that all four individual covariance corrections meet those bounds. The joint
+whitened Adam arm still fails its first proposal; a separate direct joint solve
+learns all nine paired preferences but exceeds the 5% disagreement bound at 6.409%.
+Neither passes its original mechanism gate or is promoted. A separately disclosed
+post-failure [protocol amendment](superpowers/plans/2026-10-05-joint-head-amended-evaluation.md)
+tests the unchanged joint candidate on the untouched 12-case Medium bank, removing
+the unvalidated disagreement veto. Its 24 matched games are
+[closed with failure](superpowers/plans/2026-10-05-joint-head-amended-results.md):
+parent 7/12 wins versus candidate 6/12, lower mean return and all three gameplay
+gates failed. All 15,313 decisions pass complete independent audit. No extension
+or promotion. The stronger parent remains retained; reliable Hard strength is unmet.
+
 The main CLI now contains the tested richer DQN/PPO experiment, not an accepted
 Hard bot. Richer observations encode:
 unit identities and an 8x8 grid of observed positions, health, weapons, flying,
