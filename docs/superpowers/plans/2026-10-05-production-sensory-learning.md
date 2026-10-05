@@ -47,3 +47,12 @@ Control has16of40 completed training receipts at this update, zero infrastructur
 Independent audit review found two evidence holes, not observed runtime failures: checkpoint identity lacked initial/prior-promoted links and batch sample/update counts were lower bounds. Six additional regressions fail before helper implementation, then ten total audit tests pass. Helpers now require exact transitionsum, epochs*ceil(samples/batch_size) optimizer increments, consistent batch metrics, declared initial-to-promoted-to-next behavior, and intended parent/final evaluation hashes/updates. Reviewer independently confirms all ten tests and first real batch0f3toea531updates676to740. No material remaining defect found in these fixes; full-phase audit still pending.
 
 Completed control prefix28games/24014states, seven batches; chained behavior hashes and exact optimizer increments verify through1064updates, zero recorded failures. logs/audit/production-sensory-prefix-chain-audit.json. This prefix supplies collection/accounting evidence only; no matched strength result. Live experiment handle64350 remains running.
+
+
+## Completed control training phase
+
+Control40 finishes4Victory/29Defeat/7Tie, zero failures. Full training-phase audit and independent read-only reconstruction pass35727sampled decisions, source/case/checkpoint history, exact transition totals and optimizer increments, all reward/terminal components and discounted telescoping. Episodes/attempts184, updates1252; mean discounted training return.11506899874374181. logs/ppo-production-control/partial-learning-audit.json. File remains explicitly partial because frozen evaluations are pending.
+
+Logged control production exposure includes17719townhall/19987Barracks/5397Factory/213Starport queue states and13461pending-supply states. Starport now has actual training exposure; the original held-out information diagnostic still supplied no Starport-specific predictive validation. Observed maximum45Marines/6Marauders/2Tanks/5Medivacs is a snapshot maximum, not cumulative completed production.
+
+Sequential driver advances to sensory-train40, live handle64350. Comparator is independently checked: both full nonpartial audits, allfivephases, exact30case matched bank and original3win/return gates required. No matched strength verdict until all frozen evaluations and full audits finish.
