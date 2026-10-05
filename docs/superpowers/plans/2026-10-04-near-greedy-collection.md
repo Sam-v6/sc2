@@ -99,3 +99,11 @@ on this new bank. Ties or modest counts are not statistical improvement. The
 unchanged reliable Hard target must still be satisfied before acceptance.
 This is collection evidence on reused cases, not improved learned strength or
 acceptance. Main production source and retained models remain unchanged.
+
+The new development-bank comparison completed without failures. Parent scored
+13 wins/17 losses; candidate scored 11 wins/18 losses/one horizon tie. The
+candidate failed the predeclared requirement to at least match the parent. Do
+not promote or continue this trained final. Keep the original Easy40 baseline;
+the 14/30 reused-bank result did not carry over. Validation audited all greedy decisions and reward components, unchanged hashes,
+matching case/policy seeds and exact expected source differences. Receipt:
+`logs/audit/near-greedy-validation-results.json`.
