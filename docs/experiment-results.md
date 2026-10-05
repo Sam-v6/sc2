@@ -27,16 +27,20 @@ builds/maps, using a fresh seed bank after development choices are finished.
 
 ## Current development status
 
-The current isolated experiment tests own production queues, progress, attached labs,
-and pending supply as 35 additional live inputs. Its six-game instrumentation probe
-preserved all 3,183 decisions exactly; a fixed held-out next-state predictor improved
-weighted Brier error by 10.4%, narrowly passing the declared information gate.
-That supports testing the inputs, not a playing-strength claim. The matched Medium
-learning comparison is running. Control training completed 4 wins, 29 losses and
-7 time-limit ties; sensory training completed 3 wins, 33 losses and 4 ties, both
-without failures. All 69,767 training decisions passed independent audits. The
-unchanged parent won 22/30 fresh Medium evaluation games; trained control and
-sensory evaluations remain pending. The main CLI and retained model are unchanged. See the [matched production-input experiment](superpowers/plans/2026-10-05-production-sensory-learning.md).
+The isolated production-input experiment is closed without promotion. Appending
+35 live production inputs preserved initial behavior and narrowly improved a fixed
+held-out next-state predictor, but regressed actual play. Both matched 40-game
+Medium training arms and all 90 frozen evaluation games completed without failures;
+full audits and independent review passed. Frozen wins were 22/30 for the unchanged
+parent, 21/30 for the trained old-input control, and 6/30 for the trained sensory
+agent. All declared win/return gates failed. The retained model and main CLI stay
+unchanged. The next diagnostic will examine fresh-input optimizer age and shared
+critic gradients offline before more game training. See the
+[closed production-input experiment](superpowers/plans/2026-10-05-production-sensory-learning.md).
+Matched Zerg Macro replay videos show the original victory and a sensory defeat
+with no army production, under `logs/replay-proof/`. The next
+[offline update replay](superpowers/plans/2026-10-05-production-input-update-replay.md)
+will isolate new-row optimizer age and critic gradients; no new games are declared.
 
 The main CLI now contains the tested richer DQN/PPO experiment, not an accepted
 Hard bot. Richer observations encode:

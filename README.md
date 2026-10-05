@@ -76,10 +76,10 @@ The scripted-bot examples do not establish learned strength. The retained richer
 including all three races. Reliable Hard strength remains unmet; see
 [experiment results](docs/experiment-results.md).
 
-The current isolated comparison tests 35 additional own-production inputs against
-matched old-input training and the unchanged parent. Initial behavior and real
-train/resume/replay checks pass; frozen playing-strength results are pending.
-See the [production-input experiment ledger](docs/superpowers/plans/2026-10-05-production-sensory-learning.md).
+The isolated production-input comparison completed with verified training and replay
+checks, but regressed frozen Medium wins: parent 22/30, control 21/30, sensory 6/30.
+It is closed without promotion. See the
+[production-input experiment ledger](docs/superpowers/plans/2026-10-05-production-sensory-learning.md).
 
 ## Terran learning experiment
 
