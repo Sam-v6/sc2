@@ -63,6 +63,15 @@ completed temporal-trace and batch-centering checks without new games or optimiz
 steps. All four predeclared mechanism gates failed; independent review passed.
 These diagnostics rule out the tested simple fixes and do not establish a playing fix.
 
+The [one-decision exploration pilot](superpowers/plans/2026-10-05-one-decision-exploration.md)
+completed 17 games with a verified, unchanged greedy parent: eight parent cases
+and nine single-action alternatives. Three branches changed defeat to victory,
+spanning Terran and Protoss; another changed victory to defeat. Four distinct
+cases improve return without losing a parent victory. Full 9,390-decision audit
+and independent review pass. This meets the discovery gate for a separately
+bounded state-conditioned fit, not a strength gate. No new learned policy or
+promotion exists yet; the retained Hard model remains unchanged.
+
 The main CLI now contains the tested richer DQN/PPO experiment, not an accepted
 Hard bot. Richer observations encode:
 unit identities and an 8x8 grid of observed positions, health, weapons, flying,

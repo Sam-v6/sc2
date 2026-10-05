@@ -68,19 +68,19 @@ execution. No pilot result establishes reliable Hard strength or promotion.
 
 ## Implementation checks and limits
 
-- [ ] Freeze an isolated copy of current main runtime and diagnostic driver.
+- [x] Freeze an isolated copy of current main runtime and diagnostic driver.
 - [x] Test exactly-one override, legal-action enforcement, identical intervention
   state/mask, unchanged greedy continuation, and unavailable-case handling.
-- [ ] Confirm the seed bank is unused, freeze cases/RNG rule/input/source hashes,
+- [x] Confirm the seed bank is unused, freeze cases/RNG rule/input/source hashes,
   then run and audit the bounded pilot.
-- [ ] Independently review gate results before any conditional fit.
+- [x] Independently review gate results before any conditional fit.
 
 Artifacts go under ignored `logs/one-decision-exploration/`. At most four total
 SC2 engines, existing low_load eight-CPU affinity/nice10, CPU learner, single
 BLAS thread, no sudo/downloads. Sample active total host CPU against the user's
 below-40% preference. Main policy remains unchanged throughout the pilot.
 
-## Core preflight
+## Initial core preflight
 
 The isolated `source/intervention.py` implements outcome-independent selection
 and a policy wrapper that asserts the recorded prefix, injects one different legal
@@ -93,3 +93,57 @@ Independent core review passes and reproduces selection for all eight seeds.
 `logs/audit/one-decision-core-review.json` identifies the remaining runtime checks:
 override firing and execution, raw-prefix equality, no rollout/checkpoint writes,
 and preserved failures within the declared game/concurrency budget.
+
+## Completed pilot: discovery gate passed
+
+The frozen runtime, driver and audit pass 13 focused tests and independent review.
+Review found and verified fixes for interruption receipt retention and truncated
+selection coverage before any games. The 40-file input/source freeze is recorded
+in `logs/one-decision-exploration/inputs.json`.
+
+All eight parent games and nine selected branches completed without failures;
+states with only one alternative required fewer than the maximum 24 games.
+Parents won four and lost four. The full audit verifies all 9,390 decisions,
+greedy choices except the one injection, exact raw prefixes, reward components,
+finite return telescoping, replays and immutable parent/source hashes.
+Independent review confirms all checks and both discovery gates.
+
+| Seed | Injected alternative | Parent → branch | Return difference |
+| --- | --- | --- | ---: |
+| 92000 | wait instead of SCV | Defeat → Victory | +.594201 |
+| 92001 | wait instead of retreat | Defeat → Defeat | +.027025 |
+| 92002 | Engineering Bay instead of wait | Victory → Victory | -.005007 |
+| 92003 | attack instead of wait | Defeat → Victory | +.736167 |
+| 92004 | Engineering Bay instead of retreat | Victory → Victory | -.025755 |
+| 92004 | wait instead of retreat | Victory → Victory | -.000400 |
+| 92005 | wait instead of retreat | Victory → Victory | -.031030 |
+| 92006 | Engineering Bay instead of wait | Victory → Defeat | -.574205 |
+| 92007 | wait instead of refinery | Defeat → Victory | +.586318 |
+
+Four distinct cases improve return without losing a parent victory, including
+three loss-to-win transitions spanning Terran and Protoss. The harmful 92006 branch
+is retained and excluded from the improvement count. These are reward discoveries
+under a competent continuation, not a generally improved policy or a prescribed
+worker/build/attack rule. Conditional policy fitting still requires its own
+reviewed objective, behavior bounds and fresh matched evaluation.
+
+Active host samples measured 11.027–13.723% total CPU, owned roughly 9.3–12.4%.
+All owned processes used CPUs 24–31/nice10. GPU measured 13%/19.82W/40C; this
+pilot performs no GPU learning. Evidence: `logs/audit/one-decision-resource-load.json`.
+
+Complete evidence: `logs/one-decision-exploration/{summary,ledger,selections,pairs,audit}.json`
+and `logs/audit/one-decision-complete-independent-review.json`. No model fitting,
+PPO rollout collection, optimizer updates or checkpoint writes occurred.
+
+The 92003 attack branch's actual winning replay exports to
+`logs/replay-proof/one-decision-terran-macro-win.mp4`: 460 H264 frames at 960x720,
+4fps, 115 video seconds, full 450.71 game seconds, no frame cap. ffprobe and an
+85-second still verify rendered game content. Overview is omniscient for viewing;
+the policy still uses fog-limited observations. The initial incorrect map-directory
+path fails before rendering and is preserved separately; the successful export
+uses the manifest's installed Ladder2019Season3/TritonLE map.
+
+The [conditional head-fit plan](2026-10-05-paired-head-policy-improvement.md) now
+fixes the learned objective, fresh optimizer, behavior-change limits, frozen-only
+artifact contract and separate matched game gate. Independent design review passes;
+implementation and actual fitting remain the next work.
