@@ -1050,6 +1050,15 @@ wheels = [
 ]
 
 [[package]]
+name = "s2protocol"
+version = "5.0.16.97563.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mpyq" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/59/97/12dfd27d2061fd2e2815d01dc9c1260ae59aa59df716952dd8ddfedbf641/s2protocol-5.0.16.97563.0.tar.gz", hash = "sha256:f921df9994a2352feb2b3b60e51eb63b2d17a26c9efeb583299da10fe3040d78", size = 76667 }
+
+[[package]]
 name = "sc2-void-bot"
 version = "0.1.0"
 source = { virtual = "." }
@@ -1066,6 +1075,7 @@ dependencies = [
     { name = "pyarrow" },
     { name = "pyyaml" },
     { name = "s2clientprotocol" },
+    { name = "s2protocol" },
 ]
 
 [package.metadata]
@@ -1082,6 +1092,7 @@ requires-dist = [
     { name = "pyarrow", specifier = "==21.0.0" },
     { name = "pyyaml", specifier = "==6.0.2" },
     { name = "s2clientprotocol", specifier = "==5.0.14.93333.0" },
+    { name = "s2protocol", specifier = "==5.0.16.97563.0" },
 ]
 
 [[package]]

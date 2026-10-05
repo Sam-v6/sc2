@@ -17,4 +17,5 @@ dependencies = [
     "pyarrow==21.0.0",
     "pyyaml==6.0.2",
     "s2clientprotocol==5.0.14.93333.0",
+    "s2protocol==5.0.16.97563.0",
 ]

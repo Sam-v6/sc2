@@ -1,0 +1,89 @@
+"""Shared command decisions with learned unit groups, spatial arguments and timing."""
+
+import numpy as np
+from collections import Counter
+from src.learning.imitation import unit_features, action_labels
+
+
+def coordinate_signs(state, origin):
+    return np.where(np.asarray(origin) > np.asarray(state["map_size"]) / 2.0, -1.0, 1.0)
+
+
+def global_features(state, unit_types, abilities, canonical=False):
+    own = [u for u in state["units"] if u["alliance"] == 1]
+    bases = [u for u in own if u["unit_type"] in (18, 36, 130, 132, 134)]
+    origin = (
+        np.asarray(min(bases or own, key=lambda u: u["tag"])["position"][:2])
+        if own
+        else np.zeros(2)
+    )
+    proxy = {
+        "tag": 0,
+        "unit_type": 0,
+        "position": [*origin, 0.0],
+        "health": 0.0,
+        "health_max": 1.0,
+    }
+    lookup = {kind: index for index, kind in enumerate(unit_types)}
+    enemies = np.zeros(len(unit_types), dtype=np.float32)
+    for unit in state["units"]:
+        if unit["alliance"] == 4 and unit["unit_type"] in lookup:
+            enemies[lookup[unit["unit_type"]]] += 0.05
+    history = np.zeros(abilities * 2, dtype=np.float32)
+    for index, command in enumerate(reversed(state.get("recent_commands", [])[-2:])):
+        if command["ability"] < abilities:
+            history[index * abilities + command["ability"]] = 1.0
+    entity = unit_features(state, proxy, unit_types)
+    if canonical:
+        entity[7:9] = 0.0
+        entity[19:21] *= coordinate_signs(state, origin)
+    return np.concatenate((entity, enemies, history)), origin
+
+
+def global_labels(command, state, unit_types, origin, delay, canonical=False):
+    known = {
+        u["tag"]: u
+        for u in state["units"] + state.get("owned_memory", [])
+        if u["alliance"] == 1
+    }
+    actors = [known[tag] for tag in command["units"] if tag in known]
+    if len(actors) != len(command["units"]):
+        raise ValueError("Unresolved own actor in global demonstration")
+    labels, point = action_labels(
+        command, state, {"position": origin}, unit_types, delay
+    )
+    dominant = Counter(u["unit_type"] for u in actors).most_common(1)[0][0]
+    labels["actor_type"] = (
+        unit_types.index(dominant) + 1 if dominant in unit_types else 0
+    )
+    actor_position = np.asarray([u["position"][:2] for u in actors]).mean(axis=0)
+    points = np.concatenate(
+        (point, (actor_position - origin) / 128.0, [np.log1p(len(actors)) / 3.0])
+    )
+    if canonical:
+        signs = coordinate_signs(state, origin)
+        points[:2] *= signs
+        points[2:4] *= signs
+    return labels, points.astype(np.float32)
+
+
+def select_group(state, output, available, ability, unit_types, origin):
+    actors = [
+        u
+        for u in state["units"] + state.get("owned_memory", [])
+        if u["alliance"] == 1 and ability in available.get(u["tag"], set())
+    ]
+    if not actors:
+        return []
+    lookup = {kind: index + 1 for index, kind in enumerate(unit_types)}
+    location = np.asarray(origin) + 128 * output["point"][0, 2:4]
+
+    def score(unit):
+        return (
+            output["actor_type"][0, lookup.get(unit["unit_type"], 0)]
+            - 5 * np.linalg.norm(np.asarray(unit["position"][:2]) - location) / 128.0
+        )
+
+    log_count = np.clip(output["point"][0, 4] * 3.0, 0.0, np.log1p(len(actors)))
+    count = max(1, int(round(np.expm1(log_count))))
+    return sorted(actors, key=score, reverse=True)[:count]

@@ -1,8 +1,9 @@
 # Terran learning roadmap: human examples, learned micro, then reinforcement learning
 
-Agreed direction recorded October 5, 2026. This is a general plan for future agents,
-not an instruction to start training. **Execution remains paused** until the user
-resumes it. The original goal remains reliable wins against computer opponents of
+Agreed direction recorded October 5, 2026. **Execution is active:** the user
+subsequently instructed the agent to complete this roadmap. Current implementation
+and experiment evidence are recorded in [the execution ledger](learning-execution.md).
+The original goal remains reliable wins against computer opponents of
 all races and strategies, starting with Hard and progressing to higher difficulties.
 Bot-ladder competition is a later goal.
 
@@ -305,7 +306,7 @@ bounded experiment. Distinguish implemented, tested and merely proposed work.
 
 ### User constraints that persist
 
-- Training is currently paused. This document does not resume it.
+- The user resumed execution with “your new goal is to complete this roadmap.”
 - When resumed, the latest CPU ceiling is approximately 80% of total machine
   capacity; monitor actual utilization rather than assuming worker count enforces it.
 - The GPU task was stopped; do not restart GPU training without renewed direction.

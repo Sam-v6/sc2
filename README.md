@@ -6,7 +6,8 @@ its observation/action representation is not the project's final design.
 
 **Future learning direction:** [Terran learning roadmap](docs/learning-roadmap.md)
 — broad gameplay controls, professional replay imitation, learned micro and RL.
-Training remains paused; the roadmap is not an instruction to launch jobs.
+The user has resumed roadmap execution. See the [execution ledger](docs/learning-execution.md)
+for implemented controls, replay feasibility, learning experiments and remaining gates.
 
 ## Setup
 
