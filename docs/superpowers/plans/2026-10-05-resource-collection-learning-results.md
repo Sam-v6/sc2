@@ -106,4 +106,27 @@ That actual victory was replayed on Linux and exported to
 frame cutoff. Export took 75.65 seconds. ffprobe and a decoded frame verify the
 H.264 video and real SC2 terrain, buildings, units and combat. This is one
 illustrative retained-policy win, not evidence that the rejected candidate won.
+
+## Bounded follow-up diagnostic
+
+The user suggested intermediate unit/building kill rewards. The next question
+is whether those combat rewards and economic learning can coexist in the shared
+actor. A training-only, zero-update check compared the first economic batch with
+one eligible original-parent Medium combat batch, selected lexicographically by
+provenance before computing gradients. Neither evaluation bank supplied labels.
+
+Both actors and stored likelihoods matched the original parent exactly. With
+task-local advantage normalization and one fixed 50/50 actor direction, the
+local economic surrogate derivative was +0.002931799 and the combat derivative
+was +0.000660563. Independent read-only reproduction matched every saved value
+and verified all 19 input hashes. The shared body's combat derivative was only
++0.000003121, so compatibility there is fragile. There were no optimizer steps,
+new games, fitted weights or mixture searches.
+
+This supports testing one separately declared mixed-task learner while retaining
+kill feedback. It establishes no Adam-update behavior, repeated-update stability,
+gameplay improvement or Hard transfer. The diagnostic and its source/selection
+are under `logs/resource-collection-curriculum/mixed-gradient-diagnostic/`; the
+independent receipt is
+`logs/audit/resource-collection-mixed-gradient-independent-review.json`.
 The production parent and main CLI have not been promoted to this task model.
