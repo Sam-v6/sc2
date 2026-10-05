@@ -39,8 +39,12 @@ and is sparse for advanced production. The subsequent [bounded bootstrap](superp
 completed304 actual Adam updates and passed an independent full reconstruction.
 The mean training-state parent KL is .00019215 and919/77,763 greedy choices
 change; fixed-parent-advantage actor loss improves only slightly. These are
-training-state results, not gameplay improvement. No new games have started;
-the evaluation controller/validator and independent runtime review remain required. The unfinished saving probe is deferred with its foundation
+training-state results, not gameplay improvement. The reviewed 36-game comparison
+then completed: Hard candidate5/12 versus parent6/12; sampled Easy candidate0/6
+versus parent1/6. The bootstrap fails its gate and is not promoted. A separate
+[recurrent-memory prototype](superpowers/plans/2026-10-05-recurrent-memory.md)
+passes four inference checks; sequence PPO and native recurrent training remain
+unfinished. The unfinished saving probe is deferred with its foundation
 preserved. Replays stay saved without showing videos until the goal is complete.
 
 The [combined combat and collection experiment](superpowers/plans/2026-10-05-combined-combat-collection-results.md)

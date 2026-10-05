@@ -1,7 +1,8 @@
 # Self imitation bootstrap implementation and fit
 
-The one declared offline fit is complete and independently reproduced. No fresh
-SC2 games have started; neither stronger gameplay nor promotion is established.
+The one declared offline fit is complete and independently reproduced. The declared
+36-game comparison also completed and failed its development gate; the candidate
+is not promoted.
 The [fit protocol](2026-10-05-self-imitation-bootstrap.md) remains unchanged.
 
 ## Verified inputs and gradients
@@ -46,20 +47,37 @@ are under `logs/self-imitation/`; independent fit review is
 `logs/audit/self-imitation-fit-complete-independent-review.json` with 314 unique bound
 files, including the independently authored audit source.
 
-## Next required verification
+## Completed native comparison
 
-A read-only evaluation-worker foundation passes two tests for ordinary reward/
-journal/terminal preservation and restoration after failure. Its real unique
-spawn import probe completed in .628 seconds with zero games. The evaluation
-source is unfinished/unfrozen: controller, case/input freeze, game validator and
-independent runtime review remain necessary before the declared maximum 36 games
-(12 paired Hard greedy cases plus 6 paired Easy sampled cases) can launch.
+The fixed 18 paired cases completed with 36 saved native replays, no replacement
+or refitting. There were 33 terminal outcomes and three game-limit ties; no wall
+timeout or worker error. All action choices, ordinary reward transitions,
+chronological journals and replay headers passed the runtime validator.
 
-A receipt scan across the three artifact roots found no earlier uses of the
-proposed 117000–117011/118000–118005 cases; preparation must recheck all relevant
-case keys/artifacts before launch. The reserved 50000–50029 bank is untouched.
-Training-state retention and loss evidence do not establish Hard performance.
-CPU-only,one numerical thread, nice 10/eight-CPU affinity were used for offline work;
-whole-machine baseline before fit was 1.3787%. A .9393% observation was taken
-AFTER fit, and is explicitly not a measurement of fit utilization. Preserve raw
-replays without showing videos until the full user goal is complete.
+| Panel | Retained parent | SIL candidate | Mean candidate return gain |
+| --- | --- | --- | --- |
+| Hard greedy, 12 per policy | 6 wins, 6 losses | 5 wins, 7 losses | -.0721363 |
+| Easy sampled, 6 per policy | 1 win, 4 losses, 1 tie | 0 wins, 4 losses, 2 ties | -.0744050 |
+
+Hard lost parent wins:117000,117003,117005; gained wins:117007,117009.
+Hard per-race return gains T/P/Z: -.1998026/+.1461239/-.1627302.
+The sampled Easy candidate loses the parent's only win. These results fail the
+predeclared Hard improvement and Easy retention conditions. This bootstrap is
+closed without promotion or extending its fit. It does not refute every SIL
+variant, and the small panel is not final Hard acceptance evidence.
+
+The comparison inputs SHA256 is
+`e5c6c10e0660d30f72c69e8cd7026bcd94b3e1d0751a6e0e9ac17da94e3273f9`.
+Evidence is under `logs/self-imitation/game-comparison/`. Independent final
+review passed for all23,966 raw choices, reward transitions, chronological
+journals, native headers and frozen source/model/input bindings. Receipt:
+`logs/audit/self-imitation-evaluation-complete-independent-review.json`. Its
+evidence-validity pass is distinct from the failed gameplay gate. Model/source/fit inputs remain immutable.
+CPU observations:294 two-second whole-machine samples, mean23.30%,peak64.59%,
+below the user's80% guard. Four engines maximum,CPU-only/nice10/eight-CPU affinity.
+The reserved50000–50029 acceptance bank remains untouched. No videos were shown.
+
+The next literature-informed method is a small recurrent core, described in
+[the memory plan](2026-10-05-recurrent-memory.md). Its four inference checks pass,
+but recurrent training and gameplay evidence are not yet available. Reliable
+all-race Hard performance remains unmet.
