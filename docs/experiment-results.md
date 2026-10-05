@@ -71,6 +71,14 @@ cases improve return without losing a parent victory. Full 9,390-decision audit
 and independent review pass. This meets the discovery gate for a separately
 bounded state-conditioned fit, not a strength gate. No new learned policy or
 promotion exists yet; the retained Hard model remains unchanged.
+The [conditional head fit](superpowers/plans/2026-10-05-paired-head-policy-improvement.md)
+is now closed: its second proposal exceeds the 5% parent-bank disagreement bound,
+and its retained first proposal changes none of the beneficial intervention choices.
+Independent review verifies the failed mechanism gate; no conditional games run.
+The [locality audit](superpowers/plans/2026-10-05-paired-head-locality-audit.md)
+also shows collateral changes from each specified minimum-Euclidean-norm correction.
+These results motivate checking geometry-aware directions, without claiming that
+all bounded corrections are impossible or changing the existing stability limits.
 
 The main CLI now contains the tested richer DQN/PPO experiment, not an accepted
 Hard bot. Richer observations encode:

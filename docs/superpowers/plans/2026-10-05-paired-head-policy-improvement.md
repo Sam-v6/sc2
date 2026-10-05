@@ -40,8 +40,7 @@ intervention preferences. This is one bounded improvement attempt, not a sweep.
 
 Before games, require at least two distinct positive-return case seeds to choose
 their empirically better alternative greedily over the full original legal mask,
-with both anchor
-bounds met and all non-head arrays byte-identical. Otherwise close without game
+with both anchor bounds met and all non-head arrays byte-identical. Otherwise close without game
 evaluation. This is an implementation/mechanism gate, not a strength result.
 
 The artifact contains only fitted head arrays and explicit parent/source/schema
@@ -67,12 +66,12 @@ Hard final cases remain unused.
 
 ## Implementation and review checks
 
-- [ ] Freeze source/input manifests; prepare paired states, parent hidden bank,
+- [x] Freeze source/input manifests; prepare paired states, parent hidden bank,
   masks and reward weights using the current project encoder.
-- [ ] Test head-loss gradients against finite differences, zero-weight handling,
+- [x] Test head-loss gradients against finite differences, zero-weight handling,
   anchor-bound rollback, immutable body/critic arrays, and frozen-only artifact
   schema/hash rejection.
-- [ ] Run the one bounded fit on CPU; independently review numerical results and
+- [x] Run the one bounded fit on CPU; independently review numerical results and
   mechanism gate before any games.
 - [ ] Run and audit the declared matched games only if eligible, retaining all
   failures and respecting interruption receipt retention and complete coverage.
@@ -89,4 +88,34 @@ proposal budget accounting, and fresh evaluation cases frozen before fitting.
 `logs/audit/paired-head-design-review.json` records the review. The 94000–94011
 bank was not found in prior scanned audit/input manifests; search scope is recorded
 in `logs/paired-head-policy-improvement/seed-bank-check.json`.
-Fitting, frozen artifact implementation and evaluation have not run yet.
+At design preflight, fitting, frozen artifact implementation and evaluation had
+not run yet; completed results follow.
+
+## Completed fit: mechanism gate failed
+
+The isolated implementation passes six tests covering gradients, zero-weight
+pairs, rollback, deterministic fresh Adam, body/critic/moment preservation and
+frozen-artifact rejection. Independent implementation review finds no blocker.
+All nine pairs and 3,183 cached parent states are prepared using the verified
+project encoder; all 12 future cases are frozen before fitting. The manifest
+contains 75 checked hashes.
+
+The one fit makes two proposals and accepts only the first. Proposal two changes
+7.4144% of anchor greedy decisions, exceeding the 5% bound, so it stops and retains
+proposal one. Retained mean KL is .000507384 and disagreement 3.7072%; pair loss
+falls from .849191 to .787737. No positive-return case chooses its empirically
+better alternative under the full legal mask. The mechanism gate therefore fails.
+This arm closes without any of its 24 conditional games, extension or promotion.
+The reserved evaluation cases remain unplayed.
+
+Independent review verifies all input hashes, reconstructed caches, exact retained
+arrays against the first fresh-Adam proposal, rejected proposal metrics, full-mask
+preferences, parent immutability and artifact provenance. Head SHA256:
+6ac0af9e3ff7e48451c9d1dc804f770ca1d99159b3f43c367f92bad6df407063.
+This failed frozen artifact is not a PPO checkpoint or a gameplay candidate.
+
+Evidence: `logs/paired-head-policy-improvement/{inputs,fit-results}.json`,
+`tests-green.stdout`, and `logs/audit/paired-head-fit-independent-review.json`.
+Only two real fit proposals occurred; there was no fit rerun. Subsequent work is
+the [zero-step locality audit](2026-10-05-paired-head-locality-audit.md), rather than
+relaxing this arm's bounds or retuning its settings after results.
