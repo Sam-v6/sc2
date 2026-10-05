@@ -27,15 +27,16 @@ builds/maps, using a fresh seed bank after development choices are finished.
 
 ## Current development status
 
-The [combined combat and collection experiment](superpowers/plans/2026-10-05-combined-combat-collection.md)
-is running a fixed 64-game Medium training bank. It retains per-step enemy unit
-and building destruction rewards and adds smaller authoritative harvesting
-increments, with a separate checkpoint context and reset critic/optimizer.
-Implementation, actual worker spawning, optimizer resume and replay evidence
-checks passed independent review before the frozen launch. No strength result
-is established yet. The final policy must pass independent training review and
-24 paired ordinary-scoring Hard games before reserved acceptance can run.
-The retained production model remains unchanged.
+The [combined combat and collection experiment](superpowers/plans/2026-10-05-combined-combat-collection-results.md)
+is closed without promotion. All 64 Medium training games and 24 paired Hard
+games completed with independent full-data reviews. Training had 1 win, 55 losses
+and 8 ties; ordinary-scoring Hard evaluation had parent 4/12 wins and candidate
+0/12, with lower mean return and lost parent victories across all races. Actual
+intermediate kill feedback and smaller harvesting rewards did not preserve
+strength in this test. A full Linux MP4 of training victory 114024 is under
+`logs/replay-proof/`. The retained model and reserved final bank stay unchanged.
+A longer resource-saving option probe is advisory only; the earlier five-second
+unit-intent experiment already failed and remains closed.
 
 The [resource collection curriculum](superpowers/plans/2026-10-05-resource-collection-learning-results.md)
 completed 32 training games and passed independent review. Its frozen eight-case
