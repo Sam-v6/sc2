@@ -56,3 +56,10 @@ Control40 finishes4Victory/29Defeat/7Tie, zero failures. Full training-phase aud
 Logged control production exposure includes17719townhall/19987Barracks/5397Factory/213Starport queue states and13461pending-supply states. Starport now has actual training exposure; the original held-out information diagnostic still supplied no Starport-specific predictive validation. Observed maximum45Marines/6Marauders/2Tanks/5Medivacs is a snapshot maximum, not cumulative completed production.
 
 Sequential driver advances to sensory-train40, live handle64350. Comparator is independently checked: both full nonpartial audits, allfivephases, exact30case matched bank and original3win/return gates required. No matched strength verdict until all frozen evaluations and full audits finish.
+
+
+## Actual starting-behavior parity and sensory update path
+
+First four sensory training games exactly match corresponding control games88144–88147: same policy seeds, outcomes, durations, rewards, and byte-identical full action/snapshot/mask/execution/component traces across3898decisions. logs/audit/production-sensory-firstbatch-parity.json. Scope is the original-behavior batch before updates; subsequent learning is expected to diverge.
+
+Frozen sensory behavior checkpoint after first update af0804593085a06182fdc481f35d6d94ae93990ddaa2c3c48e3fcf9dfca051f0 has148episodes/attempts and740updates.24of35 appended input rows acquire nonzero weights, with finite nonzero Adam moments/variances, weightL2.6633706529635178. The other11rows were unexposed in this batch. logs/audit/production-sensory-first-update-inputs.json. This verifies that added inputs reach the optimizer; no strength claim. Sensory phase remains live; full evaluation/audits pending.
