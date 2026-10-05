@@ -76,6 +76,11 @@ The scripted-bot examples do not establish learned strength. The retained richer
 including all three races. Reliable Hard strength remains unmet; see
 [experiment results](docs/experiment-results.md).
 
+The current isolated comparison tests 35 additional own-production inputs against
+matched old-input training and the unchanged parent. Initial behavior and real
+train/resume/replay checks pass; frozen playing-strength results are pending.
+See the [production-input experiment ledger](docs/superpowers/plans/2026-10-05-production-sensory-learning.md).
+
 ## Terran learning experiment
 
 The NumPy game policy consumes live economy, production, army, and observed-enemy features. Enemy input comes

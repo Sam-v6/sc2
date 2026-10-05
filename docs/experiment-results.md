@@ -27,6 +27,16 @@ builds/maps, using a fresh seed bank after development choices are finished.
 
 ## Current development status
 
+The current isolated experiment tests own production queues, progress, attached labs,
+and pending supply as 35 additional live inputs. Its six-game instrumentation probe
+preserved all 3,183 decisions exactly; a fixed held-out next-state predictor improved
+weighted Brier error by 10.4%, narrowly passing the declared information gate.
+That supports testing the inputs, not a playing-strength claim. The matched Medium
+learning comparison is running: control training completed 4 wins, 29 losses and
+7 time-limit ties, with all 35,727 decisions independently audited. Sensory training
+and three frozen 30-game evaluations remain pending. The main CLI and retained
+model are unchanged. See the [matched production-input experiment](superpowers/plans/2026-10-05-production-sensory-learning.md).
+
 The main CLI now contains the tested richer DQN/PPO experiment, not an accepted
 Hard bot. Richer observations encode:
 unit identities and an 8x8 grid of observed positions, health, weapons, flying,
