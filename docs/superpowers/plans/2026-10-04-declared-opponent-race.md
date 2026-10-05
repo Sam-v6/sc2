@@ -63,3 +63,26 @@ receipts and updated canonical checkpoint. Repeat the entire40-game schedule
 from exact untouched initial bytes in `policy-retry1.npz`, output `hard-retry1`;
 no selective replacement or policy/source/settings change. Audit receipt:
 `logs/audit/declared-race-infrastructure-failure.json`.
+
+The complete repeat finished15 wins/25 losses without failures, with22,263
+transitions/returns checked (maximum return error3.02e-14). All4,767 actual
+first-batch decisions, seeds, durations and outcomes match the eight-worker
+control after removing only the three new snapshot keys. Independent review
+reproduced that match and verified source/checkpoint provenance and terminal
+endpoints. The final frozen SHA-256 is
+`0c3ac6ba117e58515786af689b30c2021d4c57699fb2ab2a22e606d278f2582b`.
+
+Frozen greedy evaluation finished11 wins/18 losses/1 cutoff on bank20000 and
+14 wins/16 losses on bank40000, without failures and with checkpoint bytes
+unchanged. Every greedy choice, reward and finite return was reconstructed;
+opponent schedules match the eight-worker control, with only `terran.py`
+changed. The >=14 and >=13 joint gate fails on the first bank. Do not promote
+or extend this arm; reserve final bank50000. These are development results.
+
+A fixed-state ablation on17,323 retained control states changed146 greedy
+choices when flags were zeroed. New input rows are nonzero after training.
+This establishes learned input sensitivity, not counterfactual gameplay or
+win benefit. Zero observed enemy-unit counts do not exclude visible structures.
+Receipts: `logs/audit/declared-race-*-results.json`,
+`logs/audit/declared-race-retry-first-eight-parity.json`,
+`logs/audit/declared-race-information-effect.json`.

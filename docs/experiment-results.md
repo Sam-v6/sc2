@@ -1,3 +1,13 @@
+Declared requested-race observations passed88 tests, real train/resume/frozen
+checks and independent review. A pre-game SC2 server disconnect made the first
+Hard continuation incomplete; it is retained and excluded. A full repeat from
+untouched initial bytes finished15/40 training wins without failures. Frozen
+greedy evaluation won11/30 and14/30 on the two development banks, with exact
+actions/returns and immutable checkpoints verified. The joint14/13 gate failed;
+the experiment is not promoted or extended. The original richer-observation
+checkpoint remains retained. Details:
+[Declared opponent race](superpowers/plans/2026-10-04-declared-opponent-race.md).
+
 # Local experiment results — 2026-10-04
 
 All results below are development experiments, not final acceptance. Replays,
