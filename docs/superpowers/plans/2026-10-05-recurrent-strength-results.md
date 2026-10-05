@@ -12,8 +12,9 @@ is selected or promoted. The unchanged reference is the typed initial reset mode
 
 The controller's128game receipts validate seeded choices, ordinary rewards,
 chronological journals, replay headers and typed trajectories. The first batch
-passed independent review. Complete training review and the declared90fresh
-immutable development games remain pending. The reserved50000–50029final
+passed independent review. Complete independent training review passes all128games,94,846decisions and
+32learning calls. The declared90fresh immutable development games are running;
+their results remain pending. The reserved50000–50029final
 acceptance cases have not been used. Training victories are not acceptance.
 
 The1268two-second whole-machine CPU windows averaged14.47percent and peaked
@@ -24,4 +25,5 @@ Protocol: [fixed study](2026-10-05-recurrent-strength-study.md).
 Evidence: logs/recurrent-memory/strength-study/inputs.json,
 train-summary.json, train-ledger.json and train-cpu-windows.json;
 logs/audit/recurrent-strength-implementation-review.json and
-recurrent-strength-first-batch-independent-review.json.
+recurrent-strength-first-batch-independent-review.json, and
+recurrent-strength-training-independent-review.json.
