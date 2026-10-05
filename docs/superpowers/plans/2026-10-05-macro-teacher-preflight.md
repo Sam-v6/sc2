@@ -19,6 +19,22 @@ Translate a single documented bio/mech macro teacher to action requests; do not
 execute example bots, parallel extra commands, hidden unit quotas or extra micro.
 Teacher-only strategic priorities must stay inside the teacher selector.
 
+The selector takes the first legal request in this fixed priority order:
+supply depot below max(4,min(12,army*0.12)) free supply; attack at32army supply
+when home is safe; retreat below10army supply when home is threatened; orbital;
+workers below min(66,22*bases); first barracks; refineries below min(4,2*bases);
+second base at10army supply or third at40army supply/40workers when home is safe;
+barracks below min(6,2*bases) at6army supply; first factory at6 and starport at12;
+factory/barracks tech labs; first engineering bay at12army supply; infantry weapons.
+Then respond to observed cloak with a starport tech lab, first raven and up to
+two turrets; observed air with up to four vikings when enemy air exceeds twice
+the viking count; medivacs below max(2,min(4,army/16)); tanks below
+max(2,min(4,army/12)); marauders below max(4,marines/4); marine; wait.
+These are teacher-only thresholds using current encoded scalar observations.
+The selector never issues unit commands. Native appearances include starting
+units, and queued commands may be deduplicated or rejected by the engine;
+neither record alone establishes successful production.
+
 Declare12Hard games, seeds125000–125011 and policy seeds equal to game seeds.
 Indexi uses race(Terran,Protoss,Zerg)[i%3], build(Rush,Timing,Power,Macro,Air)[i%5],
 map(Simple64,TritonLE)[(i//3)%2]. Each race uses both maps twice. Scan allthree
