@@ -27,6 +27,7 @@ no silent model conversion is performed.
 | Kills-only combat-event reward | 8/40 Easy wins vs net-event 3/40; audited, zero failures | Greedy 2/6; sampled 0/6; broad greedy 12/30 (Terran 4/10, Protoss 2/10, Zerg 6/10) | Wins across all races; reliability goal unmet |
 | Isolated infantry research capability | 84 tests, real upgrade/Stim fixtures; Hard40 2 wins/38 losses, zero failures | Migrated initial 12/30 exact parent gameplay; trained final 0 wins/27 losses/3 cutoffs, zero failures | Working capabilities; regressed, not promoted |
 | Frozen sampling concentration, same kills-only parent | No continuation: predeclared gate failed | Temperature1:0 wins/28 losses/2 cutoffs; temperature0.5:1 win/27 losses/2 cutoffs; both zero failures | Greater greedy agreement; insufficient strength |
+| Stronger victory payoff, same kills-only parent | Hard40: 3 wins/34 losses/3 cutoffs; all rewards/returns audited, zero failures | Greedy Hard30: 0 wins/27 losses/3 cutoffs; zero failures, unchanged bytes | Regressed; not promoted |
 
 The unchanged kills-only continuation produced 18 wins, 14 defeats and 8 cutoffs
 in another 40 Easy games, with zero failures. All 35,931 transitions and every
@@ -69,7 +70,10 @@ contains all 406.79 game seconds, with 416 frames and no export cutoff. The kill
 `logs/replay-proof/combat-kills-hard-protoss-win.mp4`: all 434.11 game seconds,
 443 frames at 960x720, no frame cutoff. The game receipt confirms Victory; the
 export receipt describes rendering. Viewing uses omniscience only for the replay;
-training uses SC2 observations.
+training uses SC2 observations. A post-update victory-credit Hard Zerg Air
+training win is exported as `logs/replay-proof/victory-credit-hard-zerg-training-win.mp4`
+(all 841.70 game seconds, 858 frames, no cutoff). It does not change the
+experiment's failed frozen evaluation.
 
 ## Infrastructure evidence
 
