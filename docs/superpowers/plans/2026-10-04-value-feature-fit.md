@@ -32,3 +32,17 @@ withhold that implementation and investigate another measured limitation.
 This conditional gate is an engineering effort decision, not statistical
 validation. No gameplay win claim follows from value fitting. Final acceptance
 bank50000 stays reserved; reliable Hard remains unmet.
+
+The diagnostic completed on4,767 states. Complete-game holdout has1,058
+states; training has3,709. At epoch32, fixed/independent training MSE was
+3.9792/2.2378 and held-out MSE12.4546/6.5086 (47.7% lower). Both held-out games
+improve individually. Initial predictions and preserved actor arrays are exact;
+parameters are finite. Independent review verified targets, input/output hashes,
+whole-game split, equal shuffle orders/settings and the passing effort gate.
+Receipt: `logs/audit/value-feature-fit-results.json`.
+
+The comparison changes trainable capacity and the distribution of the critic
+norm limit across parameters. It does not isolate the cause of gameplay losses.
+Only two held-out games exist, and the winning game dominates held-out error.
+This supports a bounded independent-value gameplay trial, not promotion of
+an offline fitted model. Offline fits must not initialize gameplay training.
