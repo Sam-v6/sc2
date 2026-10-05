@@ -19,6 +19,21 @@ Freeze fixture cases/source before launch, use a fresh seed outside every prior
 bank, and preserve failure evidence. If the physical check fails, stop before
 gameplay comparison and diagnose it.
 
+The fixed physical bank is6eight-game-second Simple64 debug fixtures, seeds
+127000–127005: control/candidate mobile tank against an Overlord; control/
+candidate initially sieged tank against an Overlord; candidate mobile tank
+against a Roach; candidate mobile tank against a SupplyDepot. Spawn one own tank
+at map center and one visible enemy target6units away, leaving starting bases
+intact; no macro loop runs. Use the actual complete old/corrected micro routines.
+Record observed unit forms/current orders/visible target ranges and queued
+commands every8game loops. Require at least6frames with the target within12.
+Control must visibly siege/remain sieged against air without unsiege commands;
+candidate must show at least5mobile contextual frames, never issue siege against
+air, and issue unsiege from the initially sieged state. Against ground unit or
+structure, candidate must queue siege and visibly become sieged. All6checks
+must pass with native replays and no callback/infrastructure errors. Use2workers,
+60wall seconds per fixture. These are physics checks only; no wins are counted.
+
 Only after that check passes, declare a fresh matched ordinary-game comparison
 of unchanged teacher/executor versus the same teacher with the tank correction.
 Freeze exact seed/race/build/map cases, budgets and gates before playing;

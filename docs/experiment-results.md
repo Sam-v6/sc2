@@ -45,9 +45,11 @@ versus parent1/6. The bootstrap fails its gate and is not promoted. A separate
 [recurrent-memory prototype](superpowers/plans/2026-10-05-recurrent-memory.md)
 has a passing training-only information diagnostic and an independently
 reproduced two-game backend smoke: four actual sequence-PPO steps per arm. Both
-smoke games lost, and its fitted models are excluded from the future64-game-per-arm
-strength study. Twenty-one focused checks pass; complete batch training and
-fresh strength evaluation remain unfinished. The unfinished saving probe is deferred with its foundation
+smoke games lost, and their fitted models were excluded from the subsequent
+64-game-per-arm strength study. That study and90fresh evaluation games are now
+complete; both support gates fail and neither model is promoted. See the
+[completed recurrent results](superpowers/plans/2026-10-05-recurrent-strength-results.md).
+The unfinished saving probe is deferred with its foundation
 preserved. Replays stay saved without showing videos until the goal is complete.
 
 The [combined combat and collection experiment](superpowers/plans/2026-10-05-combined-combat-collection-results.md)
@@ -800,3 +802,5 @@ The controlled recurrent study now completes128native training games,256sequence
 A training-only macro teacher tests the literature's competent imitation starting point through the same27actions and unchanged execution. All12Hard games finish with8wins/3losses/1time-limit tie and no infrastructure failures, but Terran1/4fails the declared at-least2wins-per-race gate (Protoss4/4,Zerg3/4). No cloning or RL fitting follows; scripted victories do not establish learned strength. Independent review verifies8,721decisions, raw evidence and zero updates; CPU mean12.55percent/peak23.26percent. See [teacher feasibility results](superpowers/plans/2026-10-05-macro-teacher-results.md).
 
 The separate four-game observation-only trace verifies actual medivac healing and tank siege orders in air-only neighborhoods without ground structures. It changes no behavior or model and cannot revise the failed teacher gate. This supports a controlled ground-aware tank fixture/comparison, not an unverified healing fix. Independent evidence covers2,384decisions/zero updates; CPU mean15.48percent/peak22.79percent. See [combat-order findings](superpowers/plans/2026-10-05-micro-order-results.md).
+
+The isolated ground-aware tank adapter now has native physical evidence from6debug fixtures/138frames. The original checker fails on SupplyDepot lowering; a separate independent semantic audit preserves that failure and verifies the recorded air/ground-unit/ground-structure requirements without another game. Other micro remains unchanged. This supports a fresh matched ordinary comparison, not a gameplay or learned-strength claim. See [tank physical findings](superpowers/plans/2026-10-05-ground-tank-physical-results.md).
