@@ -50,11 +50,31 @@ from 676 to 692 optimizer updates across four games, preserving cadence and
 checkpoint chaining; frozen evaluation left initial bytes unchanged. Receipt:
 `logs/audit/infantry-tech-smoke-results.json`.
 
-The immutable initial Hard30 development evaluation (seed 20000) and bounded
-Hard40 continuation (seed base 30000) are running with four workers each,
+The immutable initial Hard30 development evaluation (seed 20000) completed
+with 12 wins, 18 losses, no ties and zero failures. Every original gameplay
+observation, selected action, execution result, time and reward matches the
+retained parent on all 30 games. New zero upgrade fields and legal research
+entries are excluded from that comparison. The greedy initial policy never
+selected the new research. Receipts: `logs/audit/infantry-tech-initial-evaluate-hard30-results.json`
+and `logs/audit/infantry-tech-initial-trace-parity.json`.
+
+The bounded Hard40 continuation (seed base 30000) completed with 2 wins,
+38 losses and zero failures, matching the old Hard40 opponent schedule.
+All 28,160 transition reward components match the saved formula exactly.
+The policy selected Stim 37 times, Combat Shield 39 and armor 40. Completed
+upgrade observations occurred in 32, 33 and 40 games respectively. This
+demonstrates exercised capabilities, not improved strength. Receipt:
+`logs/audit/infantry-tech-hard-1-results.json`. The final checkpoint has
+184 episodes/attempts and 1136 optimizer updates. Preserved SHA-256:
+25c6e0c927cb2d6816a439f71b4f584f6ecf870b5ca905b906ed13d74c37ca45.
+Its separate frozen Hard30 evaluation completed with zero wins, 27 losses
+and 3 horizon ties, zero failures, unchanged checkpoint bytes and exact
+reward components. It selected Stim once and observed it complete in one
+game; no Combat Shield or armor selection occurred. Receipt:
+`logs/audit/infantry-tech-final-evaluate-hard30-results.json`. This regressed
+against both the 12/30 parent and the earlier 8/30 Hard40 control; do not promote. All runs use four workers,
 both maps, all five fixed builds, 1200 game seconds and 300 wall seconds.
-The continuation starts from the unmodified migrated initial policy, not the
-smoke checkpoint. Production code remains unchanged pending strength evidence.
+Production code remains unchanged pending strength evidence.
 
 ## Withheld cooldown prototype
 
@@ -70,3 +90,21 @@ that was not proof of death. A second minimal opponent bot kept the actual units
 fighting; tracked death tags verified resolution. All artifacts are preserved in
 `logs/ranged-micro-fixture*` and `logs/audit/ranged-micro-controlled-results.json`.
 The infantry experiment does not include this prototype.
+
+## Training drift diagnostic
+
+On each batch's actual collected observations and legal masks, old-to-new mean
+KL ranged from 0.00110 to 0.00496; collected-action ratio clip fractions ranged
+from 0.00085 to 0.0339. Greedy action rankings changed on 4.59% to 20.82% of
+states per batch. These descriptive checks do not establish an oversized
+optimizer step as the cause. The frozen final policy selected substantially
+more expansions and fewer Marines across the same 30 cases. Receipts:
+`logs/audit/infantry-tech-update-drift.json` and
+`logs/audit/infantry-tech-frozen-action-counts.json`. First-batch traces matched
+the old Hard40 control until new research became legal, with identical initial
+policy seeds; later seeds can diverge after length-dependent learner shuffles.
+Receipt: `logs/audit/infantry-tech-training-first-batch-parity.json`.
+
+The best retained policy remains kills-only Easy40 at 12/30. The research
+implementation works but this continuation is not stronger. Reliable Hard
+strength and the untouched fresh-bank evaluation remain open.

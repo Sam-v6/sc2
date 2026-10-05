@@ -25,6 +25,7 @@ no silent model conversion is performed.
 | Direct Hard, temperature 1 vs 2 | 0 wins each; T2 has one retained engine startup failure | Both greedy and sampled 0/6 each | No improvement |
 | Reset finite control vs net combat-event reward | 6 vs 3/40 Easy wins | Both greedy and sampled 0/6 each | Net-event greedy built no army; not promoted |
 | Kills-only combat-event reward | 8/40 Easy wins vs net-event 3/40; audited, zero failures | Greedy 2/6; sampled 0/6; broad greedy 12/30 (Terran 4/10, Protoss 2/10, Zerg 6/10) | Wins across all races; reliability goal unmet |
+| Isolated infantry research capability | 84 tests, real upgrade/Stim fixtures; Hard40 2 wins/38 losses, zero failures | Migrated initial 12/30 exact parent gameplay; trained final 0 wins/27 losses/3 cutoffs, zero failures | Working capabilities; regressed, not promoted |
 
 The unchanged kills-only continuation produced 18 wins, 14 defeats and 8 cutoffs
 in another 40 Easy games, with zero failures. All 35,931 transitions and every
@@ -40,6 +41,13 @@ Hard30 check scored 8 wins/17 defeats/5 cutoffs (Terran 2/10, Protoss 2/10,
 Zerg 4/10), with no failures or model mutation. Both curricula regressed
 against the retained 12/30 parent. This
 is a learning trajectory, not an equal-budget comparison against net-event Easy40.
+
+The isolated infantry capability experiment adds policy-selected Stim, Combat
+Shield and armor with completed-upgrade observations and local Stim execution.
+Its initial model reproduces all 30 parent gameplay traces exactly. Although
+training exercised all three upgrades, its frozen final policy regressed to
+0/30. Production source and the strongest checkpoint remain unchanged. See
+[infantry experiment evidence](superpowers/plans/2026-10-04-infantry-tech.md).
 
 All counts refer to development, and cutoffs/failures are distinct from losses.
 No reliable all-race Hard model has been accepted. The reserved final bank stays
