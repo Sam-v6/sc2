@@ -27,6 +27,20 @@ builds/maps, using a fresh seed bank after development choices are finished.
 
 ## Current development status
 
+The user-requested [literature review](<../reports/SC2 RL practical improvements.md>)
+prioritizes training-experience replay, then history/entity diagnostics and a
+competence-based opponent curriculum beyond Hard. The isolated uniform
+[self-imitation foundation](superpowers/plans/2026-10-05-self-imitation.md)
+passes six tests and independent review. A read-only audit of 80 completed
+training games reconstructs all 77,763 sampled choices and ordinary returns;
+13,157 transitions have positive advantage under the retained critic. All 272
+inputs/source hashes were verified. Support is dominated by wait/stance changes
+and is sparse for advanced production. This is eligibility evidence, with zero
+optimizer updates or new games; it does not establish gameplay improvement.
+Gradient analysis, a bounded fitting declaration and fresh paired evaluation
+remain required. The unfinished saving probe is deferred with its foundation
+preserved. Replays stay saved without showing videos until the goal is complete.
+
 The [combined combat and collection experiment](superpowers/plans/2026-10-05-combined-combat-collection-results.md)
 is closed without promotion. All 64 Medium training games and 24 paired Hard
 games completed with independent full-data reviews. Training had 1 win, 55 losses
@@ -35,7 +49,7 @@ and 8 ties; ordinary-scoring Hard evaluation had parent 4/12 wins and candidate
 intermediate kill feedback and smaller harvesting rewards did not preserve
 strength in this test. A full Linux MP4 of training victory 114024 is under
 `logs/replay-proof/`. The retained model and reserved final bank stay unchanged.
-A longer resource-saving option probe is advisory only; the earlier five-second
+The longer resource-saving option probe has foundation tests only and is deferred; the earlier five-second
 unit-intent experiment already failed and remains closed.
 
 The [resource collection curriculum](superpowers/plans/2026-10-05-resource-collection-learning-results.md)
