@@ -28,4 +28,41 @@ Primary descriptive materiality check at the final update: on the separate probe
 
 No more than5×64optimizer minibatches, no SC2 games or gradient-bearing state selection. CPU-only existing siblingTorch via absolute non-resolved interpreter, Python-B, low_load eightCPUs/nice10/BLAS1 and Torch1thread; per-arm offline wall budget600seconds. Sources and artifacts stay in owned worktree; preserve all failed-arm evidence. Independent review must reconstruct fidelity and metrics before any next game experiment is separately declared. Do not integrate intervention checkpoints or promote the failed sensory model.
 
-Status: predeclared only; no optimizer replay has run.
+## Closed results
+
+All five runs completed: exactly320optimizer minibatches, zero new SC2 games,
+no timeouts. Factual A and control E reproduce every archived network/Adam array
+exactly (maximum absolute difference0), with updates740 and exact RNG endpoints.
+Four focused tests pass. Inputs, implementation and orders were frozen before
+updates; artifacts are `logs/production-input-update-replay/`.
+
+| Arm | Final probe KL | Probe greedy disagreement | New-row weight L2 | Training-target value MSE |
+| --- | ---: | ---: | ---: | ---: |
+| A inherited clock, critic enabled | .001396428 | 9.394% | .663371 | .0158193 |
+| B fresh clock only | .001187722 | 9.802% | .245598 | .0165862 |
+| C critic blocked only | .001413700 | 9.425% | .426975 | .0175267 |
+| D both | .001188813 | 9.928% | .149452 | .0175443 |
+| E old-input control | .001128011 | 10.587% | No new rows | .0175333 |
+
+Factual excess probe KL is .000268417. B reduces it77.755%, D77.348%; both
+pass the predeclared half-excess check. C increases it6.435% and fails. Old
+parameter ages end740 in every arm; only the appended block in B/D ends64.
+The blocked critic's appended gradients remain zero throughout C/D. Independent
+NumPy reconstruction verifies all final metrics and comparison gates; all320
+minibatch counts, clipping factors, ages and finite arrays pass review. Receipt:
+`logs/audit/production-input-update-replay-independent-review.json`.
+
+This identifies an optimizer-age effect on first-update movement. It does not
+establish that movement caused the later6/30win regression, that smaller KL is
+better play, or that useful observations require critic isolation. Absolute KL
+is small, and the control has more greedy changes despite its lower KL; these
+metrics are not interchangeable. No diagnostic weights are promoted.
+
+The ten-second active host sample measured3.846–4.080% whole-machine CPU,
+about3.124% owned CPU, and desktop GPU13%/19.61W/39C. The CPU-only worker used
+24–31 affinity/nice10; its idle controller had normal priority. Resource receipt:
+`logs/audit/production-input-update-replay-resource-load.json`.
+
+The next separately declared experiment tests fresh appended-row Adam age in
+actual training, preserving critic gradients and every other setting. See
+[fresh-row Adam experiment](2026-10-05-production-input-fresh-adam.md).

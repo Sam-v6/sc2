@@ -34,13 +34,18 @@ Medium training arms and all 90 frozen evaluation games completed without failur
 full audits and independent review passed. Frozen wins were 22/30 for the unchanged
 parent, 21/30 for the trained old-input control, and 6/30 for the trained sensory
 agent. All declared win/return gates failed. The retained model and main CLI stay
-unchanged. The next diagnostic will examine fresh-input optimizer age and shared
-critic gradients offline before more game training. See the
+unchanged. See the
 [closed production-input experiment](superpowers/plans/2026-10-05-production-sensory-learning.md).
 Matched Zerg Macro replay videos show the original victory and a sensory defeat
 with no army production, under `logs/replay-proof/`. The next
 [offline update replay](superpowers/plans/2026-10-05-production-input-update-replay.md)
-will isolate new-row optimizer age and critic gradients; no new games are declared.
+is now complete: both factual updates reproduce all saved network/Adam arrays
+exactly. Fresh appended-row Adam clocks reduce excess first-update probe KL by
+77.755%; blocking their critic gradients alone fails that check. All320bounded
+optimizer minibatches completed with zero new games. This is a learning-dynamics
+result, not improved strength or proof of the later collapse's cause. A separately
+declared [fresh-clock training experiment](superpowers/plans/2026-10-05-production-input-fresh-adam.md)
+will test actual play; no diagnostic weights are promoted.
 
 The main CLI now contains the tested richer DQN/PPO experiment, not an accepted
 Hard bot. Richer observations encode:
