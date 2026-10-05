@@ -103,3 +103,56 @@ class WorkerExecutionTests(unittest.TestCase):
         self.assertEqual(len(commands), 2)
         self.assertEqual([c.units for c in commands], [(1,), (2,)])
         self.assertEqual(commands[0].target_unit, 5)
+
+
+class ExplorationTests(unittest.TestCase):
+    def test_unavailable_intent_can_wait_instead_of_issuing_unrelated_command(self):
+        from src.learning.imitation_play import choose_ability
+
+        logits = np.array([0.0, 1.0, 8.0, 2.0])
+        self.assertEqual(
+            choose_ability(
+                logits,
+                [0, 1, 3],
+                np.random.default_rng(1),
+                False,
+                wait_unavailable=True,
+            ),
+            0,
+        )
+        self.assertEqual(
+            choose_ability(
+                logits,
+                [0, 1, 2, 3],
+                np.random.default_rng(1),
+                False,
+                wait_unavailable=True,
+            ),
+            2,
+        )
+
+    def test_argument_predictions_preserve_macro_ability_and_convert_coordinates(self):
+        from src.learning.imitation_play import replace_arguments
+
+        macro = {"ability": np.array([[0.0, 3.0, 2.0]]), "point": np.zeros((1, 5))}
+        arguments = {
+            "ability": np.zeros((1, 1)),
+            "point": np.array([[0.2, 0.3]]),
+            "mode": np.ones((1, 4)),
+        }
+        output = replace_arguments(macro, arguments, [-1.0, 1.0])
+        np.testing.assert_array_equal(output["ability"], macro["ability"])
+        np.testing.assert_allclose(output["point"], [[-0.2, 0.3]])
+        np.testing.assert_allclose(arguments["point"], [[0.2, 0.3]])
+
+    def test_sampling_uses_only_engine_legal_commands_and_reproducible_seed(self):
+        from src.learning.imitation_play import choose_ability
+
+        logits = np.array([0.0, 0.0, 100.0, 0.0])
+        first = np.random.default_rng(7)
+        second = np.random.default_rng(7)
+        a = [choose_ability(logits, [1, 3], first, True) for _ in range(100)]
+        b = [choose_ability(logits, [1, 3], second, True) for _ in range(100)]
+        self.assertEqual(a, b)
+        self.assertEqual(set(a), {1, 3})
+        self.assertEqual(choose_ability(logits, [1, 3], first, False), 1)

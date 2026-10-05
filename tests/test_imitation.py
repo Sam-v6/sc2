@@ -174,3 +174,26 @@ class AbilityBalancingTests(unittest.TestCase):
         self.assertAlmostEqual(weights.sum(), 4.0)
         self.assertGreater(weights[3], weights[0])
         self.assertAlmostEqual(weights[3] / weights[0], np.sqrt(3))
+
+
+class SpatialLossTests(unittest.TestCase):
+    def test_spatial_loss_uses_bounded_gradients_and_matches_finite_difference(self):
+        policy = FactorPolicy(2, 3, [45, 48], seed=7, point_dimensions=5)
+        x = np.zeros((1, 2), dtype=np.float32)
+        labels = {k: np.zeros(1, dtype=int) for k in policy.sizes}
+        labels["mode"][0] = 1
+        labels["point_valid"] = np.ones(1, dtype=int)
+        policy.parameters["point_bias"][0] = 1.0
+        points = np.zeros((1, 5), dtype=np.float32)
+        _, grad = policy.gradients(x, labels, points)
+        original = policy.parameters["point_bias"][0].copy()
+        eps = 0.001
+        policy.parameters["point_bias"][0] = original + eps
+        high = policy.loss(x, labels, points)
+        policy.parameters["point_bias"][0] = original - eps
+        low = policy.loss(x, labels, points)
+        policy.parameters["point_bias"][0] = original
+        self.assertAlmostEqual(float(grad["point_bias"][0]), 5.0, places=5)
+        self.assertAlmostEqual(
+            float(grad["point_bias"][0]), (high - low) / (2 * eps), places=3
+        )

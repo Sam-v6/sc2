@@ -188,6 +188,17 @@ class FactorPolicy:
         }
         return dict(output, ability=ability_logits)
 
+    def command_context(self, x, ability):
+        normalized = (np.asarray(x) - self.feature_mean) / self.feature_scale
+        hidden = np.tanh(
+            normalized @ self.parameters["input"] + self.parameters["bias"]
+        )
+        return (
+            np.tanh(hidden + self.parameters["ability_embedding"][ability])
+            if self.autoregressive
+            else hidden
+        )
+
     def gradients(self, x, labels, points, weights=None):
         weights = np.ones(len(x)) if weights is None else np.asarray(weights)
         x = (np.asarray(x) - self.feature_mean) / self.feature_scale
@@ -241,8 +252,18 @@ class FactorPolicy:
         if valid.any():
             error = np.where(valid, output - np.nan_to_num(points), 0.0)
             norm = weights[valid.any(axis=1)].sum()
-            loss += float((0.5 * np.square(error).sum(axis=1) * weights).sum() / norm)
-            delta = error * weights[:, None] / norm
+            coordinate_loss = 0.5 * np.square(error)
+            slope = error.copy()
+            spatial = error[:, : min(4, output.shape[1])]
+            # Positions are measured in 128-tile units. Balance their loss against
+            # categorical heads, while bounding influence of distant target errors.
+            absolute = np.abs(spatial)
+            coordinate_loss[:, : spatial.shape[1]] = 100 * np.where(
+                absolute <= 0.05, 0.5 * np.square(spatial), 0.05 * (absolute - 0.025)
+            )
+            slope[:, : spatial.shape[1]] = 100 * np.clip(spatial, -0.05, 0.05)
+            loss += float((coordinate_loss.sum(axis=1) * weights).sum() / norm)
+            delta = slope * weights[:, None] / norm
         gradients["point"] = arguments.T @ delta
         gradients["point_bias"] = delta.sum(axis=0)
         argument_back += delta @ self.parameters["point"].T

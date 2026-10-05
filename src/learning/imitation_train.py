@@ -7,12 +7,14 @@ import json
 from pathlib import Path
 import time
 import numpy as np
-from src.learning.imitation import FactorPolicy, unit_features, action_labels
+from src.learning.imitation import FactorPolicy, unit_features, action_labels, DELAYS
 from src.learning.global_imitation import global_features, global_labels
 from src.runner import positive
 
 
-def dataset(paths, unit_types, seed, decision_level="unit", abilities=None):
+def dataset(
+    paths, unit_types, seed, decision_level="unit", abilities=None, prefix_seconds=None
+):
     rng = np.random.default_rng(seed)
     features = []
     labels = []
@@ -20,7 +22,9 @@ def dataset(paths, unit_types, seed, decision_level="unit", abilities=None):
     sources = []
     weights = []
     audit = {"missing_actors": 0, "missing_targets": 0, "own_memory_selectors": 0}
+    audit["replay_ranges"] = []
     for directory in paths:
+        beginning = len(features)
         receipt = json.loads((directory / "dataset.json").read_text())
         if receipt["status"] != "completed":
             raise ValueError("Use terminal whole-game datasets for this experiment")
@@ -40,6 +44,11 @@ def dataset(paths, unit_types, seed, decision_level="unit", abilities=None):
         with gzip.open(directory / "examples.jsonl.gz", "rt") as stream:
             for line in stream:
                 row = json.loads(line)
+                if (
+                    prefix_seconds is not None
+                    and row["action_loop"] > prefix_seconds * 22.4
+                ):
+                    break
                 state = dict(
                     row["observation"],
                     recent_commands=history[-32:],
@@ -57,11 +66,12 @@ def dataset(paths, unit_types, seed, decision_level="unit", abilities=None):
                         "last_seen_loop": state["game_loop"],
                         "observed": False,
                     }
-                known_own = {
-                    **owned_memory,
-                    **{u["tag"]: u for u in state.get("owned_memory", [])},
-                    **own,
-                }
+                memory = (
+                    {u["tag"]: u for u in state["owned_memory"]}
+                    if "owned_memory" in state
+                    else owned_memory
+                )
+                known_own = {**memory, **own}
                 if decision_level == "global":
                     state = dict(
                         state,
@@ -70,7 +80,7 @@ def dataset(paths, unit_types, seed, decision_level="unit", abilities=None):
                         ],
                     )
                     feature, origin = global_features(
-                        state, unit_types, abilities, canonical=True
+                        state, unit_types, abilities, canonical=True, summarize=True
                     )
                     for command in row["commands"]:
                         absent = set(command["units"]) - known_own.keys()
@@ -136,6 +146,7 @@ def dataset(paths, unit_types, seed, decision_level="unit", abilities=None):
                     dict(command, game_loop=row["action_loop"])
                     for command in row["commands"]
                 )
+        audit["replay_ranges"].append((beginning, len(features)))
     if audit["missing_actors"]:
         raise ValueError(f"Dataset controlled-unit alignment failed: {audit}")
     return (
@@ -146,6 +157,16 @@ def dataset(paths, unit_types, seed, decision_level="unit", abilities=None):
         sources,
         audit,
     )
+
+
+def equal_replay_weights(weights, ranges):
+    result = np.asarray(weights).copy()
+    mass = result.sum() / len(ranges)
+    for begin, end in ranges:
+        if end <= begin:
+            raise ValueError("Replay curriculum contains no examples")
+        result[begin:end] *= mass / result[begin:end].sum()
+    return result
 
 
 def balance_abilities(abilities, weights):
@@ -211,16 +232,33 @@ def main():
         action="store_true",
         help="Weight rare teacher commands using training-only inverse square-root frequency",
     )
+    parser.add_argument(
+        "--prefix-seconds",
+        type=positive,
+        help="Bounded opening curriculum, preserving all issued commands and equal total weight per replay",
+    )
     args = parser.parse_args()
+    if args.prefix_seconds and args.decision_level != "global":
+        parser.error("Prefix curriculum currently requires global command decisions")
     args.output.mkdir(parents=True, exist_ok=False)
     static = json.loads((args.train[0] / "static.json").read_text())["game_data"]
     unit_types = sorted({u["unit_id"] for u in static["units"]})
     abilities = max(a["ability_id"] for a in static["abilities"]) + 1
     train_x, train_y, train_points, train_weights, train_sources, train_audit = dataset(
-        args.train, unit_types, args.seed, args.decision_level, abilities
+        args.train,
+        unit_types,
+        args.seed,
+        args.decision_level,
+        abilities,
+        args.prefix_seconds,
     )
     valid_x, valid_y, valid_points, valid_weights, valid_sources, valid_audit = dataset(
-        args.validation, unit_types, args.seed + 1, args.decision_level, abilities
+        args.validation,
+        unit_types,
+        args.seed + 1,
+        args.decision_level,
+        abilities,
+        args.prefix_seconds,
     )
     if {s["replay_sha256"] for s in train_sources} & {
         s["replay_sha256"] for s in valid_sources
@@ -228,6 +266,10 @@ def main():
         raise ValueError("Replay appears in training and validation")
     if args.balance_abilities:
         train_weights = balance_abilities(train_y["ability"], train_weights)
+    if args.prefix_seconds:
+        train_weights = equal_replay_weights(
+            train_weights, train_audit["replay_ranges"]
+        )
     policy = FactorPolicy(
         train_x.shape[1],
         abilities,
@@ -260,6 +302,10 @@ def main():
         "group_weighting": "one total weight per raw command"
         if args.decision_level == "global"
         else "one total weight per raw command; one total weight per negative group",
+        "prefix_seconds": args.prefix_seconds,
+        "replay_weighting": "equal total weight per replay"
+        if args.prefix_seconds
+        else "per command",
         "ability_balancing": "inverse_sqrt_training_frequency"
         if args.balance_abilities
         else "none",
@@ -267,10 +313,14 @@ def main():
         "seed": args.seed,
         "algorithm": "factorized_entity_behavior_cloning",
         "decision_level": args.decision_level,
+        "entity_encoder": "per_type_spatial_orders"
+        if args.decision_level == "global"
+        else "unit_context",
         "coordinate_frame": "base_toward_map_center"
         if args.decision_level == "global"
         else "absolute",
         "normalization": "training-only feature mean/std, minimum std .1",
+        "spatial_loss": "Huber delta .05 in 128-tile units, weight 100; group count MSE",
         "head_priors": "training-only class counts plus .1 smoothing; all engine abilities retained",
         "limitations": "initial entity/context baseline; no recurrent encoder or map-grid model; missing unit targets mask target-type/alliance and target-coordinate losses",
     }
@@ -306,6 +356,48 @@ def main():
         validation=metrics(policy, valid_x, valid_y, valid_points),
         wall_seconds=round(time.monotonic() - start, 3),
     )
+    if args.prefix_seconds:
+        production = {
+            a["ability_id"]
+            for a in static["abilities"]
+            if a.get("friendly_name", "").startswith("Train ")
+        }
+        report["prefix_diagnostics"] = []
+        for source, (begin, end) in zip(train_sources, train_audit["replay_ranges"]):
+            x = train_x[begin:end]
+            y = {k: v[begin:end] for k, v in train_y.items()}
+            output = policy.predict(x)
+            predicted = output["ability"].argmax(axis=1)
+            errors = np.flatnonzero(predicted != y["ability"])
+            selected = np.isin(y["ability"], list(production))
+            joint = np.ones(len(x), dtype=bool)
+            for name in policy.sizes:
+                joint &= (y[name] < 0) | (output[name].argmax(axis=1) == y[name])
+            timing = y["delay"] >= 0
+            report["prefix_diagnostics"].append(
+                dict(
+                    source,
+                    first_label=int(y["ability"][0]),
+                    first_prediction=int(predicted[0]),
+                    first_prediction_error_index=int(errors[0])
+                    if len(errors)
+                    else None,
+                    production_recall=float(
+                        (predicted[selected] == y["ability"][selected]).mean()
+                    )
+                    if selected.any()
+                    else None,
+                    joint_discrete_argument_accuracy=float(joint.mean()),
+                    timing_mean_error_loops=float(
+                        abs(
+                            DELAYS[output["delay"].argmax(axis=1)[timing]]
+                            - DELAYS[y["delay"][timing]]
+                        ).mean()
+                    )
+                    if timing.any()
+                    else None,
+                )
+            )
     policy.save(args.output / "policy.npz", report)
     report["checkpoint_sha256"] = hashlib.sha256(
         (args.output / "policy.npz").read_bytes()

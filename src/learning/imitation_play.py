@@ -12,20 +12,54 @@ from sc2.data import Race, Difficulty, AIBuild
 from sc2.main import run_game
 from sc2.player import Bot, Computer
 from s2clientprotocol import sc2api_pb2 as pb
-from src.learning.gameplay import Command, PlayerView
-from src.learning.imitation import FactorPolicy, unit_features, DELAYS
+from src.learning.gameplay import Command, PlayerView, image_dict
+from src.learning.imitation import FactorPolicy, unit_features, DELAYS, softmax
 from src.learning.global_imitation import (
     global_features,
     select_group,
     coordinate_signs,
 )
 from src.learning.live import ability_query, issue
+from src.learning.placement import resolve_placements
+from src.learning.actor_selection import actor_features, select_actors, group_features
+from src.learning.spatial_construction import (
+    decode_terrain,
+    spatial_candidates,
+    candidate_features,
+    rank_points,
+)
 from src.learning.sandbox import micro_score
 from src.runner import positive, validate_map
 from src.runtime import supervise
 
 
-def decode_commands(state, actors, output, available, catalog, unit_types, map_size):
+def replace_arguments(macro, arguments, signs):
+    output = dict(macro, **{k: v for k, v in arguments.items() if k != "ability"})
+    output["point"] = arguments["point"] * np.asarray(signs)
+    return output
+
+
+def choose_ability(logits, allowed, rng, sample, wait_unavailable=False):
+    if wait_unavailable and not sample and int(logits.argmax()) not in allowed:
+        return 0
+    scores = logits[allowed]
+    return (
+        allowed[int(rng.choice(len(allowed), p=softmax(scores[None, :])[0]))]
+        if sample
+        else allowed[int(scores.argmax())]
+    )
+
+
+def decode_commands(
+    state,
+    actors,
+    output,
+    available,
+    catalog,
+    unit_types,
+    map_size,
+    chosen_abilities=None,
+):
     lookup = {kind: index + 1 for index, kind in enumerate(unit_types)}
     commands = []
     rows = []
@@ -38,7 +72,13 @@ def decode_commands(state, actors, output, available, catalog, unit_types, map_s
                 if 0 < a < output["ability"].shape[1]
             ),
         ]
-        ability = legal[int(np.argmax(output["ability"][index, legal]))]
+        ability = (
+            legal[int(np.argmax(output["ability"][index, legal]))]
+            if chosen_abilities is None
+            else chosen_abilities[index]
+        )
+        if ability not in legal:
+            raise ValueError("Selected ability is not engine-legal for this actor")
         row = {
             "unit": actor["tag"],
             "raw_ability": int(output["ability"][index].argmax()),
@@ -135,9 +175,42 @@ class ImitationBot(BotAI):
         self.job = job
         self.stream = stream
         self.policy = FactorPolicy.load(job["policy"])
+        self.actor_policy = (
+            FactorPolicy.load(job["actor_policy"]) if job.get("actor_policy") else None
+        )
+        self.argument_policy = (
+            FactorPolicy.load(job["argument_policy"])
+            if job.get("argument_policy")
+            else None
+        )
+        self.spatial_policy = (
+            FactorPolicy.load(job["spatial_policy"])
+            if job.get("spatial_policy")
+            else None
+        )
+        if self.spatial_policy and (
+            self.spatial_policy.evidence.get("role") != "spatial_construction"
+            or self.spatial_policy.evidence["macro_sha256"]
+            != hashlib.sha256(Path(job["policy"]).read_bytes()).hexdigest()
+        ):
+            raise ValueError("Spatial scorer is incompatible with macro checkpoint")
+        if self.argument_policy and (
+            self.argument_policy.evidence.get("role") != "argument_prediction"
+            or self.argument_policy.evidence["macro_sha256"]
+            != hashlib.sha256(Path(job["policy"]).read_bytes()).hexdigest()
+        ):
+            raise ValueError("Argument predictor is incompatible with macro checkpoint")
+        if self.actor_policy and (
+            self.actor_policy.evidence.get("role") != "actor_selection"
+            or self.actor_policy.evidence["macro_sha256"]
+            != hashlib.sha256(Path(job["policy"]).read_bytes()).hexdigest()
+        ):
+            raise ValueError("Actor pointer is incompatible with macro checkpoint")
         self.view = PlayerView()
         self.next_action = {}
         self.next_global = 0
+        self.policy_history = []
+        self.rng = np.random.default_rng(job["seed"])
         self.worker_assistance_commands = 0
         self.frames = self.commands = 0
         self.results = {}
@@ -148,9 +221,22 @@ class ImitationBot(BotAI):
         self.client.game_step = self.job["step"]
         data = (await self.client._execute(data=pb.RequestData(ability_id=True))).data
         self.catalog = {
-            a.ability_id: {"target": a.target, "allow_autocast": a.allow_autocast}
+            a.ability_id: {
+                "target": a.target,
+                "allow_autocast": a.allow_autocast,
+                "is_building": a.is_building,
+                "footprint_radius": a.footprint_radius,
+            }
             for a in data.abilities
         }
+        images = {
+            name: image_dict(getattr(self.game_info._proto.start_raw, name))
+            for name in ("pathing_grid", "placement_grid", "terrain_height")
+        }
+        self.terrain = decode_terrain(images)
+        (Path(self.job["output"]) / "terrain.json").write_text(
+            json.dumps(images) + "\n"
+        )
         if max(self.catalog) + 1 != self.policy.sizes["ability"]:
             raise ValueError("Model/engine ability schema mismatch")
         # Explicit execution assistance; no build order.
@@ -163,6 +249,7 @@ class ImitationBot(BotAI):
             packet = self.state.response_observation
             state = self.view.observe(packet)
             state["map_size"] = [self.game_info.map_size.x, self.game_info.map_size.y]
+            feature_state = dict(state, recent_commands=self.policy_history[-32:])
             actors = [
                 u
                 for u in state["units"] + state["owned_memory"]
@@ -190,21 +277,65 @@ class ImitationBot(BotAI):
                         == "base_toward_map_center"
                     )
                     x, origin = global_features(
-                        state,
+                        feature_state,
                         self.policy.unit_types,
                         self.policy.sizes["ability"],
                         canonical=canonical,
+                        summarize=self.policy.evidence.get("entity_encoder")
+                        == "per_type_spatial_orders",
                     )
                     output = self.policy.predict(x[None, :])
                     allowed = [0, *sorted(set().union(*abilities.values()))]
-                    ability = allowed[int(np.argmax(output["ability"][0, allowed]))]
-                    output = self.policy.predict(x[None, :], abilities=[ability])
+                    ability = choose_ability(
+                        output["ability"][0],
+                        allowed,
+                        self.rng,
+                        self.job.get("sample", False),
+                        self.job.get("wait_unavailable", False),
+                    )
+                    if (
+                        not ability
+                        and int(output["ability"][0].argmax()) not in allowed
+                    ):
+                        decisions.append(
+                            {
+                                "source": "unavailable_intent",
+                                "raw_ability": int(output["ability"][0].argmax()),
+                                "ability": 0,
+                                "rejected": "engine_availability",
+                                "retry_loops": self.job["step"],
+                            }
+                        )
+                    # predict already conditioned arguments on its raw argmax.
+                    # Only an alternate legal fallback needs another forward pass.
+                    if ability and ability != int(output["ability"][0].argmax()):
+                        output = self.policy.predict(x[None, :], abilities=[ability])
                     if canonical:
                         signs = coordinate_signs(state, origin)
                         output["point"][:, :2] *= signs
                         output["point"][:, 2:4] *= signs
-                    group = (
-                        select_group(
+                    group = []
+                    if ability and self.actor_policy:
+                        actors = sorted(actors, key=lambda u: u["tag"])
+                        context = self.policy.command_context(x, ability)
+                        actor_x = np.stack(
+                            [
+                                actor_features(
+                                    feature_state,
+                                    u,
+                                    index,
+                                    self.policy.unit_types,
+                                    self.policy.sizes["ability"],
+                                    origin,
+                                    context,
+                                )
+                                for index, u in enumerate(actors)
+                            ]
+                        )
+                        actor_logits = self.actor_policy.predict(actor_x)["ability"]
+                        group = select_actors(actors, actor_logits, abilities, ability)
+                    elif ability:
+                        group = select_group(
                             state,
                             output,
                             abilities,
@@ -212,10 +343,23 @@ class ImitationBot(BotAI):
                             self.policy.unit_types,
                             origin,
                         )
-                        if ability
-                        else []
-                    )
                     if group:
+                        if self.argument_policy:
+                            argument_x = group_features(
+                                feature_state,
+                                group,
+                                self.policy.unit_types,
+                                self.policy.sizes["ability"],
+                                origin,
+                                self.policy.command_context(x, ability),
+                            )
+                            output = replace_arguments(
+                                output,
+                                self.argument_policy.predict(argument_x[None, :]),
+                                coordinate_signs(state, origin)
+                                if canonical
+                                else [1.0, 1.0],
+                            )
                         proxy = dict(group[0], position=[*origin, 0.0])
                         output["point"] = output["point"][:, :2]
                         commands, decisions = decode_commands(
@@ -226,6 +370,7 @@ class ImitationBot(BotAI):
                             self.catalog,
                             self.policy.unit_types,
                             (self.game_info.map_size.x, self.game_info.map_size.y),
+                            chosen_abilities=[ability],
                         )
                         commands = [
                             Command(
@@ -246,7 +391,7 @@ class ImitationBot(BotAI):
                 else:
                     x = np.stack(
                         [
-                            unit_features(state, u, self.policy.unit_types)
+                            unit_features(feature_state, u, self.policy.unit_types)
                             for u in actors
                         ]
                     )
@@ -260,6 +405,45 @@ class ImitationBot(BotAI):
                         self.policy.unit_types,
                         (self.game_info.map_size.x, self.game_info.map_size.y),
                     )
+                rankings = {}
+                if self.spatial_policy:
+                    own = {
+                        u["tag"]: u
+                        for u in state["units"] + state["owned_memory"]
+                        if u["alliance"] == 1
+                    }
+                    for command in commands:
+                        descriptor = self.catalog[command.ability]
+                        if (
+                            not descriptor.get("is_building")
+                            or command.target_point is None
+                        ):
+                            continue
+                        points = spatial_candidates(
+                            state["map_size"],
+                            descriptor["footprint_radius"],
+                            self.spatial_policy.evidence["grid_spacing"],
+                        )
+                        features = candidate_features(
+                            feature_state,
+                            [own[tag] for tag in command.units],
+                            origin,
+                            self.policy.command_context(x, command.ability),
+                            points,
+                            self.terrain,
+                            descriptor["footprint_radius"],
+                            self.spatial_policy.evidence["structure_types"],
+                        )
+                        rankings[(command.ability, command.units)] = rank_points(
+                            self.spatial_policy, features, points
+                        )
+                commands, placement_trace = await resolve_placements(
+                    self.client, commands, self.catalog, state, ranked_points=rankings
+                )
+                if placement_trace:
+                    decisions.append(
+                        {"source": "engine_placement", "placements": placement_trace}
+                    )
                 result = (
                     await issue(self.client, commands)
                     if commands
@@ -268,6 +452,10 @@ class ImitationBot(BotAI):
                 for code in result.result:
                     self.results[str(code)] = self.results.get(str(code), 0) + 1
                 self.view.record_commands(commands, state["game_loop"])
+                self.policy_history.extend(
+                    dict(c.as_dict(), game_loop=state["game_loop"]) for c in commands
+                )
+                self.policy_history = self.policy_history[-32:]
                 if not global_decision:
                     for row in decisions:
                         if "command" in row:
@@ -295,6 +483,8 @@ class ImitationBot(BotAI):
                     {
                         "observation": state,
                         "decisions": decisions,
+                        "model_recent_commands": feature_state["recent_commands"],
+                        "issued_model_commands": [c.as_dict() for c in commands],
                         "score": self.final_score,
                     },
                     separators=(",", ":"),
@@ -355,9 +545,43 @@ def play_job(job):
         },
         "worker_assistance_commands": bot.worker_assistance_commands,
         "idle_worker_harvest": job.get("idle_worker_harvest", False),
-        "scripted_assistance": "initial worker harvesting"
-        if job["initial_harvest"]
-        else "none",
+        "scripted_assistance": "; ".join(
+            name
+            for enabled, name in (
+                (job["initial_harvest"], "initial worker harvesting"),
+                (
+                    job.get("idle_worker_harvest", False),
+                    "idle worker harvesting, preserving ongoing/current model orders",
+                ),
+            )
+            if enabled
+        )
+        or "none",
+        "construction_placement": "learned uniform-grid candidate score, filtered by engine legality"
+        if job.get("spatial_policy")
+        else "closest engine-valid half-tile point around requested location; visible gas candidates",
+        "total_commands": bot.commands + bot.worker_assistance_commands,
+        "history_contract": "model-issued decisions only; assistance is traced separately and observable through unit orders",
+        "actor_pointer": job.get("actor_policy"),
+        "argument_predictor": job.get("argument_policy"),
+        "spatial_scorer": job.get("spatial_policy"),
+        "spatial_scorer_sha256": hashlib.sha256(
+            Path(job["spatial_policy"]).read_bytes()
+        ).hexdigest()
+        if job.get("spatial_policy")
+        else None,
+        "argument_predictor_sha256": hashlib.sha256(
+            Path(job["argument_policy"]).read_bytes()
+        ).hexdigest()
+        if job.get("argument_policy")
+        else None,
+        "actor_pointer_sha256": hashlib.sha256(
+            Path(job["actor_policy"]).read_bytes()
+        ).hexdigest()
+        if job.get("actor_policy")
+        else None,
+        "sampled_commands": job.get("sample", False),
+        "wait_unavailable": job.get("wait_unavailable", False),
         "macro_decisions": "factorized entity imitation",
         "micro_decisions": "same imitation model; not roach controller",
     }
@@ -369,6 +593,19 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--policy", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--actor-policy", type=Path, help="Compatible learned per-entity actor pointer"
+    )
+    parser.add_argument(
+        "--argument-policy",
+        type=Path,
+        help="Compatible learned selected-group argument predictor",
+    )
+    parser.add_argument(
+        "--spatial-policy",
+        type=Path,
+        help="Compatible learned construction candidate scorer",
+    )
     parser.add_argument("--race", choices=["Terran", "Protoss", "Zerg"], default="Zerg")
     parser.add_argument(
         "--difficulty",
@@ -385,14 +622,54 @@ def main():
     parser.add_argument("--seconds", type=positive, default=600)
     parser.add_argument("--step", type=positive, default=16)
     parser.add_argument("--wall-seconds", type=positive, default=180)
+    parser.add_argument(
+        "--sample",
+        action="store_true",
+        help="Sample engine-legal global commands from the learned distribution",
+    )
     parser.add_argument("--initial-harvest", action="store_true")
+    parser.add_argument(
+        "--wait-unavailable",
+        action="store_true",
+        help="Reevaluate unavailable intended commands instead of selecting an unrelated legal fallback",
+    )
     parser.add_argument(
         "--idle-worker-harvest",
         action="store_true",
         help="Assign idle SCVs to visible minerals, preserving ongoing and current model orders",
     )
     args = parser.parse_args()
-    FactorPolicy.load(args.policy)
+    policy = FactorPolicy.load(args.policy)
+    if args.sample and "actor_type" not in policy.sizes:
+        parser.error("Command sampling currently requires a global decision checkpoint")
+    if args.wait_unavailable and (args.sample or "actor_type" not in policy.sizes):
+        parser.error(
+            "Waiting for unavailable intent currently requires deterministic global decisions"
+        )
+    if args.actor_policy:
+        actor = FactorPolicy.load(args.actor_policy)
+        if (
+            actor.evidence.get("role") != "actor_selection"
+            or actor.evidence["macro_sha256"]
+            != hashlib.sha256(args.policy.read_bytes()).hexdigest()
+        ):
+            parser.error("Actor pointer is incompatible with macro checkpoint")
+    if args.argument_policy:
+        argument = FactorPolicy.load(args.argument_policy)
+        if "actor_type" not in policy.sizes or (
+            argument.evidence.get("role") != "argument_prediction"
+            or argument.evidence["macro_sha256"]
+            != hashlib.sha256(args.policy.read_bytes()).hexdigest()
+        ):
+            parser.error("Argument predictor is incompatible with macro checkpoint")
+    if args.spatial_policy:
+        spatial = FactorPolicy.load(args.spatial_policy)
+        if "actor_type" not in policy.sizes or (
+            spatial.evidence.get("role") != "spatial_construction"
+            or spatial.evidence["macro_sha256"]
+            != hashlib.sha256(args.policy.read_bytes()).hexdigest()
+        ):
+            parser.error("Spatial scorer is incompatible with macro checkpoint")
     validate_map(args.map)
     if args.output.exists():
         parser.error("Output exists; choose a new episode directory")
@@ -408,9 +685,17 @@ def main():
             "step",
             "initial_harvest",
             "idle_worker_harvest",
+            "sample",
+            "wait_unavailable",
         )
     }
     job.update(policy=str(args.policy.resolve()), output=str(args.output.resolve()))
+    if args.actor_policy:
+        job["actor_policy"] = str(args.actor_policy.resolve())
+    if args.argument_policy:
+        job["argument_policy"] = str(args.argument_policy.resolve())
+    if args.spatial_policy:
+        job["spatial_policy"] = str(args.spatial_policy.resolve())
     receipt = supervise(play_job, (job,), args.wall_seconds)
     args.output.with_suffix(".supervision.json").write_text(
         json.dumps(receipt, indent=2) + "\n"

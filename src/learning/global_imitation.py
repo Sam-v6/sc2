@@ -9,7 +9,42 @@ def coordinate_signs(state, origin):
     return np.where(np.asarray(origin) > np.asarray(state["map_size"]) / 2.0, -1.0, 1.0)
 
 
-def global_features(state, unit_types, abilities, canonical=False):
+def entity_summary(state, unit_types, abilities, origin, canonical):
+    lookup = {kind: index for index, kind in enumerate(unit_types)}
+    summary = np.zeros((2, len(unit_types), 10), dtype=np.float32)
+    orders = np.zeros(abilities, dtype=np.float32)
+    signs = coordinate_signs(state, origin) if canonical else np.ones(2)
+    for unit in state["units"]:
+        if unit["alliance"] not in (1, 4) or unit["unit_type"] not in lookup:
+            continue
+        side = 0 if unit["alliance"] == 1 else 1
+        position = (np.asarray(unit["position"][:2]) - origin) * signs / 128.0
+        queue = unit.get("orders", [])
+        summary[side, lookup[unit["unit_type"]]] += np.array(
+            [
+                1.0,
+                *position,
+                unit.get("health", 0) / max(unit.get("health_max", 1), 1),
+                unit.get("energy", 0) / 200.0,
+                unit.get("weapon_cooldown", 0) / 64.0,
+                unit.get("build_progress", 1.0),
+                len(queue) / 5.0,
+                queue[0].get("progress", 0) if queue else 0.0,
+                float(not queue),
+            ]
+        )
+        if side == 0:
+            for order in queue:
+                ability = order.get("ability_id", 0)
+                if ability < abilities:
+                    orders[ability] += 0.05
+    counts = summary[:, :, :1].copy()
+    summary[:, :, 1:] /= np.maximum(counts, 1.0)
+    summary[:, :, 0] *= 0.05
+    return np.concatenate((summary.ravel(), orders))
+
+
+def global_features(state, unit_types, abilities, canonical=False, summarize=False):
     own = [u for u in state["units"] if u["alliance"] == 1]
     bases = [u for u in own if u["unit_type"] in (18, 36, 130, 132, 134)]
     origin = (
@@ -37,7 +72,12 @@ def global_features(state, unit_types, abilities, canonical=False):
     if canonical:
         entity[7:9] = 0.0
         entity[19:21] *= coordinate_signs(state, origin)
-    return np.concatenate((entity, enemies, history)), origin
+    components = [entity, enemies, history]
+    if summarize:
+        components.append(
+            entity_summary(state, unit_types, abilities, origin, canonical)
+        )
+    return np.concatenate(components), origin
 
 
 def global_labels(command, state, unit_types, origin, delay, canonical=False):

@@ -154,3 +154,30 @@ class CoordinateFrameTests(unittest.TestCase):
             canonical=True,
         )
         np.testing.assert_allclose(point, mirror_point)
+
+
+class EntitySummaryTests(unittest.TestCase):
+    def test_positions_orders_and_build_progress_change_global_inputs(self):
+        state = GlobalImitationTests().state()
+        state["map_size"] = [100.0, 100.0]
+        types = [18, 45, 105]
+        base, _ = global_features(state, types, 600, canonical=True, summarize=True)
+        for change in (
+            {"position": [25.0, 20.0, 0.0]},
+            {"orders": [{"ability_id": 319, "progress": 0.5}]},
+            {"build_progress": 0.5},
+        ):
+            units = [dict(u, **change) if u["tag"] == 2 else u for u in state["units"]]
+            other, _ = global_features(
+                dict(state, units=units), types, 600, canonical=True, summarize=True
+            )
+            self.assertFalse(np.array_equal(base, other))
+        mirrored = dict(
+            state,
+            units=[
+                dict(u, position=[100 - u["position"][0], 100 - u["position"][1], 0.0])
+                for u in state["units"]
+            ],
+        )
+        other, _ = global_features(mirrored, types, 600, canonical=True, summarize=True)
+        np.testing.assert_allclose(base, other)

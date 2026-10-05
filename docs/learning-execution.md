@@ -99,8 +99,8 @@ approximately 80% total machine load. A sample during two-worker search measured
 GPU work. Keep native replays; do not show victory demonstrations before the
 user's goal is complete.
 
-Latest unit verification: 123 tests passed in 9.756 seconds, saved in
-`logs/roadmap/unittest-seventh.log`. Native search/extraction results must be
+Latest unit verification: 143 tests passed in 10.203 seconds, saved in
+`logs/roadmap/unittest-twelfth.log`. Native search/extraction results must be
 inspected after completion before recording gains or moving gates forward.
 
 ## First terminal learning results
@@ -178,3 +178,131 @@ probes (imitation-balanced-harvest-01/02) are retained as unsuccessful diagnosti
 The current optional --idle-worker-harvest primitive handles idle workers, excluding
 workers with ongoing orders or selected by the model this frame. It is explicitly
 attributed and does not alter production/construction choices.
+
+## Observation and placement development
+
+Three further Masters Mez sources (51958 TvZ, 51890 TvP, 51891 TvP; ~283 KiB)
+were reconstructed to terminal results. All match Base75689. They are not pro
+Terran examples. Their issued datasets uniquely match 279/281, 500/507 and
+531/544 human commands, respectively, with unresolved events preserved. The
+current fit uses 1,999 issued commands from five whole Mez games; Lyra's 342
+commands remain a separate held-out player/game. Imputation never uses tracker
+or future enemy state.
+
+The global model now additionally encodes per-type own/enemy positions, health,
+energy, cooldowns, construction progress, queue length/progress, idle fraction
+and own order-ability counts. Coordinates face toward map center from the own
+base. Older saved models retain their original input dimensions through explicit
+checkpoint metadata. Individual learned pointers, recurrent memory and map-grid
+encoding remain open. Spatial coordinate loss was weak compared with categorical
+loss: Huber loss with bounded gradients improves training target error from about
+25 to 13 tiles in the two-game development fit, but held-out error is still large.
+Offline improvement does not establish live competence.
+
+Native failures identified actual construction geometry rejection: action code 41
+is CantFindPlacementLocation. The placement primitive now queries the engine
+on nearby half-tile positions and currently visible gas positions, choosing the
+closest legal point to the modeled request. It preserves ability, unit group and
+queue; records requested/issued coordinates and rejections; never chooses a build
+order or expansion strategy. A spatial model built four Command Centers and
+reached a 600-second cutoff without an army. This improves physical execution,
+not macro competence. Rejected intent is retained rather than fabricated as wait.
+
+Command sampling uses the model's probabilities restricted only by actual engine
+availability and a reproducible seed. The sampled probe still failed to build a
+useful army and lifted its Command Center; it is exploration evidence, not RL
+training. Worker assistance and learned command totals are separately attributed.
+Astra reviewed the stalled imitation pipeline read-only, as authorized by the
+user when progress stalls. Do not start a large RL campaign from these checkpoints
+or claim gate C passed.
+
+## Opening curriculum and selected-unit conditioning
+
+The review found two concrete failures. Live model history included scripted
+harvesting while teaching history contained human decisions only. The live input
+now uses model-issued history; full assistance remains visible in unit orders and
+is traced separately. Coarse mean-position/dominant-type selection could not
+reproduce 5/153 opening actor groups even with perfect labels. A binary learned
+membership selector replaces that shortcut without limiting group composition.
+Ground-truth individual membership round-trips all 153 groups; this is codec
+evidence, not learned strength or an engine legality test.
+
+The five whole-game training sources supply all 153 commands issued in their
+first 120 seconds, with equal total teaching weight per replay. No ability classes
+are removed. `imitation-prefix-01` fits command identity at 98%, gets the first
+TrainSCV command right in all five games, and recalls all production commands.
+The frozen-context actor model `actor-prefix-01` exactly selects 142/153 groups
+(92.8%). Lyra remains held out. These are training fit checks, not generalization.
+
+Three 120-second live probes with that model built workers and supply but no army.
+Tracing revealed a Command Center selected with worker scouting arguments. The
+new `arguments-prefix-01` learns target, mode, queue and timing from the selected
+group and frozen macro context. It cannot overwrite the macro ability. Training
+target error is 1.77 tiles, mode accuracy 98.7%, target type 87.5%, timing 75.8%.
+Two 180-second probes on seeds 40010/40011 built a Barracks and Refinery and
+produced one army supply each; Terran also upgraded to an Orbital Command. Both
+are cutoffs against VeryEasy, not wins. Receipts:
+`prefix-arguments-zerg-01/`, `prefix-arguments-terran-01/`.
+
+Current bounded experiment: compare the old argument head on the same Zerg seed
+and 180-second horizon, then fit the five complete opening prefixes through 240
+seconds (600 epochs CPU-only; held-out Lyra unchanged). Hypothesis: actual-group
+conditioning removes rally/scout confusion, and the longer prefix provides the
+production/gas/expansion examples needed after the initial opening. Inspect first
+command, production recall, argument errors and exact actor groups before any
+new native batch. Limit live follow-up to three 300-second openings; stop and
+inspect if no army develops. This is preparation for imitation competence, not
+a full-game RL campaign or a passed gate C.
+
+The 240-second fit reached 99.4% training command accuracy, 100% production
+recall and 480/494 exact actor groups. Selected-group argument training error is
+0.87 tiles. Held-out Lyra command accuracy is 44.4%, so generalization remains
+weak. Five-minute native development probes: Zerg produced one army supply but
+six CC/Orbital structures; Terran produced no army and five CCs. These are failures
+of useful macro, not successful imitation games.
+
+The Terran trace first wanted a depot at 85 minerals. Masking substituted Stop;
+later blocked SCV production became repeated depot orders that interrupted
+construction. An optional `--wait-unavailable` execution variant reevaluates the
+same learned intent each step instead of substituting an unrelated command.
+It does not choose prerequisites or a build order. The frozen matched run issued
+34 commands, all accepted, and built one CC, one Orbital, Barracks, Refinery and
+two depots, but only one army supply. It subsequently requested CC locations
+beyond the map edge and stalled on 202 CC decisions. Artifact:
+`prefix240-wait-terran-01/`. This closes the hypothesis that availability fallback
+alone is sufficient for useful macro.
+
+Astra's second trace review identified spatial deadlock. Clamping constant input
+features changed only 2/416 macro decisions and left CC targets beyond the map;
+live mineral types were already represented in training. Do not spend another
+batch treating unused random features as the primary cause.
+
+Next bounded mechanism test: `spatial-prefix-240-01` scores uniform four-tile
+candidate positions aligned to native footprint size. Inputs use local terrain,
+placement/pathing grids, currently visible resources and units, builder distance
+and frozen command context. There is no scripted expansion list. Human build
+locations provide nearby-cell positive labels; the engine filters actual legality
+at execution. Macro command, unit selection and nonconstruction arguments stay
+frozen. On the same eight held-out Lyra construction commands, target error is
+16.15 tiles versus 36.42 for coordinate regression (training 42 commands: 2.50
+tiles, grid coverage error 1.61). These conditional geometry checks use the human
+ability/group, not closed-loop predictions. Two matched 300-second openings on
+seeds 40020/40021 will measure repeated placement rejection and completed army
+production. If legal locations merely enable excess CCs without an army, close
+this rescue hypothesis; do not extend it into a large RL run.
+
+Both spatial probes developed more production: Terran ended at five army supply,
+23 workers, Factory/Starport, two CCs plus one Orbital; Zerg ended at six army
+supply, 28 workers, Factory/Starport, four CCs plus one Orbital. Against the matched
+waiting-only Terran run, army supply rose from one to five. Both still reached
+the 300-second cutoff, and expansion is excessive. The spatial mechanism improved
+live production, but does not establish useful full-game strength. Artifacts:
+`prefix240-spatial-terran-01/`, `prefix240-spatial-zerg-01/`.
+
+Next competence check: two frozen-policy 1,200-second VeryEasy games on fresh
+Zerg/Terran seeds, at most 240 wall seconds each. Record terminal results, army
+and build progress, idle/repeated decisions and resource utilization. Do not count
+cutoffs as complete games or victories. Stop after this pair before proposing RL
+or longer imitation fits. The live adapter also avoids a redundant macro forward
+pass when the engine-legal ability is already the model's raw argmax; argument
+conditioning is identical.
