@@ -22,4 +22,16 @@ Audit all rollouts/masks/reward/terminal context/returns, complete schedules, so
 
 No sudo/downloads; eightCPUs/nice+10/BLAS1/softwareGL/CPU-only, maxfourtotalSC2games. Use existing siblingTorch interpreter with absolute(non-resolved)path and Python-B. All sources/artifacts stay in owned worktree; preserve maindefault/retained model until strength evidence supports change.
 
-Status: predeclared only. No matched learning or new bank games yet.
+## Implementation and smoke ledger
+
+Control archive uses the already verified observation-only ProductionProbe while preserving old encoder. Sensory archive adds sensory_terran.py with35inputs and two original callback bodies using extended encoding. All masks, primitives, combat micro, potential and finite terminal objective remain inherited. The learner/update helper supports dynamic checkpoint dimensions unchanged.
+
+Three sensory tests fail on missing module first, then pass. Full suites85control/88sensory pass. Initial archive omitted config/plot.yaml and both full suites failed plotting; copied original config only and retained failed outputs. No plotting code changes.
+
+Control initial bytes match retained0f3. Sensory initial3232e40ff4a3ee3b04c2d6f45af59f8ca53a76e8d6beb0458bab5c5fe4af6eaf appends zero rows and extends schema/empty states only. All old network and optimizer arrays, RNG, settings, counters and other metadata match. Across3183probe states, logits/values/probabilities differ by at most2.22e-16 with identical masked greedy choices. Independent reviewer reconstructs migration/parity and checks inherited execution/reward scope; no material blocker.
+
+All12actual smoke games complete without infrastructure/learner failures. Each arm runs train2/resume2/frozen2 at declared seeds; each phase224decisions. Episodes/attempts144to148 and updates676to680to684; final frozen checkpoint unchanged. Smoke weights separate from original actual-learning inputs. Initial reporting harness looked for summary.json but trainer writes run-id.summary.json: first control train2 completed; preserved original harness and harvested that phase without repeating games before continuing v2. Audit verifies schedules, counters, replaybytes, terminal context and finite states. logs/[arm]/smoke/audit.json.
+
+Ten-second active smoke host sample3.14to11.11percentCPU; all owned processes pinned24–31 and nice10; GPU13percent/19.55W/40C with learnerCUDAhidden. logs/audit/production-sensory-smoke-v2-resource-load.json. Short host sample does not guarantee unrelated workloads stay below limit.
+
+Original actual-learning inputs and exact schedules frozen in logs/audit/production-sensory-learning-inputs.json; driver and archive/config hashes retained. Four workers maximum, sequential phases. No matched learning or new bank games completed at this ledger update.
