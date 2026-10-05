@@ -54,7 +54,7 @@ Files: archived src/rl/intent_terran.py; tests/test_unit_intent.py; src/rl/train
 
 ## Implementation and verification ledger
 
-Task1 complete: four new tests fail before implementation (missing module), then pass; archived full85-test suite passes. Initial full suite failed five tests: four still targeted old training schema and one lacked copied plot config. Adapted only archived training-test imports and copied original config/tools. Production source unchanged. New module99lines; trainer import only.
+Task1 complete: four new tests fail before implementation (missing module), then pass; archived full85-test suite passes. Initial full suite failed five tests: four still targeted old training schema and one lacked copied plot config. Adapted only archived training-test imports and copied original config/tools. Production source unchanged. New module96lines; trainer import only.
 
 Task2 complete: migration verifies17323 old states, max logit/value error2.22e-16, all old parameters/moments/RNG exact, new input rows zero. Source and contexts independently reviewed. Migration overwrite guard rejects rerun without changing inputs/receipt. Actual SC2 fixture covers unaffordable wait, busy wait, once-only issuance and cancellation, three Vikings complete. First fixture correctly hit supply limit; failed receipt preserved and fixture supply corrected. Six120-second smoke games per arm (train2/resume2/frozen2) allTie with zero failures,148episodes/attempts and684updates. Frozen checkpoints unchanged.144states per arm, return errors<=2.92e-16. Intent smoke39issued/17delayed/26cancelled; issuance alone is not completion.
 
