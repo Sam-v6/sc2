@@ -41,3 +41,27 @@ Freeze final and evaluate greedy30 on development banks20000 and40000 with
 four workers each. Prefer/extend only with at least14 and13 wins respectively.
 Otherwise withhold that arm. The reserved final bank50000,70% reliable Hard
 acceptance target and richer observation end-state remain unchanged.
+
+The isolated implementation passed90 tests and independent review. Four new
+architecture/schema tests failed before the edit; value-only and entropy-only
+feedback checks prove both directions of gradient isolation. Resume tests use
+different actor/critic step counters. Migration preserves actor parameters,
+moments and step676, clones initial critic predictions, and resets critic Adam
+to step0/moments0. The migrated checkpoint SHA-256 is
+`5b34eb35ab88689f8700d2863626c51290469cedc0965285522028b6c55db65b`.
+Across33,556 retained states, logits, values, same-temperature probabilities
+and greedy actions match exactly (maximum errors0). These are initial parity
+checks, not strength evidence. Actual three-game train/resume/frozen smoke
+verification is now running separately from the untouched canonical initial.
+Source: `logs/audit/ppo-independent-value-source/`; migration receipt:
+`logs/ppo-independent-value/migration.json`; tests/parity receipts:
+`logs/audit/independent-value-tests.stdout`,
+`logs/audit/independent-value-inference-parity.json`.
+
+All nine actual smoke games completed without failures (three train, three
+resume, three frozen), each reaching the120-second cutoff. Resume reached
+150 episodes/attempts,692 actor updates and16 critic updates; the inherited
+676-step offset is preserved. Frozen sampling leaves checkpoint bytes unchanged.
+Both canonical initial files remain untouched. Receipt:
+`logs/audit/independent-value-smoke-results.json`. The predeclared40-game
+Hard continuation is running from the untouched migrated canonical initial.
