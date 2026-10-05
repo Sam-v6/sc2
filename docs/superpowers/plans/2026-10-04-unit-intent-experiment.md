@@ -34,16 +34,16 @@
 
 Files: archived src/rl/intent_terran.py; tests/test_unit_intent.py; src/rl/train.py import only.
 
-- [ ] Write failing tests for selectable unaffordable/busy units, tech/producers still required; actual retries obey original legal mask, execute once, and record issuance; cancellation/replacement; pending observation and encoding.
-- [ ] Run focused unittest and confirm failures identify missing behavior.
-- [ ] Implement subclass and wire archived trainer; preserve production source.
-- [ ] Run full archived unittest suite and request existing independent reviewer.
+- [x] Write failing tests for selectable unaffordable/busy units, tech/producers still required; actual retries obey original legal mask, execute once, and record issuance; cancellation/replacement; pending observation and encoding.
+- [x] Run focused unittest and confirm failures identify missing behavior.
+- [x] Implement subclass and wire archived trainer; preserve production source.
+- [x] Run full archived unittest suite and request existing independent reviewer.
 
 ### Task 2: Migration and runtime verification
 
-- [ ] Migrate retained0f3 checkpoint by feature name with zero new rows/moments, original outputs exact on recorded states; cadence5/gamma.99/explicit label. Matched immediate control changes cadence/gamma only.
-- [ ] Test supervised actual SC2 fixture: choose unaffordable unit, restore ordinary resources, observe one unit completion; busy producer waits; cancellation prevents issuance. Debug fixture excluded from learning.
-- [ ] Run/resume two VeryEasy smoke games per arm, audit trajectories and immutable frozen eval.
+- [x] Migrate retained0f3 checkpoint by feature name with zero new rows/moments, original outputs exact on recorded states; cadence5/gamma.99/explicit label. Matched immediate control changes cadence/gamma only.
+- [x] Test supervised actual SC2 fixture: choose unaffordable unit, restore ordinary resources, observe one unit completion; busy producer waits; cancellation prevents issuance. Debug fixture excluded from learning.
+- [x] Run/resume two VeryEasy smoke games per arm, audit trajectories and immutable frozen eval.
 
 ### Task 3: Bounded matched learning comparison
 
@@ -61,3 +61,5 @@ Task2 complete: migration verifies17323 old states, max logit/value error2.22e-1
 Ruling: first pass persists unit choices only; structure/research/stance remain atomic. Evidence currently concerns unit affordability/queues, and this keeps the intervention bounded. Lack of automatically constructed prerequisites is deliberate and tested. The combined selection-mask/persistence intervention also has11additional observation features; matched cadence is controlled, but those components are not separately identified.
 
 Task3 inputs frozen in each predeclared-run.json before launch; sources must remain unchanged during jobs. Keep primary and all archived evidence. No Astra consultation needed yet: concrete diagnostics and implementation have progressed.
+
+Hard intent run is live under supervisor session3014. During the first four-game batch, five sampled two-second windows show whole-host CPU13.04–13.52%, owned CPU lower bound12.37–12.48%, aggregate RSS peak4.636GiB. All ten observed owned processes use CPUs24–31 and nice+10. GPU instantaneous10%,20.71W,40C. Receipt logs/audit/unit-intent-hard-resource-load.json. This is a live sample, not an overnight peak guarantee. Matched control has not started; keep total concurrency<=4games.
