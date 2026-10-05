@@ -53,5 +53,17 @@ retained cadence one and the declared graph context, and advanced the optimizer
 canonical inputs remained untouched. Receipt:
 `logs/audit/critic-isolation-smoke-results.json`.
 
-The untouched initial is now running the bounded Hard40 continuation. Main
-production code and the strongest retained model remain unchanged.
+Hard40 completed with 2 wins, 35 losses and 3 horizon ties, without failures.
+All 28,756 transitions and full discounted returns were audited; maximum return
+error was 3.74e-14. The final contains finite parameters and optimizer moments,
+184 episodes/attempts and 1,144 updates. Frozen greedy Hard30 then scored
+4 wins, 25 losses and one tie, without failures. Its 24,177 transitions passed
+the same audit (maximum return error 2.23e-14), and checkpoint bytes stayed exact.
+Opponent schedules match the victory-credit control; only the two declared
+learning source files differ. Receipts:
+`logs/audit/critic-isolation-hard-1-results.json` and
+`logs/audit/critic-isolation-final-evaluate-hard30-results.json`.
+
+This remains below the retained 12/30 policy. Do not promote the candidate or
+infer that direct critic gradients caused regression. Main production code and
+the strongest retained model remain unchanged.

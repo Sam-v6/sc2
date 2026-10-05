@@ -28,6 +28,8 @@ no silent model conversion is performed.
 | Isolated infantry research capability | 84 tests, real upgrade/Stim fixtures; Hard40 2 wins/38 losses, zero failures | Migrated initial 12/30 exact parent gameplay; trained final 0 wins/27 losses/3 cutoffs, zero failures | Working capabilities; regressed, not promoted |
 | Frozen sampling concentration, same kills-only parent | No continuation: predeclared gate failed | Temperature1:0 wins/28 losses/2 cutoffs; temperature0.5:1 win/27 losses/2 cutoffs; both zero failures | Greater greedy agreement; insufficient strength |
 | Stronger victory payoff, same kills-only parent | Hard40: 3 wins/34 losses/3 cutoffs; all rewards/returns audited, zero failures | Greedy Hard30: 0 wins/27 losses/3 cutoffs; zero failures, unchanged bytes | Regressed; not promoted |
+| Block direct critic gradients into actor features | 82 tests; Hard40: 2 wins/35 losses/3 cutoffs; reward/return audits passed, zero failures | Greedy Hard30: 4 wins/25 losses/1 cutoff; zero failures, unchanged bytes | Below retained 12/30; not promoted |
+| Near-greedy collection temperature 0.05 | 85 tests; numeric parent state exact, metadata migration only | Fresh matched sampled Hard30 at temperatures 1 and 0.05 running | Predeclared training gate; results pending |
 
 The unchanged kills-only continuation produced 18 wins, 14 defeats and 8 cutoffs
 in another 40 Easy games, with zero failures. All 35,931 transitions and every
