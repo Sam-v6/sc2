@@ -45,11 +45,23 @@ exactly. Fresh appended-row Adam clocks reduce excess first-update probe KL by
 optimizer minibatches completed with zero new games. This is a learning-dynamics
 result, not improved strength or proof of the later collapse's cause. A separately
 declared [fresh-clock training experiment](superpowers/plans/2026-10-05-production-input-fresh-adam.md)
-is now testing actual play. Its93source tests, optimizer resume checks, six
+is now closed after actual play. Its93source tests, optimizer resume checks, six
 disposable smoke games and independent review pass. The firstfouractual Medium
 games reproduce all3898original decision traces and the corrected offline
-network/moment/RNG update exactly. The remaining36training games and30frozen
-cases are pending; no strength result or promotion is established.
+network/moment/RNG update exactly. All40training and30frozen games completed:
+training4wins/30losses/6ties; frozen7wins/23losses, versus parent22/30 and control21/30.
+Complete audits and independent review passed, but every strength gate failed.
+No promotion or conditional Hard games followed. A full matched defeat replay
+is available under `logs/replay-proof/production-fresh-adam-medium-zerg-regression.mp4`.
+
+The [saved-checkpoint SCV audit](superpowers/plans/2026-10-05-scv-credit-audit.md)
+then verified economic collapse and located a persistent SCV/wait preference
+reversal after36training games. The preceding batch's actor direction suppresses
+the fixed-state preference; its critic direction slightly supports it. A bounded
+[credit-estimator comparison](superpowers/plans/2026-10-05-scv-credit-estimator-replay.md)
+completed temporal-trace and batch-centering checks without new games or optimizer
+steps. All four predeclared mechanism gates failed; independent review passed.
+These diagnostics rule out the tested simple fixes and do not establish a playing fix.
 
 The main CLI now contains the tested richer DQN/PPO experiment, not an accepted
 Hard bot. Richer observations encode:
