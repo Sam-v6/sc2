@@ -81,8 +81,11 @@ checks, but regressed frozen Medium wins: parent 22/30, control 21/30, sensory 6
 It is closed without promotion. See the
 [production-input experiment ledger](docs/superpowers/plans/2026-10-05-production-sensory-learning.md).
 An exact offline replay then found that fresh Adam clocks for the appended inputs
-reduce excess first-update policy drift by 78%; improved gameplay remains untested.
+reduce excess first-update policy drift by 78%. The corresponding fixed continuation
+still regressed: 7/30 frozen Medium wins, so it is closed without promotion.
 See the [optimizer diagnostic](docs/superpowers/plans/2026-10-05-production-input-update-replay.md).
+The [fresh-clock experiment](docs/superpowers/plans/2026-10-05-production-input-fresh-adam.md)
+records the completed training, audits and a Linux replay video.
 
 ## Terran learning experiment
 

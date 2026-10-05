@@ -107,8 +107,32 @@ roughly12.4–12.5% owned CPU; all owned processes use24–31affinity/nice10.
 GPU is13%/21.54W/40C; the learner uses CPU only. Resource receipt:
 `logs/audit/production-fresh-adam-learning-resource-load.json`.
 
-Status: remaining36training games and subsequent30frozen Medium cases are
-running sequentially under the frozen driver. Full recorded-choice/reward/
-checkpoint-chain audit and independent review remain required. No Hard games,
-new strength claim or promotion. Live artifacts and phase ledger are under
-`logs/ppo-production-fresh-adam/`; source/smoke review receipts are in `logs/audit/`.
+## Completed result: strength gate failed
+
+All40training and30frozen Medium games completed without failures. Training
+finished4Victories/30Defeats/6Ties across34124decisions. Frozen evaluation finished
+7Victories/23Defeats across19941decisions, with mean discounted return .1143448847.
+The parent won22/30, control21/30 and original sensory6/30 on these same development
+cases. All four predeclared improvement checks fail. This arm is closed: no Hard
+games, extension or promotion. The retained main policy remains unchanged.
+
+Complete recorded-choice, reward, RNG and checkpoint-chain audit passed, followed
+by independent verification of all70receipts and the frozen evaluation. Evidence:
+`logs/ppo-production-fresh-adam/learning-audit.json` and
+`logs/audit/production-fresh-adam-complete-independent-review.json`.
+Final checkpoint SHA256:
+15b28a130e6b65132e403a9f4ed348667f65924004efd782528016b066496506.
+
+The previously selected89011Zerg/Macro/Simple64 case remains a defeat, now at
+826.43game seconds. It produces up to31army units but never chooses SCV production;
+parent and control won this case. Its actual replay exports successfully to
+`logs/replay-proof/production-fresh-adam-medium-zerg-regression.mp4`:
+843H264frames,960x720,4fps,210.75video seconds, full826.79game seconds, no frame cap.
+ffprobe and a middle-game still verify usable rendered content. The overview is
+omniscient and does not represent the policy's fog-limited observation.
+
+Across the30frozen games, this model chooses SCV production once overall and never
+before180game seconds, despite4774early decisions where SCV production is legal.
+Twenty-nine games peak at12workers. These are descriptive trace findings, not yet
+an attribution to reward, observations, optimizer or primitive execution. The next
+bounded audit will trace SCV preference and credit through saved checkpoints.
