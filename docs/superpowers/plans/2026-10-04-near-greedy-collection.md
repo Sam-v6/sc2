@@ -48,5 +48,54 @@ and identical greedy choices on 406 logged states. Temperature 0.05 multiplies
 likelihood derivatives by 20 and reduces exploration; later clipped Adam updates
 may behave differently. Frozen performance alone cannot establish learning benefit.
 
-Both frozen comparison arms are running. Main production source and retained
-models remain unchanged.
+Both frozen comparisons completed without failures. Temperature 1 scored
+0 wins, 28 losses and two horizon ties; temperature 0.05 scored 10 wins and
+20 losses. Opponent and policy seed schedules match exactly, and only the two
+declared source files differ. Checkpoint hashes stayed unchanged. Every reward
+component and seeded categorical action on its actual observed state passed the
+audit. Nonforced greedy agreement rose from 52.5% to 91.7%. Receipt:
+`logs/audit/near-greedy-frozen-comparison.json`.
+
+The predeclared gate passed. Separate two-game train/resume/frozen sampled
+checks completed without failures (all six reached their 120-second horizons).
+Hashes chained across resume, frozen bytes stayed exact, and finite payloads
+advanced from 144/676 to 148 episodes/attempts and 684 optimizer updates. Context,
+cadence and untouched experiment initial/canonical input were verified. Receipt:
+`logs/audit/near-greedy-smoke-results.json`.
+
+Hard40 completed from the untouched initial with 10 wins and 30 losses, without
+failures. All 24,692 transitions and every discounted return passed audit;
+maximum return error was 2.49e-14. Opponent schedule matches the critic-isolation
+control, and only the declared temperature source files differ. The final contains
+finite parameters/moments, 184 episodes/attempts and 1,080 updates. Its immutable
+SHA-256 is b55da4f1f0b8fc3bdde4cd1194319d25fd37d4f514f4cadc82d5b08d35f40ea9.
+Receipt: `logs/audit/near-greedy-hard-1-results.json`.
+
+Measured post-update divergence on actual collected states peaked in the first
+batch (mean old-to-new KL 0.236, collected likelihood clip fraction 15.1%, greedy
+choice flips 8.4%). Later batch KL ranges 0.0014 to 0.0131. These descriptive
+measurements do not identify the cause of wins/losses. Receipt:
+`logs/audit/near-greedy-update-drift.json`. Frozen greedy and sampled Hard30
+comparisons of the immutable final completed without failures. Greedy play scored
+14 wins/16 losses: Terran 5/10, Protoss 3/10, Zerg 6/10. Sampled play scored
+8 wins/22 losses: Terran 5/10, Protoss 0/10, Zerg 3/10. Frozen hashes are unchanged.
+The sampled result regresses against the migrated initial's 10/30; greedy
+performance exceeds the retained numerical parent's 12/30 on the reused suite
+by two wins. This is a small development gain, not reliable Hard acceptance.
+Receipts: `logs/audit/near-greedy-final-evaluate-hard30-results.json` and
+`logs/audit/near-greedy-final-sample-hard30-results.json`.
+
+## New development-bank comparison
+
+Before promoting a new preferred model or continuing its training, compare the
+original retained kills-only Easy40 and this frozen final with greedy choices
+on seed base 40000: the same 30 race/build/map cases, 1200 game seconds/300 wall
+seconds, four workers per arm. Use each checkpoint's exact matching source;
+rewards/critic context differ but do not affect frozen choices. Verify terminal
+receipts, schedules, immutable hashes and source contexts. These are fresh
+**development** cases; the separate final acceptance bank 50000 stays untouched.
+Choose the candidate for further work only if it at least matches the baseline
+on this new bank. Ties or modest counts are not statistical improvement. The
+unchanged reliable Hard target must still be satisfied before acceptance.
+This is collection evidence on reused cases, not improved learned strength or
+acceptance. Main production source and retained models remain unchanged.
