@@ -43,8 +43,11 @@ training-state results, not gameplay improvement. The reviewed 36-game compariso
 then completed: Hard candidate5/12 versus parent6/12; sampled Easy candidate0/6
 versus parent1/6. The bootstrap fails its gate and is not promoted. A separate
 [recurrent-memory prototype](superpowers/plans/2026-10-05-recurrent-memory.md)
-passes four inference checks; sequence PPO and native recurrent training remain
-unfinished. The unfinished saving probe is deferred with its foundation
+has a passing training-only information diagnostic and an independently
+reproduced two-game backend smoke: four actual sequence-PPO steps per arm. Both
+smoke games lost, and its fitted models are excluded from the future64-game-per-arm
+strength study. Twenty-one focused checks pass; complete batch training and
+fresh strength evaluation remain unfinished. The unfinished saving probe is deferred with its foundation
 preserved. Replays stay saved without showing videos until the goal is complete.
 
 The [combined combat and collection experiment](superpowers/plans/2026-10-05-combined-combat-collection-results.md)

@@ -16,12 +16,14 @@ residual actor logits and value. Zero initial residual projections preserve the
 parent exactly; new parameters need fresh optimizer state. Macro decisions remain
 learned. No build order, unit quota or attack timing is supplied.
 
-The unfrozen CPU inference prototype is at
+The CPU inference core is at
 `tools/recurrent_memory/recurrent_core.py`. Four tests currently pass:
 parent equivalence at initialization, complete/chunked sequence equivalence,
 different histories with the same current observation, and agreement with the
-existing Torch GRU cell. This is implementation evidence only: no recurrent
-optimizer, checkpoint format, game worker or training result exists yet.
+existing Torch GRU cell. The information diagnostic and native backend smoke are now complete, with
+independent reviews. Typed checkpoints, full-sequence PPO and a collecting game
+worker exist; each smoke arm performed four actual updates. This verifies the
+backend, not gameplay improvement. See [results](2026-10-05-recurrent-memory-results.md).
 
 ## Checks before native training
 
@@ -33,9 +35,10 @@ enemy state, and prediction improvement cannot establish gameplay improvement.
 If ordering provides no additional information, revisit the memory hypothesis
 before spending a native training budget.
 
-Then implement sequence PPO: contiguous trajectories, episode-boundary resets,
-reconstructed hidden state with burn-in, exact recorded behavior likelihoods,
-and checkpoint/resume agreement. Shuffling individual transitions is invalid for
+The implemented sequence PPO uses: contiguous trajectories, episode-boundary resets,
+full-episode hidden-state reconstruction, exact recorded behavior likelihoods,
+and checkpoint/resume agreement. Full BPTT avoids truncated chunks and burn-in
+approximations in this version. Shuffling individual transitions is invalid for
 a recurrent policy. Verify NumPy inference against Torch training and preserve the
 retained feedforward parent. Freeze reviewed source, budgets and inputs before
 launch; no current experiment is authorized to modify frozen source generations.
@@ -43,8 +46,11 @@ launch; no current experiment is authorized to modify frozen source generations.
 ## Bounded gameplay comparison
 
 After the mechanism and implementation checks, declare 64 completed training
-games per arm, recurrent versus feedforward PPO, on the same balanced Medium/Hard
-schedule. Keep rewards and exposure equal. Freeze a fresh paired Hard panel and
+games per arm, recurrent versus an identical-parameter memory-reset control, on the same
+balanced Medium/Hard schedule. Freeze the parent network in both arms and train
+only the new GRU/residual parameters; this preserves the learned initialization
+while isolating memory access. Both arms start anew from the retained parent;
+exclude fitted engineering-smoke models. Keep rewards and exposure equal. Freeze a fresh paired Hard panel and
 an Easy sampled retention panel before fitting. Evaluate greedy and sampled
 behavior separately. The seed bank, update schedule and strength gate still need
 explicit declaration before this comparison starts; do not select them from its
