@@ -35,3 +35,10 @@ All12actual smoke games complete without infrastructure/learner failures. Each a
 Ten-second active smoke host sample3.14to11.11percentCPU; all owned processes pinned24–31 and nice10; GPU13percent/19.55W/40C with learnerCUDAhidden. logs/audit/production-sensory-smoke-v2-resource-load.json. Short host sample does not guarantee unrelated workloads stay below limit.
 
 Original actual-learning inputs and exact schedules frozen in logs/audit/production-sensory-learning-inputs.json; driver and archive/config hashes retained. Four workers maximum, sequential phases. No matched learning or new bank games completed at this ledger update.
+
+
+## Live matched-run ledger
+
+Independent reviewer reconstructs both smoke audits and checks exact cases, input/source/driver hashes, preserved original learning weights, sequential four-worker phases and frozen-phase checks. No material launch blocker. Matched driver started through quiet wrapper; live handle64350. First four-game host sample13.3696to13.6258percentCPU, owned24–31/nice10; GPU13percent/20W/40C. logs/audit/production-sensory-learning-resource-load.json.
+
+Control has16of40 completed training receipts at this update, zero infrastructure/learner failures, updates908. Outcome comparison remains pending. Four audit tests pass, including rejecting incorrect terminal credit, broken combat-score continuity and wrong next potential. First actual four-game control batch3898states reconstructs every sampled choice from recorded behavior/policy_seed and reward/component/telescoped discounted returns. logs/audit/production-sensory-firstbatch-audit.json. Scope is first batch only; complete experiment audit and independent review still required. No source/checkpoint edits during the live run; no Hard promotion evidence.
