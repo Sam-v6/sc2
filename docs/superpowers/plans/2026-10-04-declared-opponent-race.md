@@ -55,3 +55,11 @@ The predeclared 40-game Hard continuation is now running. Receipts:
 `logs/audit/declared-race-smoke-results.json`,
 `logs/audit/declared-race-inference-parity.json`,
 `logs/ppo-declared-race/migration.json`.
+
+The first continuation stopped after31 completed games and one SC2 startup
+`ServerDisconnectedError` at2.769 wall seconds, before any game decisions.
+It is incomplete and excluded from the strength comparison. Preserve its
+receipts and updated canonical checkpoint. Repeat the entire40-game schedule
+from exact untouched initial bytes in `policy-retry1.npz`, output `hard-retry1`;
+no selective replacement or policy/source/settings change. Audit receipt:
+`logs/audit/declared-race-infrastructure-failure.json`.
