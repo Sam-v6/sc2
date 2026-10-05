@@ -63,3 +63,12 @@ Sequential driver advances to sensory-train40, live handle64350. Comparator is i
 First four sensory training games exactly match corresponding control games88144–88147: same policy seeds, outcomes, durations, rewards, and byte-identical full action/snapshot/mask/execution/component traces across3898decisions. logs/audit/production-sensory-firstbatch-parity.json. Scope is the original-behavior batch before updates; subsequent learning is expected to diverge.
 
 Frozen sensory behavior checkpoint after first update af0804593085a06182fdc481f35d6d94ae93990ddaa2c3c48e3fcf9dfca051f0 has148episodes/attempts and740updates.24of35 appended input rows acquire nonzero weights, with finite nonzero Adam moments/variances, weightL2.6633706529635178. The other11rows were unexposed in this batch. logs/audit/production-sensory-first-update-inputs.json. This verifies that added inputs reach the optimizer; no strength claim. Sensory phase remains live; full evaluation/audits pending.
+
+
+## Completed sensory training and parent evaluation
+
+Sensory40 finishes3Victory/33Defeat/4Tie, zero failures. Complete training-phase audit and independent reconstruction pass34040decisions, all sampled choices, source/case/behavior history, exact optimizer/sample counts, reward components and finite terminal telescoping. Mean discounted training return.06378040684608147; episodes/attempts184, updates1236. Logged queue-state exposure16810townhall/19325Barracks/5249Factory/719Starport and12826pending-supply states. This supplies training-path evidence, not improved playing strength.
+
+Named byte-exact final training snapshots preserved: control6f54391915f5c46bd15b9038cff67c4108da895bcef5ef176968f80511ab9576; sensorya7f7ba8b306f80ef3313658285f2601035d51ef51aa73ea6d4f22b0152e599dc. logs/[arm]/frozen-medium40.npz and logs/audit/production-sensory-final-training-snapshots.json. Driver continues evaluating its unchanged learning.npz files as predeclared; these copies do not alter jobs.
+
+Unchanged parent frozenMedium30 finishes22Victory/8Defeat, zero failures and exact checkpoint preservation. Independent full-phase audit verifies15293greedy decisions and rewards, mean discounted return.463629449028912; winsTerran8/10,Protoss5/10,Zerg9/10. Bank89000–89029 is fresh Medium development, not final Hard acceptance. The declared sensory gate now implies at least25wins and return no lower than this parent, as well as its original control-relative requirements. No thresholds changed. Trained control/sensory frozen evaluations remain pending; livehandle64350 verified active.

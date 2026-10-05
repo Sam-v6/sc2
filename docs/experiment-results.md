@@ -32,10 +32,11 @@ and pending supply as 35 additional live inputs. Its six-game instrumentation pr
 preserved all 3,183 decisions exactly; a fixed held-out next-state predictor improved
 weighted Brier error by 10.4%, narrowly passing the declared information gate.
 That supports testing the inputs, not a playing-strength claim. The matched Medium
-learning comparison is running: control training completed 4 wins, 29 losses and
-7 time-limit ties, with all 35,727 decisions independently audited. Sensory training
-and three frozen 30-game evaluations remain pending. The main CLI and retained
-model are unchanged. See the [matched production-input experiment](superpowers/plans/2026-10-05-production-sensory-learning.md).
+learning comparison is running. Control training completed 4 wins, 29 losses and
+7 time-limit ties; sensory training completed 3 wins, 33 losses and 4 ties, both
+without failures. All 69,767 training decisions passed independent audits. The
+unchanged parent won 22/30 fresh Medium evaluation games; trained control and
+sensory evaluations remain pending. The main CLI and retained model are unchanged. See the [matched production-input experiment](superpowers/plans/2026-10-05-production-sensory-learning.md).
 
 The main CLI now contains the tested richer DQN/PPO experiment, not an accepted
 Hard bot. Richer observations encode:
