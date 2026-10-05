@@ -677,3 +677,9 @@ did not establish transfer to Hard. None is promoted as stronger than the
 retained finite Easy40 snapshot. The stance counterfactual did not predict wins.
 The next experiment should train directly on Hard and compare controlled
 exploration, preserving richer live observations and the original acceptance scope.
+
+## October5 learning status
+
+Reliable Hard strength remains unmet. The retained richer-observation policy still scores12/30 and13/30 on the two development banks. The latest unit-intent experiment and immediate five-second control each train40Hard games without infrastructure failures but yield zero training victories. Frozen60-game results are0victories for intent and1for control. Both fail the development effort gate; neither is promoted or extended. Full state/action/source/checkpoint audits pass. See [unit-intent experiment](superpowers/plans/2026-10-04-unit-intent-experiment.md).
+
+Under the user's conditional permission, Astra suggested an episode-consistent exploration diagnostic. Outcome-free calibration produced eight frozen policy perturbations averaging5percent changed recorded choices. Both predeclared original-policy controls lost, so the diagnostic stops inconclusive before its16conditional perturbation games. No new training, promotion or final acceptance claim. See [episode-consistent exploration](superpowers/plans/2026-10-05-episode-coherent-exploration.md).
