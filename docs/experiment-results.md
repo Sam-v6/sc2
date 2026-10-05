@@ -26,6 +26,7 @@ no silent model conversion is performed.
 | Reset finite control vs net combat-event reward | 6 vs 3/40 Easy wins | Both greedy and sampled 0/6 each | Net-event greedy built no army; not promoted |
 | Kills-only combat-event reward | 8/40 Easy wins vs net-event 3/40; audited, zero failures | Greedy 2/6; sampled 0/6; broad greedy 12/30 (Terran 4/10, Protoss 2/10, Zerg 6/10) | Wins across all races; reliability goal unmet |
 | Isolated infantry research capability | 84 tests, real upgrade/Stim fixtures; Hard40 2 wins/38 losses, zero failures | Migrated initial 12/30 exact parent gameplay; trained final 0 wins/27 losses/3 cutoffs, zero failures | Working capabilities; regressed, not promoted |
+| Frozen sampling concentration, same kills-only parent | No continuation: predeclared gate failed | Temperature1:0 wins/28 losses/2 cutoffs; temperature0.5:1 win/27 losses/2 cutoffs; both zero failures | Greater greedy agreement; insufficient strength |
 
 The unchanged kills-only continuation produced 18 wins, 14 defeats and 8 cutoffs
 in another 40 Easy games, with zero failures. All 35,931 transitions and every

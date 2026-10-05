@@ -49,5 +49,11 @@ from 0.551 to 0.615. This is not gameplay improvement evidence. Receipt:
 `logs/ppo-concentrated/migration.json`. Immutable initial SHA-256:
 964a3547db2bb2282475157124bc56b07d15a860a090315366761501b368ec34.
 
-Both frozen sampled Hard30 comparisons are running. Main production code and
-all retained prior sources/models remain unchanged.
+Both frozen sampled Hard30 comparisons completed with zero failures and
+unchanged checkpoint hashes. Temperature 1 scored zero wins, 28 losses and
+2 horizon ties; temperature 0.5 scored one win, 27 losses and 2 ties. Every
+reward component matched, and opponent/policy seed schedules were exact.
+Agreement with greedy choices on nonforced decisions rose from 52.5% to 61.9%,
+but the predeclared training gate failed. Do not train or promote this branch.
+Receipt: `logs/audit/concentrated-frozen-comparison.json`. Main production code
+and all retained prior sources/models remain unchanged.
