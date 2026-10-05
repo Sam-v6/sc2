@@ -27,6 +27,15 @@ builds/maps, using a fresh seed bank after development choices are finished.
 
 ## Current development status
 
+The [resource collection curriculum](superpowers/plans/2026-10-05-resource-collection-learning-results.md)
+completed 32 training games and passed independent review. Its frozen eight-case
+comparison improved collection by 10.56%, with gains against every race. It
+learned to build more workers and expand, but produced no army in those games.
+The separate 24-game Hard transfer failed: parent 5/12 wins, candidate 0/12,
+with no army production in any candidate game. This arm is closed without
+promotion; auxiliary improvement did not transfer to fighting. The current CPU
+ceiling is 80%, superseding the earlier 40% preference recorded below.
+
 The isolated production-input experiment is closed without promotion. Appending
 35 live production inputs preserved initial behavior and narrowly improved a fixed
 held-out next-state predictor, but regressed actual play. Both matched 40-game

@@ -76,6 +76,12 @@ The scripted-bot examples do not establish learned strength. The retained richer
 including all three races. Reliable Hard strength remains unmet; see
 [experiment results](docs/experiment-results.md).
 
+The separately reviewed resource-collection curriculum completed 32 training
+games and improved collection by 10.56% on eight fresh paired cases. It learned
+worker production and expansion but produced no army. Its full-game Hard transfer
+failed (parent 5/12 wins, candidate 0/12), so it is closed without promotion; see the
+[collection results](docs/superpowers/plans/2026-10-05-resource-collection-learning-results.md).
+
 The isolated production-input comparison completed with verified training and replay
 checks, but regressed frozen Medium wins: parent 22/30, control 21/30, sensory 6/30.
 It is closed without promotion. See the
@@ -153,9 +159,11 @@ For quieter Linux runs, prefix the command with `python tools/low_load.py`
 and use `--workers 4`. The wrapper restricts this job and its descendants to
 eight allowed logical CPUs, adds nice +10, limits numerical-library threads
 to one, hides CUDA devices, and requests software OpenGL. On this32-thread
-machine the CPU affinity bounds this task to25% of logical CPU capacity,
-leaving headroom for a40% whole-machine target. Other applications remain
-independent; monitor whole-machine load during runs. Example:
+machine the CPU affinity bounds this task to 25% of logical CPU capacity.
+The currently authorized whole-machine CPU ceiling is 80%; it is a ceiling,
+not a target. The isolated collection experiment also samples aggregate CPU
+and cancels its owned workers above that ceiling. Other applications remain
+independent; monitor whole-machine load during ordinary CLI runs. Example:
 
 ```bash
 .venv/bin/python tools/low_load.py .venv/bin/python -B -m src.rl.train --mode evaluate --checkpoint .worktrees/terran-rl/logs/ppo-combat-kills/frozen-easy40.npz --episodes 4 --workers 4 --difficulty Hard --maps Simple64 --builds Air --races Protoss --seed 20013 --macro-seconds 1 --output logs/quiet-hard-check
