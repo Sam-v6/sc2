@@ -3419,3 +3419,21 @@ default NumPy policy. A fresh representation-only fit is planned separately;
 its own-history gates are declared before fitting. Previous failed artifacts
 remain unchanged; reproduce their original source from the recorded Git
 revision rather than treating the changed trainer's SHA as historical code.
+
+Fresh representation-only wrappers `run/watch/verify_professional_retained_history_01.py`
+are independently reviewed without blockers. Full preflight handle8698 is
+terminal exit0: all4805previous frozen-model predictions reproduce the saved
+retained-history oracle, counts remain4513teaching/4510fitting/292diagnostic,
+and sampled supervised input-neutralization parity passes. The controller,
+losses, optimizer, seeds and bounds are unchanged. Fourteen gates include all
+previous copying gates plus own-history teaching complete>=1000 and diagnostic
+ability>=170,actors>=73,target>=62,complete>=24,macro ability>=20of91.
+
+The single new experiment is launched under live exec handle27513,
+childPID2372207. Initial host CPU peak4%; corpus reload is active before fitting.
+Output `professional-retained-history-01/`, telemetry
+`professional-retained-history-01.telemetry.json`, preflight receipt
+`professional-retained-history-01.preflight.json`. Two CPU threads, CUDA hidden,
+existing installed runtime,100epochs/1800optimizer seconds,80%host guard.
+Poll the same handle; no second concurrent fit/native/RL. Results and independent
+terminal verification are pending. A failure ends this trial without extension.
