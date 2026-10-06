@@ -2726,3 +2726,15 @@ Reserved professional 848 and original 51483/51886 remain excluded from model
 predictions and optimizer input. Learned micro transfer, reliable all-race Hard
 wins and higher-difficulty evaluation remain unproved. The full goal remains
 active.
+
+Read-only bottleneck audit `professional-encoder-saturation-01.json` uses fit05's
+teaching sources and reused diagnostic only. It compares the trained encoder
+with its same-seed initialization, without another fit. Mean fraction of context
+coordinates with absolute value above 0.95 increases from 0.19% to 70.72% on
+teaching rows, and from 0.26% to 68.87% on diagnostic rows. Mean history contribution
+norm increases from 1.89 to 17.88 on teaching; scene from 0.91 to 5.72 and pool
+from 2.45 to 10.51. Entity saturation remains about 10%. This supports examining
+the context bottleneck; it does not prove saturation causes the learning failure
+or that normalization improves copying. A focused follow-up consultation with
+the previously authorized Astra advisor is pending. Do not infer an approved
+experiment, competent imitation or RL readiness from this measurement.
