@@ -300,6 +300,11 @@ def main():
         help="Learn unit-selection scores from relative position and squared distance features",
     )
     parser.add_argument("--seed", type=int, default=7000)
+    parser.add_argument(
+        "--actor-nonlinear",
+        action="store_true",
+        help="Learn a nonlinear unit-selection residual conditioned on game context",
+    )
     parser.add_argument("--wall-seconds", type=float, required=True)
     args = parser.parse_args()
     encoder_kind = JointEntityEncoder
@@ -376,6 +381,7 @@ def main():
         context_layer_norm=args.context_layer_norm,
         actor_relative_points=args.actor_relative_points,
         actor_geometry=args.actor_geometry,
+        actor_nonlinear=args.actor_nonlinear,
         relational_attention=args.relational_attention,
         encoder_runtime=runtime,
         seed=args.seed,
@@ -445,6 +451,7 @@ def main():
         else 2,
         actor_relative_points=args.actor_relative_points,
         actor_geometry=args.actor_geometry,
+        actor_nonlinear=args.actor_nonlinear,
     )
     optimizer = Adam(policy, args.rate)
     rng = np.random.default_rng(args.seed + 2)

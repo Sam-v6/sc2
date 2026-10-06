@@ -40,7 +40,9 @@ class JointEntityPolicy:
         missing_fields=False,
         actor_relative_points=False,
         actor_geometry=False,
+        actor_nonlinear=False,
     ):
+        self.actor_nonlinear = actor_nonlinear
         self.actor_geometry = actor_geometry
         self.actor_relative_points = actor_relative_points
         self.missing_fields = missing_fields
@@ -99,6 +101,16 @@ class JointEntityPolicy:
             self.heads["point_relative"] = np.zeros((4, hidden), np.float32)
         if actor_geometry:
             self.heads["actor_geometry"] = np.zeros((hidden, 4), np.float32)
+        if actor_nonlinear:
+            extra_rng = np.random.default_rng(seed + 100)
+            self.heads["actor_nonlinear_entity"] = extra_rng.normal(
+                0, 1 / np.sqrt(hidden + 4), (hidden + 4, 32)
+            ).astype(np.float32)
+            self.heads["actor_nonlinear_context"] = extra_rng.normal(
+                0, 1 / np.sqrt(hidden), (hidden, 32)
+            ).astype(np.float32)
+            self.heads["actor_nonlinear_bias"] = np.zeros(32, np.float32)
+            self.heads["actor_nonlinear_output"] = np.zeros(32, np.float32)
 
     @property
     def parameters(self):
@@ -129,7 +141,7 @@ class JointEntityPolicy:
         actor_logits = entities @ actor_query
         eligible = np.flatnonzero(inputs["actor_mask"])
         geometry = None
-        if self.actor_geometry:
+        if self.actor_geometry or self.actor_nonlinear:
             positions = np.asarray(inputs["entity_positions"], dtype=np.float32)
             center = (
                 positions[eligible].mean(axis=0)
@@ -138,7 +150,17 @@ class JointEntityPolicy:
             )
             delta = (positions - center) / 32
             geometry = np.concatenate((delta, delta**2), axis=1)
+        if self.actor_geometry:
             actor_logits = actor_logits + geometry @ (conditioned @ p["actor_geometry"])
+        nonlinear_inputs = nonlinear = None
+        if self.actor_nonlinear:
+            nonlinear_inputs = np.concatenate((entities, geometry), axis=1)
+            nonlinear = np.tanh(
+                nonlinear_inputs @ p["actor_nonlinear_entity"]
+                + conditioned @ p["actor_nonlinear_context"]
+                + p["actor_nonlinear_bias"]
+            )
+            actor_logits = actor_logits + nonlinear @ p["actor_nonlinear_output"]
         if self.actor_cutoff:
             actor_logits = actor_logits + conditioned @ p["actor_cutoff"]
         count_log = (
@@ -206,6 +228,8 @@ class JointEntityPolicy:
             count_log=count_log,
             point_relative=relative,
             actor_geometry=geometry,
+            actor_nonlinear=nonlinear,
+            actor_nonlinear_inputs=nonlinear_inputs,
         )
         return output, cache
 
@@ -295,6 +319,22 @@ class JointEntityPolicy:
             geometry_delta = c["actor_geometry"].T @ actor_delta
             gradients["actor_geometry"] = np.outer(c["conditioned"], geometry_delta)
             conditioned_gradient += geometry_delta @ p["actor_geometry"].T
+        if self.actor_nonlinear:
+            nonlinear_delta = np.outer(actor_delta, p["actor_nonlinear_output"]) * (
+                1 - c["actor_nonlinear"] ** 2
+            )
+            gradients["actor_nonlinear_output"] = c["actor_nonlinear"].T @ actor_delta
+            gradients["actor_nonlinear_entity"] = (
+                c["actor_nonlinear_inputs"].T @ nonlinear_delta
+            )
+            summed = nonlinear_delta.sum(axis=0)
+            gradients["actor_nonlinear_context"] = np.outer(c["conditioned"], summed)
+            gradients["actor_nonlinear_bias"] = summed
+            conditioned_gradient += summed @ p["actor_nonlinear_context"].T
+            entity_gradient += (
+                nonlinear_delta
+                @ p["actor_nonlinear_entity"][: c["entities"].shape[1]].T
+            )
         query_gradient = c["entities"].T @ actor_delta
         gradients["actor"] = np.outer(c["conditioned"], query_gradient)
         conditioned_gradient += query_gradient @ p["actor"].T
@@ -395,6 +435,7 @@ class JointEntityPolicy:
             context_layer_norm=self.encoder.context_layer_norm,
             actor_relative_points=self.actor_relative_points,
             actor_geometry=self.actor_geometry,
+            actor_nonlinear=self.actor_nonlinear,
             encoder_backend=getattr(self.encoder, "backend", "numpy"),
             relational_attention=getattr(self.encoder, "relational_attention", False),
         )
@@ -432,6 +473,7 @@ class JointEntityPolicy:
                 missing_fields=configuration.get("missing_fields", False),
                 actor_relative_points=configuration.get("actor_relative_points", False),
                 actor_geometry=configuration.get("actor_geometry", False),
+                actor_nonlinear=configuration.get("actor_nonlinear", False),
             )
             for name, parameter in policy.parameters.items():
                 if archive[name].shape != parameter.shape:

@@ -44,3 +44,10 @@ Report actor margins and resolution of the geometry baseline's ten failures.
 Failure ends the experiment without extending or sweeping parameters. Success
 only permits a separately frozen cross-game human-imitation test. No native
 games, reserved/diagnostic replay predictions, promotion or RL in this test.
+
+Implemented: four focused tests fail on the absent flag, then pass after the
+optional residual and analytic/shared gradients are added. Full default suite
+passes337tests in10.02seconds with six optional-framework tests skipped; Ruff
+and diff checks pass. Independent review reports no actionable findings, passes
+16focused tests, and additionally checks nonlinear scoring without the geometry
+flag and loading an older checkpoint lacking the flag. This verifies code only.
