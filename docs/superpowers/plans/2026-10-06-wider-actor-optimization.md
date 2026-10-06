@@ -40,3 +40,11 @@ the experiment without extensions, sweeps or promotion. Teaching-only success
 calls for diagnosing transfer; passing both only permits a separately frozen
 imitation-only native behavior test, with known replay/native observation gaps
 and untaught input support addressed. No RL or Hard-win claim follows here.
+
+Compact fitter implemented in `src/learning/entity_actor_fit.py`. Four tests
+RED→GREEN, then a fifth adds cooperative-wall-bound and Adam/checkpoint checks.
+Five focused tests pass; full342tests pass10.30seconds with six optional-framework
+skips. Ruff/diff pass. Independent review verifies dense/original/factored math
+and both optimizers; no remaining findings. Simulated SciPy absence passes four
+tests/skips one, preserving the optional dependency boundary. Default training
+and checkpoint formats are unchanged. No wider fitting result yet.
