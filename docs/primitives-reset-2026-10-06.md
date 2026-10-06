@@ -82,6 +82,14 @@ sequential games, and cancellation after three sampled host CPU readings above
 bot's Python random choices were not seeded by this diagnostic harness. Do not
 present this as a fully deterministic reproduction or final acceptance panel.
 
+The panel is now terminal: six defeats, zero cutoffs or victories, and sampled
+whole-host CPU peak 64.2 percent. Each game peaks at 21 workers and only 7–11
+Reapers. Engine score telemetry reports zero killed structure value in all six
+games. Source hashes were rechecked and replay sizes/hashes recorded in
+`panel/summary.json`. This establishes that the existing harassment example is
+not a sufficient Hard baseline here; it does not establish the cause of every
+loss or evaluate Sharpy itself.
+
 Build a modest Terran baseline with an economy that can fund sustained production
 and a composition capable of hitting ground and air opponents. Keep primitive
 execution separate from the declared scripted build and attack choices, so human

@@ -97,6 +97,12 @@ Attribute its results explicitly to the scripted controller. Human imitation
 resumes after primitives are verified; RL follows useful imitation. Broad learned
 controls, learned micro and reliable learned all-race Hard wins remain goals.
 
+The [primitives loss audit and reference review](primitives-reset-2026-10-06.md)
+are complete. The existing Reaper reference loses all six Hard Rush/Macro games
+across the three races, peaking at 21 workers and 7–11 Reapers, with zero killed
+structure value. Sampled host CPU peaks at64.2percent. Next implement the more
+complete economy/production/army baseline described there; no model fitting.
+
 The validated intake manifest is
 `logs/roadmap/pro-source-expansion-02/final-verification.json`. Future fits must
 check its source, report and reader-table hashes. Energy and other unavailable
