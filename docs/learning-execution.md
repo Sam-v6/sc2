@@ -3883,3 +3883,22 @@ or RL. One unmatched raw game and one unobserved target label remain excluded.
 Preserve unknown energy and other missing fields. Next freeze human-only training
 on the expanded data, applying the production/generalization findings.
 See [verified intake](superpowers/plans/2026-10-06-professional-source-expansion-02-results.md).
+
+### October 6: expanded human imitation fit active
+
+[Frozen eleven-game plan](superpowers/plans/2026-10-06-expanded-professional-imitation.md)
+uses the verified 6,086 representable teaching examples. Each of 30 epochs samples
+3,398 without replacement, with the exact planned schedule saved. The maximum
+6,390 updates and 101,940 presentations match the closed source-version trial;
+this is an expanded-source workflow with updated teaching-only support, not a
+perfectly isolated data-only comparison. Architecture, optimizer and original
+command losses remain unchanged. No reserved/native/RL or scripted macro.
+
+Baseline predictions on the same development states reproduce exactly before
+fitting: macro 21/262 and complete 28/1,113. Watchdog handle 4057 is confirmed live
+with fit-start output. Optimizer cap 600 seconds, total cap 1,200 seconds, CPU guard
+80 percent, two CPU threads and no GPU. The artifact folder is
+`logs/roadmap/expanded-professional-imitation-01/`; independent reconstruction is
+prepared in `verify_expanded_professional_imitation_01.py` with its guarded wrapper.
+Wait on this exact handle; never restart from a stale file or observation timeout.
+No result or progress gate is claimed until terminal verification.
