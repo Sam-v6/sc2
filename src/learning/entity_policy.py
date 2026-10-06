@@ -36,10 +36,12 @@ class JointEntityPolicy:
         refinement=False,
         actor_cutoff=False,
         spatial_features=2,
+        actor_count=False,
     ):
         self.encoder, self.delays = encoder, tuple(delays)
         self.refinement = refinement
         self.actor_cutoff = actor_cutoff
+        self.actor_count = actor_count
         self.spatial_features = spatial_features
         hidden = encoder.parameters["entity"].shape[1]
         abilities = len(encoder.parameters["abilities"])
@@ -68,6 +70,10 @@ class JointEntityPolicy:
 
         if actor_cutoff:
             self.heads["actor_cutoff"] = np.zeros(hidden, np.float32)
+
+        if actor_count:
+            self.heads["actor_count"] = np.zeros(hidden, np.float32)
+            self.heads["actor_count_bias"] = np.zeros(1, np.float32)
 
         if spatial_features > 2:
             coordinates = self.heads["point_input"]
@@ -106,6 +112,17 @@ class JointEntityPolicy:
         if self.actor_cutoff:
             actor_logits = actor_logits + conditioned @ p["actor_cutoff"]
         eligible = np.flatnonzero(inputs["actor_mask"])
+        count_log = (
+            float(conditioned @ p["actor_count"] + p["actor_count_bias"][0])
+            if self.actor_count
+            else None
+        )
+        if actors is None and self.actor_count and len(eligible):
+            # A continuous log-count can represent any physically present group
+            # size. Only inference rounds/clamps; supervision uses human log(K).
+            count = int(np.rint(np.exp(np.clip(count_log, 0, np.log(len(eligible))))))
+            ranked = eligible[np.argsort(-actor_logits[eligible], kind="stable")]
+            actors = tuple(sorted(int(i) for i in ranked[:count]))
         if actors is None:
             actors = tuple(int(i) for i in eligible if actor_logits[i] >= 0)
             if not actors and len(eligible):
@@ -151,6 +168,7 @@ class JointEntityPolicy:
             points=points,
             point_inputs=point_inputs,
             cell_coordinate=cell_coordinate,
+            count_log=count_log,
         )
         return output, cache
 
@@ -226,6 +244,12 @@ class JointEntityPolicy:
                 - np.log(selected_count)
             )
             actor_delta[eligible] += ranking_probability - actor_labels / selected_count
+        if self.actor_count:
+            count_delta = c["count_log"] - np.log(len(label["actors"]))
+            loss += 0.5 * count_delta**2
+            gradients["actor_count"] = c["conditioned"] * count_delta
+            gradients["actor_count_bias"][0] = count_delta
+            conditioned_gradient += p["actor_count"] * count_delta
         if self.actor_cutoff:
             cutoff_delta = actor_delta.sum()
             gradients["actor_cutoff"] = c["conditioned"] * cutoff_delta
@@ -317,6 +341,7 @@ class JointEntityPolicy:
             metadata=metadata,
             refinement=self.refinement,
             actor_cutoff=self.actor_cutoff,
+            actor_count=self.actor_count,
             spatial_features=self.spatial_features,
         )
         np.savez_compressed(
@@ -335,6 +360,7 @@ class JointEntityPolicy:
                 configuration["delays"],
                 refinement=configuration.get("refinement", False),
                 actor_cutoff=configuration.get("actor_cutoff", False),
+                actor_count=configuration.get("actor_count", False),
                 spatial_features=configuration.get("spatial_features", 2),
             )
             for name, parameter in policy.parameters.items():

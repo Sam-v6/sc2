@@ -167,6 +167,11 @@ def main():
         help="Learn a context-conditioned unit-selection cutoff",
     )
     parser.add_argument(
+        "--actor-count",
+        action="store_true",
+        help="Learn variable unit-group size from human command labels",
+    )
+    parser.add_argument(
         "--spatial", action="store_true", help="Learn from full-resolution map patches"
     )
     parser.add_argument("--batch-size", type=int, default=16)
@@ -221,6 +226,7 @@ def main():
         rate=args.rate,
         refinement=args.refinement,
         actor_cutoff=args.actor_cutoff,
+        actor_count=args.actor_count,
         spatial=args.spatial,
         seed=args.seed,
         wall_seconds=args.wall_seconds,
@@ -256,6 +262,7 @@ def main():
         seed=args.seed + 1,
         refinement=args.refinement,
         actor_cutoff=args.actor_cutoff,
+        actor_count=args.actor_count,
         spatial_features=fitting[0][0]["point_features"].shape[1]
         if args.spatial
         else 2,
