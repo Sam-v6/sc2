@@ -743,3 +743,34 @@ were unavailable/excluded in any fold. These results contradict combat imitation
 readiness despite the first comparative improvement. Keep the scorer experimental
 and unwired; further RL remains on hold. Additional independent compatible human
 players, richer target relations and fresh held games are required before promotion.
+
+### Third human player and fresh target comparison
+
+Bounded TvT source screening found replay 51960 (Huski, 4507 MMR, versus Mez,
+4546 MMR) on exactly Base75689 / B89B5D6FA7CBF6452E721311BFBC6CB2. Candidates
+51898 and 51896 require unavailable Base75800 and remain excluded. Huski is a
+source-named human, not a verified professional. `human-51960-p1/` reconstructs
+player one to terminal Defeat in 89.385 wall seconds, retaining all 10,711
+consecutive fog-enabled engine observations for command alignment and 96 sampled
+quiet states. No untranslated native gameplay commands were reported.
+
+`issued-51960-p1/` aligns 305 commands with 312 human SCmdEvents, excludes 418
+engine repeats, and explicitly records seven unresolved events. Those seven
+events are not silently converted to teaching labels. This adds a seventh game
+and third named human to the reconstruction corpus. Both sides of replay 51960
+must stay together in every split; a second player view is not an independent
+held game.
+
+Before reconstruction finished, `huski-target-held-01-contract.json` froze the
+existing target, full-human argument and macro checkpoint hashes for a fresh
+comparison without fitting on 51960. `huski-target-held-01-with-strata.json`
+reports 56 unit-target commands: direct selection matches 16/56 versus 3/56 for
+the argument decoder, with distance error 8.50 versus 25.36 tiles. All targets
+were currently available. Of seven enemy-directed unit Attack commands, direct
+selection matches 4/7 versus 0/7, with distance error 4.07 versus 40.09 tiles.
+The fresh comparative gate passes. The nearest-group-center diagnostic has zero
+exact matches but slightly lower mean distance (7.20 overall and 3.99 for attacks),
+so distance alone would exaggerate the learned benefit. Forty-seven point-directed
+or unseen-target attacks are outside this unit-pointer comparison. The small
+combat sample and failed six-fold results still preclude competent imitation,
+live promotion, professional acceptance and further RL. All jobs are terminal.
