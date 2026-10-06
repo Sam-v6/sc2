@@ -2462,3 +2462,36 @@ Next importer work: represent verified subsets of human history without claiming
 complete history, apply only player-owned causal death/upgrade events, emit source
 alignment/provenance receipts, and mask delay labels crossing unresolved commands.
 Professional fitting and RL remain stopped.
+
+
+Professional event-history progress: original SCmdEvents now retain one causal
+history slot each. Identity-verified commands preserve their exact details and
+original unit-target snapshot position; unreconciled events keep only timestamp
+and an explicit unknown marker. Unknown slots mask actor/target references and
+command-role values rather than inventing actions. The next-action timing label
+is withheld when the immediately following original event is unknown. Source
+histories require one demonstration row per original event, including same-loop
+events; native complete-history burst behavior remains unchanged. Independent
+review identified the grouped-row snapshot problem; a failing regression test
+confirmed it and the single-event guard fixes it. Fresh suite:283tests pass;
+changed Python files pass Ruff.
+
+Local three-game verification is terminal with no optimizer updates:1482verified
+commands retain causal event slots;1421currently have representable labels,
+1476rows include unknown history and451timing labels are masked. The61target
+exclusions are all Smart unit-target commands.60original target positions each
+match exactly one currently visible neutral mineral patch (54type665,6type666),
+but the converted neutral tag differs from the original command tag. Cached
+converter `source/include/observer.hpp` explains this: `updateResourceObs` replaces
+resource tags with their first remembered ID when visibility changes. The last
+excluded target is a unit seen11loops earlier. Do not drop harvesting capability
+or substitute point commands: reconcile source-normalized mineral identities
+with explicit provenance, keeping native tags and fog filtering intact. The
+remaining remembered-unit target needs a separate legality/representation check.
+
+Evidence: `logs/roadmap/pro-preconverted-probe-01/target-exclusions-audit-01.json`,
+`target-exclusions-history-01.json`, `target-exclusions-position-01.json`, and
+`logs/roadmap/unittest-event-history-02.log`. These are local representation
+checks, not a training-eligible professional corpus or learned competence. The
+actual professional importer, own causal deaths/upgrades, source map inputs,
+training eligibility and human imitation fit remain open. RL remains stopped.

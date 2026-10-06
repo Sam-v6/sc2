@@ -126,6 +126,9 @@ def state_inputs(
     entity_features = np.asarray(features, np.float32).reshape(len(units), 94)
     roles = []
     for command in history:
+        if command.get("unknown"):
+            roles.append([0.0] * 8 + [max(loop - command["game_loop"], 0) / 1344])
+            continue
         point = command.get("target_point") or command.get("target_position")
         target = known.get(command.get("target_unit"))
         if not point and target:
@@ -302,6 +305,8 @@ def replay_examples(
         else None
     )
     for row, state in teacher_states(directory):
+        if state.get("history_quality") == "event_slots" and len(row["commands"]) != 1:
+            raise ValueError("Source event histories require one row per original event")
         state = dict(
             state,
             decision_loop=row["action_loop"],
@@ -333,6 +338,7 @@ def replay_examples(
             except ValueError as error:
                 label, exclusion = None, str(error)
             yield inputs, label, command, exclusion
-            state["recent_commands"].append(
-                remember_command(raw, state, row["action_loop"])
-            )
+            remembered = remember_command(raw, state, row["action_loop"])
+            if state.get("history_quality") == "event_slots":
+                remembered["verified"] = True
+            state["recent_commands"].append(remembered)

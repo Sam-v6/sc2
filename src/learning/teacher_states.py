@@ -31,7 +31,11 @@ def teacher_states(directory, seconds=None):
                 break
             state = dict(
                 row["observation"],
-                recent_commands=history[-32:],
+                recent_commands=(
+                    row["observation"]["recent_commands"][-32:]
+                    if row["observation"].get("history_quality") == "event_slots"
+                    else history[-32:]
+                ),
                 map_size=[size["x"], size["y"]],
             )
             own = {u["tag"]: u for u in state["units"] if u["alliance"] == 1}

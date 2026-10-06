@@ -87,3 +87,31 @@ class MissingFieldInputsTests(unittest.TestCase):
         partial["recent_commands"] = [dict(game_loop=10, ability=3, units=[1])]
         with self.assertRaisesRegex(ValueError, "history"):
             self.encode(partial)
+
+    def test_event_slots_keep_gaps_without_using_unknown_action_details(self):
+        partial = copy.deepcopy(self.state)
+        partial["unknown_fields"] = dict(world=["command_history"])
+        partial["history_quality"] = "event_slots"
+        partial["recent_commands"] = [
+            dict(game_loop=8, ability=3, units=[1], verified=True),
+            dict(
+                game_loop=10,
+                ability=11,
+                units=[1],
+                target_point=[999, 999],
+                queue=True,
+                unknown=True,
+            ),
+        ]
+        encoded = self.encode(partial)
+        np.testing.assert_array_equal(encoded[4], [3, 0])
+        np.testing.assert_array_equal(encoded[5][1, :8], np.zeros(8))
+        self.assertAlmostEqual(encoded[5][1, 8], 2 / 1344)
+        self.assertEqual(encoded[0][0, 94 + 30], 1)  # Known empty padding.
+        self.assertEqual(encoded[0][0, 30 + 30 * 2], 1)
+        self.assertEqual(encoded[0][0, 94 + 30 + 30 * 2], 1)
+        self.assertEqual(encoded[0][0, 30 + 31 * 2], 0)
+        self.assertEqual(encoded[0][0, 94 + 30 + 31 * 2], 0)
+        partial["recent_commands"][0].pop("verified")
+        with self.assertRaisesRegex(ValueError, "verified"):
+            self.encode(partial)

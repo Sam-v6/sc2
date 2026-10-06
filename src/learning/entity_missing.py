@@ -32,13 +32,25 @@ UNIT_FIELDS = {
 def without_unknown_values(state):
     unknown = state.get("unknown_fields", {})
     world = unknown.get("world", [])
-    if "command_history" in world and state.get("recent_commands"):
+    history = state.get("recent_commands", [])
+    event_slots = state.get("history_quality") == "event_slots"
+    if "command_history" in world and history and not event_slots:
         raise ValueError("Unknown command history cannot supply verified references")
+    if event_slots:
+        if any(not c.get("unknown") and c.get("verified") is not True for c in history):
+            raise ValueError("Event-slot history requires verified command details")
+        history = [
+            dict(game_loop=c["game_loop"], ability=0, units=[], unknown=True)
+            if c.get("unknown")
+            else c
+            for c in history
+        ]
     omitted = set(unknown.get("units", []))
     if "neutral_resource_kind_and_current_contents" in omitted:
         omitted.update(("mineral_contents", "vespene_contents"))
     return dict(
         state,
+        recent_commands=history,
         player={
             k: v
             for k, v in state["player"].items()
@@ -88,7 +100,13 @@ def append_availability(state, units, encoder):
             masks[i, 21:24] = 0
             masks[i, 26:30] = 0
         if "command_history" in world:
-            masks[i, 30:] = 0
+            if state.get("history_quality") == "event_slots":
+                commands = state.get("recent_commands", [])[-32:]
+                for slot, command in enumerate(commands, 32 - len(commands)):
+                    if command.get("unknown"):
+                        masks[i, 30 + 2 * slot : 32 + 2 * slot] = 0
+            else:
+                masks[i, 30:] = 0
     scene_mask = np.ones_like(scene)
     for i, name in enumerate(PLAYER_FIELDS, 3):
         if name in unknown.get("player", []):
