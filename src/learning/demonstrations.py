@@ -19,6 +19,9 @@ class ReplayExamples:
             )
         groups = {}
         for action in packet.actions:
+            if [field.name for field, _ in action.ListFields()] == ["game_loop"]:
+                self.counts["empty"] += 1
+                continue
             if (
                 action.action_raw.HasField("camera_move")
                 or action.action_feature_layer.HasField("camera_move")

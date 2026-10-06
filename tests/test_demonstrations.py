@@ -74,6 +74,23 @@ class DemonstrationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             examples.push(packet(8))
 
+    def test_timestamp_only_replay_record_is_counted_without_losing_gameplay(self):
+        examples = ReplayExamples()
+        examples.push(packet(12579))
+        examples.push(packet(12580))
+        empty = pb.Action(game_loop=12580)
+        command = Command(23, (1,), target_point=(10.0, 20.0)).to_proto()
+        command.game_loop = 12580
+        rows = examples.push(packet(12581, actions=[empty, command]))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(
+            rows[0]["commands"], [Command.from_proto(command).as_dict()]
+        )
+        self.assertEqual(examples.counts["empty"], 1)
+        self.assertEqual(examples.counts["gameplay"], 1)
+        with self.assertRaises(ValueError):
+            examples.push(packet(12582, actions=[pb.Action()]))
+
 
 class TimingTests(unittest.TestCase):
     def test_next_delay_is_a_label_and_last_action_has_no_fabricated_delay(self):

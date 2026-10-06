@@ -894,3 +894,32 @@ teaching. `replay-51959-diagnostic-01.py` repeats the exact replay in a separate
 output and captures the offending protobuf action before re-raising, preserving
 the failure rather than silently dropping potentially important gameplay.
 The action's actual payload must determine the eventual fix and regression test.
+
+### Timestamp-only native replay records
+
+The diagnostic reproduces the 51959 failure in 117.29 seconds and captures the
+exact unsupported action: `{"game_loop":12580}` with no payload fields. Original
+replay events around that loop contain command-target and command-manager state
+updates, not an issued SCmdEvent at loop 12580. Do not fabricate a command label
+or claim a specific native event-to-placeholder mapping from this evidence.
+
+`ReplayExamples.push` now separately counts records whose only present protobuf
+field is `game_loop` as `empty`. Known unsupported payloads and entirely fieldless
+actions still reject. The regression first reproduced the original failure,
+then verifies both same-packet gameplay preservation and fieldless rejection.
+The independent runtime reviewer found no actionable concerns. All 170 tests
+pass in 9.73 seconds (`unittest-twentysecond.log`), Ruff passes changed files,
+and diff whitespace checks pass. Complete native reconstruction into
+`human-51959-fixed-01/` is the remaining verification of the original symptom.
+
+The fixed native replay completes in 126.80 seconds: 12,999 consecutive
+observations, 117 sampled quiet states, 1,007 gameplay commands and exactly one
+separately counted timestamp-only record. Fog is enabled and no untranslated
+commands are reported. `issued-51959-held-01/` retains 439 human commands in
+437 rows, excludes 568 engine repeats and explicitly records six unresolved
+human events out of 445. Native completion verifies the original import failure
+is resolved. The source SHA, fog, count reconciliation and preselected held role
+were checked against the corpus contract. Both sides of this replay stay out of
+training. It is now a ninth reconstructed named-human game, not professional
+corpus acceptance or evidence of improved learned performance. All verification
+and reconstruction jobs for this fix are terminal.
