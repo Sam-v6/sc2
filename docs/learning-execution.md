@@ -3702,3 +3702,24 @@ See [verified result and next diagnostic](superpowers/plans/2026-10-06-native-co
 The prior observation-profile plan is restored to its exact frozen hash, with
 results moved to a separate document. Keep future experiment plans immutable;
 source-bound historical verifiers require their corresponding Git implementation.
+
+### October6: seeded imitation sampling produces actual economic construction
+
+GoalFirstsupports explicit optional ability sampling from its learned distribution
+after engine masking; default/forced-label behavior and all weights stay unchanged.
+New tests prove seeded probability draws, input/weight invariance and no draws for
+empty candidates/forced choices.387normaltests (31optional skips),23focusedTorch
+checks, Ruff/diff and independent review pass.
+
+Frozen opener59273and independent verifier15655are terminal exit0. Fixed ability
+seed120603produces eight new workers, a completedDepotandRefinery, final20workers,
+23supplycap and1365minerals/268gas. All112draws/commands/history reconstruct.
+ThreeCommandCenterand oneBarracksplacement fail; five other commands return
+NotSupported. CPUpeak6.0%, noGPU/fitting/RL. This is one deliberately truncated
+VeryEasyopening, not checkpoint promotion, reliable planning or a full-game win.
+No seed sweep/extension. See
+[sampled-policy result and next execution repair](superpowers/plans/2026-10-06-sampled-human-policy-results.md).
+
+Next integrate the existing local engine-placement primitive explicitly, preserving
+learned build choices and recording requested versus actually dispatched commands.
+Useful imitation and all remaining roadmap gates are still incomplete.

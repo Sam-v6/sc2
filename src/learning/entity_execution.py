@@ -2,6 +2,8 @@
 
 from copy import deepcopy
 
+import numpy as np
+
 from src.learning.entity_examples import state_inputs, decode_command
 from src.learning.teacher_states import remember_command
 
@@ -31,12 +33,21 @@ def project_observation(state, profile):
 
 class JointCommandAgent:
     def __init__(
-        self, policy, vocabulary, products, terrain=None, observation_profile=None
+        self,
+        policy,
+        vocabulary,
+        products,
+        terrain=None,
+        observation_profile=None,
+        ability_seed=None,
     ):
         self.policy = policy
         self.vocabulary = tuple(vocabulary)
         self.products, self.terrain = products, terrain
         self.observation_profile = observation_profile
+        self.ability_rng = (
+            np.random.default_rng(ability_seed) if ability_seed is not None else None
+        )
         self.history = []
         self.next_loop = 0
 
@@ -73,7 +84,11 @@ class JointCommandAgent:
                 for a, modes in inputs["command_candidates"].items()
                 if any(modes.values())
             }
-        decision = self.policy.predict(inputs)
+        decision = (
+            self.policy.predict(inputs, ability_rng=self.ability_rng)
+            if self.ability_rng is not None
+            else self.policy.predict(inputs)
+        )
         if decision is None:
             return None, None
         return decode_command(decision, inputs), decision["delay"]

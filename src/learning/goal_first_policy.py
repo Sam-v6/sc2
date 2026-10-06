@@ -84,7 +84,14 @@ class GoalFirstPolicy(nn.Module):
             raise ValueError("Human label outside eligible candidates")
         return int(gold), logits
 
-    def _forward(self, inputs, label=None, ability_override=None, actors_override=None):
+    def _forward(
+        self,
+        inputs,
+        label=None,
+        ability_override=None,
+        actors_override=None,
+        ability_rng=None,
+    ):
         raw, types, orders, scene, history, roles = inputs["encoder"]
         raw = self._tensor(raw)
         entities = torch.tanh(
@@ -135,6 +142,11 @@ class GoalFirstPolicy(nn.Module):
             ability_mask,
             label["ability"] if label else ability_override,
         )
+        if ability_rng is not None and label is None and ability_override is None:
+            probabilities = (
+                torch.softmax(ability_logits.double(), dim=0).detach().numpy()
+            )
+            ability = int(ability_rng.choice(len(probabilities), p=probabilities))
         conditioned = torch.tanh(context + self.ability_embedding.weight[ability])
         mode_mask = torch.tensor(
             [True, bool(targets_mask.any()), len(points) > 0, True]
@@ -216,14 +228,17 @@ class GoalFirstPolicy(nn.Module):
             delay=delay_logits,
         ), result
 
-    def predict(self, inputs, ability=None, actors=None):
+    def predict(self, inputs, ability=None, actors=None, ability_rng=None):
         if not np.asarray(inputs["actor_mask"]).any() or (
             "command_candidates" in inputs and not inputs["command_candidates"]
         ):
             return None
         with torch.no_grad():
             return self._forward(
-                inputs, ability_override=ability, actors_override=actors
+                inputs,
+                ability_override=ability,
+                actors_override=actors,
+                ability_rng=ability_rng,
             )[1]
 
     def loss(self, inputs, label):

@@ -73,9 +73,11 @@ class JointImitationBot(BotAI):
         self.policy, self.metadata = load_policy(
             job["policy"], job.get("controller", "joint")
         )
-        if job.get("condition_available") and job.get("controller") != "goal-first":
+        if (
+            job.get("condition_available") or job.get("ability_seed") is not None
+        ) and job.get("controller") != "goal-first":
             raise ValueError(
-                "Engine-conditioned decoding requires the goal-first controller"
+                "Conditioned/sampled decoding requires the goal-first controller"
             )
         self.observation_profile = None
         self.observation_profile_sha256 = None
@@ -124,6 +126,7 @@ class JointImitationBot(BotAI):
             construction_products(static["game_data"]),
             terrain,
             self.observation_profile,
+            self.job.get("ability_seed"),
         )
 
     def schedule_step(self):
@@ -270,6 +273,7 @@ def play_joint_job(job):
         availability_blocks=bot.availability_blocks,
         wait_unavailable=bool(job.get("wait_unavailable")),
         condition_available=bool(job.get("condition_available")),
+        ability_seed=job.get("ability_seed"),
         final_player=bot.final_player,
         final_observed_own_units=bot.final_units,
         action_results=bot.action_results,
@@ -326,6 +330,11 @@ def main():
         default=1,
         help="Cap observation steps during model-chosen waits; default observes every loop",
     )
+    parser.add_argument(
+        "--ability-seed",
+        type=int,
+        help="Sample learned goal-first ability probabilities with this local seed",
+    )
     parser.add_argument("--seed", type=int, default=120001)
     parser.add_argument("--seconds", type=positive, default=600)
     parser.add_argument("--wall-seconds", type=positive, default=120)
@@ -349,6 +358,7 @@ def main():
         seed=args.seed,
         wait_unavailable=args.wait_unavailable,
         condition_available=args.condition_available,
+        ability_seed=args.ability_seed,
         seconds=args.seconds,
     )
     receipt = supervise(play_joint_job, (job,), args.wall_seconds)

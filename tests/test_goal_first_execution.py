@@ -209,3 +209,53 @@ class GoalFirstAvailabilityTests(GoalFirstExecutionTests):
         self.assertEqual(prediction["ability"], 4)
         self.assertEqual(prediction["mode"], 3)
         self.assertEqual(prediction["actors"], (0,))
+
+
+@unittest.skipUnless(importlib.util.find_spec("torch"), "optional CPU Torch absent")
+class GoalFirstSamplingTests(unittest.TestCase):
+    def setUp(self):
+        GoalFirstExecutionTests.setUp(self)
+
+    def test_sampling_is_seeded_masked_and_preserves_default_and_inputs(self):
+        import torch
+        from src.learning.entity_examples import state_inputs
+
+        inputs = state_inputs(self.state, 8, 12, missing_fields=True)
+        with torch.no_grad():
+            self.policy.ability.bias[4] = 99.5
+        inputs["command_candidates"] = {
+            3: {"normal": [0], "autocast": []},
+            4: {"normal": [1], "autocast": []},
+        }
+        original_mask = inputs["actor_mask"].copy()
+        weights = {k: v.clone() for k, v in self.policy.state_dict().items()}
+        first, second = np.random.default_rng(43), np.random.default_rng(43)
+        draws = [self.policy.predict(inputs, ability_rng=first) for _ in range(32)]
+        repeated = [self.policy.predict(inputs, ability_rng=second) for _ in range(32)]
+        self.assertEqual(draws, repeated)
+        probabilities = np.array([1.0, np.exp(-0.5)])
+        probabilities /= probabilities.sum()
+        oracle = np.random.default_rng(43).choice([3, 4], size=32, p=probabilities)
+        self.assertEqual([d["ability"] for d in draws], oracle.tolist())
+        for name, value in self.policy.state_dict().items():
+            self.assertTrue(torch.equal(value, weights[name]))
+        self.assertEqual({d["ability"] for d in draws}, {3, 4})
+        for d in draws:
+            self.assertEqual(d["actors"], (d["ability"] - 3,))
+        self.assertEqual(self.policy.predict(inputs)["ability"], 3)
+        np.testing.assert_array_equal(inputs["actor_mask"], original_mask)
+
+    def test_forced_choice_and_empty_candidates_do_not_consume_rng(self):
+        from copy import deepcopy
+        from src.learning.entity_examples import state_inputs
+
+        inputs = state_inputs(self.state, 8, 12, missing_fields=True)
+        rng = np.random.default_rng(43)
+        before = deepcopy(rng.bit_generator.state)
+        self.assertEqual(
+            self.policy.predict(inputs, ability=4, ability_rng=rng)["ability"], 4
+        )
+        self.assertEqual(rng.bit_generator.state, before)
+        inputs["command_candidates"] = {}
+        self.assertIsNone(self.policy.predict(inputs, ability_rng=rng))
+        self.assertEqual(rng.bit_generator.state, before)
