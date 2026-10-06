@@ -247,6 +247,11 @@ def main():
         help="Include availability indicators for partial replay observations",
     )
     parser.add_argument("--batch-size", type=int, default=16)
+    parser.add_argument(
+        "--role-pooling",
+        action="store_true",
+        help="Summarize observed own/enemy/neutral and remembered entities separately",
+    )
     parser.add_argument("--hidden", type=int, default=32)
     parser.add_argument("--rate", type=float, default=0.001)
     parser.add_argument("--seed", type=int, default=7000)
@@ -303,6 +308,7 @@ def main():
         actor_count=args.actor_count,
         spatial=args.spatial,
         missing_fields=args.missing_fields,
+        role_pooling=args.role_pooling,
         seed=args.seed,
         wall_seconds=args.wall_seconds,
         delays=DELAYS,
@@ -337,6 +343,7 @@ def main():
             counts[1],
             hidden=args.hidden,
             seed=args.seed,
+            role_pooling=args.role_pooling,
         ),
         DELAYS,
         seed=args.seed + 1,

@@ -2583,3 +2583,43 @@ are diagnostics only. No professional checkpoint replaces the retained native
 baseline or earns a strength claim. Next improve teaching coverage and spatial/
 actor generalization, including native/professional input coverage, using bounded
 human-only fits; retain RL hold and the full micro/Hard/higher-difficulty goals.
+
+Two further supervised comparisons completed without RL or native games.
+`joint-professional-fit-02` combined the eleven existing native human teaching
+files with the two professional teaching games. The same fifty epochs now meant
+268900 presentations and16850updates, rather than equal training compute.
+Terminal handle44714 exited0 in310.95total seconds. Complete teaching copying
+was460/5380(8.55%); Harstem diagnostic copying was9/292(3.08%). Adding this
+particular mixed-source teaching corpus did not improve diagnostic copying.
+It is a failed candidate, not a reason to start RL.
+
+An optional `--role-pooling` encoder now keeps separate summaries for observed
+owned units, observed enemies, observed neutrals and remaining remembered/other
+entities. Each summary has its own mean learned embedding and log count. This
+prevents neutral patches from directly diluting the owned-unit mean, without
+removing actions or adding observations. Checkpoints preserve this mode;
+default initialization, forward outputs and gradients reproduce the previous
+encoder bitwise in independent review. Five focused tests cover role/count
+behavior, finite-difference gradients, permutation/checkpoint behavior, empty
+groups and float32 preservation. Full298tests pass, with changed-file Ruff clean.
+
+`joint-professional-fit-03` used this mode on the same two professional teaching
+games and Harstem diagnostic, with the fit01 fifty-epoch controls. Terminal
+handle74574 exited0:1189usable teaching commands,3750updates,62.42optimizer
+seconds,81.35total seconds. Complete teaching copying improved to487/1190(40.9%),
+but diagnostic copying was11/292(3.77%), compared with12/292before. Diagnostic
+point error remained61.79tiles, or55.23tiles with true ability/actors supplied
+as an oracle. The new architecture changes random initialization as well as
+pooling; this single comparison is not a causal attribution or strength result.
+No checkpoint is promoted. Source/code/checkpoint bindings and saved mode verify
+in `joint-professional-fit-verification-03.json`.
+
+The actor diagnostic `joint-professional-actor-roles-01.json` also finds incorrect
+unit types and counts, not merely alternative interchangeable worker tags:
+fit01 matches exact actor-type counts on15/51townhall-only,17/66worker-only and
+22/175other diagnostic commands. Repeated poor new-game copying calls for a
+focused architecture/data diagnosis before another fit. Astra consultation is
+within the user's explicit conditional authorization. Harstem remains a reused
+diagnostic; reserved51483/51886 remain untouched. Human imitation must establish
+competent play before RL resumes. Micro transfer, reliable all-race Hard wins
+and higher-difficulty evaluation remain open.

@@ -13,7 +13,11 @@ class JointEntityEncoder:
         abilities,
         hidden=32,
         seed=0,
+        role_pooling=False,
     ):
+        if role_pooling and features < 6:
+            raise ValueError("Role pooling requires ownership and observation features")
+        self.role_pooling = role_pooling
         rng = np.random.default_rng(seed)
 
         def matrix(rows, scale=None):
@@ -26,7 +30,7 @@ class JointEntityEncoder:
             "types": matrix(unit_types, 0.1),
             "abilities": matrix(abilities, 0.1),
             "scene": matrix(scene_features),
-            "pool": matrix(hidden),
+            "pool": matrix(4 * (hidden + 1) if role_pooling else hidden),
             "history": matrix(32 * hidden),
             "history_roles": matrix(history_features),
             "entity_bias": np.zeros(hidden, dtype=np.float32),
@@ -69,7 +73,22 @@ class JointEntityEncoder:
             + p["abilities"][orders]
             + p["entity_bias"]
         )
-        pooled = encoded.sum(axis=0) / max(len(encoded), 1)
+        pool_weights = None
+        if self.role_pooling:
+            observed = entities[:, 5] > 0
+            groups = np.column_stack(
+                [observed & (entities[:, i] > 0) for i in (2, 3, 4)]
+            )
+            groups = np.column_stack((groups, ~groups.any(axis=1)))
+            counts = groups.sum(axis=0)
+            pool_weights = groups.astype(encoded.dtype) / np.maximum(counts, 1).astype(
+                encoded.dtype
+            )
+            pooled = np.column_stack(
+                (pool_weights.T @ encoded, np.log1p(counts).astype(encoded.dtype) / 5)
+            ).ravel()
+        else:
+            pooled = encoded.sum(axis=0) / max(len(encoded), 1)
         events = np.tanh(
             p["abilities"][history]
             + history_roles @ p["history_roles"]
@@ -93,6 +112,7 @@ class JointEntityEncoder:
             "history_roles": history_roles,
             "encoded": encoded,
             "pooled": pooled,
+            "pool_weights": pool_weights,
             "events": events,
             "padded": padded,
             "context": context,
@@ -108,10 +128,14 @@ class JointEntityEncoder:
         gradients["pool"] = np.outer(c["pooled"], context_delta)
         gradients["history"] = np.outer(c["padded"].ravel(), context_delta)
         gradients["context_bias"] = context_delta
-        entity_delta = (
-            np.asarray(entity_gradient)
-            + (context_delta @ p["pool"].T) / max(len(c["encoded"]), 1)
-        ) * (1 - c["encoded"] ** 2)
+        pooled_gradient = context_delta @ p["pool"].T
+        if self.role_pooling:
+            pooled_gradient = c["pool_weights"] @ pooled_gradient.reshape(4, -1)[:, :-1]
+        else:
+            pooled_gradient = pooled_gradient / max(len(c["encoded"]), 1)
+        entity_delta = (np.asarray(entity_gradient) + pooled_gradient) * (
+            1 - c["encoded"] ** 2
+        )
         gradients["entity"] = c["entities"].T @ entity_delta
         gradients["entity_bias"] = entity_delta.sum(axis=0)
         np.add.at(gradients["types"], c["unit_types"], entity_delta)

@@ -352,6 +352,7 @@ class JointEntityPolicy:
             actor_count=self.actor_count,
             spatial_features=self.spatial_features,
             missing_fields=self.missing_fields,
+            role_pooling=self.encoder.role_pooling,
         )
         np.savez_compressed(
             path, **self.parameters, configuration=json.dumps(configuration)
@@ -362,7 +363,9 @@ class JointEntityPolicy:
         with np.load(path, allow_pickle=False) as archive:
             configuration = json.loads(str(archive["configuration"]))
             encoder = JointEntityEncoder(
-                *configuration["dimensions"], hidden=configuration["hidden"]
+                *configuration["dimensions"],
+                hidden=configuration["hidden"],
+                role_pooling=configuration.get("role_pooling", False),
             )
             policy = cls(
                 encoder,
