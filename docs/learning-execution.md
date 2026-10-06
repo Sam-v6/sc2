@@ -456,3 +456,71 @@ always-WAIT metric, and mixed-schema death-memory checks are added and require
 a fresh full-suite result before checkpointing these changes.
 
 The sixteenth full suite passed all 156 tests in 10.06 seconds; Ruff and diff whitespace checks passed. The quiet-state fitting experiment remains running and has no promotion evidence yet.
+
+The quiet-state arm is closed before native follow-up. The 600-epoch fit took
+284.07 seconds with 800 projected training columns / 97,914 full features.
+Training event accuracy was 99.4%, quiet accuracy 95.9%, and production recall
+100%; held-out event accuracy was only 19.2%, quiet accuracy 54.9%, balanced
+score 0.370. The previous teacher-forced delay scheduler's balanced score was
+0.482 (6.1% event / 90.3% quiet; it assumes all intended commands succeed).
+The new fit fails all predeclared held-out thresholds. No actor/argument/spatial
+fits or native games are warranted from this checkpoint. Preserve report,
+checkpoint and `occupancy-240-01-gate.json`; do not extend this arm blindly.
+Implementation checkpoint: `645b916`; 156 tests and the extended native fixture
+passed. The next direction must address recovery on learner-visited states or
+RL experimentation, with any supplemental teacher's provenance explicit.
+
+## Broad-ability RL bridge
+
+After quiet-frame generalization failed, Astra reviewed two alternatives and
+recommended a raw-action RL bridge. Grafting the old 27-action expert into another
+controller would require translating its own stance, masks and executor. The
+new experiment directly samples the learner's own state distribution.
+
+`src/learning/broad_rl.py` adds a zero-initialized 32-feature ability-logit residual
+and independent value head, preserving every engine ability and WAIT. The frozen
+human macro's WAIT context supplies its features. Original macro/actor/argument/
+spatial checkpoints stay byte-identical; argument contexts still come exclusively
+from the original macro. Native availability is the only ability mask. Target
+modes still follow the engine catalog, but untrained or poor arguments can fail
+and remain an explicit limitation.
+
+Sampling uses `(1-epsilon)*masked_policy + epsilon*uniform_legal`, epsilon 0.1.
+PPO records and differentiates the actual mixture likelihood, including its
+responsibility factor; finite-difference gradient tests cover actor, value and
+entropy. Greedy evaluations record actual deterministic probability one and
+cannot be fed to the training updater. Rejected/undecodable choices remain in
+trajectories. Frozen likelihood and value replay are checked before updates.
+Discount and GAE depend on actual elapsed loops, measured in five-second units.
+The reward is deliberately unchanged across this arm: incremental killed-resource
+value /100, +100 native Victory, -100 native Defeat, zero finite-horizon timeout.
+There is no new economic/damage shaping. A timeout is a truncated native game and
+a finite-horizon training endpoint; it is never labelled a victory.
+
+The first native one-minute smoke failed only at terminal response unwrapping;
+its artifact remains. A focused regression test now checks the actual nested API
+response. The repaired smoke retained all 336 decisions, including failures,
+and queried the final native score/clock. The full pipeline smoke
+`broad-rl-pipeline-smoke-01/` completed three one-minute training games, 1,008
+samples, 32 optimizer updates, and six fresh paired controls (12 evaluation
+games) in 52.51 seconds. All were cutoff Ties with zero combat return. This is
+collection/update/evaluation engineering evidence, not reward-driven learning or
+strength. It deliberately used a horizon too short to assess combat competence.
+
+Next fixed protocol: 24 x 600-second Very Easy training episodes, eight per race,
+three CPU-only workers (maximum four), then six fresh paired cases (two per race)
+comparing greedy trained and zero-residual controllers under identical fixed
+four-loop cadence, native masking and explicit idle-worker harvesting assistance.
+Use the four-minute spatial checkpoint family, which previously produced 5/6 army
+supply in matched openings. The control matters because removing predicted sleep
+and replacing unavailable-intent waits already changes behavior. Require more
+native wins and greater mean ordinary combat return than zero-residual control;
+no automatic extension. Increased production or kills alone is mechanism evidence.
+Close ability-only learning if reward-bearing exploration chiefly fails during
+unit/argument execution. Any continuation must identify that actual bottleneck.
+Professional imitation and reliable all-race Hard gates remain open.
+
+Independent read-only PPO review found no Critical or Important issues. Its one
+minor cadence-provenance finding was repaired: residual execution now always
+uses fixed cadence, including direct CLI runs. The full suite passed 165 tests
+in 9.729 seconds (`unittest-eighteenth.log`); Ruff and whitespace checks passed.

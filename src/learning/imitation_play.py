@@ -1,6 +1,7 @@
 """Execute the factorized imitation model through broad raw gameplay controls."""
 
 from src.learning.teacher_states import remember_command
+from src.learning.broad_rl import ResidualPPO, episode_arrays
 
 import argparse
 import gzip
@@ -208,6 +209,15 @@ class ImitationBot(BotAI):
             != hashlib.sha256(Path(job["policy"]).read_bytes()).hexdigest()
         ):
             raise ValueError("Actor pointer is incompatible with macro checkpoint")
+        self.residual = (
+            ResidualPPO.load(
+                job["residual_policy"],
+                hashlib.sha256(Path(job["policy"]).read_bytes()).hexdigest(),
+            )
+            if job.get("residual_policy")
+            else None
+        )
+        self.rl_records = []
         self.view = PlayerView()
         self.next_action = {}
         self.next_global = 0
@@ -263,6 +273,8 @@ class ImitationBot(BotAI):
                 actors = []
             commands = []
             decisions = []
+            model_results = []
+            rl_decision = None
             if actors:
                 available = (
                     await self.client._execute(
@@ -291,15 +303,53 @@ class ImitationBot(BotAI):
                     )
                     output = self.policy.predict(x[None, :])
                     allowed = [0, *sorted(set().union(*abilities.values()))]
-                    ability = choose_ability(
-                        output["ability"][0],
-                        allowed,
-                        self.rng,
-                        self.job.get("sample", False),
-                        self.job.get("wait_unavailable", False),
-                    )
+                    if self.residual:
+                        context = self.policy.command_context(x, 0)
+                        prior = output["ability"][0].copy()
+                        mask = np.zeros(len(prior), dtype=bool)
+                        mask[allowed] = True
+                        q, _, values = self.residual.distribution(
+                            context[None, :], prior[None, :], mask[None, :]
+                        )
+                        ability = (
+                            int(self.rng.choice(len(prior), p=q[0]))
+                            if self.job.get("sample")
+                            else int(q[0].argmax())
+                        )
+                        self.rl_records.append(
+                            dict(
+                                state=context,
+                                prior=prior,
+                                mask=mask,
+                                action=ability,
+                                log_prob=float(np.log(q[0, ability]))
+                                if self.job.get("sample")
+                                else 0.0,
+                                value=float(values[0]),
+                                loop=state["game_loop"],
+                                killed=micro_score(packet)["killed_value"],
+                            )
+                        )
+                        rl_decision = {
+                            "ability": ability,
+                            "probability": float(q[0, ability])
+                            if self.job.get("sample")
+                            else 1.0,
+                            "policy_probability": float(q[0, ability]),
+                            "value": float(values[0]),
+                            "allowed": allowed,
+                        }
+                    else:
+                        ability = choose_ability(
+                            output["ability"][0],
+                            allowed,
+                            self.rng,
+                            self.job.get("sample", False),
+                            self.job.get("wait_unavailable", False),
+                        )
                     if (
-                        not ability
+                        not self.residual
+                        and not ability
                         and int(output["ability"][0].argmax()) not in allowed
                     ):
                         decisions.append(
@@ -392,7 +442,7 @@ class ImitationBot(BotAI):
                             row["command"] = command.as_dict()
                         self.next_global = state["game_loop"] + (
                             self.job["step"]
-                            if self.job.get("fixed_cadence")
+                            if self.job.get("fixed_cadence") or self.residual
                             else int(DELAYS[output["delay"][0].argmax()])
                         )
                 else:
@@ -456,6 +506,7 @@ class ImitationBot(BotAI):
                     if commands
                     else pb.ResponseAction()
                 )
+                model_results = list(result.result)
                 for code in result.result:
                     self.results[str(code)] = self.results.get(str(code), 0) + 1
                 self.view.record_commands(commands, state["game_loop"])
@@ -494,6 +545,8 @@ class ImitationBot(BotAI):
                         "model_recent_commands": feature_state["recent_commands"],
                         "issued_model_commands": [c.as_dict() for c in commands],
                         "score": self.final_score,
+                        "model_action_results": model_results,
+                        "rl_decision": rl_decision,
                     },
                     separators=(",", ":"),
                 )
@@ -502,6 +555,12 @@ class ImitationBot(BotAI):
         except Exception as error:
             self.callback_error = repr(error)
             raise
+
+    async def on_end(self, result):
+        if self.residual:
+            packet = (await self.client.observation()).observation
+            self.final_score = micro_score(packet)
+            self.rl_final_loop = packet.observation.game_loop
 
 
 def play_job(job):
@@ -530,6 +589,28 @@ def play_job(job):
         )
     if bot.callback_error or not bot.frames:
         raise RuntimeError(bot.callback_error or "No model frames")
+    if bot.residual:
+        arrays = episode_arrays(
+            bot.rl_records,
+            result.name,
+            bot.final_score["killed_value"],
+            bot.rl_final_loop,
+        )
+        metadata = {
+            "base_sha256": bot.residual.base_sha256,
+            "residual_sha256": hashlib.sha256(
+                Path(job["residual_policy"]).read_bytes()
+            ).hexdigest(),
+            "reward": "incremental killed-resource value /100 +100 victory -100 defeat; finite-horizon timeout 0",
+            "finite_horizon": True,
+            "epsilon": bot.residual.epsilon,
+            "feature_encoder": "frozen_macro_wait_context",
+            "sampling": "mixture" if job.get("sample") else "greedy",
+            "result": result.name,
+        }
+        np.savez_compressed(
+            output / "rollout.npz", metadata=np.array(json.dumps(metadata)), **arrays
+        )
     receipt = {
         "status": "truncated" if result.name == "Tie" else "completed",
         "result": result.name,
@@ -590,8 +671,12 @@ def play_job(job):
         else None,
         "sampled_commands": job.get("sample", False),
         "wait_unavailable": job.get("wait_unavailable", False),
-        "fixed_cadence": job.get("fixed_cadence", False),
-        "macro_decisions": "factorized entity imitation",
+        "fixed_cadence": job.get("fixed_cadence", False) or bool(bot.residual),
+        "residual_policy": job.get("residual_policy"),
+        "rl_decisions": len(bot.rl_records),
+        "macro_decisions": "PPO raw-ability residual with frozen human encoder"
+        if bot.residual
+        else "factorized entity imitation",
         "micro_decisions": "same imitation model; not roach controller",
     }
     (output / "episode.json").write_text(json.dumps(receipt, indent=2) + "\n")
@@ -637,6 +722,11 @@ def main():
         help="Sample engine-legal global commands from the learned distribution",
     )
     parser.add_argument("--initial-harvest", action="store_true")
+    parser.add_argument(
+        "--residual-policy",
+        type=Path,
+        help="Compatible CPU-only raw ability PPO residual; frozen human unit and target models",
+    )
     parser.add_argument(
         "--fixed-cadence",
         action="store_true",
@@ -686,6 +776,16 @@ def main():
             != hashlib.sha256(args.policy.read_bytes()).hexdigest()
         ):
             parser.error("Spatial scorer is incompatible with macro checkpoint")
+    if args.residual_policy:
+        if "actor_type" not in policy.sizes or args.wait_unavailable:
+            parser.error(
+                "Residual learning requires global native-masked choices without an unavailable-intent guard"
+            )
+        residual = ResidualPPO.load(
+            args.residual_policy, hashlib.sha256(args.policy.read_bytes()).hexdigest()
+        )
+        if residual.parameters["actor"].shape != (32, policy.sizes["ability"]):
+            parser.error("Residual dimensions do not match frozen macro")
     validate_map(args.map)
     if args.output.exists():
         parser.error("Output exists; choose a new episode directory")
@@ -707,6 +807,8 @@ def main():
         )
     }
     job.update(policy=str(args.policy.resolve()), output=str(args.output.resolve()))
+    if args.residual_policy:
+        job["residual_policy"] = str(args.residual_policy.resolve())
     if args.actor_policy:
         job["actor_policy"] = str(args.actor_policy.resolve())
     if args.argument_policy:

@@ -156,3 +156,24 @@ class ExplorationTests(unittest.TestCase):
         self.assertEqual(a, b)
         self.assertEqual(set(a), {1, 3})
         self.assertEqual(choose_ability(logits, [1, 3], first, False), 1)
+
+
+class ResidualTerminalTests(unittest.IsolatedAsyncioTestCase):
+    async def test_terminal_observation_unwraps_response_and_keeps_final_kills(self):
+        from src.learning.imitation_play import ImitationBot
+        from s2clientprotocol import sc2api_pb2 as pb
+        from types import SimpleNamespace
+
+        response = pb.Response()
+        response.observation.observation.game_loop = 128
+        response.observation.observation.score.score_details.killed_value_units = 50
+
+        async def observe():
+            return response
+
+        bot = object.__new__(ImitationBot)
+        bot.residual = True
+        bot.client = SimpleNamespace(observation=observe)
+        await bot.on_end(None)
+        self.assertEqual(bot.rl_final_loop, 128)
+        self.assertEqual(bot.final_score["killed_value"], 50)
