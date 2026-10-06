@@ -40,6 +40,28 @@ class GoalFirstPolicy(nn.Module):
             self.queue = nn.Linear(hidden, 2)
             self.delay = nn.Linear(hidden, len(delays))
 
+    @property
+    def missing_fields(self):
+        return self.dimensions[0] == 188
+
+    @property
+    def spatial_features(self):
+        return self.dimensions[5]
+
+    @property
+    def engine_vocabulary(self):
+        features, scene, roles, types, abilities, points = self.dimensions
+        multiplier = 2 if self.missing_fields else 1
+        if (
+            features not in (94, 188)
+            or scene < 13 * multiplier
+            or scene % multiplier
+            or roles != 9
+            or points not in (2, 401 if self.missing_fields else 386)
+        ):
+            raise ValueError("Goal-first checkpoint lacks a native observation schema")
+        return types, abilities, scene // multiplier - 13
+
     @staticmethod
     def _tensor(values, dtype=torch.float32):
         return torch.as_tensor(np.asarray(values), dtype=dtype, device="cpu")

@@ -3567,3 +3567,34 @@ remain required. The fixed solver settings are declared in the probe plan.
 Full default suite now passes368tests in10.08seconds with20optional skips;
 Ruff/diff checks pass. Source/test implementation review is clean. No diagnostic
 corpus predictions or optimizer run has occurred at this milestone.
+
+### October6: closed intention diagnostic and live goal-first adapter
+
+The intention probe is terminal and independently reconstructed: all4513rows,
+fold-only scales/classes, predictions and metrics match. It took42.70seconds,
+peak wholeCPU7.2%. All9fits hit100iterations without convergence, so the signal
+result is inconclusive, with no positive gate. Fixed first3state-arm macro
+mistakes per held game are18TrainSCVand9SupplyDepot, all predictedSmart.
+Read-only saved-model objective/gradient reconstruction finds state teaching
+macro recall4–7%, history80–84%, both92–94%, versus weak held-game results.
+Producer orders/resources/counts are available in these opening source rows;
+missing food_used cannot be claimed as the sole cause. No fits were extended.
+See [results](superpowers/plans/2026-10-06-intention-sufficiency-probe-results.md).
+
+The native adapter gap described above is now closed: `entity_play` explicitly
+accepts `--controller goal-first`, while the default remainsjointwith no Torch
+import. Native vocabulary/history-role/point-layout guards run before command
+execution; shared decoding/spatial masks/issued-only history are preserved.
+372normal tests pass (23optional skips),14focused optional tests pass, Ruff and
+independent review pass. One installed-engine15second wiring smoke completed
+336frames/11successfulSmartcommands; all11decisions/delays/history independently
+reproduce from the immutable checkpoint. Replay saved, not displayed. CPUpeak6.1%.
+This is a deliberately truncated wiring proof, not a useful macro policy or
+full-game competence. No training/RL process is active. See
+[adapter verification](superpowers/plans/2026-10-06-goal-first-native-adapter.md).
+
+Next model work should investigate truthful current-state representation,
+including unit-type-specific producer status instead of ownership-only means,
+and explicitly test teaching fit plus whole-game generalization. The closed
+linear probe does not prove nonlinear signal absent. RL, micro transfer,
+reliable all-raceHard and higher difficulty gates remain open.

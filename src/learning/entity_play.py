@@ -23,6 +23,16 @@ from src.runner import positive, validate_map
 from src.runtime import supervise
 
 
+def load_policy(path, controller="joint"):
+    if controller == "joint":
+        return JointEntityPolicy.load(path)
+    if controller == "goal-first":
+        from src.learning.goal_first_policy import GoalFirstPolicy
+
+        return GoalFirstPolicy.load(path)
+    raise ValueError("Unknown imitation controller: " + controller)
+
+
 def validate_engine(policy, data):
     vocabulary = tuple(
         max((getattr(row, key) for row in rows), default=-1) + 1
@@ -32,13 +42,15 @@ def validate_engine(policy, data):
             (data.upgrades, "upgrade_id"),
         )
     )
-    expected = (
-        len(policy.encoder.parameters["types"]),
-        len(policy.encoder.parameters["abilities"]),
-        policy.encoder.parameters["scene"].shape[0]
-        // (2 if policy.missing_fields else 1)
-        - 13,
-    )
+    expected = getattr(policy, "engine_vocabulary", None)
+    if expected is None:
+        expected = (
+            len(policy.encoder.parameters["types"]),
+            len(policy.encoder.parameters["abilities"]),
+            policy.encoder.parameters["scene"].shape[0]
+            // (2 if policy.missing_fields else 1)
+            - 13,
+        )
     if vocabulary != expected:
         raise ValueError("Joint checkpoint and engine vocabularies differ")
     return vocabulary
@@ -48,7 +60,9 @@ class JointImitationBot(BotAI):
     def __init__(self, job, stream):
         super().__init__()
         self.job, self.stream = job, stream
-        self.policy, self.metadata = JointEntityPolicy.load(job["policy"])
+        self.policy, self.metadata = load_policy(
+            job["policy"], job.get("controller", "joint")
+        )
         self.view = PlayerView()
         self.frames = self.commands = self.last_loop = 0
         self.decisions = self.availability_blocks = 0
@@ -200,7 +214,9 @@ def play_joint_job(job):
         action_results=bot.action_results,
         game_seconds=bot.last_loop / 22.4,
         score=bot.last_score,
-        controller="joint_imitation",
+        controller="goal_first_imitation"
+        if job.get("controller") == "goal-first"
+        else "joint_imitation",
         step=1,
         training=False,
         scope="Single frozen checkpoint episode; no acceptance or RL claim",
@@ -211,6 +227,9 @@ def play_joint_job(job):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--controller", choices=("joint", "goal-first"), default="joint"
+    )
     parser.add_argument("--policy", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--map", default="AcropolisLE")
@@ -231,10 +250,11 @@ def main():
     parser.add_argument("--wall-seconds", type=positive, default=120)
     args = parser.parse_args()
     validate_map(args.map)
-    JointEntityPolicy.load(args.policy)
+    load_policy(args.policy, args.controller)
     if args.output.exists():
         parser.error("Use a fresh episode directory")
     job = dict(
+        controller=args.controller,
         policy=str(args.policy.resolve()),
         output=str(args.output.resolve()),
         map=args.map,

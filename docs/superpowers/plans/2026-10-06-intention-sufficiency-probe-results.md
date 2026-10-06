@@ -25,3 +25,28 @@ RL stays stopped while useful human imitation and native controller competence a
 - `logs/roadmap/intention-probe-01/verification.json`: `b19d467a5c2228e97ace5181b14ac81226647e02803bffe5b0689ac6b572d7f9`
 
 Run/watch/verifier wrappers are retained underlogs/roadmapwith SHA bindings. Implementation/runner/independent-verifier reviews found no remaining blockers after explicit terminal-timeout handling; no model was promoted.
+
+## Read-only optimization and opening-source follow-up
+
+All nine saved-model training gradients/losses were reconstructed without
+optimizer updates. State-only training macro recall is4.1%,3.8%,6.7%; history
+83.8%,80.5%,84.0%; both93.8%,92.4%,92.4%. History fitting can memorize much of
+the teaching sequences while held-game macro recall remains weak. This is
+consistent with sequence overfitting, but does not isolate a sole cause. State
+linear features remain weak even on teaching data under this regularized
+objective; this does not establish absence of learnable nonlinear state signal.
+Maximum absolute training gradients range.000278–.001519, above the fixed
+1e-5gradient tolerance. Each state-containing arm has49constant active columns.
+Do not reinterpret the original inconclusive solver status as convergence.
+
+The fixed source-row inspection confirms firstTrainSCVcommands have an observed
+CommandCenter with no order; laterTrainSCVcommands may queue onto an observed
+in-progress SCV. SupplyDepot commands involve observedSCVs. These facts and
+recorded resources/counts are causal inputs; no hidden producer energy/supply
+legality is invented. Current ownership-mean features do not retain status by
+native unit type, suggesting that more faithful type/status pooling is a useful
+next representation hypothesis. A new controller experiment must separately
+test generalization; these source observations are not a justification to
+extend the closed probe or promote a checkpoint.
+
+- Read-only audit `logs/roadmap/intention-probe-01/optimization-audit.json`: `eb57aac8d13d3d9f466fc96c786c8fb1f075a39ef83a9bb69583af6bfeeb87ae`
