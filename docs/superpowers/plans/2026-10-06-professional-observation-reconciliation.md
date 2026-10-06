@@ -8,7 +8,9 @@ Assumption: public preconverted player observations can be reconciled with origi
 - [x] Correct Windows database offset width, retrieve three independently compressed candidate records inside16MiB contract, and decode header/scalar/image/action blocks.
 - [x] Compare exact original command loops and truncated targets; preserve unresolved cases. Found2181/2229 unique matches; no conflicting ability mappings in these matches.
 - [ ] Independently verify ability mappings and selected actor tags using official replay events/native catalog evidence.
-- [ ] Decode unit blocks with schema/bounds verification. Confirm pre-command observations and player fog visibility using concrete records and converter source.
+- [x] Decode complete unit/neutral blocks with schema/bounds verification and exact byte consumption. All3543converted commands use present Self actors; first TrainSCV observations retain50minerals and empty CommandCenter orders.
+- [ ] Confirm later pre-command observations and player fog visibility. Resolve visibility-grid coordinates before importing.
+- [ ] Resolve selection-mask/subgroup semantics: preliminary reconstruction corroborates1039groups, with343known-selection disagreements and799unknown selections excluded.
 - [ ] Restore original queue flags/point precision only for verified commands. Mask/exclude unavailable observations and unknown action modes explicitly. Recover upgrades from player-visible replay events if feasible.
 - [ ] Build an importer with meaningful fixture tests, source receipts and compatibility checks against native inference. Do not mix partial records silently into existing datasets.
 - [ ] Assemble professional teaching/validation splits by whole game and evaluate imitation before further frozen native tests. Larger corpus downloads require a concrete bounded size decision within user constraints.
