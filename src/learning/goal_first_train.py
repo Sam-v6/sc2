@@ -7,6 +7,7 @@ import numpy as np
 import torch
 
 from src.learning.entity_examples import decode_command, state_inputs
+from src.learning.teacher_states import remember_command
 
 
 def teaching_support(policy, examples):
@@ -111,24 +112,13 @@ def fit_goal_first(policy, examples, *, epochs, batch_size, rate, seconds, seed)
     )
 
 
-def prediction_history_examples(policy, examples, rows, vocabulary, products):
-    """Own predictions at human decision times, on unchanged human game states.
-
-    Rebuild both event embeddings and entity references, removing human history.
-    Commands are hypothetical, not engine-executed; this is not a native rollout.
-    """
-    history, rebuilt, records = [], [], []
+def _history_rows(examples, rows):
     previous_loop = None
-    for index, ((original, label, command, exclusion), (row, observed)) in enumerate(
+    for index, (example, (row, observed)) in enumerate(
         zip(examples, rows, strict=True)
     ):
-        state = dict(
-            observed,
-            decision_loop=row["action_loop"],
-            recent_commands=list(history),
-            history_quality="event_slots",
-        )
-        if state["game_loop"] != row["action_loop"]:
+        command = example[2]
+        if observed["game_loop"] != row["action_loop"]:
             raise ValueError("Prediction history requires causal issue-loop states")
         if row["commands"] != [command.as_dict()] or (
             previous_loop is not None and row["action_loop"] < previous_loop
@@ -137,32 +127,74 @@ def prediction_history_examples(policy, examples, rows, vocabulary, products):
                 "Prediction history requires aligned chronological commands"
             )
         previous_loop = row["action_loop"]
-        inputs = state_inputs(
-            state, *vocabulary, products=products, missing_fields=True
-        )
-        if inputs["tags"] != original["tags"]:
-            raise ValueError("Prediction history changed candidate identity")
-        for component in (1, 2, 3):
-            np.testing.assert_array_equal(
-                inputs["encoder"][component], original["encoder"][component]
-            )
+        yield index, example, row, observed
+
+
+def _history_inputs(original, row, observed, history, vocabulary, products):
+    state = dict(
+        observed,
+        decision_loop=row["action_loop"],
+        recent_commands=list(history),
+        history_quality="event_slots",
+    )
+    inputs = state_inputs(state, *vocabulary, products=products, missing_fields=True)
+    if inputs["tags"] != original["tags"]:
+        raise ValueError("Prediction history changed candidate identity")
+    for component in (1, 2, 3):
         np.testing.assert_array_equal(
-            inputs["encoder"][0][:, :30], original["encoder"][0][:, :30]
+            inputs["encoder"][component], original["encoder"][component]
         )
-        np.testing.assert_array_equal(
-            inputs["encoder"][0][:, 94:124], original["encoder"][0][:, 94:124]
+    np.testing.assert_array_equal(
+        inputs["encoder"][0][:, :30], original["encoder"][0][:, :30]
+    )
+    np.testing.assert_array_equal(
+        inputs["encoder"][0][:, 94:124], original["encoder"][0][:, 94:124]
+    )
+    for name in (
+        "actor_mask",
+        "target_mask",
+        "entity_positions",
+        "points",
+        "world_points",
+        "point_radii",
+    ):
+        np.testing.assert_array_equal(inputs[name], original[name])
+    if "point_features" in original:
+        inputs["point_features"] = original["point_features"]
+    return inputs
+
+
+def retained_history_examples(examples, rows, vocabulary, products):
+    """Teaching inputs from previous retained human commands only.
+
+    Match the agent's command window, excluding unresolved source event slots.
+    Labels remain unchanged; append each command after constructing its inputs.
+    """
+    history, rebuilt = [], []
+    for _, (original, label, command, exclusion), row, observed in _history_rows(
+        examples, rows
+    ):
+        inputs = _history_inputs(original, row, observed, history, vocabulary, products)
+        rebuilt.append((inputs, label, command, exclusion))
+        remembered = dict(
+            remember_command(command.as_dict(), observed, row["action_loop"]),
+            verified=True,
         )
-        for name in (
-            "actor_mask",
-            "target_mask",
-            "entity_positions",
-            "points",
-            "world_points",
-            "point_radii",
-        ):
-            np.testing.assert_array_equal(inputs[name], original[name])
-        if "point_features" in original:
-            inputs["point_features"] = original["point_features"]
+        history = [*history, remembered][-32:]
+    return rebuilt
+
+
+def prediction_history_examples(policy, examples, rows, vocabulary, products):
+    """Own predictions at human decision times, on unchanged human game states.
+
+    Rebuild both event embeddings and entity references, removing human history.
+    Commands are hypothetical, not engine-executed; this is not a native rollout.
+    """
+    history, rebuilt, records = [], [], []
+    for index, (original, label, command, exclusion), row, observed in _history_rows(
+        examples, rows
+    ):
+        inputs = _history_inputs(original, row, observed, history, vocabulary, products)
         prediction = policy.predict(inputs)
         records.append(
             dict(row=index, prior_prediction_events=len(history), prediction=prediction)
@@ -171,7 +203,7 @@ def prediction_history_examples(policy, examples, rows, vocabulary, products):
         if prediction is not None:
             actual = decode_command(prediction, inputs)
             remembered = dict(
-                actual.as_dict(), game_loop=state["game_loop"], verified=True
+                actual.as_dict(), game_loop=row["action_loop"], verified=True
             )
             if actual.target_unit is not None:
                 remembered["target_position"] = inputs["entity_positions"][

@@ -162,6 +162,63 @@ class GoalFirstTrainTests(unittest.TestCase):
         self.assertEqual(records[1]["prior_prediction_events"], 1)
         self.assertEqual([r["row"] for r in records], [0, 1])
 
+    def test_retained_history_is_causal_resets_and_preserves_exclusions(self):
+        from src.learning.goal_first_train import retained_history_examples
+        from src.learning.entity_examples import state_inputs
+        from src.learning.gameplay import Command
+        from tests.test_entity_examples import EntityExamplesTests
+
+        fixture = EntityExamplesTests()
+        fixture.setUp()
+        examples, rows = [], []
+        for loop, ability in zip((100, 101, 102), (3, 4, 5)):
+            state = json.loads(json.dumps(fixture.state))
+            state["game_loop"] = loop
+            state["recent_commands"] = [dict(ability=9, units=[25], game_loop=99)]
+            command = Command(ability, (fixture.tag,))
+            examples.append(
+                (
+                    state_inputs(state, 8, 12, missing_fields=True),
+                    None,
+                    command,
+                    "test exclusion",
+                )
+            )
+            rows.append((dict(action_loop=loop, commands=[command.as_dict()]), state))
+        rebuilt = retained_history_examples(examples, rows, (8, 12, 0), {})
+        for index, (inputs, label, command, exclusion) in enumerate(rebuilt):
+            np.testing.assert_array_equal(inputs["encoder"][4], [3, 4][:index])
+            self.assertIsNone(label)
+            self.assertIs(command, examples[index][2])
+            self.assertEqual(exclusion, "test exclusion")
+            np.testing.assert_array_equal(
+                inputs["encoder"][0][:, :30], examples[index][0]["encoder"][0][:, :30]
+            )
+            if index:
+                self.assertEqual(
+                    inputs["encoder"][0][inputs["tags"].index(fixture.tag), 92], 1
+                )
+        np.testing.assert_array_equal(examples[0][0]["encoder"][4], [9])
+        changed_examples, changed_rows = list(examples), list(rows)
+        last = Command(7, (25,))
+        changed_examples[-1] = (*examples[-1][:2], last, "test exclusion")
+        changed_rows[-1] = (
+            dict(action_loop=102, commands=[last.as_dict()]),
+            rows[-1][1],
+        )
+        changed = retained_history_examples(
+            changed_examples, changed_rows, (8, 12, 0), {}
+        )
+        for a, b in zip(rebuilt, changed, strict=True):
+            for x, y in zip(a[0]["encoder"], b[0]["encoder"], strict=True):
+                np.testing.assert_array_equal(x, y)
+        again = retained_history_examples(examples, rows, (8, 12, 0), {})
+        self.assertEqual(len(again[0][0]["encoder"][4]), 0)
+        with self.assertRaises(ValueError):
+            retained_history_examples(examples[::-1], rows[::-1], (8, 12, 0), {})
+        with self.assertRaises(ValueError):
+            retained_history_examples(examples, rows[:-1], (8, 12, 0), {})
+
     def test_final_example_crossing_deadline_is_discarded(self):
         weights = {
             k: v.detach().numpy().copy() for k, v in self.policy.state_dict().items()

@@ -3403,3 +3403,19 @@ Next work should align teaching history with history actually available to the
 agent, then measure prediction-error sensitivity separately. No second fit has
 been launched; the frozen failed trial stays unchanged and the full roadmap
 remains incomplete.
+
+Retained teaching-history rebuilding is implemented in `goal_first_train.py`
+using shared alignment/non-history invariants with prediction-derived history.
+The new test is RED for the absent helper, then GREEN: current/future command
+mutation leaves current inputs unchanged, excluded labels still contribute
+known past commands, history resets and misaligned/reversed/count-mismatched
+rows are rejected. Ten optional CPU tests pass1.04seconds; default360tests pass
+10.06seconds with16optional skips; Ruff/diff pass. Independent review finds no
+blocker. Professional294parity reproduces all467saved retained-oracle
+predictions/audit and the original saved own-history trace exactly; helperSHA
+`08e535043ae70fbe6f006f9d4d39e0c39646b2524c9a4ed38e083d02838d415d`.
+This changes collection history, not controller architecture/action space or
+default NumPy policy. A fresh representation-only fit is planned separately;
+its own-history gates are declared before fitting. Previous failed artifacts
+remain unchanged; reproduce their original source from the recorded Git
+revision rather than treating the changed trainer's SHA as historical code.
