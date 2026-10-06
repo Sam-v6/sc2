@@ -144,6 +144,7 @@ class PlayerView:
     def observe(self, packet):
         observation = packet.observation
         loop = observation.game_loop
+        visibility = observation.raw_data.map_state.visibility
         units, visible_enemies, radar_contacts = [], set(), []
         for action in packet.actions:
             if action.action_raw.HasField("unit_command") or action.action_raw.HasField(
@@ -158,8 +159,15 @@ class PlayerView:
                 continue
             if unit.display_type == raw.Hidden:
                 continue
+            visible = unit.display_type == raw.Visible
+            if unit.alliance == raw.Enemy and visibility.data:
+                # Linux 4.10 can label fog snapshots Visible; match the SDK's
+                # visibility-grid guard before exposing current enemy fields.
+                x, y = round(unit.pos.x), round(unit.pos.y)
+                visible = (visible and 0 <= x < visibility.size.x and 0 <= y < visibility.size.y
+                           and visibility.data[y*visibility.size.x+x] == 2)
             if unit.alliance == raw.Enemy:
-                if unit.display_type == raw.Visible:
+                if visible:
                     self.known[unit.tag] = {
                         "tag": unit.tag,
                         "unit_type": unit.unit_type,
@@ -167,14 +175,14 @@ class PlayerView:
                         "last_seen_loop": loop,
                     }
                     visible_enemies.add(unit.tag)
-                elif unit.tag not in self.known:
+                elif unit.display_type == raw.Snapshot and unit.tag not in self.known:
                     self.known[unit.tag] = {
                         "tag": unit.tag,
                         "unit_type": unit.unit_type,
                         "position": [unit.pos.x, unit.pos.y, unit.pos.z],
                         "last_seen_loop": None,
                     }
-            if unit.display_type != raw.Visible:
+            if not visible:
                 continue
             if unit.alliance == raw.Self:
                 self.owned[unit.tag] = {

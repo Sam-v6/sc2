@@ -20,6 +20,7 @@ from sc2.main import run_game
 from sc2.player import Bot, Computer
 
 BOTS = {
+    'primitives': ('src.bots.primitive_terran', 'PrimitiveTerranBot', Race.Terran),
     'reaper': ('src.bots.mass_reaper', 'MassReaperBot', Race.Terran),
     'battlecruiser': ('src.bots.one_base_battlecruiser', 'BCRushBot', Race.Terran),
     'proxy': ('src.bots.proxy_rax', 'ProxyRaxBot', Race.Terran),
@@ -76,6 +77,8 @@ def play_job(job):
     module, name, race = BOTS[job['bot']]
     bot = getattr(import_module(module), name)()
     bot.requested_game_step = job['game_step']
+    if job['bot'] == 'primitives':
+        bot.trace_path = str(Path(job['replay']).with_suffix('.primitives.jsonl.gz'))
     start = time.monotonic()
     result = run_game(validate_map(job['map']),
                       [Bot(race, bot), Computer(Race[job['race']], Difficulty[job['difficulty']], AIBuild[job['build']])],
@@ -86,7 +89,8 @@ def play_job(job):
     replay = Path(job['replay'])
     if not replay.is_file() or replay.stat().st_size == 0:
         raise RuntimeError('Game did not save a replay')
-    return {'status': 'truncated' if result.name == 'Tie' else 'completed',
+    return {**({'primitives': bot.summary} if job['bot'] == 'primitives' else {}),
+            'status': 'truncated' if result.name == 'Tie' else 'completed',
             'result': result.name, 'game_seconds': bot.time, 'engine_wall_seconds': time.monotonic() - start,
             'replay_bytes': replay.stat().st_size}
 

@@ -3948,3 +3948,21 @@ and license inspection; no bot has yet been selected or proven on our engine.
 Then return to professional imitation with the verified execution layer, and
 only afterward RL and learned micro transfer. Scripted wins must remain distinct
 from learned-controller wins; the complete roadmap remains unfinished.
+
+### October 6: Terran primitives controller and Linux visibility repair
+
+Shared mining/combat rules and a scripted Marine/Tank/Medivac baseline are
+implemented. Test-first regressions and a native four-minute economy/production
+smoke pass. The first Hard diagnostic panel finished two Terran cutoffs and one
+Zerg victory before being stopped for a visibility defect; none counts toward
+acceptance. Frozen sources and receipts are preserved. Shared PlayerView now
+uses the visibility grid to guard bogus Visible flags on Linux 4.10, matching the
+installed SDK. Historical source observations require auditing before fitting.
+Attack-search arrival and redundant command handling are also repaired.
+
+Latest suite:440tests pass,32optional skips; native smoke ran separately.
+The fixed six-game Hard development panel is active at
+`logs/roadmap/primitives-native-02/panel`, unified exec session59542. Poll that
+handle; do not restart from file state alone. Run the saved verifier after its
+terminal receipt. Construction errors and remaining primitive behavior still
+need investigation; no imitation/RL or final strength claim.

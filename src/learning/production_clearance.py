@@ -30,7 +30,7 @@ def reservations(state, units, catalog):
 
 async def resolve_production_placement(client, command, catalog, state, unit_type, reserved):
     info = catalog[command.ability]
-    addon = info.get('friendly_name', '').startswith(('Build TechLab ', 'Build Reactor '))
+    addon = info.get('friendly_name', '').startswith(('Build TechLab', 'Build Reactor'))
     if not info.get('is_building') or command.target_unit is not None:
         return await resolve_placements(client, [command], catalog, state)
     depot = next(a for a, row in catalog.items() if row.get('friendly_name') == 'Build SupplyDepot')

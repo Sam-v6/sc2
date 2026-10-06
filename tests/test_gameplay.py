@@ -13,6 +13,30 @@ class GameplayTests(unittest.TestCase):
     def setUp(self):
         self.assertIsNotNone(Command, "The shared raw gameplay interface is missing")
 
+    def test_legacy_visible_flag_cannot_override_visibility_grid_or_refresh_memory(self):
+        packet = pb.ResponseObservation()
+        packet.observation.game_loop = 10
+        packet.observation.raw_data.map_state.visibility.CopyFrom(
+            common.ImageData(bits_per_pixel=8, size={"x": 2, "y": 1}, data=b"\x02\x00")
+        )
+        enemy = packet.observation.raw_data.units.add(
+            tag=2, alliance=raw.Enemy, display_type=raw.Visible, unit_type=21,
+            health=100, pos={"x": 0, "y": 0})
+        view = PlayerView()
+        self.assertEqual([u['tag'] for u in view.observe(packet)['units']], [2])
+        packet.observation.game_loop = 20
+        enemy.pos.x = 1
+        enemy.health = 999
+        packet.observation.raw_data.units.add(
+            tag=3, alliance=raw.Enemy, display_type=raw.Visible, unit_type=21,
+            health=999, pos={"x": 1, "y": 0})
+        state = view.observe(packet)
+        self.assertEqual(state['units'], [])
+        self.assertEqual([u['tag'] for u in state['memory']], [2])
+        self.assertEqual(state['memory'][0]['position'], [0.0, 0.0, 0.0])
+        self.assertEqual(state['memory'][0]['last_seen_loop'], 10)
+        self.assertNotIn('health', state['memory'][0])
+
     def test_commands_preserve_multiple_units_target_queue_and_autocast(self):
         command = Command(ability=23, units=(101, 102), target_unit=201, queue=True)
         action = command.to_proto()

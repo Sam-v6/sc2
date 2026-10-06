@@ -6,6 +6,13 @@ The full roadmap remains incomplete. The user explicitly authorized using
 established bots to build reliable resource, production, attacking and combat
 micro behavior before returning to professional imitation, then RL.
 
+The [new Terran primitives controller](terran-primitives-implementation.md) is
+implemented and passes its native economy/production smoke test. Its first Hard
+panel was stopped after exposing an older Linux engine visibility defect and
+attack-search stalling. Both are repaired; a fixed six-game development recheck
+is running under `logs/roadmap/primitives-native-02/panel`. Do not claim reliable
+Hard wins or resume fitting yet. Earlier source observations need a fog audit.
+
 Start here, then read [the roadmap](learning-roadmap.md). Use
 [the execution ledger](learning-execution.md) for detailed evidence. Historical
 experiments are references, not an instruction to rerun every failed variant.
