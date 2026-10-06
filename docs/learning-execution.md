@@ -962,3 +962,35 @@ hashes. Future experiments must bind actual dataset files and source before use.
 Preserve this failed experiment; no live promotion, longer sweep, RL restart or
 full crossed-player coverage claim follows. Other-player TvP/Z and verified
 professional examples still depend on resolving exact native-engine availability.
+
+### Attack failure components and available spatial cues
+
+`attack-failure-diagnosis-01.json` separates attack argument failures without
+fitting. Both models receive the human ability and actor group. On Lyra, Huski
+and reserved TvZ, baseline queue accuracy is 78.8%, 81.8% and 97.1%; coverage-model
+queue accuracy is 90.4%, 89.1% and 99.0%. Mode accuracy is a separate problem,
+especially Huski/TvZ (baseline 61.8%/64.4%, coverage 60.0%/54.8%). Location errors
+remain large even among predictions decoded as point commands: baseline median
+37.57/24.34/42.69 tiles, coverage 32.47/25.96/22.91 tiles. Point predictions within
+two tiles number 0/51, 0/33, 0/53 for baseline and 0/46, 1/33, 0/45 for coverage.
+The unit-target attacks match 0/8 and 0/24 at baseline, versus 0/8 and 2/24 after
+coverage expansion. Thus queue handling alone cannot explain the failed attacks.
+
+Human point attacks total 52, 47 and 80. A currently visible enemy lies within
+five tiles of the human target in 24, 23 and 47 respectively (94/179 overall).
+These are player-observable units, not hidden opponent state. Remembered enemies
+supply additional candidate locations but must retain stale/uncertain semantics.
+This supports investigating point selection conditioned on local spatial relations,
+not simply more epochs of the base-relative regressor. It does not prove that a
+nearest-enemy rule is the human strategy, nor that every attack targets an enemy.
+General map-point choices and noncombat commands must remain available.
+
+A useful next bounded supervised experiment can reuse the existing terrain and
+candidate-position features for a point scorer, with a full-map candidate grid,
+currently observed unit relations, chosen human ability and group. Bind dataset
+files/code before fitting, declare candidate quantization coverage and failure
+gates, retain whole-replay separation and compare decoded point fidelity rather
+than raw distance alone. Start as an explicit component experiment; no live
+promotion, complete imitation claim or RL follows without subsequent full-command
+and native evidence. Professional and crossed-player corpus requirements remain
+open independently of representation experiments.
