@@ -3388,3 +3388,18 @@ threads, no fitting/native/RL; its result is pending. It supplies only past
 retained human commands after each current prediction, never current/future
 labels during inference. Preserve `history-diagnostic.json` and the eventual
 `retained-history-oracle.json` alongside original frozen experiment artifacts.
+
+The retained-history oracle handle24481 is terminal exit0. It reconstructs
+all4805rows without fitting: teaching ability2724/4513,actors1389,target1027,
+complete302; diagnostic ability141/292,actors48,target68,complete10. Teaching
+complete thus falls2118→302 even when prior retained human commands are exact,
+and falls further to98 with predicted history. This demonstrates sensitivity
+to the changed command-history representation as well as prediction error;
+it does not prove that any single omitted field/event causes all failures.
+All non-history candidates/base fields/orders/scene/map geometry are checked
+unchanged; only past commands are inserted after the current prediction.
+OracleartifactSHA256`cfe8add992dc7bcd6155988b07bc7a5f7fa9d61a6ced18060e9a340bd0ed557b`.
+Next work should align teaching history with history actually available to the
+agent, then measure prediction-error sensitivity separately. No second fit has
+been launched; the frozen failed trial stays unchanged and the full roadmap
+remains incomplete.
