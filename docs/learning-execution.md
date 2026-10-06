@@ -3723,3 +3723,23 @@ No seed sweep/extension. See
 Next integrate the existing local engine-placement primitive explicitly, preserving
 learned build choices and recording requested versus actually dispatched commands.
 Useful imitation and all remaining roadmap gates are still incomplete.
+
+### October6: existing placement primitive integrated and reconstructed
+
+Opt-in native engine placement preserves original model choice and records actual
+adjusted dispatch/history plus exact query packets. Separate rejection/adjustment
+counts and default-parity integration tests pass.390normaltests (31optional skips),
+30focused optional/execution checks, Ruff/diff and independent review pass.
+
+Watcher61363and verifier76397are terminal exit0. Same fixed sampled checkpoint/
+profile/candidates/seeds opener completes one additionalCommandCenter, twoDepots,
+twoRefineries and16totalworkers, but noBarracks/army.125choices reconstruct,
+including threepoint adjustments; zero placement-location failures. ThreeRefinery
+unit-target commands still returnNotSupported. CPUpeak10.5%, noGPU/fitting/RL.
+This is valid execution evidence and inefficient macro behavior, not promotion,
+a repairedBarracksattempt, reliable planning or a full-game win. See
+[verified placement result and target-validation question](superpowers/plans/2026-10-06-native-placement-primitive-results.md).
+
+Next inspect the rejected unit-target gas positions before changing target behavior;
+existing point resolution deliberately does not replace the model's selected geyser.
+The full human-imitation/micro/Hard-and-higher roadmap remains incomplete.

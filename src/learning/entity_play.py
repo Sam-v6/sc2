@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+from types import SimpleNamespace
 
 from sc2.bot_ai import BotAI
 from sc2.data import AIBuild, Difficulty, Race
@@ -24,6 +25,7 @@ from src.learning.entity_policy import JointEntityPolicy
 from src.learning.entity_train import digest
 from src.learning.gameplay import PlayerView, image_dict, protocol_dict
 from src.learning.live import ability_query, issue
+from src.learning.placement import resolve_placements
 from src.learning.sandbox import micro_score
 from src.runner import positive, validate_map
 from src.runtime import supervise
@@ -92,6 +94,7 @@ class JointImitationBot(BotAI):
         self.view = PlayerView()
         self.frames = self.commands = self.last_loop = 0
         self.decisions = self.availability_blocks = 0
+        self.placement_blocks = self.placement_adjustments = 0
         self.final_player = None
         self.final_units = []
         self.action_results = {}
@@ -175,15 +178,41 @@ class JointImitationBot(BotAI):
             issued = not self.job.get("wait_unavailable") or command_available(
                 command, available, self.catalog
             )
+            placement_queries, placement_trace = [], []
+            dispatched = command if issued else None
+            if not issued:
+                self.availability_blocks += 1
+            elif self.job.get("engine_placement"):
+
+                async def placement_execute(**kwargs):
+                    response = await self.client._execute(**kwargs)
+                    placement_queries.append(
+                        dict(
+                            request=protocol_dict(kwargs["query"]),
+                            response=protocol_dict(response.query),
+                        )
+                    )
+                    return response
+
+                commands, placement_trace = await resolve_placements(
+                    SimpleNamespace(_execute=placement_execute),
+                    [command],
+                    self.catalog,
+                    state,
+                )
+                dispatched = commands[0] if commands else None
+                if dispatched is None:
+                    self.placement_blocks += 1
+                elif dispatched != command:
+                    self.placement_adjustments += 1
+            issued = dispatched is not None
             if issued:
-                result = await issue(self.client, [command])
-                self.agent.record_issued(command, state, delay)
+                result = await issue(self.client, [dispatched])
+                self.agent.record_issued(dispatched, state, delay)
                 self.commands += 1
             else:
-                # Reobserve and ask the unchanged model again next loop. An
-                # unissued intention must not enter its command history.
+                # Unissued intentions never enter dispatched command history.
                 result = pb.ResponseAction()
-                self.availability_blocks += 1
             self.schedule_step()
             for code in result.result:
                 self.action_results[str(code)] = (
@@ -195,6 +224,9 @@ class JointImitationBot(BotAI):
                         observation=feature_state,
                         candidate_queries=candidate_queries,
                         command=command.as_dict(),
+                        issued_command=dispatched.as_dict() if dispatched else None,
+                        placement_queries=placement_queries,
+                        placement_trace=placement_trace,
                         delay=delay,
                         issued=issued,
                         available=[protocol_dict(row) for row in available.abilities],
@@ -271,6 +303,9 @@ def play_joint_job(job):
         commands=bot.commands,
         decisions=bot.decisions,
         availability_blocks=bot.availability_blocks,
+        placement_blocks=bot.placement_blocks,
+        placement_adjustments=bot.placement_adjustments,
+        engine_placement=bool(job.get("engine_placement")),
         wait_unavailable=bool(job.get("wait_unavailable")),
         condition_available=bool(job.get("condition_available")),
         ability_seed=job.get("ability_seed"),
@@ -313,6 +348,11 @@ def main():
     )
     parser.add_argument(
         "--build", choices=[b.name for b in AIBuild], default="RandomBuild"
+    )
+    parser.add_argument(
+        "--engine-placement",
+        action="store_true",
+        help="Resolve learned construction points through local engine placement queries",
     )
     parser.add_argument(
         "--condition-available",
@@ -358,6 +398,7 @@ def main():
         seed=args.seed,
         wait_unavailable=args.wait_unavailable,
         condition_available=args.condition_available,
+        engine_placement=args.engine_placement,
         ability_seed=args.ability_seed,
         seconds=args.seconds,
     )
