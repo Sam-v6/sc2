@@ -2969,3 +2969,16 @@ one wrong same-type TechLab, five human actors ranked first with extra units
 selected. Targets are fitted but selection is unresolved. Exact tag mismatches
 alone do not establish that another worker is functionally unusable. Receipt:
 `professional-small-set-relational-01/attention/actor-diagnosis.json`.
+
+A second frozen audit checks whether those wrong top choices are indistinguishable
+in the actual inputs. All ten wrong-ranking pairs have the same type and first
+order, but none have identical numeric features. Seven pairs (six SCVs and one
+TechLab) differ only in their two position columns. For these, base embedding
+distances are0.00468–0.01536 and relational distances0.0349–0.1310. All ten human
+and alternative base embeddings have no coordinates above0.99absolute activation;
+this does not support dead/saturated per-unit features as the explanation.
+Attention increases distinction without learning the correct ranking. It does
+not prove that more attention, extra epochs, or functional equivalence will fix
+the errors. These are same-state input comparisons, not hidden information or
+execution evidence. Source/code/runtime/checkpoint bindings verify; no updates.
+Receipt: `professional-small-set-relational-01/attention/actor-representation.json`.
