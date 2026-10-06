@@ -1,7 +1,10 @@
 # Current learning status
 
-Updated October 6, 2026. The active phase is **supervised human imitation**.
-Reinforcement learning is off. The full roadmap remains incomplete.
+Updated October 6, 2026. The active phase is **loss diagnosis and reliable
+primitives**. Human-imitation training and reinforcement learning are paused.
+The full roadmap remains incomplete. The user explicitly authorized using
+established bots to build reliable resource, production, attacking and combat
+micro behavior before returning to professional imitation, then RL.
 
 Start here, then read [the roadmap](learning-roadmap.md). Use
 [the execution ledger](learning-execution.md) for detailed evidence. Historical
@@ -9,6 +12,7 @@ experiments are references, not an instruction to rerun every failed variant.
 
 | Requirement | Current evidence | Still needed |
 |---|---|---|
+| Reliable execution primitives and scripted baseline | Construction/addon repairs work, but the latest native panel still has zero wins | Diagnose losses, inspect established Terran bot code, verify economy/production/scouting/attacking/micro, and prove the scripted all-race Hard baseline |
 | Broad gameplay controls and player-visible information | Raw command schema, native catalogue, missing-field masks, fog filtering and argument execution exist | Prove the learned controller uses the necessary controls reliably, including simultaneous unit control |
 | Strong human examples | Eleven professional teaching games: 6,089 verified decisions, 6,086 representable; whole-game development split and untouched reserved games | More varied verified data, including Terran opponents; resolve unavailable observations where actual source evidence permits |
 | Learn to copy human decisions | Full command imitation failed; simultaneous production-outcome imitation passes offline gates | Useful generalization and actual game competence |
@@ -78,10 +82,20 @@ no delayed action errors. Still zero wins: three Rush defeats and three Macro
 cutoffs. Macro worker peaks decline to35/31/37; military peaks29/25/30.
 CPU peak30.1percent. See [repair results and limits](superpowers/plans/2026-10-06-production-clearance-results.md).
 
-Next audit the timing/resource boundary: a45-second future outcome forecast is
-currently treated as immediate work on every replan. Avoid another unchanged
-fit or scripted strategic goals. RL stays off. Learned micro, broad learned raw
-controls and reliable all-race Hard wins remain unfinished.
+The timing audit found affordable idle worker-production opportunities and large
+spare supply in saved Macro games; this is diagnostic evidence, not proof of a
+single cause. A saved timing-model experiment failed its baseline and family
+error gates on reevaluation and was not deployed. Preserve that unfinished
+experiment as historical work; do not resume fitting it by default.
+
+Next inspect the saved losses and established open-source Terran bots, then
+implement and verify reliable primitives and a scripted Hard baseline. The
+current controller only attacks visible enemies and lacks offensive army
+destinations. Check resource scheduling and production starvation as well.
+Scripted strategy and combat micro are authorized for this baseline phase.
+Attribute its results explicitly to the scripted controller. Human imitation
+resumes after primitives are verified; RL follows useful imitation. Broad learned
+controls, learned micro and reliable learned all-race Hard wins remain goals.
 
 The validated intake manifest is
 `logs/roadmap/pro-source-expansion-02/final-verification.json`. Future fits must

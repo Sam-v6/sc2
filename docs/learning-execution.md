@@ -3929,3 +3929,22 @@ three Rush failures. Peak CPU30.1percent, no fit/RL.419tests pass with31skips.
 See [repair result](superpowers/plans/2026-10-06-production-clearance-results.md).
 Next audit temporal/resource interpretation of human outcome forecasts; no
 unchanged fit/sim sweep or hidden strategic recipe. Full roadmap remains active.
+
+### October 6: user-directed primitives-first reset
+
+The user redirected execution to diagnosing losses and building reliable
+primitives from established open-source SC2 bots, explicitly including attacking
+and combat micro. This supersedes the preceding next-step restriction on scripted
+strategy for the baseline phase. Imitation and RL training are paused; the latest
+saved timing-model reevaluation finished, failed its error gates, and was not
+deployed. No new learning batch is authorized by this reset.
+
+The active goal and roadmap now require native verification of mining, worker
+and army production, supply, construction, scouting, army movement, attacking and
+combat micro, followed by a declared all-race scripted Hard baseline. Diagnose
+resource starvation and the lack of offensive army destinations using saved
+traces and actual game outcomes. Reference bot selection still requires source
+and license inspection; no bot has yet been selected or proven on our engine.
+Then return to professional imitation with the verified execution layer, and
+only afterward RL and learned micro transfer. Scripted wins must remain distinct
+from learned-controller wins; the complete roadmap remains unfinished.

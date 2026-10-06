@@ -1,4 +1,4 @@
-# Terran learning roadmap: human examples, learned micro, then reinforcement learning
+# Terran learning roadmap: reliable primitives, human examples, then reinforcement learning
 
 Agreed direction recorded October 5, 2026. **Execution is active:** the user
 subsequently instructed the agent to complete this roadmap. Current implementation
@@ -10,9 +10,49 @@ all races and strategies, starting with Hard and progressing to higher difficult
 Bot-ladder competition is a later goal.
 
 This roadmap supersedes the narrow 27-action macro experiment as the future
-architecture. Preserve that experiment and its evidence as baselines. Do not
-resume the pending 24-game scripted-teacher comparison by default; first explain
-whether it answers a necessary question in this new direction.
+architecture. Preserve that experiment and its evidence as baselines.
+
+## October 6 reset: establish reliable primitives first
+
+The user explicitly redirected the work after repeated losses: pause imitation
+and RL training, understand the losses, and establish reliable primitives using
+established open-source bots as engineering references. This supersedes earlier
+instructions against scripted strategic goals during the current baseline phase.
+Scripted attacking and combat micro are explicitly in scope. A scripted Hard win
+is an execution baseline, not completion of the learned-policy goal.
+
+1. Diagnose saved losses before another training batch. Measure mining and idle
+   workers, resource income and floating resources, supply blocks, production
+   downtime, failed construction, army movement, engagements and losses. Separate
+   observed failures from suspected causes. Existing games already show zero
+   victories and a controller that attacks visible enemies but does not send an
+   army toward the opponent's base; worker-production starvation also needs checking.
+2. Inspect maintained open-source Terran bots and their actual command paths.
+   Record source versions, licenses and relevant code before adapting behavior.
+   Prefer a working, modest baseline over assembling an untested collection of
+   features. Do not assume competition rank implies strength on our engine.
+3. Establish resource gathering and saturation, worker production, supply,
+   construction and placement, army production, scouting, army movement and
+   attacking. Combat primitives include target selection, movement during fights,
+   retreat and appropriate unit abilities. Verify commands produce their intended
+   effects in native games, including under attack; command acceptance alone is
+   insufficient. Use player-visible information and respect fog of war.
+4. Prove the scripted baseline against Hard opponents of all races, using declared
+   maps, seeds and opponent strategies. Use the existing 21/30 initial Hard gate
+   below, report each race, include losses and timeouts, and inspect failures.
+   Fix execution defects before spending more compute on learning.
+5. Return to professional replay imitation with the verified execution layer.
+   Keep broad raw controls available; primitives must not permanently reduce the
+   model to a fixed menu of build orders. Make explicit which decisions are learned
+   and which details the primitives execute. Verify useful native imitation.
+6. Only then resume RL, including micro sandbox learning and full-game transfer,
+   to improve the learned controller against Hard and higher difficulties.
+
+For a construction primitive, the model can decide what to build and where;
+the executor selects an available worker, checks placement and follows through.
+For combat, scripted micro supplies the initial working baseline while learned
+control remains a later target. Keep separate results for scripted, imitation
+and RL controllers. Preserve the existing replay workflow and CPU-only limits.
 
 ## Where we stand
 
@@ -33,10 +73,11 @@ before acting.
 
 ## The intended learning process
 
-1. Give the model the gameplay controls and information needed to play Terran.
-2. Turn strong human replays into examples of what a player knew and did.
-3. Train the model to make similar decisions, and check that it can actually play.
-4. Let it learn beyond those examples through games and focused micro practice.
+1. Establish and verify reliable execution primitives and a strong scripted baseline.
+2. Give the model the gameplay controls and information needed to play Terran.
+3. Turn strong human replays into examples of what a player knew and did.
+4. Train the model to make similar decisions, and check that it can actually play.
+5. Let it learn beyond those examples through games and focused micro practice.
 
 Human examples give it a useful starting point. They must not permanently limit
 its tactics, reaction speed or ability to control several places at once. The
@@ -46,6 +87,8 @@ but this project should not promise AlphaStar results on a desktop budget.
 
 ```mermaid
 flowchart TD
+    B[Reference bots and loss diagnosis] --> X[Verified primitives and scripted Hard baseline]
+    X --> I
     R[Compatible human replays] --> D[Player observations and action examples]
     D --> I[Initial model trained to copy decisions]
     I --> P[Learned Terran controller]
