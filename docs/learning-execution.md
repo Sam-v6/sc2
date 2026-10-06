@@ -16,7 +16,7 @@ The commands below run from that worktree. Run artifacts are ignored under
 | B: replay extraction | Matching-build preflight; fog enabled; observation before command; full anonymous replay reconstructed (559 commands); source-labelled Masters trio fully reconstructed; issued-command repeats audited | Verified professional Terran games, wider corpus, issued/executed event audit |
 | C: imitation | Saved CPU-only command-conditioned imitation models; whole-game/held-out-player split; raw unit groups, arguments and delay labels | Wider training corpus and useful live-game competence |
 | D: micro | Native DefeatRoaches adapter using shared entities/commands; trace, scores and replay; CPU-only return-driven policy search; held-out combat-score gains; ordinary-game transfer measured | Other scenarios and successful full-game transfer |
-| E: full-game RL | Existing runner/supervisor remain available | New policy RL and improvement over frozen imitation |
+| E: full-game RL | CPU raw-ability PPO bridge and native collection/update/paired evaluation; fresh combat-return mechanism gains | Native wins over frozen imitation; learned arguments and durable competence |
 | F: Hard and beyond | Historical narrow learner development results remain documented | Reliable fresh all-race wins, map/build variation, harder evaluations |
 
 The interface fixture `logs/roadmap/interface-third/` physically checked SCV
@@ -524,3 +524,59 @@ Independent read-only PPO review found no Critical or Important issues. Its one
 minor cadence-provenance finding was repaired: residual execution now always
 uses fixed cadence, including direct CLI runs. The full suite passed 165 tests
 in 9.729 seconds (`unittest-eighteenth.log`); Ruff and whitespace checks passed.
+
+### Fixed-cadence bridge: closed without promotion
+
+Commit `66de683`, `broad-rl-24-01/`: completed 24 training games, 2,396 optimizer
+updates and all six fresh paired evaluations (12 games), in 687.62 seconds.
+Both evaluated controllers won 0/6. Mean native-outcome difference was zero;
+mean combat-return difference was +1.375, equivalent to 137.5 extra killed-resource
+value per game because terminal outcomes balanced. The declared wins-and-return
+gate failed. This is a reward-driven production/combat mechanism improvement,
+not Very Easy competence or Hard acceptance. Preserve the trained checkpoint;
+do not automatically extend this training batch.
+
+The training traces contain 75,635 model commands, 9,196 queue-full results and
+1,384 possible construction interruptions (movement/stop/hold/attack issued to
+workers with build orders; these are candidate interruptions, not a verified
+count of cancelled buildings). All training games ended with zero army supply.
+Greedy trained evaluations did produce army, including final 6/12 supply in the
+first Terran/Protoss pairs, versus zero for those frozen controls. See the report,
+native episode receipts and execution audit; sampling and greedy behavior differ.
+
+Astra identified a temporal mismatch in its earlier fixed-cadence recommendation:
+the frozen argument model commonly predicts longer command intervals, while the
+bridge overrides them with four loops. Before tempering logits, learning queue
+heads or adding rewards, isolate that mismatch. Next screening: six fresh paired
+sampled cases (seeds 41600–41605, two per opponent race), 600-second Very Easy games,
+same zero residual and four frozen checkpoints, epsilon 0.1 and identical worker
+assistance. Compare fixed four-loop decisions with the learned predicted delay
+after **native-accepted** commands. WAIT, undecodable, placement-rejected and
+engine-rejected attempts retry next control step. No PPO updates occur.
+
+Require more completed army units in at least four of six pairs and no worse mean
+ordinary combat return. Report queue-full results per model command and potential
+construction interruptions. Reduced command count alone does not pass. Only a
+passed screening justifies declaring a separate duration-aware RL arm. Full-game
+micro and higher reaction rates will still need separate control; slowing a bad
+macro sequence does not fulfill the unlimited-attention objective.
+
+The accepted-command cadence regression passed, then the full suite passed 166
+tests in 9.727 seconds (`unittest-nineteenth.log`). Ruff and whitespace checks
+passed. An independent read-only review found no issues in the timing patch,
+including WAIT, failed placement/native rejection, callback scope and separating
+harvest-assistance results. Screening source and contracts are retained under
+`logs/roadmap/cadence-screen-01.py` and `cadence-screen-01/`.
+
+Four additional small professional-tagged source candidates were acquired and
+metadata checked: [Cure 52120](https://lotv.spawningtool.com/52120/),
+[52121](https://lotv.spawningtool.com/52121/),
+[52122](https://lotv.spawningtool.com/52122/), and
+[demuLarva/Lambo 52146](https://lotv.spawningtool.com/52146/). All require unavailable
+Base75800 / 4.10.1, data hash `DDFFF9EC4A171459A4F371C6CC189554`.
+They have source/hash receipts and `pro-4.10.1-preflight.json`, but no reconstructed
+observations and are excluded from training. The
+[SC2EGSet paper](https://www.nature.com/articles/s41597-023-02510-7) describes parsed
+game/tracker events rather than our causal fog-safe player observations. It does
+not presently replace the matching-engine extraction step; no bulk dataset was
+downloaded.

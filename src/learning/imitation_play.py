@@ -53,6 +53,12 @@ def choose_ability(logits, allowed, rng, sample, wait_unavailable=False):
     )
 
 
+def command_delay(job, residual, predicted, results):
+    if job.get("learned_cadence"):
+        return max(job["step"], predicted) if 1 in results else job["step"]
+    return job["step"] if job.get("fixed_cadence") or residual else predicted
+
+
 def decode_commands(
     state,
     actors,
@@ -440,11 +446,6 @@ class ImitationBot(BotAI):
                         ]
                         for row, command in zip(decisions, commands):
                             row["command"] = command.as_dict()
-                        self.next_global = state["game_loop"] + (
-                            self.job["step"]
-                            if self.job.get("fixed_cadence") or self.residual
-                            else int(DELAYS[output["delay"][0].argmax()])
-                        )
                 else:
                     x = np.stack(
                         [
@@ -507,6 +508,13 @@ class ImitationBot(BotAI):
                     else pb.ResponseAction()
                 )
                 model_results = list(result.result)
+                if global_decision and group:
+                    self.next_global = state["game_loop"] + command_delay(
+                        self.job,
+                        self.residual,
+                        int(DELAYS[output["delay"][0].argmax()]),
+                        model_results,
+                    )
                 for code in result.result:
                     self.results[str(code)] = self.results.get(str(code), 0) + 1
                 self.view.record_commands(commands, state["game_loop"])
@@ -671,7 +679,9 @@ def play_job(job):
         else None,
         "sampled_commands": job.get("sample", False),
         "wait_unavailable": job.get("wait_unavailable", False),
-        "fixed_cadence": job.get("fixed_cadence", False) or bool(bot.residual),
+        "fixed_cadence": (job.get("fixed_cadence", False) or bool(bot.residual))
+        and not job.get("learned_cadence", False),
+        "learned_cadence": job.get("learned_cadence", False),
         "residual_policy": job.get("residual_policy"),
         "rl_decisions": len(bot.rl_records),
         "macro_decisions": "PPO raw-ability residual with frozen human encoder"
@@ -733,6 +743,11 @@ def main():
         help="Reevaluate every engine step instead of sleeping for a predicted delay",
     )
     parser.add_argument(
+        "--learned-cadence",
+        action="store_true",
+        help="Residual controller uses predicted delays after accepted commands; retries failures next step",
+    )
+    parser.add_argument(
         "--wait-unavailable",
         action="store_true",
         help="Reevaluate unavailable intended commands instead of selecting an unrelated legal fallback",
@@ -744,6 +759,8 @@ def main():
     )
     args = parser.parse_args()
     policy = FactorPolicy.load(args.policy)
+    if args.learned_cadence and (not args.residual_policy or args.fixed_cadence):
+        parser.error("Learned cadence requires a residual policy without fixed cadence")
     if args.fixed_cadence and "actor_type" not in policy.sizes:
         parser.error("Fixed cadence requires global decisions")
     if args.sample and "actor_type" not in policy.sizes:
@@ -804,6 +821,7 @@ def main():
             "sample",
             "wait_unavailable",
             "fixed_cadence",
+            "learned_cadence",
         )
     }
     job.update(policy=str(args.policy.resolve()), output=str(args.output.resolve()))

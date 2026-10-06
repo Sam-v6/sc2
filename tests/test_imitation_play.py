@@ -106,6 +106,16 @@ class WorkerExecutionTests(unittest.TestCase):
 
 
 class ExplorationTests(unittest.TestCase):
+    def test_learned_cadence_waits_only_after_engine_accepted_commands(self):
+        from src.learning.imitation_play import command_delay
+
+        job = {"step": 4, "learned_cadence": True}
+        self.assertEqual(command_delay(job, True, 128, [1]), 128)
+        self.assertEqual(command_delay(job, True, 128, [203]), 4)
+        self.assertEqual(command_delay(job, True, 128, []), 4)
+        self.assertEqual(command_delay({"step": 4}, True, 128, [1]), 4)
+        self.assertEqual(command_delay({"step": 4}, False, 128, [203]), 128)
+
     def test_unavailable_intent_can_wait_instead_of_issuing_unrelated_command(self):
         from src.learning.imitation_play import choose_ability
 
