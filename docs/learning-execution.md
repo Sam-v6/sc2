@@ -1761,3 +1761,71 @@ claim. Prioritize obtaining compatible independently sourced professional teachi
 and defining whole-game splits before the next larger fit. Reused Lyra/Huski
 diagnostics can become teaching only through an explicit split-role change; their
 subsequent copying must then be reported as training, not independent transfer.
+
+### Professional runtime asset: archive-range and identical-content routes exhausted
+
+The next investigation targets the exact missing 75025 content, not another
+imitation fit. `old-casc-probe/archive-index-local-search-01.json` scans 370 cached
+CDN indexes (57,492,600 bytes) for EKey
+`31271d461c33eda86a4723e3cbdd8038`. It finds the primary archive index
+`8cae1b7aac0ede723affeeccc63689e9.index` and the current archive-group index. The
+primary entry at byte 38,040 is page/entry aligned and declares a 24,624-byte BLTE
+object at archive offset 17,619,227. Its footer checksum is independently checked
+before using the entry; this is not complete index-page or archive authenticity.
+Any recovered object must still pass the exact BLTE/chunk/CKey verification.
+
+`fetch_asset_archive_01.py` preregisters only two exact range attempts, at most
+49,248 reserved response-body bytes total, on the two previously used official
+CDN hosts. Both return HTTP 404 for the archive object. The terminal receipt is
+`asset-archive-range-01/receipt.json`, status `unavailable`; zero asset-body bytes
+are retained and nothing is installed. The budget tracks reserved body reads,
+not HTTP headers/error traffic. No retry or larger ZIP-prefix read follows.
+The synthetic 30-byte wrapper in the unreachable decode branch is only an
+adapter to the existing verifier, not a claimed physical archive record.
+
+The user-authorized Astra adviser rejects speculative arbitrary ZIP-position
+probes: the password alone cannot initialize ZipCrypto's evolving state at a
+later byte, and DEFLATE also needs a block boundary/dictionary. A content digest
+does not reconstruct those states. See the
+[ZIP specification](https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT)
+and [DEFLATE specification](https://www.rfc-editor.org/rfc/rfc1951).
+The adviser instead recommends searching every already available encoding
+manifest for the identical old CKey, potentially under another EKey. This would
+reuse identical decoded content, not substitute a newer product manifest.
+
+`current_content_key_probe_01.py` reads the installed 75689 manifest directly from
+its local physical record, never writing to the installation or using network.
+It verifies the config-bound EKey, framed BLTE hashes and full decoded CKey:
+44,888,032 decoded bytes, 6,539 page hashes and 699,614 encoding entries. The
+required CKey `1566ae22ab93ec0f9e246c9efbc7fec4` is present with decoded size
+264,581, but has only the original missing EKey; no alternative representation
+is listed. No active local index resolves it. A separate read-only check of all
+32 local index generations also has no matching prefix. The report is
+`current-content-key-01/report.json`, status `exact_content_unavailable_locally`.
+Together with the previously verified old manifest, this exhausts the two locally
+available old/current manifests, not every possible external encoding manifest.
+
+`orphan_record_probe_01.py` then checks whether an exact old record remains
+physically present despite being omitted from indexes. It scans all four current
+physical archives, 3,595,659,840 bytes, with a 32 MiB buffer and a 120-second bound;
+completion takes 3.760 seconds. The reversed 16-byte EKey has no candidate matches.
+Archive size/mtime remain unchanged, and no network is used. This scan does not
+recover arbitrary alternate encodings; it rules out this specific physical header
+in these four files. `orphan-record-01/report.json` records the terminal result.
+
+Independent review exactly reproduces the current-manifest lookup and verifies
+the primary index/footer/entry, two-attempt reservation arithmetic, four archive
+coverage sizes and scan boundary handling. It does not repeat the full orphan
+scan. The receipts initially omit executing-script/imported-verifier hashes;
+`asset-alternative-source-bindings-01.json` explicitly records these retrospectively
+alongside terminal receipt hashes. This is current-code provenance, not a claim
+of pre-execution frozen source bindings. Size/mtime stability is weaker than full
+archive digests. No result-changing parser or budget defect is found; absence and
+404 conclusions remain scoped to these inspected files and two URLs.
+
+Professional replay reconstruction remains incomplete. The bounded old-ZIP prefix
+retrieval still requires the earlier pending user approval, or the exact verified
+record must come from a matching existing installation. Neither guarantees that
+this is the last missing startup asset. Do not claim a professional teaching
+corpus, silently substitute current content, resume RL or keep guessing CDN hosts
+from these results. No model/checkpoint/default changes occur in this investigation.
