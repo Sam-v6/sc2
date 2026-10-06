@@ -3762,3 +3762,20 @@ middle/last eligible states are only.37%/.25%/.30%. Teaching sources do contain
 address human production-intent supervision, with a coverage/predictability audit
 before another controller fit, rather than more unchanged execution openers.
 See [verified result and next learning question](superpowers/plans/2026-10-06-unit-construction-validation-results.md).
+
+### October6: human production forecast coverage audited
+
+Current phase remains human imitation. New target-only labels retain exact
+loop/sequence order, censor intervening unknown issued events and reject ambiguous
+source contracts. On six fitted games, 850 immediate production commands yield
+2,069 usable forecast observations; 1,322 rows remain unknown-censored. Barracks
+18→40 labels still represent the same 18 decisions. All 3,400 labels reconstruct
+independently, source bindings match and observations remain unchanged.
+
+A source-bound unresolved-name inspection finds 900 of 1,276 unresolved events
+without the current exact engine-name/index match, including army production.
+Names and sc2reader fallback unit IDs are insufficient to recover commands.
+Next investigate independently verifiable production identities and coverage
+before another imitation fit. No native game, optimizer or RL ran. Normal suite:
+395 tests pass, 31 optional skips. Full roadmap completion remains unproved.
+See [coverage evidence and source-repair direction](superpowers/plans/2026-10-06-production-forecast-coverage-results.md).
