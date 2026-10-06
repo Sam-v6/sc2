@@ -832,3 +832,65 @@ The current live argument decoder expects base-relative coordinates, so this
 artifact must not be passed to live play before explicit coordinate-convention
 support and its regression checks. Retain the experiment rather than silently
 replacing the compatible base-relative checkpoint.
+
+### Explicit ability input does not resolve held-game geometry
+
+`arguments-direct-ability-01/` keeps the five training games, 1,999 commands,
+600 epochs, seed 5001 and base-relative labels fixed, while appending an explicit
+chosen-ability one-hot input. CPU fitting completed in 21.98 seconds. Training
+point error reaches 3.24 tiles, but held-game error worsens from 35.66 to 36.26
+for Lyra and 37.22 to 38.45 for Huski. Point-only error also worsens on both;
+alliance accuracy declines. The declared comparison gate fails. This artifact's
+extra input schema is experimental and incompatible with the current live decoder.
+
+Raw mode accuracy improves, but the native ability catalog already restricts
+many mode choices. `mode-audit.json` applies those actual restrictions: Lyra
+complete mode accuracy rises from 89.77% to 93.57%, and Huski from 79.02% to
+80.33%. Among commands with multiple legal modes, the corresponding changes are
+80.11% to 87.50% and 65.78% to 67.91%. No teacher mode falls outside catalog rules.
+This limited gain does not fix the large location errors or justify live promotion.
+
+The authorized Astra adviser recommends stopping head ablations and testing
+corpus coverage with architecture held fixed. Current training is five games of
+one player in TvP/Z; both other-player diagnostics are TvT. Player and matchup
+therefore change together. Screen a bounded additional block crossing those
+combinations, retain whole-replay splits including both player views, and preselect
+fresh evaluation games before fitting. Assess full decoded commands and combat
+strata rather than point error alone. Existing Lyra/Huski games remain diagnostic
+validation. Professional replay reconstruction remains a separate unmet requirement.
+Human imitation comes first; no further RL is running or authorized for this stage.
+
+### Bounded corpus coverage screening
+
+`corpus-crossed-screen-01.json` records ten additional public human replay
+sources, their content hashes, native metadata and names, totaling 899,068 replay
+bytes. Only 51957 and 51959 match installed Base75689. Replay 51957 is Mez's
+Terran mirror win against Butte; reserve the whole replay for candidate training.
+Replay 51959 is Mez's Terran-versus-Zerg win against Provornuk; reserve both views
+for a fresh held game before fitting. Reconstruction of 51957 is supervised,
+fog-enabled and CPU-only, with a 300-second wall limit.
+
+Cody (51955) and CyberManiac (51954) supply the missing other-player TvZ sources,
+but both require Base75025. ProbyTheProb (51952) also requires that engine.
+The remaining candidates require Base75025 or unavailable Base75800. They remain
+excluded from native teaching until their exact engine can reconstruct them.
+No candidate is claimed to be a verified professional. A partial same-player
+coverage addition cannot establish the proposed crossed-player experiment; keep
+that limitation explicit rather than silently changing its acceptance conditions.
+
+Replay 51957 reconstruction completed in 135.13 wall seconds: 13,540 consecutive
+observations, 121 sampled quiet states and 897 native gameplay commands, with fog
+of war enabled and zero untranslated commands. Its issued-event audit retains
+326 commands in 324 teaching rows, excludes 571 engine repeats and explicitly
+records six unresolved events out of 332 human command events. Those unresolved
+events do not become labels. The native Victory is the recorded human's result,
+not a learned bot victory. Reconstruction of reserved replay 51959 follows;
+no model has been fit on either new replay.
+
+The first 51959 reconstruction terminated with an importer error after 118.97
+seconds: `ReplayExamples.push` encountered an action unsupported by
+`Command.from_proto`. It has no completed dataset receipt and is excluded from
+teaching. `replay-51959-diagnostic-01.py` repeats the exact replay in a separate
+output and captures the offending protobuf action before re-raising, preserving
+the failure rather than silently dropping potentially important gameplay.
+The action's actual payload must determine the eventual fix and regression test.
