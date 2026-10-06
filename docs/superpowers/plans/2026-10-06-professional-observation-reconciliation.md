@@ -35,3 +35,12 @@ inference now share the format; source geometry and plane availability accompany
 spatial patches.270tests and36professional-state format probes pass. Original
 map height reconciliation and command chronology/labels remain open. The full
 importer and professional fitting are still not completed; no RL restarted.
+
+Command reconciliation progress: tested identity helper now combines original
+selection, independent name/index, exact loop and target, supported flags and
+mutual uniqueness; restores queue and point precision.1482commands verified,
+747excluded in final receipt03. Unknown events retain possible identities to
+block ambiguous reuse.277tests pass and independent review confirms fixes.
+159worker-training examples support pre-effect phase, but full chronology and
+version-specific mappings remain open; these records are still not training
+eligible. No guessed loop offsets or invented complete history have been added.

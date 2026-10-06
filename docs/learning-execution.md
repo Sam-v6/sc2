@@ -2389,3 +2389,39 @@ that the source still declares unknown. A regression assertion now preserves
 that rejection. The professional importer must explicitly reconcile history
 quality before those rows become eligible; silently removing this guard would
 fabricate complete history. This is still an open importer requirement.
+
+### Professional command identity reconciliation
+
+Added `src/learning/tournament_commands.py`, which requires same loop and target,
+independent ability name/index agreement, original human selection membership,
+supported regular command flags and mutual one-to-one correspondence. Accepted
+labels retain full native actor/target tags, original queue flags and precise
+original target points. Unmapped names, unknown selections, unsupported flags and
+ambiguous repeats remain explicit exclusions; they cannot silently become labels.
+Unknown events also reserve possible converted identities, preventing another
+event from claiming an action they might own.
+
+The real three-game probe verified1482commands:467Future/BackupI,292Harstem,
+723Scarlett;747original commands remain excluded. The final bound receipt is
+`logs/roadmap/pro-preconverted-probe-01/command-reconciliation-03.json`. Receipt01
+predates mixed-ambiguity fixes and is superseded; probe02 computed the same counts
+but failed during source-binding serialization and produced no receipt. All277
+unit tests pass (`logs/roadmap/unittest-tournament-commands-02.log`), and an
+independent read-only review confirmed both ambiguity fixes.
+
+Chronology probe:159worker-training commands across the three games; none
+introduced a new training order at the command loop when the preceding recorded
+building state was idle.61had empty orders both before and at that loop. Later
+observations commonly showed the training order and resource deduction. This is
+supporting evidence, not yet proof for every command/observation pair. Bound
+artifacts: `command-state-timing-audit-01.json` and
+`command-state-timing-bindings-01.json` in the same probe directory. Blizzard's
+[protocol](https://github.com/Blizzard/s2client-proto/blob/master/s2clientprotocol/sc2api.proto)
+provides executed-loop timestamps on observed actions; the preconverted database
+omits them. No fabricated loop shift has been introduced.
+
+Some installed historical replay ability names are incompatible with current
+native catalog names (including clearly unrelated names on later abilities).
+Those mismatches are excluded. Exact version-specific mapping, full chronology,
+causal partial-history handling and the actual professional demonstration importer
+remain open. No optimizer, native match, fitting or RL ran in this stage.
