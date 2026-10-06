@@ -3156,3 +3156,15 @@ case mismatch; the fresh final suite passes347tests in10.02seconds with six
 optional-framework skips. Ruff/diff pass. No training/native/RL is launched.
 The compact nonlinear objective/fitter and frozen full-corpus wrapper remain
 to implement and review before testing copying gains.
+
+The compact context-query fitter now shares the existing bounded optimizer
+with the linear fitter, preserving its mean per-command selection loss. It
+computes context queries and segmented candidate gradients without dense
+context-by-candidate outer products. Three new tests cover policy loss/gradient
+parity on unequal group sizes, finite differences, nonzero learned residual,
+unchanged other heads, immediate wall stop and invalid-family/vector rejection.
+The first two are RED on the absent fitter, then GREEN; focused eight tests
+pass and the full350-test suite passes10.00seconds with six optional skips.
+Ruff/diff pass. The wrapper reuses the hash-bound117MBteaching cache, reconstructs
+it exactly and adds post-fit score parity for every4510fitting rows.
+Independent fitting/wrapper review and the actual frozen comparison are pending.

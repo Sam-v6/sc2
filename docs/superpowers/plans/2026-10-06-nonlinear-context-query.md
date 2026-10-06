@@ -53,3 +53,10 @@ checks68gradient coordinates and genuine legacy checkpoint behavior. The
 linear fitter now explicitly rejects this residual family, covering the
 reviewed API guard gap. No model fitting or prediction campaign has started;
 the compact nonlinear fitter/wrapper remains pending.
+
+Compact fitter implemented with the existing bounded optimizer and shared
+segmented query loss; three new tests, full350tests pass10.00seconds (six skips).
+The separately prepared wrapper reconstructs the bound cache, preserves
+initial ordinary predictions and checks post-fit cached/policy scores on all
+4510rows, using atol5e-5/rtol2e-5. This parity tolerance verifies implementation,
+not copying acceptance. Fitter/wrapper review and launch remain pending.

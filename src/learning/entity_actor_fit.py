@@ -58,8 +58,16 @@ def actor_cache(policy, examples):
 def actor_objective(weights, cache):
     if not np.isfinite(weights).all():
         raise ValueError("Nonfinite actor weights")
+    loss, query_gradient = _query_objective(cache["contexts"] @ weights, cache)
+    gradient = cache["contexts"].T @ query_gradient
+    if not np.isfinite(gradient).all():
+        raise ValueError("Nonfinite actor gradient")
+    return loss, gradient
+
+
+def _query_objective(queries, cache):
     c = cache
-    logits = np.sum(c["features"] * (c["contexts"] @ weights)[c["owners"]], axis=1)
+    logits = np.sum(c["features"] * queries[c["owners"]], axis=1)
     starts, owners, gold = c["starts"], c["owners"], c["gold"]
     selected = np.add.reduceat(gold, starts)
     sums = np.add.reduceat(gold * logits, starts)
@@ -74,7 +82,7 @@ def actor_objective(weights, cache):
         - gold / selected[owners]
     )
     per_command = np.add.reduceat(c["features"] * delta[:, None], starts, axis=0)
-    gradient = c["contexts"].T @ per_command / len(starts)
+    gradient = per_command / len(starts)
     loss = float(np.mean(bce + rank))
     if not np.isfinite(loss) or not np.isfinite(gradient).all():
         raise ValueError("Nonfinite actor objective/gradient")
@@ -90,7 +98,24 @@ def fit_actor_heads(policy, cache, *, optimizer, iterations, seconds):
     if optimizer not in ("adam", "lbfgs") or iterations <= 0 or seconds <= 0:
         raise ValueError("Choose a bounded Adam or L-BFGS actor fit")
     initial = actor_weights(policy)
-    initial_loss = actor_objective(initial, cache)[0]
+    weights, report = _optimize_actor(
+        initial, lambda w: actor_objective(w, cache), optimizer, iterations, seconds
+    )
+    h = initial.shape[0]
+    policy.heads["actor"][:] = weights[:, :h]
+    policy.heads["actor_geometry"][:] = weights[:, h : h + 4]
+    policy.heads["actor_cutoff"][:] = weights[:, -1]
+    actual = actor_weights(policy)
+    report.update(
+        final_objective=actor_objective(actual, cache)[0],
+        parameter_norm=float(np.linalg.norm(actual)),
+        parameter_max=float(np.abs(actual).max()),
+    )
+    return report
+
+
+def _optimize_actor(initial, objective, optimizer, iterations, seconds):
+    initial_loss = objective(initial)[0]
     weights = initial.copy()
     best, best_loss = weights.copy(), initial_loss
     evaluations = updates = 0
@@ -104,7 +129,7 @@ def fit_actor_heads(policy, cache, *, optimizer, iterations, seconds):
         if time.monotonic() - start >= seconds:
             raise WallBound
         matrix = vector.reshape(initial.shape)
-        value, gradient = actor_objective(matrix, cache)
+        value, gradient = objective(matrix)
         evaluations += 1
         if value < best_loss:
             best, best_loss = matrix.copy(), value
@@ -152,19 +177,96 @@ def fit_actor_heads(policy, cache, *, optimizer, iterations, seconds):
     elapsed = time.monotonic() - start
     if not np.isfinite(weights).all():
         raise ValueError("Nonfinite fitted actor weights")
-    h = initial.shape[0]
-    policy.heads["actor"][:] = weights[:, :h]
-    policy.heads["actor_geometry"][:] = weights[:, h : h + 4]
-    policy.heads["actor_cutoff"][:] = weights[:, -1]
-    actual = actor_weights(policy)
-    return dict(
+    return weights, dict(
         status=status,
         message=message,
         iterations=updates,
         evaluations=evaluations,
         optimizer_seconds=elapsed,
         initial_objective=initial_loss,
-        final_objective=actor_objective(actual, cache)[0],
+    )
+
+
+def context_query_weights(policy):
+    return np.concatenate(
+        [
+            actor_weights(policy).ravel(),
+            *[
+                policy.heads[k].ravel()
+                for k in (
+                    "actor_context_input",
+                    "actor_context_bias",
+                    "actor_context_output",
+                )
+            ],
+        ]
+    ).astype(np.float64)
+
+
+def _context_parts(vector, hidden):
+    shapes = ((hidden, hidden + 5), (hidden, 64), (64,), (64, hidden + 5))
+    lengths = [int(np.prod(shape)) for shape in shapes]
+    if vector.shape != (sum(lengths),) or not np.isfinite(vector).all():
+        raise ValueError("Invalid context query weights")
+    return tuple(
+        part.reshape(shape)
+        for part, shape in zip(np.split(vector, np.cumsum(lengths)[:-1]), shapes)
+    )
+
+
+def context_query_objective(vector, cache):
+    contexts = cache["contexts"]
+    linear, inputs, bias, output = _context_parts(vector, contexts.shape[1])
+    hidden = np.tanh(contexts @ inputs + bias)
+    loss, query_gradient = _query_objective(contexts @ linear + hidden @ output, cache)
+    hidden_gradient = (query_gradient @ output.T) * (1 - hidden**2)
+    gradient = np.concatenate(
+        [
+            (contexts.T @ query_gradient).ravel(),
+            (contexts.T @ hidden_gradient).ravel(),
+            hidden_gradient.sum(axis=0),
+            (hidden.T @ query_gradient).ravel(),
+        ]
+    )
+    if not np.isfinite(gradient).all():
+        raise ValueError("Nonfinite context query gradient")
+    return loss, gradient
+
+
+def fit_actor_context_query(policy, cache, *, iterations, seconds):
+    if (
+        not policy.actor_context_query
+        or policy.actor_count
+        or policy.actor_nonlinear
+        or iterations <= 0
+        or seconds <= 0
+    ):
+        raise ValueError("Choose a bounded context-query actor fit")
+    initial = context_query_weights(policy)
+    vector, report = _optimize_actor(
+        initial,
+        lambda v: context_query_objective(v, cache),
+        "lbfgs",
+        iterations,
+        seconds,
+    )
+    linear, inputs, bias, output = _context_parts(
+        vector, policy.heads["actor"].shape[0]
+    )
+    h = linear.shape[0]
+    for name, value in (
+        ("actor", linear[:, :h]),
+        ("actor_geometry", linear[:, h : h + 4]),
+        ("actor_cutoff", linear[:, -1]),
+        ("actor_context_input", inputs),
+        ("actor_context_bias", bias),
+        ("actor_context_output", output),
+    ):
+        policy.heads[name][:] = value
+    actual = context_query_weights(policy)
+    report.update(
+        final_objective=context_query_objective(actual, cache)[0],
         parameter_norm=float(np.linalg.norm(actual)),
         parameter_max=float(np.abs(actual).max()),
     )
+    return report
