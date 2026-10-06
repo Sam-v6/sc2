@@ -3506,3 +3506,25 @@ independent reconstruction of each recorded refresh. Final own-history
 evaluation regenerates history from the final policy rather than the fitting
 cache. All14gates remain unchanged. Poll this same handle; no concurrent fit,
 native games or RL. Terminal results and independent verification are pending.
+
+Mixed-history trial handle73442 is now terminal exit0. All50epochs complete,
+14100updates/225500presentations,1185.78seconds including all10history refreshes,
+within the1200second bound. Total load/fit/evaluation1389.73seconds;280host
+samples peak11.1%CPU with no stop. Producer reports all14gates failed: teaching
+human-history complete387/4513 versus parent1282, own-history193 versus parent80;
+reused774complete2/292 with human history and3with predicted history. Diagnostic
+macro ability3/91 with human history and2/91 with predicted history. No native
+games, RL or promotion. This trial ends without extension. These are producer
+results, not yet independently verified.
+ContractSHA256`1f6df5f6047c6f216dd4e75d78600b3ade66ef7630ac4686451ce3a17830636a`;
+reportSHA256`9668099b8347c5156a6c1e03b6148f7dd7fc7ed041062be877640a1683d6ed47`;
+checkpointSHA256`d421803ff94c667d9a0824a3f12e2ab07788e654c4670b892acc23b242222600`.
+Independent verifier is live under handle87351. It reconstructs all10recorded
+refresh inputs from snapshots and independently reproduces final ordinary,
+oracle and own-history reports. Poll that verifier rather than restarting fit.
+
+Read-only native-path inspection confirms `entity_play.py` loads
+JointEntityPolicy and validates its NumPy encoder fields; GoalFirstPolicy is
+not yet wired to that runner. A tested adapter is still needed before native
+evaluation of a useful new controller. No native competence is inferred from
+offline copying results, and the full roadmap remains incomplete.

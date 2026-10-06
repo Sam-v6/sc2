@@ -79,3 +79,8 @@ Subsequent execution: wrapper review finds no blockers and preflight handle84453
 passes without updates. The single bounded trial is now live under handle73442
 with childPID2384922; see the execution ledger for bindings and telemetry.
 Terminal evaluation and independent verification remain pending.
+
+Subsequent terminal producer result: all50epochs complete within1200seconds;
+all14gates fail. Own teaching complete193/4513, human-history complete387/4513;
+reused diagnostic3/292 and2/292 respectively. No extension or promotion.
+Independent verifier handle87351 is live; terminal verification remains pending.
