@@ -3904,3 +3904,16 @@ without creating strategic goals. The native executor is not yet integrated.
 Next complete generic engine execution, input-profile parity and six fixed bounded
 native development games with declared assistance. Do not refit/sweep the passing
 model or unlock RL before useful closed-loop imitation is demonstrated.
+
+### October6: verified native human-outcome panel and caster fix
+
+Generic native execution and masked-input parity are implemented. Six frozen Hard
+jobs finish;1,543predictions and original replay production chronology verify.
+Three Macro games pass sustained production gates; three Rush defeats fail.
+Zero wins; all-race starting competence remains incomplete. Peak CPU27.2percent.
+No refit, RL or reserved use. See [native result](superpowers/plans/2026-10-06-human-production-goals-native-results.md).
+
+A source-trace-backed addon alias regression now restricts Factory Tech Lab goals
+to actual Factories. It passes its formerly failing test. Native revalidation and
+addon/spawn placement investigation are next; no unchanged model sweep. Preserve
+`human-goal-native-01/panel/source-snapshot` as the original execution code.

@@ -66,12 +66,17 @@ precision/recall are52.4/57.5percent; military75.8/78.2percent. Fit19.78seconds,
 CPU-only two threads, peak19percent whole-host CPU. No native competence claim.
 See [verified result and limits](superpowers/plans/2026-10-06-human-production-goals-results.md).
 
-ProductionLedger has tested pending/queue/rejection/cancellation accounting and
-creates no goals of its own. Next integrate generic native execution, verify
-live input projection and run the frozen six-game development panel with explicit
-placement/worker/combat assistance. The executor must not invent a build order,
-prerequisites or army composition. RL remains off. Broad raw controls remain in
-the roadmap for learned micro and full-controller integration.
+The generic native executor is integrated and the frozen six-game Hard panel
+is independently verified. All three Macro games sustained learned production;
+all three Rush games failed. Results: zero wins, three defeats, three ten-minute
+cutoffs. Macro worker peaks40/49/48and military peaks27/28/29. Panel CPU peak27.2percent.
+See [native result and diagnosed issues](superpowers/plans/2026-10-06-human-production-goals-native-results.md).
+
+A tested fix now prevents shared addon ability aliases from selecting the wrong
+production building; native revalidation is still needed. Next resolve physical
+addon/spawn clearance and acknowledged-but-unstarted Refineries, then recheck the
+same frozen model. The all-race useful-start gate remains failed. RL stays off;
+learned micro, broad learned raw controls and reliable Hard wins remain unfinished.
 
 The validated intake manifest is
 `logs/roadmap/pro-source-expansion-02/final-verification.json`. Future fits must
