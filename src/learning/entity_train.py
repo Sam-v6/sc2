@@ -181,19 +181,39 @@ def collect(paths, counts, spatial=False, missing_fields=False):
     return examples, reports
 
 
+def ability_importance_weights(abilities, replay_count):
+    """Teaching-only, bounded TStarBot-X-inspired command importance."""
+    counts = Counter(abilities)
+    weights = np.array(
+        [
+            0.25
+            if ability == 1
+            else min(10.0, max(1.0, replay_count / counts[ability]))
+            for ability in abilities
+        ]
+    )
+    return weights / weights.mean()
+
+
 class Adam:
     def __init__(self, policy, rate):
         self.policy, self.rate, self.updates = policy, rate, 0
         self.m = {k: np.zeros_like(v) for k, v in policy.parameters.items()}
         self.v = {k: np.zeros_like(v) for k, v in policy.parameters.items()}
 
-    def step(self, batch):
+    def step(self, batch, weights=None):
         if not batch:
             raise ValueError("A supervised batch must contain examples")
         gradients = {k: np.zeros_like(v) for k, v in self.policy.parameters.items()}
         loss = 0.0
-        for inputs, label in batch:
+        for index, (inputs, label) in enumerate(batch):
             value, current = self.policy.loss_and_gradients(inputs, label)
+            if weights is not None:
+                value *= weights[index]
+                current = {
+                    name: gradient * weights[index]
+                    for name, gradient in current.items()
+                }
             loss += value / len(batch)
             for name in gradients:
                 gradients[name] += current[name] / len(batch)
@@ -247,6 +267,11 @@ def main():
         help="Include availability indicators for partial replay observations",
     )
     parser.add_argument("--batch-size", type=int, default=16)
+    parser.add_argument(
+        "--ability-importance",
+        action="store_true",
+        help="Reduce Smart dominance and weight rarely taught abilities",
+    )
     parser.add_argument(
         "--role-pooling",
         action="store_true",
@@ -311,6 +336,7 @@ def main():
         vocabulary=counts,
         epochs=args.epochs,
         batch_size=args.batch_size,
+        ability_importance=args.ability_importance,
         hidden=args.hidden,
         rate=args.rate,
         refinement=args.refinement,
@@ -345,6 +371,24 @@ def main():
     fitting = [(inputs, label) for inputs, label, _, _ in teaching if label is not None]
     if not fitting:
         raise ValueError("No representable teaching commands")
+    weights = None
+    if args.ability_importance:
+        abilities = [label["ability"] for _, label in fitting]
+        weights = ability_importance_weights(abilities, len(args.train))
+        ability_counts = Counter(abilities)
+        configuration["importance"] = dict(
+            rule="Smart 0.25; other max(1, teaching_replays/count) capped10; global mean1",
+            scope="Representable teaching commands only; full command losses/gradients",
+            abilities={
+                str(ability): dict(
+                    count=count, weight=float(weights[abilities.index(ability)])
+                )
+                for ability, count in ability_counts.items()
+            },
+        )
+        (args.output / "configuration.json").write_text(
+            json.dumps(configuration, indent=2) + "\n"
+        )
     sample = fitting[0][0]["encoder"]
     policy = JointEntityPolicy(
         JointEntityEncoder(
@@ -381,8 +425,11 @@ def main():
             if time.monotonic() - fit_start >= args.wall_seconds:
                 status = "wall_bound"
                 break
-            batch = [fitting[int(i)] for i in order[begin : begin + args.batch_size]]
-            loss = optimizer.step(batch)
+            indices = order[begin : begin + args.batch_size]
+            batch = [fitting[int(i)] for i in indices]
+            loss = optimizer.step(
+                batch, weights=None if weights is None else weights[indices]
+            )
             total_loss += loss * len(batch)
             processed += len(batch)
         record = dict(

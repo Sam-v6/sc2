@@ -2784,3 +2784,33 @@ oracle within-two-tiles0to5. None supports promotion. Use these corrected values
 instead of earlier auxiliary point summaries. The construction-feature support
 and saturation audits already supplied construction products and remain valid.
 The full human-imitation/micro/full-game/Hard/higher-difficulty roadmap is open.
+
+The next diagnostic uses the exact trainer.collect inputs and groups every
+representable command by native ability, including explicit ability/actor and
+gold-cell oracles. Receipt `professional-command-failures-01.json` binds fit06,
+configuration and helper. Teaching Smart2103+Attack1232/4510 (73.95%) dominate.
+Diagnostic ability choices miss all11SupplyDepots,4Barracks and12Marine production
+commands, despite105/26/233teaching examples respectively. Correct-ability actor
+type/count matches improve for construction, but exact worker choice and target
+generalization remain weak. SupplyDepot correct-cell offset mean0.78tiles teaching
+versus3.32diagnostic. This is evidence of several failures, not just action rarity.
+
+[TStarBot-X section4.4](https://arxiv.org/pdf/2011.13729) reports improvements from
+ability importance weighting: reduced Smart contribution and bounded increases
+for seldom demonstrated abilities. It also preprocesses context-dependent Smart
+semantics and uses recurrent trajectory sampling. Our bounded adaptation preserves
+the raw native command labels and independent causal32-command histories; it does
+not reproduce that full method or guarantee its Zerg results. No source download.
+
+Plan `superpowers/plans/2026-10-06-ability-importance.md` adds optional full-command
+loss/gradient weights using only representable teaching examples. Smart rawweight
+0.25; other max(1,teaching_replays/count), capped10before globalmean1. All commands,
+labels, action vocabulary, shuffle order and unweighted defaults remain. CLI and
+configuration bind rule/counts/weights before fitting. Four focused tests first
+fail then pass. Independent review catches a vocabulary/count variable overwrite;
+a real tiny-dataset main-path test reproduces the zero-row embedding failure,
+then passes after renaming the counter. Full322tests pass, Ruff/diff checks clean.
+Review finds no other blocker or minor. No re-review is needed for the reproduced
+fix. Next one fixed fit07 uses fit05architecture (context normalization false),
+same nine teachers/774 and50epochs/14100updates/600optimizer-second cap. Macro
+and micro guardrail gates are frozen before fitting. No reserved/native/RL work.
