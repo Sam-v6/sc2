@@ -2949,3 +2949,23 @@ same200epochs/800updates and120optimizer-second cap each. Actor geometry stays
 disabled to isolate attention. No diagnostic/reserved replay predictions, native
 games, promotion or RL. Fitting and then cross-game/live competence still need
 evidence; code verification alone establishes no learning improvement.
+
+The relational comparison is terminal: baseline15.78seconds and attention24.17
+seconds, each200epochs/800updates. Both initial audits are exactly equal, and
+both schedules/code/contract/checkpoint bindings verify. Attention improves
+complete commands44→47/62, actors46→47 and targets59→62; abilities/modes/queues
+remain62 and all43known timing labels match. Actor/complete56gates fail;
+ability/target gates pass. This experiment ends without extension, broader fit,
+promotion, native game or RL. Evidence:
+`professional-small-set-relational-01/{contract,comparison}.json`, plus each
+run's report and policy. The framework baseline reproduces the NumPy field
+totals; this is no evidence that using a framework alone improves learning.
+
+Frozen attention actor diagnosis verifies runtime/source/code/checkpoint and
+the same62selected teaching rows. It finds47exact,56correct count/type groups,
+and52exact when human cardinality is supplied only as a diagnostic oracle.
+Fifteen failures remain: nine SCV ranking errors (one also selects extra workers),
+one wrong same-type TechLab, five human actors ranked first with extra units
+selected. Targets are fitted but selection is unresolved. Exact tag mismatches
+alone do not establish that another worker is functionally unusable. Receipt:
+`professional-small-set-relational-01/attention/actor-diagnosis.json`.

@@ -54,3 +54,20 @@ reproduces it without updates. This is an environment boundary, not a claimed
 green broad run; default suite result is recorded separately. No framework or
 package was downloaded/installed. Both interpreters need compatible dependency
 paths; do not export this temporary PYTHONPATH globally.
+
+Completed matched comparison: both runs finish200epochs/800updates, baseline
+15.78 and attention24.17optimizer seconds. Initial audits match exactly;
+source/code/runtime/checkpoint bindings and schedules verify. Baseline matches
+the earlier NumPy small-set result: actors46, targets59, complete44/62. Attention
+gives actors47, targets62, complete47/62. Both have all62abilities/modes/queues
+and43known timing labels correct. Ability/target gates pass, actor/complete56
+gates fail. No extension, cross-game fit, native game, promotion or RL follows.
+
+Frozen attention actor audit: correct count/type composition56/62, exact47;
+supplying human cardinality only raises exact selection to52. Of15failures,
+nine involve SCV ranking (one also predicts extra workers), one chooses another
+same-type TechLab, and five rank the human actor first but include extra units.
+Attention does not resolve the selection bottleneck; its exact target fitting
+does not establish functional worker choice or cross-game competence.
+Evidence: `logs/roadmap/professional-small-set-relational-01/comparison.json`,
+both run reports/checkpoints and `attention/actor-diagnosis.json`.
