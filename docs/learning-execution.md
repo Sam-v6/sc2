@@ -2112,3 +2112,51 @@ bytes and model parameters are 1,447,856 bytes; these are not full trainer RSS o
 native throughput measurements. There has been no joint model fit or native game
 with this model yet. Next: freeze one supervised configuration/update budget, fit
 these human commands and audit complete predicted commands before native play.
+
+
+### Joint human fit: terminal reconstruction results and next bottlenecks
+
+The first fixed shared-model fit completed all 200 epochs / 44,400 updates on the nine
+Mez teaching games. It used a fresh seed 7000/7001 checkpoint, hidden 32, batch 16,
+rate 0.001, uniform shuffled commands and two CPU threads. A one-epoch throughput
+smoke chose the budget; no architecture/rate sweep or RL was run. Fit time 483.316s,
+total 502.466s; final joint loss 0.970165. All input/code/checkpoint bindings remain
+unchanged. Report: `logs/roadmap/joint-entity-fit-01/report.json`; checkpoint SHA256
+`e0cd9737fccf466c3b683bfc343b311c605b457e05f70ea4155ddf3f712541aa`.
+
+| Human-state reconstruction | Teaching 9 games | Reused Lyra/Huski diagnostics |
+| --- | --- | --- |
+| Ordinary ability |3540/3543 (99.9%)|189/647 (29.2%)|
+| Ordinary exact actor group |1563/3543 (44.1%)|138/647 (21.3%)|
+| Ordinary complete command, one-tile point tolerance |628/3543 (17.7%)|11/647 (1.7%)|
+| Complete with human ability and actors supplied |1679/3543 (47.4%)|165/647 (25.5%)|
+
+The frozen 95% ability / 90% actors / 75% complete teaching prerequisite fails. No native
+play, fresh 51483/51886 prediction, professional coverage or playing-strength claim
+follows from this result. The model sees actual human histories here, not the
+histories its own mistakes would create in a game. Known timing matched 3101/3493
+teaching commands; complete-with-timing 612, reported separately from untimed totals.
+One unseen-target label remains explicitly excluded but in the 3543 denominator.
+
+Reloaded verification independently regenerated ordinary field counts and checked
+the complete update budget plus source/checkpoint bindings:
+`logs/roadmap/joint-entity-fit-verification-01.json`. Actor selection fails on 472
+oversized groups, 510 undersized groups and 998 groups with the right size but wrong
+members. With the human ability/group supplied, spatial cells match 1567/1970
+(79.5%), while continuous offsets fall within one tile only 304/1970 (15.4%) even
+when supplied the human cell. These are explicitly oracle diagnostics.
+
+Two implementation choices are likely contributors to test next: actor loss is
+averaged over eligible entities, which can weaken exact-set supervision, and the
+spatial residual head learns offsets that wrap at cell boundaries without being
+conditioned on the chosen cell. The audit does not establish those choices as the
+sole causes of the errors. The next experiment should strengthen actor ranking and condition residual
+positions on the chosen cell with a loss in physical tile units. It should retain
+broad controls, jointly trained shared features, the same fixed source split and
+an honest full-command audit. Repeating the same fit longer is not the chosen next
+step. Native play and every RL path stay held until reconstruction improves.
+
+The independent whole-candidate reviewer found no actionable code defect and ran
+27 focused tests. The full suite passed 214 tests in 9.756s, with Ruff/diff checks green.
+A one-second whole-machine CPU sample during the live fit was 6.575% on 32 logical
+CPUs; this is not a peak-load measurement. All training/audit handles are terminal.

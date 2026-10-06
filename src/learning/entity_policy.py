@@ -111,11 +111,11 @@ class JointEntityPolicy:
         """Explicit conditioning is for supervised/oracle diagnostics only."""
         return self._forward(inputs, ability, actors)[0]
 
-    def predict(self, inputs):
-        """Use predicted ability and actors, never human command labels."""
+    def predict(self, inputs, ability=None, actors=None):
+        """Ordinary inference predicts all choices; explicit oracles are diagnostic."""
         if not np.asarray(inputs["actor_mask"]).any():
             return None
-        scores, cache = self._forward(inputs)
+        scores, cache = self._forward(inputs, ability, actors)
         modes = np.array(
             [
                 True,
