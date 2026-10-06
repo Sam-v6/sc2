@@ -4,10 +4,10 @@ from s2clientprotocol import query_pb2 as query, sc2api_pb2 as pb
 from src.learning.gameplay import protocol_dict
 
 
-def ability_query(tags):
+def ability_query(tags, *, ignore_resources=False):
     return query.RequestQuery(
         abilities=[query.RequestQueryAvailableAbilities(unit_tag=tag) for tag in tags],
-        ignore_resource_requirements=False,
+        ignore_resource_requirements=ignore_resources,
     )
 
 

@@ -124,6 +124,11 @@ class GoalFirstPolicy(nn.Module):
         actors_mask = self._tensor(inputs["actor_mask"], torch.bool)
         targets_mask = self._tensor(inputs["target_mask"], torch.bool)
         ability_mask = torch.ones(self.dimensions[4], dtype=torch.bool)
+        candidates = inputs.get("command_candidates")
+        if candidates is not None:
+            ability_mask[:] = False
+            for candidate in candidates:
+                ability_mask[candidate] = True
         ability_mask[0] = False
         ability, ability_logits = self._choose(
             self.ability(context),
@@ -134,6 +139,9 @@ class GoalFirstPolicy(nn.Module):
         mode_mask = torch.tensor(
             [True, bool(targets_mask.any()), len(points) > 0, True]
         )
+        if candidates is not None:
+            mode_mask[:3] &= bool(candidates[ability]["normal"])
+            mode_mask[3] = bool(candidates[ability]["autocast"])
         mode, mode_logits = self._choose(
             self.mode(conditioned), mode_mask, label["mode"] if label else None
         )
@@ -171,6 +179,12 @@ class GoalFirstPolicy(nn.Module):
             + geometry @ self.actor_geometry(goal)
             + self.actor_cutoff(goal)[0]
         )
+        if candidates is not None:
+            caster_mask = torch.zeros_like(actors_mask)
+            caster_mask[candidates[ability]["autocast" if mode == 3 else "normal"]] = (
+                True
+            )
+            actors_mask = actors_mask & caster_mask
         eligible = torch.nonzero(actors_mask).flatten()
         if label or actors_override is not None:
             actors = tuple(label["actors"] if label else actors_override)
@@ -203,7 +217,9 @@ class GoalFirstPolicy(nn.Module):
         ), result
 
     def predict(self, inputs, ability=None, actors=None):
-        if not np.asarray(inputs["actor_mask"]).any():
+        if not np.asarray(inputs["actor_mask"]).any() or (
+            "command_candidates" in inputs and not inputs["command_candidates"]
+        ):
             return None
         with torch.no_grad():
             return self._forward(

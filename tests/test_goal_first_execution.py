@@ -173,3 +173,39 @@ class GoalFirstTypeStatusTests(unittest.TestCase):
             legacy, _ = GoalFirstPolicy.load(path)
             self.assertFalse(legacy.type_status)
             self.assertEqual(baseline.predict(inputs), legacy.predict(inputs))
+
+
+@unittest.skipUnless(importlib.util.find_spec("torch"), "optional CPU Torch absent")
+class GoalFirstAvailabilityTests(GoalFirstExecutionTests):
+    def test_candidates_mask_ability_and_selected_actors(self):
+        from src.learning.entity_examples import state_inputs
+        from src.learning.entity_execution import JointCommandAgent
+
+        inputs = state_inputs(self.state, 8, 12, missing_fields=True)
+        inputs["command_candidates"] = {4: {"normal": [1], "autocast": []}}
+        original_mask = inputs["actor_mask"].copy()
+        prediction = self.policy.predict(inputs)
+        np.testing.assert_array_equal(inputs["actor_mask"], original_mask)
+        self.assertEqual(self.policy.predict(inputs), prediction)
+        self.assertEqual(prediction["ability"], 4)
+        self.assertEqual(prediction["actors"], (1,))
+        self.assertNotEqual(prediction["mode"], 3)
+        self.assertEqual(self.agent.decide(self.state)[0].ability, 3)
+        agent = JointCommandAgent(self.policy, (8, 12, 0), {})
+        command, _ = agent.decide(
+            self.state, {4: {"normal": [2**63 + 17], "autocast": []}}
+        )
+        self.assertEqual(command.ability, 4)
+        self.assertEqual(command.units, (2**63 + 17,))
+
+    def test_empty_candidates_wait_and_autocast_needs_no_normal_cast(self):
+        from src.learning.entity_examples import state_inputs
+
+        inputs = state_inputs(self.state, 8, 12, missing_fields=True)
+        inputs["command_candidates"] = {}
+        self.assertIsNone(self.policy.predict(inputs))
+        inputs["command_candidates"] = {4: {"normal": [], "autocast": [0]}}
+        prediction = self.policy.predict(inputs)
+        self.assertEqual(prediction["ability"], 4)
+        self.assertEqual(prediction["mode"], 3)
+        self.assertEqual(prediction["actors"], (0,))

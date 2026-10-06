@@ -3680,4 +3680,25 @@ Barracks. Seventeen issued commands returnSuccess;2501unavailableTrainSCVrequest
 stay out of issued history. Trace reconstruction verifies all2518decisions.
 CPU peak9.7%, noGPU/fitting/RL. This is a concrete opening compatibility repair,
 not promotion or full-game competence. See the
-[implementation and verified limits](superpowers/plans/2026-10-06-professional-observation-contract.md).
+[implementation and verified limits](superpowers/plans/2026-10-06-professional-observation-contract-results.md).
+
+### October6: engine-conditioned choices remove unavailable retries, not macro failure
+
+Opt-in GoalFirst command candidates use resource-aware normal queries plus
+resource-independent autocast queries and catalog flags. Alias, ability, mode and
+caster masks preserve default inference and checkpoint weights. Review caught
+and fixed an input-mask alias mutation before execution. Normal385tests (29skips),
+focused21Torchchecks, Ruff/diff and independent review pass; inherited optional
+checks are included in the count.
+
+Native watcher22805and verifier47983are terminal exit0. Frozen baseline/profile
+opener produces3newworkers,167accepted submissions (3TrainSCV/164Smart), zero
+availability blocks,2180finalminerals,15/15supply and zeroDepot/Barracks. Independent
+reconstruction reproduces all167choices using the saved raw queries/profile;
+CPUpeak6.1%, noGPU/fitting/RL. Legal Smart choices replace the old impossible
+SCVretry loop without repairing macro planning. No model promotion or extension.
+See [verified result and next diagnostic](superpowers/plans/2026-10-06-native-command-candidates-results.md).
+
+The prior observation-profile plan is restored to its exact frozen hash, with
+results moved to a separate document. Keep future experiment plans immutable;
+source-bound historical verifiers require their corresponding Git implementation.

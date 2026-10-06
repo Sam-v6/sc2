@@ -17,6 +17,7 @@ from src.learning.actor_selection import construction_products
 from src.learning.entity_execution import (
     JointCommandAgent,
     command_available,
+    command_candidates,
     validate_order_aliases,
 )
 from src.learning.entity_policy import JointEntityPolicy
@@ -72,6 +73,10 @@ class JointImitationBot(BotAI):
         self.policy, self.metadata = load_policy(
             job["policy"], job.get("controller", "joint")
         )
+        if job.get("condition_available") and job.get("controller") != "goal-first":
+            raise ValueError(
+                "Engine-conditioned decoding requires the goal-first controller"
+            )
         self.observation_profile = None
         self.observation_profile_sha256 = None
         if job.get("observation_profile"):
@@ -139,7 +144,24 @@ class JointImitationBot(BotAI):
             self.last_loop = state["game_loop"]
             self.last_score = micro_score(packet)
             feature_state = dict(state, recent_commands=list(self.agent.history))
-            command, delay = self.agent.decide(feature_state)
+            candidates = None
+            candidate_queries = None
+            if (
+                self.job.get("condition_available")
+                and self.last_loop >= self.agent.next_loop
+            ):
+                tags = [u["tag"] for u in state["units"] if u["alliance"] == 1]
+                normal = (await self.client._execute(query=ability_query(tags))).query
+                toggles = (
+                    await self.client._execute(
+                        query=ability_query(tags, ignore_resources=True)
+                    )
+                ).query
+                candidates = command_candidates(normal, toggles, self.catalog)
+                candidate_queries = dict(
+                    normal=protocol_dict(normal), autocast=protocol_dict(toggles)
+                )
+            command, delay = self.agent.decide(feature_state, candidates)
             if command is None:
                 self.schedule_step()
                 return
@@ -168,6 +190,7 @@ class JointImitationBot(BotAI):
                 json.dumps(
                     dict(
                         observation=feature_state,
+                        candidate_queries=candidate_queries,
                         command=command.as_dict(),
                         delay=delay,
                         issued=issued,
@@ -246,6 +269,7 @@ def play_joint_job(job):
         decisions=bot.decisions,
         availability_blocks=bot.availability_blocks,
         wait_unavailable=bool(job.get("wait_unavailable")),
+        condition_available=bool(job.get("condition_available")),
         final_player=bot.final_player,
         final_observed_own_units=bot.final_units,
         action_results=bot.action_results,
@@ -287,6 +311,11 @@ def main():
         "--build", choices=[b.name for b in AIBuild], default="RandomBuild"
     )
     parser.add_argument(
+        "--condition-available",
+        action="store_true",
+        help="Condition goal-first choices and casters on current engine abilities",
+    )
+    parser.add_argument(
         "--wait-unavailable",
         action="store_true",
         help="Retry model decisions next loop while selected unit commands are unavailable",
@@ -319,6 +348,7 @@ def main():
         build=args.build,
         seed=args.seed,
         wait_unavailable=args.wait_unavailable,
+        condition_available=args.condition_available,
         seconds=args.seconds,
     )
     receipt = supervise(play_joint_job, (job,), args.wall_seconds)

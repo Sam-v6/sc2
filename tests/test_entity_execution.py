@@ -223,3 +223,30 @@ class ObservationProjectionTests(unittest.TestCase):
         for aliases in ({"295": 524}, {"524": 3666}, {"3666": 295}):
             with self.assertRaisesRegex(ValueError, "engine catalog"):
                 validate_order_aliases({"order_aliases": aliases}, catalog)
+
+
+class EngineCandidateTests(unittest.TestCase):
+    def test_alias_casters_and_resource_independent_autocast(self):
+        from s2clientprotocol import query_pb2 as query
+        from src.learning.entity_execution import command_candidates
+        from src.learning.live import ability_query
+
+        normal = query.ResponseQuery()
+        normal.abilities.add(unit_tag=100).abilities.add(ability_id=3)
+        toggles = query.ResponseQuery()
+        toggles.abilities.add(unit_tag=200).abilities.add(ability_id=5)
+        catalog = {
+            3: {"remaps_to_ability_id": 4},
+            4: {},
+            5: {"allow_autocast": True},
+            6: {},
+        }
+        candidates = command_candidates(normal, toggles, catalog)
+        self.assertEqual(candidates[3], {"normal": [100], "autocast": []})
+        self.assertEqual(candidates[4], candidates[3])
+        self.assertEqual(candidates[5], {"normal": [], "autocast": [200]})
+        self.assertNotIn(6, candidates)
+        self.assertFalse(ability_query([100]).ignore_resource_requirements)
+        self.assertTrue(
+            ability_query([200], ignore_resources=True).ignore_resource_requirements
+        )

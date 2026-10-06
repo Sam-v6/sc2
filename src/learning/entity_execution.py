@@ -40,7 +40,7 @@ class JointCommandAgent:
         self.history = []
         self.next_loop = 0
 
-    def decide(self, state):
+    def decide(self, state, candidates=None):
         if state["game_loop"] < self.next_loop:
             return None, None
         # PlayerView may contain engine echoes. Only this agent's issued decisions
@@ -55,6 +55,24 @@ class JointCommandAgent:
             missing_fields=self.policy.missing_fields,
             terrain=self.terrain if self.policy.spatial_features > 2 else None,
         )
+        if candidates is not None:
+            indices = {
+                tag: i
+                for i, tag in enumerate(inputs["tags"])
+                if inputs["actor_mask"][i]
+            }
+            inputs["command_candidates"] = {
+                ability: {
+                    mode: [indices[tag] for tag in tags if tag in indices]
+                    for mode, tags in modes.items()
+                }
+                for ability, modes in candidates.items()
+            }
+            inputs["command_candidates"] = {
+                a: modes
+                for a, modes in inputs["command_candidates"].items()
+                if any(modes.values())
+            }
         decision = self.policy.predict(inputs)
         if decision is None:
             return None, None
@@ -68,6 +86,35 @@ class JointCommandAgent:
         # This first live adapter issues one command per observation. Zero delay
         # advances one loop; same-observation batching remains future work.
         self.next_loop = state["game_loop"] + max(1, delay)
+
+
+def command_candidates(response, autocast_response, catalog):
+    """Engine-derived cast/toggle candidates, including equivalent raw aliases."""
+
+    def canonical(ability):
+        return catalog.get(ability, {}).get("remaps_to_ability_id") or ability
+
+    def casters(packet):
+        result = {}
+        for row in packet.abilities:
+            for ability in row.abilities:
+                result.setdefault(canonical(ability.ability_id), set()).add(
+                    row.unit_tag
+                )
+        return result
+
+    normal, toggles = casters(response), casters(autocast_response)
+    result = {}
+    for ability, entry in catalog.items():
+        raw = sorted(normal.get(canonical(ability), ()))
+        auto = (
+            sorted(toggles.get(canonical(ability), ()))
+            if entry.get("allow_autocast")
+            else []
+        )
+        if ability and (raw or auto):
+            result[ability] = dict(normal=raw, autocast=auto)
+    return result
 
 
 def command_available(command, response, catalog):
