@@ -2217,3 +2217,12 @@ this new split in the audit. Bindings:
 `logs/roadmap/multiplayer-teacher-split-audit-01.json`. Professional teachers remain
 zero, and reserved 51483/51886 stay closed. Freeze the next update budget before
 fitting; the full professional/micro/native/Hard/higher-difficulty roadmap is open.
+
+
+### Three human teachers: added players learned, aggregate gate still fails
+
+The frozen169-epoch fit completed44278updates /707941command presentations. Reloaded checkpoints reproduced the complete reports exactly, with source/code/checkpoint hashes unchanged. Receipt: `logs/roadmap/diverse-human-fit-comparison-01.json`; checkpoint SHA256 `87d3d072ed92b7525c2e43775d467c0ad36e7d2ca4a0049f5d9da581e60f3feb`. On the same expanded4190-command teaching cohort, complete commands fall1504->1418 (33.8%), while ability rises3706->4162 and exact groups2122->2232. Mez complete1495->1173/3543, Lyra6->125/342, Huski3->120/305. Lyra/Huski are now teaching, so their gains are reconstruction, not generalization. Separate Rom diagnostic complete6->7/180, exact groups63->45; this is not meaningful independent-player competence.
+
+The actor diagnostic `logs/roadmap/actor-cardinality-audit-01.json` compares the existing cutoff against supplying human ability and human group size. Highest-ranked K actors recover3545/4189 exact teaching groups (84.6%), versus2238/4189 (53.4%) with human ability and the normal cutoff. Diagnostic Rom61->102/180 with these oracles. This isolates considerable ranking-versus-size error without changing inference. Next investigate a learned context-conditioned cutoff with no fixed group cap. Coarse spatial cells also remain weak1031/2302 even with human ability/group supplied; offset accuracy with human cell supplied is1955/2302.
+
+Both fit/comparison and actor-audit handles are terminal. The teaching prerequisite fails. All RL and native promotion remain held; professional teachers remain zero and reserved51483/51886 remain closed. The whole roadmap remains active and incomplete.
