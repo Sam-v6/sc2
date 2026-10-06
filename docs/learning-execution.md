@@ -697,3 +697,49 @@ filter or professional tag, determines actual build and observed player's race.
 The remaining supervision work includes learning current-target identity directly
 from entities, rather than relying solely on separate type/alliance logits plus
 an extrapolated point. Evaluate that change on held human games before live use.
+
+### Supervised target-identity comparison
+
+`src/learning/target_selection.py` encodes every currently observed candidate's
+type, alliance, actor-relative geometry, health/resources and prior target orders,
+along with explicit chosen ability and selected-group composition. Friendly,
+neutral and enemy choices remain available; there are no combat target recipes.
+The model scores candidate identities directly. It excludes hidden and remembered
+targets, uses prior command history only, and does not use unit tags as features.
+It is not wired into live gameplay pending competent held-game results.
+
+`target-human-fit-01/` completed a fixed 150-epoch CPU-only supervised fit in
+13.08 seconds. Five full Mez games teach 289 unit-target commands; the held-out
+Lyra game supplies 51. The actual human ability, actors and unit-target mode are
+supplied to both models to isolate target grounding. Relative to the frozen
+full-human argument decoder, exact held target matches increase from 5/51 to
+12/51 (9.8% to 23.5%) and distance error falls from 15.61 to 10.79 tiles. No held
+targets were excluded. The comparative gate passes, but 23.5% accuracy is far
+below competent imitation. The held game includes no unit-target Attack commands,
+so this comparison alone cannot establish combat targeting. Nearest-group-center
+selection scores 0/51; it is a simple diagnostic, not a strong teacher baseline.
+
+An independent read-only review found no blocking leakage, split, weighting or
+comparison issues and explicitly rejected treating this as live/RL readiness.
+The full suite passed 169 tests in 9.750 seconds (`unittest-twentyfirst.log`),
+including visibility exclusions, explicit ability conditioning and invariance
+to unit tags/candidate ordering; Ruff passed.
+
+Next declared diagnostic: `target-human-crossval-01/` evaluates the unchanged
+150-epoch target scorer across all six complete human games, each excluded from
+its own fit. Report every fold, unavailable targets and enemy/Attack strata.
+Each fold balances training replay weights and derives normalization from its
+training games only. The older argument baseline is omitted because it was fitted
+on five of these games. This wider audit addresses matchup and combat coverage;
+it does not authorize live promotion or another RL campaign.
+
+The six-fold audit completed in 57.12 wall seconds. Across 340 held unit-target
+commands, exact identity accuracy was 29.1%, type accuracy 54.7%, and mean distance
+error 10.27 tiles. Across 53 enemy-target commands the corresponding values were
+13.2%, 26.4%, and 11.60 tiles. Most decisively, only 6/40 enemy-directed Attack
+targets matched exactly (15%); correct type was chosen for 12/40, with 13.03-tile
+mean error. One TvZ fold matched zero of seventeen attack targets. No held targets
+were unavailable/excluded in any fold. These results contradict combat imitation
+readiness despite the first comparative improvement. Keep the scorer experimental
+and unwired; further RL remains on hold. Additional independent compatible human
+players, richer target relations and fresh held games are required before promotion.
