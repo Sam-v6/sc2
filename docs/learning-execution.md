@@ -3779,3 +3779,24 @@ Next investigate independently verifiable production identities and coverage
 before another imitation fit. No native game, optimizer or RL ran. Normal suite:
 395 tests pass, 31 optional skips. Full roadmap completion remains unproved.
 See [coverage evidence and source-repair direction](superpowers/plans/2026-10-06-production-forecast-coverage-results.md).
+
+### October6: missing human army production recovered into a separate corpus
+
+Exact named producer metadata plus unchanged selection/flags/target/loop/mutual
+uniqueness gates recover146commands across the six fitted games:74Hellions,
+35SiegeTanks,15WidowMines,1Thor,18Orbital and3Planetary morphs. No reader numeric ID
+joins, freeform name guesses or original-corpus edits. All3,400previous commands
+retain full serializations; zero retained-command metadata contradictions.
+
+Independent correspondence reconstruction passes3,546commands. Separate imports
+finish allsixgames with peakwholeCPU8.3%, CPU-only/noRL. Every causalhistory and
+delay label reconstructs;3,400prior observations remain unchanged apart from history.
+Source eligibility and vocabulary checks pass;3,544labels are representable, with
+the same two prior observed-target exclusions. Normal suite397tests/31optional skips,
+Ruff/diff and independent review pass. The new corpus is
+`logs/roadmap/pro-demonstrations-production-08/`; no learned improvement is claimed.
+
+Next design a bounded human imitation experiment on the repaired source, explicitly
+reporting the recovered production families and ordinary complete-command fidelity.
+RL/native promotion and the remaining micro/Hard/higher roadmap gates stay pending.
+See [recovery evidence and limitations](superpowers/plans/2026-10-06-production-identity-audit-results.md).
