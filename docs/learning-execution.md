@@ -14,7 +14,7 @@ The commands below run from that worktree. Run artifacts are ignored under
 | --- | --- | --- |
 | A: shared controls | Raw ability, unit group, unit/point target, queue and autocast schema; full visible-map entities, scouting memory, map grids, recent commands; hidden-health checks | Broader physical command-family inventory and learned selection |
 | B: replay extraction | Matching-build preflight; fog enabled; observation before command; eleven source-labelled human games from four Terran players reconstructed; issued-command repeats audited; unresolved timing intervals masked | Verified professional Terran games, wider corpus, issued/executed event audit |
-| C: imitation | Saved CPU-only command-conditioned imitation models; whole-game/held-out-player split; raw unit groups, arguments and delay labels | Wider training corpus and useful live-game competence |
+| C: imitation | CPU-only full-game models on a shared teaching set; staged command audits; raw unit groups, arguments and delay labels | Worker selection/queue execution, independent-player transfer and useful live-game competence |
 | D: micro | Native DefeatRoaches adapter using shared entities/commands; trace, scores and replay; CPU-only return-driven policy search; held-out combat-score gains; ordinary-game transfer measured | Other scenarios and successful full-game transfer |
 | E: full-game RL | CPU raw-ability PPO bridge and native collection/update/paired evaluation; fresh combat-return mechanism gains | Native wins over frozen imitation; learned arguments and durable competence |
 | F: Hard and beyond | Historical narrow learner development results remain documented | Reliable fresh all-race wins, map/build variation, harder evaluations |
@@ -100,8 +100,9 @@ approximately 80% total machine load. A sample during two-worker search measured
 GPU work. Keep native replays; do not show victory demonstrations before the
 user's goal is complete.
 
-Latest unit verification: 143 tests passed in 10.203 seconds, saved in
-`logs/roadmap/unittest-twelfth.log`. Native search/extraction results must be
+Latest production unit verification: 182 tests passed in 9.712 seconds, saved in
+`logs/roadmap/unittest-twentyseventh.log`. The subsequent consistent-fit work changes
+experiment artifacts and documentation, with production code unchanged. Native search/extraction results must be
 inspected after completion before recording gains or moving gates forward.
 
 ## First terminal learning results
@@ -1511,3 +1512,183 @@ teaching audit before spending fresh validation data. Broad independent-player
 and verified professional teaching remain required after this sanity check; this
 Masters corpus is not a substitute for the requested professional corpus. No
 native game, RL or checkpoint promotion occurs, and reserved 51886 remains unused.
+
+### Consistent full-game supervised rebuild
+
+`consistent_fullgame_pipeline_02.py` completes `consistent-fullgame-02/` in
+834.238 seconds. All three components use the same five corrected full-game Mez
+sources (1,999 commands; maximum event time 919.64 seconds). The 10,000-second
+collection bound therefore includes every teaching command. Macro: 600 epochs,
+seed 4000; actors: 350 epochs, seed 5000; arguments: 600 epochs, seed 5001.
+The new frozen macro supplies both later models' shared context. Its checksum
+`08aecdafb1b9fe5239c9014afac7cc05e42ea4d8f91e0e8643a2ff8548e05afa`
+matches both component contracts. No replay/player crosses the training split;
+Lyra is reused diagnostic validation, and reserved 51886 remains unused.
+
+The first attempt (`consistent-fullgame-01/`) failed before fitting because the
+launcher resolved the virtual-environment executable symlink to system Python,
+which lacked SC2 imports. The corrected runner retains the absolute virtual-env
+executable path. That failure has no completed stages or fit evidence. Every
+successful stage uses a fixed epoch budget and subprocess timeout; errors stop
+the pipeline, with no automatic extra fits. Training uses two BLAS threads and
+NumPy, no GPU. A sampled actor stage used approximately 5% of total 32-thread CPU
+capacity and about 10 GiB RAM; this is a sample, not a constant load guarantee.
+
+The macro copies 1,936/1,999 teaching abilities (96.85%): 477/494 before 240
+seconds and 1,459/1,505 afterward. Reused Lyra ability copying is 61/342 (17.84%),
+so training recovery is not strong other-player transfer. Actors use 209,690 unit
+examples across 1,999 commands and copy 1,523 teacher-conditioned groups (76.19%).
+Positive/negative individual-unit recalls are 99.86%/99.47%; small individual
+errors can invalidate a whole group. Arguments' teaching mean coordinate error
+falls to 1.997 tiles, versus 4.346 for the previous full-five-game model conditioned
+on the opening-only macro. Changed context and fits mean this is a pipeline
+comparison, not an isolated architecture-effect estimate.
+
+`command-stage-consistent-fullgame-02/` uses the same 1,999 teacher commands as
+the previous unmasked teaching audit, with the new three frozen checkpoints:
+
+| Teaching period | Previous joint complete | Rebuilt joint complete | Rebuilt with teacher ability | Rebuilt with teacher ability and actors |
+| --- | --- | --- | --- | --- |
+| Through 240 seconds | 278/494 | 342/494 | 353/494 | 378/494 |
+| After 240 seconds | 2/1,505 | 778/1,505 | 798/1,505 | 1,172/1,505 |
+
+Rebuilt joint actor-set hits are 456/494 and 1,035/1,505. Actual joint point-target
+hits within two tiles are 147/255 and 418/845; unit-target hits are 67/91 and
+139/198. With teacher ability and actors, point hits reach 159/255 and 555/845,
+and unit-target hits 71/91 and 155/198. Null targets do not count as targeted hits.
+Native availability, autonomous event scheduling and engine placement/execution
+remain outside this audit; previous human history and event times are supplied.
+
+The declared sanity gate requires 95% ability, 90% exact actor sets and 75%
+complete-command copying in both periods. Ability passes both; prefix actor sets
+pass (92.31%), but prefix completion (69.23%), late actor sets (68.77%) and late
+completion (51.69%) fail. This is substantial teaching-data recovery, still
+insufficient for promotion or RL resumption. Group/target composition now limits
+copying, and independent-player ability transfer remains poor.
+
+`consistent-fullgame-02/integrity-audit.json` verifies shared macro compatibility,
+all listed input/source/model bindings, identical old/new teacher rows, every
+per-game/stage aggregate and the failed gate. The independent reviewer verifies
+all 57 source/data bindings, checkpoint digests, finite tensors/Adam state and
+update counts. It reconstructs the complete macro dataset/normalizers exactly,
+independently counts all actor rows/groups and recomputes all aggregate scores.
+A deterministic 21-command/63-stage prediction subset is exactly reproduced.
+The full-forward comparison encountered tuple-versus-JSON-list equality in the
+reviewer's harness; full prediction equality is not claimed. No blocking defect
+is found, and no native-game/professional-strength evidence follows from these
+supervised reconstruction results.
+
+### Frozen-policy functional game exposes interrupted worker construction
+
+A separate, preregistered functional evaluation uses the three consistent full-game
+models without updating them: Zerg VeryEasy, seed 115001, installed AcropolisLE,
+600 game seconds / 240 wall-second bound, eight-loop steps, deterministic action
+selection with waiting for unavailable intent. No initial/idle-worker harvesting
+assistance, residual policy or spatial learning checkpoint is supplied. The
+existing engine placement primitive still filters requested construction sites.
+The first invocation used the replay display name `Acropolis`; map validation
+fails before any native game. The corrected basename is `AcropolisLE`, with the
+resolved Season2 map path and hash bound in the second contract. This does not
+establish identical terrain to each teaching replay.
+
+`consistent-fullgame-live-zerg-02/` finishes in 29.612 wall seconds, native Defeat
+at 598.929 game seconds. There are 1,678 frames and 32 model commands: seven SCV
+production commands, sixteen Smart commands, two depot builds, one Barracks build
+intent, two depot-lower commands, two refinery builds, one Attack and one Command
+Center build. Twenty-nine native results are Success; one is
+CantTargetInvulnerableUnits and two are NotSupported. The bot completes depots,
+a refinery and a second Command Center, but no Barracks is ever observed and army
+supply is zero throughout. Native Success acknowledges a command, not completion
+of its intended work. The loss is a failed functional check, not promotion or
+proof of any Hard-opponent competence. All three models, learning source files
+and the map retain their contract hashes; every RL-decision trace field is null.
+The native replay is retained and is not shown to the user.
+
+`worker-interruption-audit.json` isolates one early causal sequence. At loop 1312
+(58.571 seconds), the model assigns SCV 4350803969 to build a Barracks. At loop
+1448 (64.643 seconds), that same SCV still has the Barracks construction order,
+but the model sends a nonqueued Smart command to a mineral patch. The next
+observation replaces its order with HarvestGatherSCV (295). No Barracks foundation
+appears anywhere in the trace. This demonstrates an interrupted construction
+intent; it does not prove it is the only failure or that a simple guard makes the
+policy competent. Later raw intents repeatedly request unavailable actions,
+including Barracks lift (656 frames), MULE (371) and Marine stim (137), under the
+explicit waiting mode. There is no paired fallback-control comparison yet.
+
+The counted `trace-audit.json` uses `issued_model_commands` and matches all 32
+commands and 1,678 frames against the terminal receipt. An initial audit used the
+wrong `commands` field and returned an empty counter; it is retained as
+`trace-audit-invalid-01.json` and explicitly superseded, never evidence of no issued
+commands. Models/source/map immutability was checked separately against the
+preregistered contract.
+
+The next bounded human-imitation diagnostic should examine worker-harvest labels
+while a build order is pending, including selected SCV identity and queue flags.
+Compare the relevant teacher cases with this failed SCV sequence before changing
+execution. Any worker primitive must preserve learned macro choices and explicit
+retreat/cancel controls; do not hardwire a build order or silently treat a
+construction guard as a learned policy. Improve worker execution from human data
+and measure autonomous production again. RL remains held, fresh validation remains
+untouched, and professional replay compatibility/teaching is still unmet.
+
+### Human worker labels distinguish queued harvesting from interruption
+
+Three frozen diagnostics follow the native Barracks interruption without fitting
+models, running another game or using reserved 51886. They cover the five Mez
+teaching games and the reused Lyra, Huski and Rom diagnostics. Checksums bind the
+inputs, scripts and checkpoints before/after; production code remains unchanged.
+`worker-harvest-diagnosis-01/` audits Smart/Gather commands targeting observed
+mineral patches, conditioned on the teacher ability with all known own actors
+synthetically eligible. These are actor diagnostics, not native legal selections.
+
+Across 68 mineral commands, the actor model copies 29 complete groups. There are
+167 SCV candidate occurrences whose first order is a catalogue Build ability; humans select
+44 of them, 33 with queued mining and 11 without queueing. The model selects 34
+builders, including six teacher-negative candidates. All six false positives are
+in reused Lyra/Huski diagnostics; none occur in these five teaching games. Merely
+seeing a Build order is insufficient reason to prohibit a harvest command.
+
+`worker-build-progress-01/` locates current visible own buildings of the expected
+type within one tile of the build order's target. It does not inspect future
+states or establish the player's intent. Of 167 candidate cases, 36 have no
+visible foundation, 130 have unfinished foundations and one has a completed
+building. All 26 human-selected builders without a visible foundation are queued.
+These counts are occurrences across commands, not unique workers.
+The 11 selected builders with nonqueued mineral commands have visible unfinished
+foundations, with progress from 4.62% to 98.31%; they are not uniformly almost
+finished. Native handling and the reason for these commands remain unverified.
+Do not interpret them as proof of intentional cancellation or mining success.
+
+`worker-queue-diagnosis-01/` supplies teacher ability and exact actor groups to the
+frozen argument model. It copies queue flags for 57/68 mineral commands. The 26
+selected builders without foundations occur across 19 commands, all human-queued;
+the model queues 14/19. This is 11/11 in teaching games and only 3/8 in reused
+other-player diagnostics. Copying training cases therefore does not establish
+transfer of the worker/queue relationship.
+
+At native loop 1448, the worker's Barracks order is present in its actor feature
+one-hot, so this signal was not missing from the observation. Its actor selection
+margin is +3.200527; every other SCV has a negative margin (next highest -9.126947).
+The build target has no visible Barracks foundation, and the worker is 5.436 tiles
+away. Using the actual issued group and traced model history, the argument head's
+queue margin is -5.301648, reproducing the nonqueued command. The live report's
+`correct` field means agreement with that recorded model-issued flag, not correct
+human behavior. Both heads participate in the failure; adding worker-order
+visibility alone cannot repair it because that order is already encoded.
+
+An independent reviewer reproduces all three diagnostics and verifies the input
+bindings, discrete labels, choices, counts and foundation descriptions. A one-thread
+BLAS reproduction changes some actor margins by at most 0.000031, with no selection
+changes; the live actor margin and queue decision are reproduced. No material bug
+is found. The visibility, synthetic eligibility and occurrence-count limits above
+remain part of the evidence.
+
+The next imitation change should explicitly connect an SCV's pending build target
+with its visible foundation/progress and supervise actor/queue choices together
+on broader human examples. Existing inputs expose building information globally,
+but the per-worker encoder has no direct matching-foundation/progress feature.
+This is a hypothesis to test against unchanged baselines and independent-player
+examples, not a demonstrated fix. Preserve humans' queued harvest and explicit
+cancel/retreat actions rather than installing an unconditional builder guard.
+Professional teacher extraction remains open, and no checkpoint is promoted or
+RL resumed from these diagnostics.
