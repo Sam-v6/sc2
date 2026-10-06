@@ -98,3 +98,43 @@ class EntityEngineSchemaTests(unittest.TestCase):
         response.abilities.add(ability_id=12)
         with self.assertRaises(ValueError):
             validate_engine(policy, response)
+
+
+class EntityAvailabilityTests(unittest.TestCase):
+    def test_unit_command_availability_accepts_aliases_and_requires_all_actors(self):
+        from s2clientprotocol import query_pb2 as query
+        from src.learning.gameplay import Command
+
+        try:
+            from src.learning.entity_execution import command_available
+        except ImportError:
+            command_available = None
+        self.assertIsNotNone(command_available, "native availability check is missing")
+        response = query.ResponseQuery()
+        response.abilities.add(unit_tag=11).abilities.add(ability_id=3674)
+        response.abilities.add(unit_tag=12).abilities.add(ability_id=23)
+        catalog = {23: {"remaps_to_ability_id": 3674}, 3674: {}}
+        command = Command(23, (11, 12), target_point=(10, 10))
+        self.assertTrue(command_available(command, response, catalog))
+        response.abilities[1].abilities[0].ability_id = 1
+        self.assertFalse(command_available(command, response, catalog))
+        self.assertFalse(
+            command_available(
+                Command(23, (13,), target_point=(10, 10)), response, catalog
+            )
+        )
+
+    def test_autocast_stays_on_the_engine_validated_path(self):
+        from s2clientprotocol import query_pb2 as query
+        from src.learning.gameplay import Command
+
+        try:
+            from src.learning.entity_execution import command_available
+        except ImportError:
+            command_available = None
+        self.assertIsNotNone(command_available, "native availability check is missing")
+        self.assertTrue(
+            command_available(
+                Command(39, (11,), autocast=True), query.ResponseQuery(), {}
+            )
+        )

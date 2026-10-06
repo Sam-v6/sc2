@@ -37,3 +37,20 @@ class JointCommandAgent:
         # This first live adapter issues one command per observation. Zero delay
         # advances one loop; same-observation batching remains future work.
         self.next_loop = state["game_loop"] + max(1, delay)
+
+
+def command_available(command, response, catalog):
+    """Check unit-command castability; autocast toggles remain engine-validated."""
+    if command.autocast:
+        return True
+
+    def canonical(ability):
+        return catalog.get(ability, {}).get("remaps_to_ability_id") or ability
+
+    available = {
+        row.unit_tag: {canonical(a.ability_id) for a in row.abilities}
+        for row in response.abilities
+    }
+    return all(
+        canonical(command.ability) in available.get(tag, set()) for tag in command.units
+    )

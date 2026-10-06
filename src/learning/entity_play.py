@@ -13,7 +13,7 @@ from sc2.player import Bot, Computer
 from s2clientprotocol import sc2api_pb2 as pb
 
 from src.learning.actor_selection import construction_products
-from src.learning.entity_execution import JointCommandAgent
+from src.learning.entity_execution import JointCommandAgent, command_available
 from src.learning.entity_policy import JointEntityPolicy
 from src.learning.entity_train import digest
 from src.learning.gameplay import PlayerView, image_dict, protocol_dict
@@ -49,6 +49,9 @@ class JointImitationBot(BotAI):
         self.policy, self.metadata = JointEntityPolicy.load(job["policy"])
         self.view = PlayerView()
         self.frames = self.commands = self.last_loop = 0
+        self.decisions = self.availability_blocks = 0
+        self.final_player = None
+        self.final_units = []
         self.action_results = {}
         self.callback_error = None
         self.last_score = None
@@ -71,6 +74,7 @@ class JointImitationBot(BotAI):
             terrain=terrain,
         )
         (Path(self.job["output"]) / "static.json").write_text(json.dumps(static) + "\n")
+        self.catalog = {a["ability_id"]: a for a in static["game_data"]["abilities"]}
         self.agent = JointCommandAgent(
             self.policy, vocabulary, construction_products(static["game_data"]), terrain
         )
@@ -90,9 +94,19 @@ class JointImitationBot(BotAI):
             available = (
                 await self.client._execute(query=ability_query(command.units))
             ).query
-            result = await issue(self.client, [command])
-            self.agent.record_issued(command, state, delay)
-            self.commands += 1
+            self.decisions += 1
+            issued = not self.job.get("wait_unavailable") or command_available(
+                command, available, self.catalog
+            )
+            if issued:
+                result = await issue(self.client, [command])
+                self.agent.record_issued(command, state, delay)
+                self.commands += 1
+            else:
+                # Reobserve and ask the unchanged model again next loop. An
+                # unissued intention must not enter its command history.
+                result = pb.ResponseAction()
+                self.availability_blocks += 1
             for code in result.result:
                 self.action_results[str(code)] = (
                     self.action_results.get(str(code), 0) + 1
@@ -103,6 +117,7 @@ class JointImitationBot(BotAI):
                         observation=feature_state,
                         command=command.as_dict(),
                         delay=delay,
+                        issued=issued,
                         available=[protocol_dict(row) for row in available.abilities],
                         results=list(result.result),
                         score=self.last_score,
@@ -119,6 +134,18 @@ class JointImitationBot(BotAI):
         packet = (await self.client.observation()).observation
         self.last_loop = packet.observation.game_loop
         self.last_score = micro_score(packet)
+        state = self.view.observe(packet)
+        self.final_player = state["player"]
+        self.final_units = [
+            dict(
+                tag=u["tag"],
+                unit_type=u["unit_type"],
+                build_progress=u.get("build_progress", 1),
+                position=u["position"],
+            )
+            for u in state["units"]
+            if u["alliance"] == 1
+        ]
 
 
 def play_joint_job(job):
@@ -163,6 +190,11 @@ def play_joint_job(job):
         seed=job["seed"],
         frames=bot.frames,
         commands=bot.commands,
+        decisions=bot.decisions,
+        availability_blocks=bot.availability_blocks,
+        wait_unavailable=bool(job.get("wait_unavailable")),
+        final_player=bot.final_player,
+        final_observed_own_units=bot.final_units,
         action_results=bot.action_results,
         game_seconds=bot.last_loop / 22.4,
         score=bot.last_score,
@@ -187,6 +219,11 @@ def main():
     parser.add_argument(
         "--build", choices=[b.name for b in AIBuild], default="RandomBuild"
     )
+    parser.add_argument(
+        "--wait-unavailable",
+        action="store_true",
+        help="Retry model decisions next loop while selected unit commands are unavailable",
+    )
     parser.add_argument("--seed", type=int, default=120001)
     parser.add_argument("--seconds", type=positive, default=600)
     parser.add_argument("--wall-seconds", type=positive, default=120)
@@ -203,6 +240,7 @@ def main():
         difficulty=args.difficulty,
         build=args.build,
         seed=args.seed,
+        wait_unavailable=args.wait_unavailable,
         seconds=args.seconds,
     )
     receipt = supervise(play_joint_job, (job,), args.wall_seconds)
