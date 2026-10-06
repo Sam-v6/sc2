@@ -3022,3 +3022,22 @@ recorded for every singleton teaching label. This is no demonstrated selection
 gain and no reason to resume RL. Artifacts:
 `professional-small-set-nonlinear-01/{contract,comparison}.json`, both run
 reports/checkpoints and `nonlinear/actor-diagnosis.json`.
+
+A frozen linear separability diagnostic now distinguishes score-family support
+from training failure. For each of62teaching rows, an independent diagnostic
+query separates human membership from other eligible actors; all solvers finish
+optimally, minimum directly verified signed margin0.000925, no opposite-label
+feature collisions. More consequentially, one shared score on the frozen
+conditioned-context × [entity, geometry, cutoff]features also separates all62.
+Its31.03second solver returns optimal with direct margin0.015785843624879448 and
+coefficients bounded[-1,1]. Original actor logits reconstruct before probing;
+source/code/checkpoint bindings pass. These label-assisted probes are not a
+deployed policy, ordinary held-out predictions or strength evidence. No policy
+updates/native games/RL. Artifacts:
+`professional-actor-separability-01/{contract,report}.json`.
+
+This supports testing selection-head optimization with the representation
+frozen, rather than claiming missing information or impossible scoring. Plan
+`superpowers/plans/2026-10-06-convex-actor-heads.md` specifies a same-objective,
+same-initial-weight Adam/L-BFGS comparison on62human rows, with fixed budgets and
+ordinary complete-command gates. It is proposed; no acceptance follows from LP.
