@@ -3323,3 +3323,22 @@ support or history leakage findings. The wrapper must use normalized
 Fresh default359tests pass10.06seconds with15optional skips; nine controller/
 trainer tests pass1.04seconds in installed CPU Torch. Ruff/diff pass. No corpus
 fit, diagnostic campaign, native game or RL has started.
+
+The frozen corpus wrapper and whole-host watchdog are now prepared and
+independently reviewed. A preflight-only pass loaded all4513teaching commands,
+4510fitting examples and292reused diagnostic commands, checked source bindings,
+teaching-only support and sampled supervised score parity. The support masks
+are saved in safe NPZ and hash-bound before fitting; review's missing-support-
+binding finding is fixed. Per-family reports retain all command/timing metrics.
+Nine optional CPU tests pass1.03seconds; wrapper Ruff/compile pass.
+
+The single supervised experiment was launched on October6 under live exec
+handle42188, child PID2360900. Initial whole-host sample is4.1%CPU. It is
+reloading the checked corpus before optimizer work; this is not a completed
+fit. The watchdog uses the existing installed CPU Torch interpreter, two
+threads, no CUDA, at most100epochs/1800optimizer seconds, and stops its own
+child after three host samples above80%. No native games or RL run. Helpers
+and preflight evidence remain ignored in `logs/roadmap/`; output is
+`professional-goal-first-01/`, telemetry is
+`professional-goal-first-01.telemetry.json`. Poll the same live handle rather
+than restarting. Terminal results and parent verification remain pending.
