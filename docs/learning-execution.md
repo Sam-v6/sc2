@@ -1829,3 +1829,42 @@ record must come from a matching existing installation. Neither guarantees that
 this is the last missing startup asset. Do not claim a professional teaching
 corpus, silently substitute current content, resume RL or keep guessing CDN hosts
 from these results. No model/checkpoint/default changes occur in this investigation.
+
+### Native Terran control census: engineering coverage only
+
+`logs/roadmap/terran-native-inventory-05/` records a bounded native interface
+check, not training. All 52 explicitly curated Terran unit/state names are
+observed, with 121 unique queried ability IDs and 283 successful synthetic
+command serialization roundtrips. Queries cover every current owned unit at
+game loops 4 and 80, both with and without resource checks. The scene uses debug
+resources, bypassed technology requirements, fast construction and upgrades;
+even queries with resource checks therefore do not represent ordinary ladder
+conditions. Synthetic roundtrips do not establish valid targets or successful
+execution of every ability.
+
+Seven fixture construction commands return native success. The subsequent state
+also verifies six distinct parent buildings linked to completed Barracks,
+Factory and Starport Tech Labs and Reactors, plus Supply Depot lowering that
+preserves the depot tag. These commands create the test scene; they are not
+learned gameplay. Direct debug spawning of building-specific add-ons normalizes
+them to generic add-ons, so the successful fixture constructs them through their
+parent buildings instead.
+
+The run binds 32 source/map files before and after execution, uses AcropolisLE,
+seed 115010 and SC2 4.10.0/Base75689/DataVersion
+`B89B5D6FA7CBF6452E721311BFBC6CB2`. Supervision completes in 7.183 wall seconds.
+The requested game cutoff is six seconds; replay metadata reports nine seconds.
+Independent review reproduces the inventory, grammar coverage, bindings and
+physical add-on/depot relationships without rerunning the game. Earlier fixture
+attempts retain their terminal receipts: three fail on helper type/attribute
+errors, while one completes with only 43 of the requested states. These are
+fixture corrections, not evidence of production policy improvement.
+
+Context-dependent abilities involving loaded cargo, ammunition, cooldowns,
+orders and ordinary prerequisites still need coverage. Learned selection and
+physical execution beyond representative command families remain open. No
+model is fitted or updated here, the reserved human validation game is untouched,
+and this result does not complete the action-space milestone. Human imitation
+remains the next learning phase; RL, including micro RL, stays on hold until
+human-trained behavior works competently in actual games. Professional replay
+reconstruction and broader human-data transfer are still unresolved.
