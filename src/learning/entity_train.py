@@ -2,6 +2,7 @@
 
 import argparse
 from collections import Counter
+import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -37,6 +38,23 @@ def validate_datasets(train, validation):
                 or receipt["player"]["player_info"]["race_actual"] != 1
             ):
                 raise ValueError("Use complete fog-safe human Terran demonstrations")
+            unresolved = {
+                item["event"]["_gameloop"]
+                for item in receipt.get("issued_command_audit", {}).get(
+                    "unresolved_events", []
+                )
+            }
+            if unresolved:
+                with gzip.open(directory / "examples.jsonl.gz", "rt") as stream:
+                    for row in map(json.loads, stream):
+                        gap = row["next_action_delay"]
+                        if gap is not None and any(
+                            row["action_loop"] < loop < row["action_loop"] + gap
+                            for loop in unresolved
+                        ):
+                            raise ValueError(
+                                "Mask timing gaps crossing unresolved human events"
+                            )
             identity = receipt["sha256"]
             if identity in seen:
                 raise ValueError("A replay may occur in only one split and view")

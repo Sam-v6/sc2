@@ -1,3 +1,4 @@
+import gzip
 import json
 import tempfile
 import unittest
@@ -87,6 +88,36 @@ class EntityTrainTests(unittest.TestCase):
             np.linalg.norm(policy.encoder.parameters["types"] - original), 0
         )
         self.assertEqual(optimizer.updates, 50)
+
+    def timing_dataset(self, root, gap, unresolved_loop):
+        directory = self.dataset(root, "timing", "timing-replay")
+        receipt = json.loads((directory / "dataset.json").read_text())
+        receipt["issued_command_audit"] = {
+            "unresolved_events": [{"event": {"_gameloop": unresolved_loop}}]
+        }
+        (directory / "dataset.json").write_text(json.dumps(receipt))
+        with gzip.open(directory / "examples.jsonl.gz", "wt") as stream:
+            stream.write(
+                json.dumps({"action_loop": 10, "next_action_delay": gap}) + "\n"
+            )
+        return directory
+
+    def test_unresolved_human_event_cannot_cross_a_labeled_timing_gap(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = self.timing_dataset(Path(temporary), 20, 15)
+            with self.assertRaises(ValueError):
+                validate_datasets([directory], [])
+
+    def test_masked_unknown_timing_remains_a_usable_human_source(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = self.timing_dataset(Path(temporary), None, 15)
+            self.assertEqual(len(validate_datasets([directory], [])), 1)
+
+    def test_events_at_gap_boundaries_do_not_invalidate_known_delay(self):
+        for loop in (10, 30):
+            with self.subTest(loop=loop), tempfile.TemporaryDirectory() as temporary:
+                directory = self.timing_dataset(Path(temporary), 20, loop)
+                self.assertEqual(len(validate_datasets([directory], [])), 1)
 
 
 if __name__ == "__main__":

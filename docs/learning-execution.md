@@ -2160,3 +2160,60 @@ The independent whole-candidate reviewer found no actionable code defect and ran
 27 focused tests. The full suite passed 214 tests in 9.756s, with Ruff/diff checks green.
 A one-second whole-machine CPU sample during the live fit was 6.575% on 32 logical
 CPUs; this is not a peak-load measurement. All training/audit handles are terminal.
+
+
+### Refined actor/spatial fit: material teaching gains, no cross-player gain
+
+The fixed refinement fit completed all 200 epochs / 44,400 updates in 518.106
+seconds of fitting (537.437 total). It held the nine teaching games, seed, width,
+batch size, learning rate and budget constant; the selected-set ranking and
+cell-conditioned physical-tile loss changed together. Checkpoint SHA256:
+`95167fc48ca862eca5b118bc106fc20bdb20a0e7e51bec785e12ce4052a4924e`.
+Both saved checkpoints regenerated their entire ordinary/oracle audit exactly;
+comparison receipt: `logs/roadmap/joint-refinement-comparison-01.json`. Input/code/
+checkpoint bindings were unchanged at fit and comparison completion. Historical
+source hashes are not claimed unchanged after the later timing-validation fix.
+
+| Ordinary human-state reconstruction | Baseline | Refined |
+| --- | --- | --- |
+| Teaching ability |3540/3543|3532/3543 (99.7%)|
+| Teaching exact actor group |1563/3543|2033/3543 (57.4%)|
+| Teaching complete command, one-tile tolerance |628/3543 (17.7%)|1495/3543 (42.2%)|
+| Reused Lyra/Huski ability |189/647|174/647|
+| Reused Lyra/Huski exact actor group |138/647|89/647|
+| Reused Lyra/Huski complete command |11/647|9/647|
+
+With human ability/actors supplied, teaching complete commands improve from
+1679 to 2542/3543. With the human cell supplied explicitly, offsets within one tile
+improve from 304 to 1754/1970 (15.4% to 89.0%). Correct cells fall from 1567 to
+1224/1970 (79.5% to 62.1%). These are oracle diagnostics, not ordinary inference.
+Oversized actor groups rise from 472 to 1000, undersized groups fall from 510 to
+368, and correct-size/wrong-member groups fall from 998 to 142. The combined
+change improves exact members and fine geometry while leaving group-size and
+coarse-cell errors; separate component causality is not established.
+
+The frozen teaching gate still fails. Reused other-player results deteriorate;
+there is no promotion, native game, fresh reserved prediction, RL or Hard claim.
+The next priority is broader human teachers with this architecture held fixed.
+
+A diagnostic input-selection mistake was corrected after both jobs ended: Huski
+used an older file with seven unmasked uncertain timing gaps. The corrected file
+has identical observations/actions/arguments; only those seven delays become
+unknown. Training and every non-timing comparison remain unchanged. Corrected
+known timing is 633/647, with ordinary delay matches 143 baseline / 114 refined;
+complete-with-timing remains 2 / 3. Receipt:
+`logs/roadmap/joint-refinement-timing-diagnostic-correction-01.json`. Original
+reports are preserved as historical outputs; the correction supersedes their
+diagnostic timing counts. A tested source validator now rejects such gaps before
+future fitting. Full suite: 225 tests in 9.815 seconds, Ruff/diff checks green.
+
+A prospective source-only diversity audit binds eleven teaching games from three
+players: Mez 3543 commands, Lyra 342, Huski 305 with corrected timing; total 4190,
+4189 complete representable labels. Rom's 180-command game stays diagnostic.
+Previously reused Lyra/Huski diagnostics explicitly become teaching before any
+new fit; this is not randomized fresh acceptance. No model has fitted/predicted
+this new split in the audit. Bindings:
+`logs/roadmap/multiplayer-teacher-split-contract-01.json` and
+`logs/roadmap/multiplayer-teacher-split-audit-01.json`. Professional teachers remain
+zero, and reserved 51483/51886 stay closed. Freeze the next update budget before
+fitting; the full professional/micro/native/Hard/higher-difficulty roadmap is open.
