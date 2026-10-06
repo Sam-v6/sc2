@@ -3294,3 +3294,32 @@ corpus integration, frozen reports and prediction-derived history evaluation
 remain pending; implementation tests do not establish copying or strength.
 Plan: `2026-10-06-goal-first-sequence-imitation.md`, including a single bounded
 end-to-end fit and improvement gates for the now-learned ability classifier.
+
+The supervised trainer and teaching-only support neutralizer are implemented.
+Support scans numeric entity/scene/history/map inputs and categorical types,
+orders, prior abilities and teacher ability. It clears only unused input
+weights, not outputs or future gradients. Teacher-conditioned scores remain
+exactly equal after clearing; a newly activated cleared feature receives a
+nonzero gradient. Bounded Adam applies complete batches only, clips gradients
+and reports completed epochs/updates/presentations/loss components. A tiny
+fixture learns, immediate stop preserves weights, and inference does not
+mutate them; none of these counts as corpus learning evidence.
+
+Prediction-derived history evaluation rebuilds every history-dependent entity
+reference and GRU input using only previous model predictions. It consumes
+normalized `teacher_states` rows, verifies chronological single-command
+alignment, unchanged tags/categorical orders/scene/base features/masks/map
+candidates, and retains the unchanged spatial patches. A test proves that the
+human actor reference is replaced by the predicted worker reference. The
+human game states and decision schedule remain fixed; hypothetical predictions
+are not engine-executed and do not establish native closed-loop competence.
+
+Independent trainer/support/history review finds one deadline defect: an
+example finishing after the deadline could still trigger an update. The
+regression test is RED (`completed` instead of`wall_bound`), then GREEN after
+a final pre-update deadline check discards the batch. No other reviewed math,
+support or history leakage findings. The wrapper must use normalized
+`teacher_states` and bind per-game source/order/reset; it is still pending.
+Fresh default359tests pass10.06seconds with15optional skips; nine controller/
+trainer tests pass1.04seconds in installed CPU Torch. Ruff/diff pass. No corpus
+fit, diagnostic campaign, native game or RL has started.

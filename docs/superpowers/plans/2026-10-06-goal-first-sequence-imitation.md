@@ -52,3 +52,12 @@ rollouts. Failure ends this trial without extension/sweep/promotion/native/RL.
 Success only supports broader imitation evaluation and a separately declared
 native competence check with source gaps addressed. The full roadmap remains
 active, including learned micro transfer and later independent Hard/higher gates.
+
+Controller implementation independently reviewed and committed. Trainer,
+teaching-only input support and prediction-derived-history helper now pass
+nine optional CPU Torch tests; fresh default359tests pass10.06seconds with15
+optional skips. Review's final-example deadline defect is reproduced RED and
+fixed GREEN by discarding the expired batch. Normalized source rows and all
+non-history input fields are checked before history rebuilding. This remains
+human-state/schedule inference, not native rollout. Frozen corpus wrapper,
+whole-host guard integration and actual fit/evaluation remain pending.

@@ -203,6 +203,28 @@ class GoalFirstPolicy(nn.Module):
         )
         return losses
 
+    def clear_unseen_inputs(self, support):
+        """Zero never-taught input weights, retaining their future gradients."""
+        with torch.no_grad():
+            for name, layer in (
+                ("entity", self.entity),
+                ("scene", self.scene),
+                ("history_roles", self.history_roles),
+                ("point", self.point),
+            ):
+                mask = self._tensor(support[name], torch.bool)
+                if mask.shape != (layer.in_features,):
+                    raise ValueError("Input support dimensions do not match")
+                layer.weight[:, ~mask] = 0
+            for name, layer in (
+                ("types", self.type_embedding),
+                ("abilities", self.ability_embedding),
+            ):
+                mask = self._tensor(support[name], torch.bool)
+                if mask.shape != (layer.num_embeddings,):
+                    raise ValueError("Input support dimensions do not match")
+                layer.weight[~mask] = 0
+
     def save(self, path, metadata):
         configuration = dict(
             dimensions=self.dimensions,
