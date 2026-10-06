@@ -2915,3 +2915,37 @@ possible CPU framework for richer learned unit relationships without downloading
 or installing a package. It is not a declared SC2 dependency or implemented new
 model; any prototype must explicitly bind its runtime and preserve NumPy/native
 interfaces. Human imitation remains the only active learning stage.
+
+[SCC section4](https://proceedings.mlr.press/v139/wang21v/wang21v.pdf) motivates
+learned relationships among units rather than independent encodings followed
+only by averages. A bounded adaptation now adds an optional CPU-autograd encoder
+with one residual self-attention block; it is not SCC's grouped architecture or
+data-scale reproduction. The existing heads, broad raw controls, causal inputs,
+spatial sensing and NumPy Adam stay in use. Query/key/value projections and a
+learned squared world-distance coefficient form attention; output projection and
+distance coefficient start at zero. Ordinary decisions receive no human targets
+or actors. Last-seen memory remains last-seen, with no hidden-state augmentation.
+
+`entity_torch_encoder.py` retains the parameter/forward/backward interface while
+using CPU autograd. Default NumPy and legacy checkpoints remain available. The
+opt-in CLI binds backend/version/two threads and the new source; save/load binds
+backend and relational flag. No framework installation or GPU use occurs.
+Initial four tests RED→GREEN, plus complete-command-loss/Adam and real CLI-path
+checks: six explicit CPU tests pass in0.80s. Default suite runs333tests in10.06s,
+passing with six optional-framework tests skipped; those six pass separately in
+the verified CPU environment. Independent review finds no actionable issues and
+independently passes four mathematical/parity/checkpoint tests. Ruff/diff clean.
+
+The mixed-environment broad run is not green: its existing test hardcodes a
+Python3.11 subprocess, which inherits the temporary Python3.12 site-packages
+path and cannot import NumPy's C-extension. A direct interpreter/import probe
+reproduces the cause without updates. Temporary environment variables are
+command-scoped; no global environment was changed. This neither invalidates
+default-suite verification nor proves all tests work in the mixed environment.
+
+Plan `superpowers/plans/2026-10-06-relational-human-encoder.md` freezes a matched
+CPU-backend baseline/attention comparison on the exact62selected teaching rows:
+same200epochs/800updates and120optimizer-second cap each. Actor geometry stays
+disabled to isolate attention. No diagnostic/reserved replay predictions, native
+games, promotion or RL. Fitting and then cross-game/live competence still need
+evidence; code verification alone establishes no learning improvement.

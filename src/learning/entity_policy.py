@@ -395,6 +395,8 @@ class JointEntityPolicy:
             context_layer_norm=self.encoder.context_layer_norm,
             actor_relative_points=self.actor_relative_points,
             actor_geometry=self.actor_geometry,
+            encoder_backend=getattr(self.encoder, "backend", "numpy"),
+            relational_attention=getattr(self.encoder, "relational_attention", False),
         )
         np.savez_compressed(
             path, **self.parameters, configuration=json.dumps(configuration)
@@ -404,11 +406,21 @@ class JointEntityPolicy:
     def load(cls, path):
         with np.load(path, allow_pickle=False) as archive:
             configuration = json.loads(str(archive["configuration"]))
-            encoder = JointEntityEncoder(
+            encoder_kind = JointEntityEncoder
+            encoder_options = {}
+            if configuration.get("encoder_backend", "numpy") == "torch":
+                from src.learning.entity_torch_encoder import TorchEntityEncoder
+
+                encoder_kind = TorchEntityEncoder
+                encoder_options["relational_attention"] = configuration.get(
+                    "relational_attention", False
+                )
+            encoder = encoder_kind(
                 *configuration["dimensions"],
                 hidden=configuration["hidden"],
                 role_pooling=configuration.get("role_pooling", False),
                 context_layer_norm=configuration.get("context_layer_norm", False),
+                **encoder_options,
             )
             policy = cls(
                 encoder,

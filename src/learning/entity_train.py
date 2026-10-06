@@ -290,6 +290,11 @@ def main():
     )
     parser.add_argument("--rate", type=float, default=0.001)
     parser.add_argument(
+        "--relational-attention",
+        action="store_true",
+        help="Use optional CPU autograd and learned unit relationships",
+    )
+    parser.add_argument(
         "--actor-geometry",
         action="store_true",
         help="Learn unit-selection scores from relative position and squared distance features",
@@ -297,6 +302,21 @@ def main():
     parser.add_argument("--seed", type=int, default=7000)
     parser.add_argument("--wall-seconds", type=float, required=True)
     args = parser.parse_args()
+    encoder_kind = JointEntityEncoder
+    encoder_options = {}
+    runtime = None
+    if args.relational_attention:
+        from src.learning.entity_torch_encoder import TorchEntityEncoder, torch
+
+        encoder_kind = TorchEntityEncoder
+        encoder_options["relational_attention"] = True
+        torch.set_num_threads(2)
+        runtime = dict(
+            backend="torch",
+            version=torch.__version__,
+            device="cpu",
+            threads=torch.get_num_threads(),
+        )
     if (
         min(args.epochs, args.batch_size, args.hidden, args.rate, args.wall_seconds)
         <= 0
@@ -335,6 +355,9 @@ def main():
         ],
     ]
     code_before = {str(p.absolute()): digest(p) for p in source_files}
+    if args.relational_attention:
+        source_files.append(Path(__file__).with_name("entity_torch_encoder.py"))
+        code_before[str(source_files[-1].absolute())] = digest(source_files[-1])
     configuration = dict(
         sources=sources,
         code_before=code_before,
@@ -353,6 +376,8 @@ def main():
         context_layer_norm=args.context_layer_norm,
         actor_relative_points=args.actor_relative_points,
         actor_geometry=args.actor_geometry,
+        relational_attention=args.relational_attention,
+        encoder_runtime=runtime,
         seed=args.seed,
         wall_seconds=args.wall_seconds,
         delays=DELAYS,
@@ -397,7 +422,7 @@ def main():
         )
     sample = fitting[0][0]["encoder"]
     policy = JointEntityPolicy(
-        JointEntityEncoder(
+        encoder_kind(
             sample[0].shape[1],
             len(sample[3]),
             sample[5].shape[1],
@@ -407,6 +432,7 @@ def main():
             seed=args.seed,
             role_pooling=args.role_pooling,
             context_layer_norm=args.context_layer_norm,
+            **encoder_options,
         ),
         DELAYS,
         seed=args.seed + 1,
