@@ -45,11 +45,11 @@
 
 **Interfaces:** Policy consumes encoder inputs, actor/target eligibility and spatial candidates. `predict` uses its own ability and selected group; `loss_and_gradients` uses explicit human labels and returns all joint gradients. Checkpoint save/load persists shared parameters and metadata. Examples consume `teacher_states` and existing fog-safe state fields.
 
-- [ ] Write failures for actor/pointer permutation, queue/target gradient reaching shared embeddings, masked unknown timing, checkpoint prediction equivalence and candidate coverage without gold-label insertion at inference.
-- [ ] Run those failures before production implementation.
-- [ ] Implement shared actor/group argument conditioning, categorical unit/point pointers, full ability/mode/queue/delay heads and compact causal preprocessing.
-- [ ] Numerically verify representative gradients through every active head; check full real command grammar and large uint64 actor/target identity.
-- [ ] Run suite/Ruff and commit model/preprocessing.
+- [x] Write failures for actor/pointer permutation, queue/target gradient reaching shared embeddings, masked unknown timing, checkpoint prediction equivalence and candidate coverage without gold-label insertion at inference.
+- [x] Run those failures before production implementation.
+- [x] Implement shared actor/group argument conditioning, categorical unit/point pointers, full ability/mode/queue/delay heads and compact causal preprocessing.
+- [x] Numerically verify representative gradients through every active head; check full real command grammar and large uint64 actor/target identity.
+- [x] Run suite/Ruff and commit model/preprocessing.
 
 ### Task 3: One fixed human supervised fit and full-command audit
 
@@ -80,3 +80,10 @@
 - Task 1: five missing-feature failures observed before implementation; two row-alignment tests then failed with ValueError not raised before guards were added. Seven targeted tests pass, including finite differences with repeated type/order/history IDs, permutation invariance, empty state and oldest-of-32 history sensitivity. Full suite: 194 tests, 9.769 seconds, all green. Ruff and diff checks pass.
 - Task 1 smoke: `logs/roadmap/entity-encoder-smoke-01.json`; synthetic 200-entity/32-numeric-feature inputs, 1,970 unit slots and 3,801 ability slots, 1,000 forward/backward calls in 0.163 seconds including postchecks. Encoder parameters 881,536 bytes; numeric entity payload 25,600 bytes plus categorical payload 3,200 bytes. No optimizer update, human fit or native throughput claim.
 - Ruling: pooled context plus separate entity embeddings is the first shared encoder; command heads, semantic state conversion, candidate coverage and actual queue/target-loss coupling remain Task 2. Old live/model defaults remain unchanged.
+
+- Task 2: complete joint ability/actor/group/mode/queue/delay/unit-pointer/spatial-pointer heads added. All argument losses propagate through group conditioning and shared entity/history parameters. Spatial candidates cover the whole map rectangle in eight-unit cells, with learned continuous offsets within each cell; ordinary prediction never inserts a human point or actor group. Ability 0 is a sentinel and cannot become an issued command.
+- Task 2: 13 targeted tests pass after missing-model/converter failures and an observed failure for unrepresentable burst targets. Central finite differences verify all command modes and representative parameters in every active head plus the shared encoder. Tests cover entity permutation, queue/target-label gradient coupling, unknown timing masks, checkpoint equivalence, uint64 tags, fog-safe memory, map edges and simultaneous bursts. Full suite: 207 tests in 9.796 seconds; Ruff and diff checks pass.
+- Task 2 real audit: `logs/roadmap/entity-examples-real-audit-02.json`; all nine teaching games, 3,543 commands, 3,542 reversible complete labels, 15.198 seconds, before/after bindings unchanged. One command (51754 loop 3480, Attack ability 23, target 4367319041) has no observed target candidate; exclusion is explicit. All later commands still receive the actual human history. This is conversion coverage, not model accuracy. Reserved 51483/51886 and professional data were not opened.
+- Ruling: replay iterator returns `(inputs, label, command, exclusion)`; an unrepresentable label is None with a reason, rather than terminating the game or inserting an unseen unit. Task 3 must count excluded labels against the total command denominator and report their reasons — preserves fog safety and all remaining training examples — costs one complete supervised label in this corpus.
+- Task 2 payload: 94 numeric fields/entity (30 current-state/construction fields plus 32 actor/target history reference pairs), full engine type/order embeddings, nine semantic fields/history command and observed upgrade flags. Nine-game numeric entity payload totals 268,004,904 bytes; model parameters 1,447,856 bytes. These are component sizes, not measured trainer peak RSS or native speedups.
+- Task 2 scope: one untrained analytic-gradient call per teaching game, no optimizer/model fit/native play/RL. Task 3 remains open and must bind/freeze its complete supervised configuration before the real fit.

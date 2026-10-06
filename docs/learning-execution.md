@@ -2083,3 +2083,32 @@ semantic example conversion, spatial candidate coverage, shared queue/target-los
 checks, human fit and opt-in native integration remain. The old macro still uses
 its old history encoding; no joint policy or improvement is claimed, and both
 reserved games stay closed to model prediction/fitting.
+
+
+### Shared entity command model: implementation and real-label coverage
+
+The compact shared encoder now has jointly trained full-vocabulary ability,
+variable-size actor membership, group-conditioned mode/queue/timing and unit/point
+target heads. Point targets use map-wide cells plus continuous offsets. Queue and
+target losses numerically backpropagate into the same encoder; this remains an
+imitation architecture, with every RL path held.
+
+The causal converter preserves all 32 command-history slots and entity references,
+exact integer tags, simultaneous command bursts and masked unresolved timing.
+Enemy memory exposes only known identity/position, with no hidden attributes or
+unit-target eligibility. Own remembered entities remain actor candidates. A missing
+human target is explicitly excluded without dropping later commands or inventing a
+sensor input.
+
+`logs/roadmap/entity-examples-real-audit-02.json` checked all nine Mez teaching games:
+3,542/3,543 commands roundtrip through complete labels and raw grammar. The excluded
+command is 51754 loop 3480, Attack 23 targeting 4367319041, absent from the recorded
+pre-command visible target candidates. Source/input bindings are unchanged; reserved
+51483/51886 remain unopened. Conversion coverage does not measure learned accuracy.
+
+Thirteen new targeted tests and the whole 207-test suite pass (9.796 seconds), with
+Ruff/diff checks green. Numeric entity payload for these nine games is 268,004,904
+bytes and model parameters are 1,447,856 bytes; these are not full trainer RSS or
+native throughput measurements. There has been no joint model fit or native game
+with this model yet. Next: freeze one supervised configuration/update budget, fit
+these human commands and audit complete predicted commands before native play.
