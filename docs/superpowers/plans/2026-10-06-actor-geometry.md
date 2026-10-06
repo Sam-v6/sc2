@@ -42,4 +42,19 @@ Implementation verified: four tests observed RED→GREEN; fifth checks that a
 learned geometric score can prefer an interior unit. Full327tests pass in10.06s;
 Ruff/diff checks pass. Independent reviewer reports no Critical/Important/Minor
 findings. Default initialization/legacy loading and all combined BCE/ranking
-gradient branches are verified. The fixed small-set experiment has not yet run.
+gradient branches are verified. At implementation commit, the fixed experiment
+had not yet run; its subsequent outcome is recorded below.
+
+The experiment is now terminal: same62commands/33abilities, same200epochs and
+800updates,12.17optimizer seconds. Zero-residual initial audit exactly matches
+the baseline; selected row indices and source hashes match. Complete copying
+improves44→51, exact actors46→52, targets59→60; abilities/modes/queues stay62/62
+and known timing43/43. Complete/actor gates fail56; ability/target gates pass.
+Checkpoint, source/code bindings and exact updates verify. No extension, sweep,
+cross-game fit, native competence, promotion or RL follows this failed gate.
+
+Frozen new actor audit: count/type composition60/62; human-count oracle exact54.
+Eight remaining mismatches choose another single SCV; two select two same-type
+production/research buildings where the human chose one. The residual improves
+this controlled fitting test, but does not resolve ranking or generalization.
+Artifacts: `professional-small-set-actor-geometry-01/{contract,report,actor-diagnosis}.json`.

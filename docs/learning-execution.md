@@ -2893,3 +2893,25 @@ bound. Four tests first fail then pass; an added interior-unit ranking check
 brings five focused tests. Full 327 tests pass in 10.06 seconds, Ruff/diff checks
 pass, and independent review finds no Critical, Important or Minor findings.
 No learning outcome or promotion is established by these code checks.
+
+The fixed actor-geometry small-set run completes200epochs/800updates in12.17
+optimizer seconds. Initial predictions exactly match the baseline and all62
+selected rows/source bindings match. Exact actors improve46→52, complete
+commands44→51, targets59→60; all62abilities/modes/queues and43known timing labels
+remain correct. Complete and actor gates fail the56threshold; ability and target
+gates pass. Checkpoint, source/code hashes, terminal status and exact update
+schedule verify. Frozen actor diagnosis reports60/62correct count/type groups
+and54/62exact with human count supplied. Eight remaining failures choose another
+single SCV; two select multiple same-type production/research buildings. This is
+a bounded fitting improvement, not cross-game competence. No extension, sweep,
+cross-game fit, native game, reserved prediction, promotion or RL follows.
+Artifacts: `professional-small-set-actor-geometry-01/{contract,report,actor-diagnosis}.json`.
+
+A narrow read-only runtime inventory finds installed PyTorch2.13.0+cu130 in
+`/home/sam/repos/hobby-repos/exoplanet/.venv`. A CPU tensor/backward smoke verifies
+two threads and no CUDA initialization with CUDA_VISIBLE_DEVICES empty. Receipt
+`installed-torch-cpu-probe-01.json` records its module/version. This offers a
+possible CPU framework for richer learned unit relationships without downloading
+or installing a package. It is not a declared SC2 dependency or implemented new
+model; any prototype must explicitly bind its runtime and preserve NumPy/native
+interfaces. Human imitation remains the only active learning stage.
