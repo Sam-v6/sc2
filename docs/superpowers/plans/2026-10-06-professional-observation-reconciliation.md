@@ -44,3 +44,14 @@ block ambiguous reuse.277tests pass and independent review confirms fixes.
 159worker-training examples support pre-effect phase, but full chronology and
 version-specific mappings remain open; these records are still not training
 eligible. No guessed loop offsets or invented complete history have been added.
+
+Timing interpretation resolved with native evidence: all five raw actions in
+an existing teaching replay through300loops echo at issue+1; four match original
+human SCmdEvents and one is an unmatched engine echo. Historical action
+converter attaches them to the preceding observation buffer, explaining stored
+professional issue-loop pre-effect states without shifting timestamps. Record
+this source contract separately from legacy L-1 extraction. Native build75689,
+professional76052engine unavailable; exact producer revision not claimed. Final
+phase receipt: issue-loop-phase-verification-01.json. Complete official4.10Linux
+package directory confirms no Base76052client; only3.43MiBmetadata downloaded,
+no executable/assets. Importer/history/death handling and fitting remain open.

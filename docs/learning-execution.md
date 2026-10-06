@@ -2425,3 +2425,40 @@ native catalog names (including clearly unrelated names on later abilities).
 Those mismatches are excluded. Exact version-specific mapping, full chronology,
 causal partial-history handling and the actual professional demonstration importer
 remain open. No optimizer, native match, fitting or RL ran in this stage.
+
+### Issue-loop observation timing contract
+
+A bounded installed-client replay probe recovered301consecutive observations from
+an existing teaching game (51574/Mez; reserved games untouched). All five observed raw actions through loop300were echoed one loop after their
+issue timestamp. Four match original human commands; the fifth is an engine
+echo without a matching original SCmdEvent. At loop23the CommandCenter was idle with50minerals;
+loop24echoed TrainSCV(issue23), showed the order and0minerals. The second train
+command at249similarly added its queued order in observation250.
+
+The cached historical `ActionConverter::OnStep` explains the professional rows:
+it copies newly received actions into the preceding observation buffer, locks
+that row, then copies the current observation into a new buffer. Thus a stored
+observation at original issue loopL is a pre-effect state; it is not a fabricated
+L-1 timestamp. Source logic, native phase and the159professional worker-command
+checks support an explicit `state_at_issue_loop_before_effect` importer contract.
+The previous native extractor deliberately uses the more conservative L-1
+format; these two source formats should remain distinguishable.
+
+Bound evidence: `logs/roadmap/pro-preconverted-probe-01/issue-loop-phase-verification-01.json`
+and `native-issue-phase-01.json`. The native build is75689, not the professional
+76052build, and the exact compiled producer revision remains unknown. This
+resolves the converter-buffer timing interpretation; it is not a claim that the
+professional games were directly reconstructed on the native client.
+
+A fresh bounded official-package index check confirmed the complete4.10Linux
+archive lists Base75689only; Base76052is absent. Guessed4.10.1/4.10.2URLs returned
+404. Total archive metadata downloaded:3,592,190bytes under a4MiBcap; executable
+and asset downloads:0. Full directory/receipt:
+`linux-archive-full-directory-01.bin` and `linux-archive-full-index-01.json`.
+The earlier512KiBdirectory probe stopped at its cap and was superseded by this
+explicit metadata-only contract. No pending legacy asset download executed.
+
+Next importer work: represent verified subsets of human history without claiming
+complete history, apply only player-owned causal death/upgrade events, emit source
+alignment/provenance receipts, and mask delay labels crossing unresolved commands.
+Professional fitting and RL remain stopped.
