@@ -3619,3 +3619,14 @@ reserved inputs/predictions were used. Frozen paired run is prepared under
 this source milestone. The prior diagnostic remains closed. This intervention
 needs actual independently verified comparative results before any strength
 claim or broader native/RL work.
+
+The paired run is now confirmed live under watcherhandle28403, childPID2407534,
+with baseline fit started (766637parameters). Latest sampled wholeCPU6.5%,
+peak8.9%; no resource stop. Source/plan/wrappers remain frozen. The prepared
+`verify_type_status_imitation_01.py` independently checks initial parity/support,
+all9026ordinary and2226held own-history predictions, metrics and five gates;
+read-only review finds no blockers. Run it only after confirmed terminal
+comparison/telemetry; no success or failure gate is available yet.
+
+- Frozen paired contract SHA256`331cf3086562300d0efdf02507f0ab6e2d4e99aa618285adce63c56d3fe9ee88`.
+- Prepared verifier SHA256`4bc6758357b5af33d7c70d8ef36ee6c5d091f1478224a3a61029b995347c7c18`.
