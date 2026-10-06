@@ -3845,3 +3845,15 @@ Next test upcoming human production intent/timing supervision separately from th
 next raw click, with censored target-only future labels and no future-input leakage.
 Preserve full raw controls and sensory information; no recipe/primitive action-space
 replacement. See [verified source-version result](superpowers/plans/2026-10-06-repaired-production-imitation-results.md).
+
+### October6: upcoming human production diagnostic closed
+
+[Fixed forecast diagnostic](superpowers/plans/2026-10-06-production-forecast-probe.md)
+completed at peakwholeCPU8.7%, withoutGPU/native/RL. Independent verification
+reconstructs3,162targets and6,324predictions.399tests/31optional skips pass.
+State-only heldaccuracy34.30%, state+history30.44%, majority37.47%; nonworker
+accuracy15.86/16.08%, Barracks0/13. History fits97.54%teachingchoices but generalizes
+poorly. Bothnumericalsolves verify, so this result is not an iteration-limit artifact.
+No promotion or extension. Next use one fixed nonlinear current-state diagnostic
+to test resource/count threshold interactions before choosing controller work.
+See [evidence and limits](superpowers/plans/2026-10-06-production-forecast-probe-results.md).
