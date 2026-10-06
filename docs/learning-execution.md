@@ -622,3 +622,64 @@ This remains a primitive experiment and does not establish ordinary-game transfe
 The complete suite passed 167 tests in 9.770 seconds (`unittest-twentieth.log`),
 including both terminal-response adapters. Ruff passed. `broad_train` exposes
 `--learned-cadence`; its original fixed-cadence default remains unchanged.
+
+Micro criterion correction **before any held-out evaluation**: inspection of the
+installed map's `MapScript.galaxy` showed repeated six-Zergling/four-Baneling waves.
+Each cleared wave preserves surviving Marine health, relocates the group and adds
+four Marines. Its official score adds five per enemy death and subtracts one per
+own death. The 120-second timer pauses the mission; clearing a wave spawns another.
+Consequently the proposed native-win criterion was incorrect for this sandbox,
+and absolute damage taken confounds additional reinforcements with worse combat.
+That original micro gate is invalid, not passed. No training reward/model choice
+changes. `banelings-map-mechanics.json` binds this inspection to map/script hashes.
+
+The corrected primitive check, declared before seeds 42200–42207 run, requires
+strictly greater mean killed-resource value, at least 1.5x the fresh paired
+nearest-target baseline, and no worse aggregate damage-taken/killed-value ratio.
+Report official score, outcomes and survival separately; zero-kill fleeing cannot
+pass. This is a scored-wave primitive check, not a relaxed full-game win gate.
+Professional extraction, full-game micro transfer and Hard acceptance remain open.
+
+### Terminal results and return to human imitation
+
+`broad-duration-24-01/report.json` closes the declared duration-aware arm:
+24 training games and twelve paired evaluation games completed in 586.48 wall
+seconds, with 320 optimizer updates. Both evaluation arms won zero of six games.
+Mean combat return improved by 4.125, but the required native-win gate failed.
+No promotion or automatic extension follows. Trace inspection found many Marine
+Attack commands targeting neutral minerals or friendly units, and many point
+targets clamped to map boundaries. Ability-only reinforcement learning leaves
+the frozen target and unit-selection models unable to correct these decisions.
+
+`banelings-heldout-01/report.json` closes sixteen fresh sandbox games. The learned
+primitive doubled mean killed-resource value (159.375 to 318.75), reduced the
+aggregate damage/killed-value ratio from 2.6824 to 1.5529, and increased mean
+official score from 26.875 to 39.75. The corrected scored-wave primitive gate
+passed. Every game in both arms ended in native Defeat. Ordinary-game transfer,
+professional imitation and Hard acceptance remain unproved.
+
+The user clarified that human imitation must precede further full-game RL.
+Hold further RL and micro-transfer experiments until imitation is demonstrably
+competent. The roadmap remains active; this changes sequencing, not acceptance.
+
+`human-argument-audit-01.json` checks the retained four-minute argument model on
+the entirely held-out Lyra game, supplying the actual human ability and selected
+unit group. Mean target error is 39.84 tiles over the first four minutes and
+92.64 over the complete held game; mode accuracy falls from 74.7% to 57.0%.
+This isolates a substantial argument-generalization failure independently of
+macro and actor errors. Training/live coordinate conventions agree on inspection;
+no conversion bug is established. The five four-minute teaching prefixes contain
+65 Attack commands, only five aimed at enemy units. Complete teaching games
+contain 380 Attack commands, including forty aimed at enemies.
+
+`arguments-full-human-01/` is a supervised-only experiment using all 1,999 issued
+commands from the same five teaching games, the same frozen macro context and
+600 epochs. It excludes the Lyra game throughout fitting. Complete held-game
+target error improves to 35.66 tiles (61.5% lower), mode accuracy to 70.2%, and
+target-alliance accuracy to 88.2%. Opening target error improves to 26.94 tiles.
+Training target error is 4.35 tiles. This is evidence that full demonstrations
+help, but the large train/held gap and low held target-type accuracy (27.5%)
+still fail competent imitation. Do not promote it to live gameplay on the
+strength of training accuracy. Expand compatible human coverage across players,
+maps and matchups, and evaluate target identity/geometry on held games before
+another native training campaign. Professional replay extraction remains open.
