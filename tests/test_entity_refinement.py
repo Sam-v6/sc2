@@ -135,6 +135,53 @@ class EntityRefinementTests(unittest.TestCase):
                         gradients[name][index], (plus - minus) / 2e-6, places=7
                     )
 
+    def test_partial_groups_and_edge_cells_have_correct_joint_gradients(self):
+        encoder = self.inputs["encoder"]
+        self.inputs["encoder"] = (
+            np.vstack((encoder[0], encoder[0] + 0.1)),
+            np.array([2, 5, 2, 2, 5, 2]),
+            np.array([3, 0, 3, 3, 0, 3]),
+            *encoder[3:],
+        )
+        self.inputs["actor_mask"] = np.array([True, False, True, True, False, True])
+        self.inputs["target_mask"] = np.ones(6, bool)
+        self.policy.encoder.parameters = {
+            k: v.astype(float) for k, v in self.policy.encoder.parameters.items()
+        }
+        self.policy.heads = {k: v.astype(float) for k, v in self.policy.heads.items()}
+        for actors, radii in (
+            ((0, 2), (1.5, 2)),
+            ((0, 2, 3), (4, 0.5)),
+            ((0, 2, 3, 5), (4, 4)),
+        ):
+            self.inputs["point_radii"][1] = radii
+            label = dict(
+                self.label, actors=actors, mode=2, point=1, offset=np.array([0.2, -0.3])
+            )
+            _, gradients = self.policy.loss_and_gradients(self.inputs, label)
+            for name, index in {
+                "actor": (1, 2),
+                "group": (1, 2),
+                "offset": (1, 0),
+                "offset_cell": (0, 1),
+                "point_input": (0, 1),
+                "point_query": (1, 2),
+                "encoder.entity": (0, 1),
+                "encoder.types": (2, 1),
+                "encoder.abilities": (3, 1),
+            }.items():
+                with self.subTest(actors=actors, radii=radii, parameter=name):
+                    parameter = self.policy.parameters[name]
+                    original = parameter[index]
+                    parameter[index] = original + 1e-6
+                    plus, _ = self.policy.loss_and_gradients(self.inputs, label)
+                    parameter[index] = original - 1e-6
+                    minus, _ = self.policy.loss_and_gradients(self.inputs, label)
+                    parameter[index] = original
+                    self.assertAlmostEqual(
+                        gradients[name][index], (plus - minus) / 2e-6, places=7
+                    )
+
 
 if __name__ == "__main__":
     unittest.main()

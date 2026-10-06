@@ -34,7 +34,7 @@ Modify `src/learning/entity_policy.py`, `src/learning/entity_train.py`; add `tes
 
 ## Task 2: One comparable fixed fit and reconstruction decision
 
-- [ ] Freeze fresh seed7000/7001, hidden32, batch16, rate0.001,200epochs/44400updates,900second fit wall bound, same datasets, refinement=True before fit. Bind current code, datasets, baseline checkpoint and comparison protocol. No epoch/rate/architecture sweep.
+- [x] Freeze fresh seed7000/7001, hidden32, batch16, rate0.001,200epochs/44400updates,900second fit wall bound, same datasets, refinement=True before fit. Bind current code, datasets, baseline checkpoint and comparison protocol. No epoch/rate/architecture sweep.
 - [ ] Run fixed CPU-only fit; monitor exact live handle until terminal. Do not modify bound production code during fit.
 - [ ] Reload both checkpoints, regenerate ordinary full-command counts and explicit human-cell offset/ranking diagnostics. Compare same cohort and total denominators. Record source/checkpoint bindings before/after.
 - [ ] Independent whole-change review, record material limitations, commit verified implementation and results. If teaching gate fails, hold native/RL and derive next action from field-level evidence. If it passes, proceed to the existing frozen native functional protocol without claiming full roadmap completion.
@@ -46,3 +46,10 @@ Modify `src/learning/entity_policy.py`, `src/learning/entity_train.py`; add `tes
 
 - Task1: seven missing-refinement failures observed before implementation. Seven targeted tests now pass, including every-mode central finite differences, candidate permutation, predicted-vs-explicit human cell behavior, physical radii loss/gradients, selected-set ranking and legacy/refined checkpoint roundtrip. Full suite221tests in9.808seconds passes; Ruff/diff checks green.
 - Task1 compatibility: `logs/roadmap/refinement-baseline-compatibility-01.json`, all nine teaching and both reused diagnostic games; the old checkpoint's entire report (including all oracles/geometry metrics) regenerated exactly in19.211seconds. Original checkpoint SHA and dataset bindings unchanged. Historical original code hashes are deliberately not claimed unchanged after this modification.
+
+- Task2 dispatched: `logs/roadmap/joint-entity-fit-contract-02.json`, exactly the baseline200epoch/44400update recipe, same9teaching/2reuseddiagnostic sources; refinement=True, fresh initialization. Baseline checkpoint `e0cd9737fccf466c3b683bfc343b311c605b457e05f70ea4155ddf3f712541aa` is comparison only, not resumed. Live handle93461; follow that exact handle until authoritative terminal evidence. Current bound production files must not change during fitting.
+- Task2 review: fresh read-only reviewer `/root/review_refined_arguments` checking the whole change while fitting. No extra fit, native game, download or reserved-data access authorized.
+
+- Whole-change review: `/root/review_refined_arguments` found no material defect;14targeted tests and additional exhaustive partial/full/noncontiguous-group and anisotropic-radius finite differences passed (maximum absolute error2.04e-9). The latter cases are now persisted as an eighth targeted test. Raw training losses differ across objectives and must not be compared as equivalent; combined refinements cannot yield component-specific attribution. No production edits during the frozen fit.
+
+- Coverage after review: eight refinement tests and full222-test suite pass (9.916seconds). Persisted finite differences now include multi-actor partial/full groups, noncontiguous eligible masks and anisotropic edge-cell radii. All bound production files remain atd46eaa2; only tests/plan changed during the live fit. Fit still nonterminal at last handle93461 poll; compare helper `logs/roadmap/compare_joint_refinement_01.py` is prepared but must run only after completed report/full44400updates.
