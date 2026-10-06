@@ -155,6 +155,11 @@ def main():
         action="store_true",
         help="Selected-set ranking and cell-conditioned tile loss",
     )
+    parser.add_argument(
+        "--actor-cutoff",
+        action="store_true",
+        help="Learn a context-conditioned unit-selection cutoff",
+    )
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--hidden", type=int, default=32)
     parser.add_argument("--rate", type=float, default=0.001)
@@ -203,6 +208,7 @@ def main():
         hidden=args.hidden,
         rate=args.rate,
         refinement=args.refinement,
+        actor_cutoff=args.actor_cutoff,
         seed=args.seed,
         wall_seconds=args.wall_seconds,
         delays=DELAYS,
@@ -234,6 +240,7 @@ def main():
         DELAYS,
         seed=args.seed + 1,
         refinement=args.refinement,
+        actor_cutoff=args.actor_cutoff,
     )
     optimizer = Adam(policy, args.rate)
     rng = np.random.default_rng(args.seed + 2)

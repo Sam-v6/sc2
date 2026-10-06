@@ -28,9 +28,10 @@ def categorical_loss(logits, label, mask=None):
 
 
 class JointEntityPolicy:
-    def __init__(self, encoder, delays, seed=0, refinement=False):
+    def __init__(self, encoder, delays, seed=0, refinement=False, actor_cutoff=False):
         self.encoder, self.delays = encoder, tuple(delays)
         self.refinement = refinement
+        self.actor_cutoff = actor_cutoff
         hidden = encoder.parameters["entity"].shape[1]
         abilities = len(encoder.parameters["abilities"])
         rng = np.random.default_rng(seed)
@@ -56,6 +57,9 @@ class JointEntityPolicy:
         if refinement:
             self.heads["offset_cell"] = rng.normal(0, 0.1, (2, 2)).astype(np.float32)
 
+        if actor_cutoff:
+            self.heads["actor_cutoff"] = np.zeros(hidden, np.float32)
+
     @property
     def parameters(self):
         return {
@@ -74,6 +78,8 @@ class JointEntityPolicy:
         conditioned = np.tanh(context + self.encoder.parameters["abilities"][ability])
         actor_query = conditioned @ p["actor"]
         actor_logits = entities @ actor_query
+        if self.actor_cutoff:
+            actor_logits = actor_logits + conditioned @ p["actor_cutoff"]
         eligible = np.flatnonzero(inputs["actor_mask"])
         if actors is None:
             actors = tuple(int(i) for i in eligible if actor_logits[i] >= 0)
@@ -195,6 +201,10 @@ class JointEntityPolicy:
                 - np.log(selected_count)
             )
             actor_delta[eligible] += ranking_probability - actor_labels / selected_count
+        if self.actor_cutoff:
+            cutoff_delta = actor_delta.sum()
+            gradients["actor_cutoff"] = c["conditioned"] * cutoff_delta
+            conditioned_gradient += p["actor_cutoff"] * cutoff_delta
         query_gradient = c["entities"].T @ actor_delta
         gradients["actor"] = np.outer(c["conditioned"], query_gradient)
         conditioned_gradient += query_gradient @ p["actor"].T
@@ -270,6 +280,7 @@ class JointEntityPolicy:
             delays=self.delays,
             metadata=metadata,
             refinement=self.refinement,
+            actor_cutoff=self.actor_cutoff,
         )
         np.savez_compressed(
             path, **self.parameters, configuration=json.dumps(configuration)
@@ -286,6 +297,7 @@ class JointEntityPolicy:
                 encoder,
                 configuration["delays"],
                 refinement=configuration.get("refinement", False),
+                actor_cutoff=configuration.get("actor_cutoff", False),
             )
             for name, parameter in policy.parameters.items():
                 if archive[name].shape != parameter.shape:
