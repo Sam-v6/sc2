@@ -28,8 +28,9 @@ def categorical_loss(logits, label, mask=None):
 
 
 class JointEntityPolicy:
-    def __init__(self, encoder, delays, seed=0):
+    def __init__(self, encoder, delays, seed=0, refinement=False):
         self.encoder, self.delays = encoder, tuple(delays)
+        self.refinement = refinement
         hidden = encoder.parameters["entity"].shape[1]
         abilities = len(encoder.parameters["abilities"])
         rng = np.random.default_rng(seed)
@@ -52,6 +53,9 @@ class JointEntityPolicy:
         for name in ("ability", "mode", "queue", "delay", "offset"):
             self.heads[name + "_bias"] = np.zeros(self.heads[name].shape[1], np.float32)
 
+        if refinement:
+            self.heads["offset_cell"] = rng.normal(0, 0.1, (2, 2)).astype(np.float32)
+
     @property
     def parameters(self):
         return {
@@ -59,7 +63,7 @@ class JointEntityPolicy:
             **self.heads,
         }
 
-    def _forward(self, inputs, ability=None, actors=None):
+    def _forward(self, inputs, ability=None, actors=None, point=None):
         p = self.heads
         context, entities, encoder_cache = self.encoder.forward(*inputs["encoder"])
         ability_logits = context @ p["ability"] + p["ability_bias"]
@@ -91,6 +95,17 @@ class JointEntityPolicy:
             "point": points @ (arguments @ p["point_query"]),
             "offset": np.tanh(arguments @ p["offset"] + p["offset_bias"]),
         }
+        cell_coordinate = None
+        if self.refinement and len(points):
+            cell = int(np.argmax(output["point"])) if point is None else point
+            if not 0 <= cell < len(points):
+                raise ValueError("Chosen point cell is outside map candidates")
+            cell_coordinate = np.asarray(inputs["points"])[cell]
+            output["offset"] = np.tanh(
+                arguments @ p["offset"]
+                + cell_coordinate @ p["offset_cell"]
+                + p["offset_bias"]
+            )
         for name in ("mode", "queue", "delay"):
             output[name] = arguments @ p[name] + p[name + "_bias"]
         cache = dict(
@@ -104,12 +119,13 @@ class JointEntityPolicy:
             group=group,
             arguments=arguments,
             points=points,
+            cell_coordinate=cell_coordinate,
         )
         return output, cache
 
-    def scores(self, inputs, ability=None, actors=None):
+    def scores(self, inputs, ability=None, actors=None, point=None):
         """Explicit conditioning is for supervised/oracle diagnostics only."""
-        return self._forward(inputs, ability, actors)[0]
+        return self._forward(inputs, ability, actors, point)[0]
 
     def predict(self, inputs, ability=None, actors=None):
         """Ordinary inference predicts all choices; explicit oracles are diagnostic."""
@@ -142,7 +158,12 @@ class JointEntityPolicy:
         return result
 
     def loss_and_gradients(self, inputs, label):
-        scores, c = self._forward(inputs, label["ability"], tuple(label["actors"]))
+        scores, c = self._forward(
+            inputs,
+            label["ability"],
+            tuple(label["actors"]),
+            point=label["point"] if self.refinement and label["mode"] == 2 else None,
+        )
         p = self.heads
         gradients = {k: np.zeros_like(v) for k, v in p.items()}
         entity_gradient = np.zeros_like(c["entities"])
@@ -164,6 +185,16 @@ class JointEntityPolicy:
         actor_delta = np.zeros(len(c["entities"]))
         probability = np.exp(-np.logaddexp(0, -logits))
         actor_delta[eligible] = (probability - actor_labels) / len(eligible)
+        if self.refinement:
+            selected_count = actor_labels.sum()
+            ranking_probability = categorical(logits)
+            loss += float(
+                np.log(np.exp(logits - logits.max()).sum())
+                + logits.max()
+                - logits[actor_labels.astype(bool)].mean()
+                - np.log(selected_count)
+            )
+            actor_delta[eligible] += ranking_probability - actor_labels / selected_count
         query_gradient = c["entities"].T @ actor_delta
         gradients["actor"] = np.outer(c["conditioned"], query_gradient)
         conditioned_gradient += query_gradient @ p["actor"].T
@@ -197,8 +228,17 @@ class JointEntityPolicy:
                 point_delta = candidate_gradient * (1 - c["points"] ** 2)
                 gradients["point_input"] = np.asarray(inputs["points"]).T @ point_delta
                 error = scores["offset"] - np.asarray(label["offset"])
-                loss += float(0.5 * (error @ error))
-                offset_delta = error * (1 - scores["offset"] ** 2)
+                radii = (
+                    np.asarray(inputs["point_radii"])[label["point"]]
+                    if self.refinement
+                    else np.ones(2)
+                )
+                loss += float(0.5 * np.square(error * radii).sum())
+                offset_delta = error * radii**2 * (1 - scores["offset"] ** 2)
+                if self.refinement:
+                    gradients["offset_cell"] = np.outer(
+                        c["cell_coordinate"], offset_delta
+                    )
                 gradients["offset"] = np.outer(c["arguments"], offset_delta)
                 gradients["offset_bias"] = offset_delta
                 argument_gradient += offset_delta @ p["offset"].T
@@ -229,6 +269,7 @@ class JointEntityPolicy:
             hidden=self.heads["actor"].shape[0],
             delays=self.delays,
             metadata=metadata,
+            refinement=self.refinement,
         )
         np.savez_compressed(
             path, **self.parameters, configuration=json.dumps(configuration)
@@ -241,7 +282,11 @@ class JointEntityPolicy:
             encoder = JointEntityEncoder(
                 *configuration["dimensions"], hidden=configuration["hidden"]
             )
-            policy = cls(encoder, configuration["delays"])
+            policy = cls(
+                encoder,
+                configuration["delays"],
+                refinement=configuration.get("refinement", False),
+            )
             for name, parameter in policy.parameters.items():
                 if archive[name].shape != parameter.shape:
                     raise ValueError("Checkpoint parameter shape mismatch")

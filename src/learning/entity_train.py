@@ -132,6 +132,11 @@ def main():
     parser.add_argument("--validation", nargs="*", type=Path, default=[])
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--epochs", type=int, required=True)
+    parser.add_argument(
+        "--refinement",
+        action="store_true",
+        help="Selected-set ranking and cell-conditioned tile loss",
+    )
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--hidden", type=int, default=32)
     parser.add_argument("--rate", type=float, default=0.001)
@@ -179,6 +184,7 @@ def main():
         batch_size=args.batch_size,
         hidden=args.hidden,
         rate=args.rate,
+        refinement=args.refinement,
         seed=args.seed,
         wall_seconds=args.wall_seconds,
         delays=DELAYS,
@@ -209,6 +215,7 @@ def main():
         ),
         DELAYS,
         seed=args.seed + 1,
+        refinement=args.refinement,
     )
     optimizer = Adam(policy, args.rate)
     rng = np.random.default_rng(args.seed + 2)
