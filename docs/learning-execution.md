@@ -1123,3 +1123,43 @@ files match bindings from the original completed candidate experiment; the new
 report has no inherited earlier binding. This does not retroactively establish
 complete pre-run provenance for the new diagnostic. The comparison remains
 confounded by sixteen-command specialization versus the 365-command baseline.
+
+### Categorical location prediction on the full teaching corpus
+
+`attack-listwise-corpus-01/` applies the same categorical location experiment to
+all 365 teaching Attack point commands from the previous binary scorer's six
+games. A pre-fit contract fixes 32 hidden units, seed 5010, learning rate .001,
+100 epochs and the full two-tile candidate grid. All consumed helper source,
+reports, datasets and frozen checkpoints are bound before/after. The three
+separate games are reused diagnostic validation, not fresh tests; the separate
+whole-replay hash audit confirms no teaching/diagnostic game overlap.
+
+The CPU-only fit and evaluation complete in 133.72 seconds. Teaching accuracy
+within two tiles improves from 58/365 (15.89%) to 240/365 (65.75%); mean error
+falls from 8.77 to 2.35 tiles. On diagnostic Lyra, accuracy is 1/52 versus 2/52
+and mean error 15.64 versus 17.20 tiles; on Huski, 5/47 versus 5/47 and 23.77
+versus 16.50 tiles; on Mez TvZ, 2/80 versus 5/80 and 13.14 versus 12.54 tiles.
+The declared training-accuracy and per-game diagnostic gate **fails**. Better
+training fit does not transfer to these separate games. This result separates
+an optimization/training-fit improvement from unresolved generalization; it
+does not establish that data count, representation or player differences alone
+cause the failures. It still supplies human ability/group/mode rather than
+measuring complete commands. No live decoder promotion, native game or RL ran.
+
+The comparison uses the same teaching commands but differs in normalization,
+full-grid versus sampled objective, update count and replay weighting (uniform
+command updates versus equal replay weight). Therefore it is not a controlled
+objective-only ablation. The new scorer avoids the earlier negative-sampler
+tie defect because it uses no sampled negatives. One measured host process
+sample shows approximately 190% CPU in per-core units (about 6% of the known
+32 logical CPUs) and 1.01 GiB resident memory; two BLAS threads were configured.
+All fitting is terminal, and there was no GPU or large download.
+
+An independent reviewer reconstructs all 544 saved new/baseline predictions
+(365 teaching plus 52/47/80 diagnostic), confirms every point/error/count and the
+failed gate, verifies all 39 pre/post bindings and final checkpoint hash, and
+checks actual replay hashes and whole-game split. No material objective,
+gradient, prediction or provenance defect is found. The failed generalization
+result remains authoritative. The next proposed bounded supervised test is
+actor-linked prior-command destination history, rather than further optimization
+or RL; its causal history and changed-destination behavior must be audited.
