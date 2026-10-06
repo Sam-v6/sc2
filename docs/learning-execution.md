@@ -774,3 +774,61 @@ so distance alone would exaggerate the learned benefit. Forty-seven point-direct
 or unseen-target attacks are outside this unit-pointer comparison. The small
 combat sample and failed six-fold results still preclude competent imitation,
 live promotion, professional acceptance and further RL. All jobs are terminal.
+
+### Native old-runtime failure traced and narrowed
+
+`old-casc-probe/native-trace-01/` traces the existing isolated Base75025 process:
+it aborts after opening the first modified CASC index, before opening any data
+archive. A separate `runtime-4.9.3-indexpad-01/` clone pads short index copies to
+196,608 bytes without changing their payloads or acquiring assets. Native tracing
+now opens all sixteen selected index buckets and five archive files, then fails
+at a different startup stage. The original installation's index SHA inventory is
+unchanged; archive opens are read-only (`indexpad-native-progress-01.json`).
+This resolves an index-layout obstruction, not native playback as a whole.
+
+The new native failure identifies **GameData/AssetsProduct.txt**, content key
+`1566ae22ab93ec0f9e246c9efbc7fec4`, as required and unavailable. This is a traced
+required-file failure, unlike the earlier unproved Liberty manifest hypothesis.
+The verified old encoding maps it to encoded key
+`31271d461c33eda86a4723e3cbdd8038`, decoded size 264,581 bytes. Bounded archived
+index members locate its 24,654-byte physical record in data.002 at offset
+236,180,873. Loose CDN attempts and sampled group/archive index endpoints are
+unavailable. The official ZIP's encrypted deflate stream requires decoding its
+preceding bytes, so recovering this small record needs approximately 225 MiB of
+archive-prefix input, not a 24 KB range request.
+
+`required-assetsproduct-download-plan-01.json` records the exact official source,
+member/header checks, stream offset, record size, expected content/encoded hashes
+and a proposed 250 MiB maximum. That larger download has **not** been executed.
+User authorization is pending because the user prohibited large unsolicited
+downloads. If authorized, decode only the bounded prefix, verify encoded-header
+and frame hashes plus full decoded MD5/size, and install only the verified record
+into an isolated overlay. Then repeat native startup and trace any next failure.
+Do not assume this one asset guarantees professional replay reconstruction;
+additional required files and the exact replay map may remain. No whole 3.6 GB
+archive, sudo, GPU work or further RL is authorized by this proposal. Independent
+supervised imitation work can proceed while the download decision is pending.
+
+### Independent actor-relative point experiment
+
+`arguments-actor-origin-01/` completed a controlled supervised-only fit while the
+download question was pending. It uses the same five full teaching games, 1,999
+commands, input features, seed 5001, equal-replay weights and 600 epochs as the
+full-human argument model. Only the point reference changes from base origin to
+selected-group centroid; orientation still uses the base's canonical signs.
+Fitting took 31.42 wall seconds on CPU. The Lyra and Huski games remain excluded
+from fitting but are now reused diagnostic validation, not untouched final tests.
+
+Mean error across valid targets declines from 35.66 to 31.10 tiles for Lyra and
+37.22 to 27.61 for Huski. Restricting to actual point-target commands gives
+36.32 to 32.79 tiles across 169 Lyra commands and 38.19 to 28.39 across 163 Huski
+commands (`report-with-point-strata.json`). The declared geometric comparison
+passes, but these errors remain much too large for competent imitation. Other
+shared categorical heads do not establish improvement; Huski target-alliance
+accuracy is only 50%. No native game or RL follows this fit.
+
+This experimental checkpoint records `point_origin=selected_group_centroid`.
+The current live argument decoder expects base-relative coordinates, so this
+artifact must not be passed to live play before explicit coordinate-convention
+support and its regression checks. Retain the experiment rather than silently
+replacing the compatible base-relative checkpoint.
