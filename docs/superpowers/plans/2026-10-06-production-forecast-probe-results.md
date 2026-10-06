@@ -17,3 +17,6 @@ Current state fits 69.29% of teaching choices, versus 97.54% with history. The l
 Close both fixed diagnostics. No budget extension, native promotion or RL. Next test one nonlinear current-state model because a linear score cannot directly express resource/count thresholds and their interactions. Keep the same source split and report the same rare-class/positive-delay metrics; no history retry or hyperparameter sweep. This tests model form before committing to a controller redesign. If it fails, prioritize source coverage/observation sufficiency rather than repeating full-controller fits.
 
 Artifacts: `logs/roadmap/production-forecast-probe-01/`; runner and independent verifier live in `logs/roadmap/`. Report SHA256 `eac735dd377a3308e962bebe8dcddb19881820bd181e9fd11f56e56499cbf6c0`. Verification receipt binds the report. Full raw control, learned micro, native imitation, Hard wins and higher difficulties remain unachieved.
+
+A separate final check also reconstructs every3,162stored causal feature row exactly
+from the bound source corpus; see`feature-verification.json`.

@@ -3857,3 +3857,12 @@ poorly. Bothnumericalsolves verify, so this result is not an iteration-limit art
 No promotion or extension. Next use one fixed nonlinear current-state diagnostic
 to test resource/count threshold interactions before choosing controller work.
 See [evidence and limits](superpowers/plans/2026-10-06-production-forecast-probe-results.md).
+
+### October6: nonlinear production diagnostic completed
+
+One fixed CPU tree model/refit finishes46.74seconds, peakwholeCPU9.5%, noRL.
+Developmentclass-average recall12.01→26.34%, nonworker15.86→20.26%; Barracks0→5/13.
+Marine38→11/217; overallaccuracy35.95% stilltrailsworkermajority37.47%.
+Balancedclassweights andmodelbothchange, so noisolatednonlinearityclaim.
+No promotion/sweep. Next audit additional localprofessionaldata and sensorycoverage
+before anotherfullcontrollerfit. See[results](superpowers/plans/2026-10-06-production-threshold-probe-results.md).
