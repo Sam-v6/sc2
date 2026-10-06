@@ -3630,3 +3630,21 @@ comparison/telemetry; no success or failure gate is available yet.
 
 - Frozen paired contract SHA256`331cf3086562300d0efdf02507f0ab6e2d4e99aa618285adce63c56d3fe9ee88`.
 - Prepared verifier SHA256`4bc6758357b5af33d7c70d8ef36ee6c5d091f1478224a3a61029b995347c7c18`.
+
+### October6: opt-in native stepping during learned waits
+
+Native execution accepts `--max-game-step` (default1) to cap advancement at
+the model's next scheduled decision; due/unissued retries stay1loop. Recorded
+selected-step counts are explicit. Review and376normal/26focused optional
+tests pass. One cap32opening smoke reduces callbacks336to14while exactly
+matching11command loops/arguments/delays/results and final own state of the
+retained15second cap1opener. Independent model/history reproduction passes;
+replay saved. This is a limited wiring/performance observation, not general
+fog-memory/strength equivalence, and the one-loop default stays unchanged. See
+[verified limits](superpowers/plans/2026-10-06-adaptive-imitation-stepping.md).
+
+Paired imitation handle28403 remains live: baseline completes30epochs, held
+macro27/262(10.3%),31/1113complete commands; own-history macro10/262(3.8%).
+These are provisional until the full comparison independently verifies. The
+type-status arm has started (2027437parameters), with no final result yet. No
+frozen fitting source/plan/input binding has changed during native optimization.

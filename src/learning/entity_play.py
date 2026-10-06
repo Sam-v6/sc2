@@ -23,6 +23,10 @@ from src.runner import positive, validate_map
 from src.runtime import supervise
 
 
+def decision_step(current_loop, next_loop, maximum):
+    return min(maximum, max(1, next_loop - current_loop))
+
+
 def load_policy(path, controller="joint"):
     if controller == "joint":
         return JointEntityPolicy.load(path)
@@ -71,6 +75,7 @@ class JointImitationBot(BotAI):
         self.action_results = {}
         self.callback_error = None
         self.last_score = None
+        self.scheduled_step_counts = {}
 
     async def on_start(self):
         self.client.game_step = 1
@@ -95,6 +100,15 @@ class JointImitationBot(BotAI):
             self.policy, vocabulary, construction_products(static["game_data"]), terrain
         )
 
+    def schedule_step(self):
+        step = decision_step(
+            self.last_loop, self.agent.next_loop, self.job.get("max_game_step", 1)
+        )
+        self.client.game_step = step
+        self.scheduled_step_counts[str(step)] = (
+            self.scheduled_step_counts.get(str(step), 0) + 1
+        )
+
     async def on_step(self, iteration):
         try:
             packet = self.state.response_observation
@@ -106,6 +120,7 @@ class JointImitationBot(BotAI):
             feature_state = dict(state, recent_commands=list(self.agent.history))
             command, delay = self.agent.decide(feature_state)
             if command is None:
+                self.schedule_step()
                 return
             available = (
                 await self.client._execute(query=ability_query(command.units))
@@ -123,6 +138,7 @@ class JointImitationBot(BotAI):
                 # unissued intention must not enter its command history.
                 result = pb.ResponseAction()
                 self.availability_blocks += 1
+            self.schedule_step()
             for code in result.result:
                 self.action_results[str(code)] = (
                     self.action_results.get(str(code), 0) + 1
@@ -217,7 +233,9 @@ def play_joint_job(job):
         controller="goal_first_imitation"
         if job.get("controller") == "goal-first"
         else "joint_imitation",
-        step=1,
+        step=1 if job.get("max_game_step", 1) == 1 else "adaptive",
+        max_game_step=job.get("max_game_step", 1),
+        scheduled_step_counts=bot.scheduled_step_counts,
         training=False,
         scope="Single frozen checkpoint episode; no acceptance or RL claim",
     )
@@ -245,6 +263,12 @@ def main():
         action="store_true",
         help="Retry model decisions next loop while selected unit commands are unavailable",
     )
+    parser.add_argument(
+        "--max-game-step",
+        type=positive,
+        default=1,
+        help="Cap observation steps during model-chosen waits; default observes every loop",
+    )
     parser.add_argument("--seed", type=int, default=120001)
     parser.add_argument("--seconds", type=positive, default=600)
     parser.add_argument("--wall-seconds", type=positive, default=120)
@@ -255,6 +279,7 @@ def main():
         parser.error("Use a fresh episode directory")
     job = dict(
         controller=args.controller,
+        max_game_step=args.max_game_step,
         policy=str(args.policy.resolve()),
         output=str(args.output.resolve()),
         map=args.map,

@@ -138,3 +138,14 @@ class EntityAvailabilityTests(unittest.TestCase):
                 Command(39, (11,), autocast=True), query.ResponseQuery(), {}
             )
         )
+
+
+class DecisionStepTests(unittest.TestCase):
+    def test_step_cap_never_passes_scheduled_decision_and_due_retries_one(self):
+        from src.learning.entity_play import decision_step
+
+        self.assertEqual(decision_step(10, 18, 32), 8)
+        self.assertEqual(decision_step(10, 18, 4), 4)
+        self.assertEqual(decision_step(10, 18, 1), 1)
+        self.assertEqual(decision_step(18, 18, 32), 1)
+        self.assertEqual(decision_step(19, 18, 32), 1)
