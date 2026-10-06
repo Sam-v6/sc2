@@ -1356,3 +1356,53 @@ predicting each current row. No blocking defect is found. Exact actor/target
 copying is a stricter metric than strategically equivalent behavior; these scores
 are fidelity measurements, not game-outcome measurements or an acceptance gate
 for Hard opponents. The reserved validation replay remains untouched by models.
+
+### Isolating complete-command failures during human imitation
+
+RL remains held. `command-stage-diagnosis-rom-01/` repeats the frozen command
+pipeline on the same 180 Rom commands, then supplies the correct teacher ability,
+and finally supplies both the correct ability and selected units. These teacher
+fields are deliberate diagnostic interventions, not learned decisions. Every joint
+prediction exactly reproduces the previous full-command audit using capture04's
+stronger state-aligned native availability masks.
+
+| Supplied teacher fields | Original prefix argument model: complete hits | Existing full-five-game argument model: complete hits |
+| --- | --- | --- |
+| None | 2/180 | 3/180 |
+| Ability | 22/180 | 24/180 |
+| Ability and selected units | 33/180 | 40/180 |
+
+The second column of models is measured in
+`command-stage-diagnosis-rom-fullargs-01/`; it changes only the argument checkpoint,
+keeping macro and actor checkpoints fixed. That checkpoint already exists and
+was trained on 1,999 commands from five complete Mez games, with the same macro
+checkpoint hash. No new fitting occurs. Different earlier training duration/data
+means this comparison does not isolate a single training-method effect.
+
+There are 105 commands with an actual point target and 37 with an actual unit
+target. Even with correct ability and actors, the original model hits 0/105 point
+targets within two tiles and 3/37 unit tags; the full-game argument model hits
+1/105 and 1/37. Mean point error when a point is actually predicted is 51.04 tiles
+for the original model (91 predictions) and 55.72 tiles for the full-game model
+(100 predictions). Missing/wrong-mode points are failures, not included in those
+conditional means. These counts exclude shared null targets and expose poor
+spatial transfer independently of ability and membership mistakes. One teacher
+ability is unavailable in the native prestate mask; the ability-and-group oracle
+intentionally bypasses that restriction and must not be read as executable play.
+
+`command-label-roundtrip-rom-01/` passes teacher labels, ability and actors through
+the same base-relative, canonical-sign coordinate path and live command decoder.
+All 180 commands reconstruct correctly, all 37 unit targets are present in current
+entities, and maximum point-coordinate error is zero. This uses synthetic ability
+availability and does not prove native legality or placement. It rules out a
+label/decoder representability failure on this particular game; it does not rule
+out other games' label errors or prove adequate sensory information.
+
+All three reports bind their scripts, checkpoints, datasets and learning source
+files before and after; `command-stage-diagnosis-integrity-01.json` recomputes every
+reported field/count and verifies all bindings against disk. These are local
+checks, not an independent model-quality review. The next representation/data
+change must address target prediction as well as action and actor choice and be
+measured on complete commands, rather than promoting an isolated head score.
+Rom remains reused diagnostic/candidate teaching data. Reserved 51886 is unused;
+no live game, model update, RL, or promotion occurs in these checks.
