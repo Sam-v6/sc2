@@ -253,6 +253,11 @@ def main():
         help="Summarize observed own/enemy/neutral and remembered entities separately",
     )
     parser.add_argument("--hidden", type=int, default=32)
+    parser.add_argument(
+        "--actor-relative-points",
+        action="store_true",
+        help="Learn a candidate-to-selected-actor geometric point-score residual",
+    )
     parser.add_argument("--rate", type=float, default=0.001)
     parser.add_argument("--seed", type=int, default=7000)
     parser.add_argument("--wall-seconds", type=float, required=True)
@@ -309,6 +314,7 @@ def main():
         spatial=args.spatial,
         missing_fields=args.missing_fields,
         role_pooling=args.role_pooling,
+        actor_relative_points=args.actor_relative_points,
         seed=args.seed,
         wall_seconds=args.wall_seconds,
         delays=DELAYS,
@@ -354,6 +360,7 @@ def main():
         spatial_features=fitting[0][0]["point_features"].shape[1]
         if args.spatial
         else 2,
+        actor_relative_points=args.actor_relative_points,
     )
     optimizer = Adam(policy, args.rate)
     rng = np.random.default_rng(args.seed + 2)

@@ -38,7 +38,9 @@ class JointEntityPolicy:
         spatial_features=2,
         actor_count=False,
         missing_fields=False,
+        actor_relative_points=False,
     ):
+        self.actor_relative_points = actor_relative_points
         self.missing_fields = missing_fields
         if missing_fields and (
             encoder.parameters["entity"].shape[0] != 188
@@ -89,6 +91,10 @@ class JointEntityPolicy:
             self.heads["point_input"][:2] = coordinates
             self.heads["point_bias"] = np.zeros(hidden, np.float32)
             self.heads["spatial_context"] = np.zeros((hidden, hidden), np.float32)
+
+        if actor_relative_points:
+            # A zero residual preserves every existing initialization and score.
+            self.heads["point_relative"] = np.zeros((4, hidden), np.float32)
 
     @property
     def parameters(self):
@@ -150,6 +156,12 @@ class JointEntityPolicy:
             "point": points @ (arguments @ p["point_query"]),
             "offset": np.tanh(arguments @ p["offset"] + p["offset_bias"]),
         }
+        relative = None
+        if self.actor_relative_points:
+            centroid = np.asarray(inputs["entity_positions"])[list(actors)].mean(axis=0)
+            displacement = (np.asarray(inputs["world_points"]) - centroid) / 32
+            relative = np.concatenate((displacement, displacement**2), axis=1)
+            output["point"] += relative @ p["point_relative"] @ arguments
         cell_coordinate = None
         if self.refinement and len(points):
             cell = int(np.argmax(output["point"])) if point is None else point
@@ -177,6 +189,7 @@ class JointEntityPolicy:
             point_inputs=point_inputs,
             cell_coordinate=cell_coordinate,
             count_log=count_log,
+            point_relative=relative,
         )
         return output, cache
 
@@ -292,6 +305,12 @@ class JointEntityPolicy:
             if name == "target":
                 entity_gradient += candidate_gradient
             else:
+                if self.actor_relative_points:
+                    relative_delta = c["point_relative"].T @ delta
+                    gradients["point_relative"] = np.outer(
+                        relative_delta, c["arguments"]
+                    )
+                    argument_gradient += relative_delta @ p["point_relative"]
                 point_delta = candidate_gradient * (1 - c["points"] ** 2)
                 gradients["point_input"] = c["point_inputs"].T @ point_delta
                 if self.spatial_features > 2:
@@ -353,6 +372,7 @@ class JointEntityPolicy:
             spatial_features=self.spatial_features,
             missing_fields=self.missing_fields,
             role_pooling=self.encoder.role_pooling,
+            actor_relative_points=self.actor_relative_points,
         )
         np.savez_compressed(
             path, **self.parameters, configuration=json.dumps(configuration)
@@ -375,6 +395,7 @@ class JointEntityPolicy:
                 actor_count=configuration.get("actor_count", False),
                 spatial_features=configuration.get("spatial_features", 2),
                 missing_fields=configuration.get("missing_fields", False),
+                actor_relative_points=configuration.get("actor_relative_points", False),
             )
             for name, parameter in policy.parameters.items():
                 if archive[name].shape != parameter.shape:

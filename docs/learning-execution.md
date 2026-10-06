@@ -2623,3 +2623,28 @@ within the user's explicit conditional authorization. Harstem remains a reused
 diagnostic; reserved51483/51886 remain untouched. Human imitation must establish
 competent play before RL resumes. Micro transfer, reliable all-race Hard wins
 and higher-difficulty evaluation remain open.
+
+Astra's focused diagnosis finds no concrete gradient defect, but a missing
+explicit candidate-to-selected-actor relation and severe two-game data scarcity.
+283/292diagnostic commands use abilities already present in teaching; novelty
+alone cannot explain the failures. An opt-in --actor-relative-points residual
+now learns from dx/dy and squared displacements from the selected group centroid,
+scaled by32world tiles. Every map candidate remains. The shared argument encoder
+receives its loss gradients; ordinary inference supplies its own predicted actors.
+It starts at zero without changing RNG draws or initial default scores, and
+checkpoints preserve the flag. Five tests cover gradients, translation of the
+residual, entity/candidate permutation, zero/default parity, empty candidates and
+checkpoint persistence. Full303tests pass; independent review finds no blocker.
+
+One predeclared human-only fit04 completes50epochs/3750updates in84.50seconds.
+Terminal source/code/checkpoint validation succeeds. Complete copying459/1190
+teaching and11/292diagnostic fails the required24diagnostic matches. Scoring the
+point head on every gold point command, including mode mistakes, finds a useful
+limited mechanism: true-ability/actor mean error56.13to33.64tiles(40.1%lower),
+p95126.17to116.50,within-two-tiles1to4. Ordinary mean worsens68.13to72.13;
+wrong actor/ability choices still dominate. The overall gate fails; this model
+is not promoted and RL stays stopped. Next acquire a bounded, more diverse
+professional teaching corpus instead of continuing architecture/optimizer sweeps.
+The optional residual remains available for future frozen comparisons.
+See `superpowers/plans/2026-10-06-actor-relative-points.md` for thresholds and
+receipts. No native match, reserved-game evaluation or large download occurred.

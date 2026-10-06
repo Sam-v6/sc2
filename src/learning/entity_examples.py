@@ -195,6 +195,9 @@ def state_inputs(
             np.asarray(roles, np.float32).reshape(len(history), 9),
         ),
         tags=tags,
+        entity_positions=np.asarray(
+            [u["position"][:2] for u in units], np.float32
+        ).reshape(len(units), 2),
         actor_mask=np.array(actor_mask, bool),
         target_mask=np.array(target_mask, bool),
         points=world_points / size,
