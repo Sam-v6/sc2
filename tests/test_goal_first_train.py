@@ -219,6 +219,187 @@ class GoalFirstTrainTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             retained_history_examples(examples, rows[:-1], (8, 12, 0), {})
 
+    def test_mixed_history_endpoints_seed_and_causality(self):
+        from src.learning.goal_first_train import (
+            mixed_history_examples,
+            prediction_history_examples,
+            retained_history_examples,
+        )
+        from src.learning.entity_examples import state_inputs
+        from src.learning.gameplay import Command
+        from tests.test_entity_examples import EntityExamplesTests
+
+        fixture = EntityExamplesTests()
+        fixture.setUp()
+        examples, rows = [], []
+        for index in range(40):
+            state = json.loads(json.dumps(fixture.state))
+            state["game_loop"] = 100 + index
+            command = Command(3, (fixture.tag,))
+            examples.append(
+                (
+                    state_inputs(state, 8, 12, missing_fields=True),
+                    None,
+                    command,
+                    "excluded",
+                )
+            )
+            rows.append(
+                (dict(action_loop=100 + index, commands=[command.as_dict()]), state)
+            )
+
+        class Predictor:
+            def predict(self, x):
+                return dict(
+                    ability=4,
+                    actors=(x["tags"].index(25),),
+                    mode=0,
+                    queue=False,
+                    delay=1,
+                )
+
+        args = (Predictor(), examples, rows, (8, 12, 0), {})
+        gold = retained_history_examples(*args[1:])
+        own = prediction_history_examples(*args)[0]
+        for probability, expected in ((1, gold), (0, own)):
+            actual = mixed_history_examples(
+                *args, human_probability=probability, seed=31
+            )
+            for a, b in zip(actual, expected, strict=True):
+                for x, y in zip(a[0]["encoder"], b[0]["encoder"], strict=True):
+                    np.testing.assert_array_equal(x, y)
+                self.assertEqual(a[1:], b[1:])
+        mixed = mixed_history_examples(*args, human_probability=0.5, seed=31)
+        again = mixed_history_examples(*args, human_probability=0.5, seed=31)
+        self.assertEqual(len(mixed[0][0]["encoder"][4]), 0)
+        self.assertEqual(len(mixed[-1][0]["encoder"][4]), 32)
+        self.assertEqual(set(mixed[-1][0]["encoder"][4]), {3, 4})
+        for a, b in zip(mixed, again, strict=True):
+            for x, y in zip(a[0]["encoder"], b[0]["encoder"], strict=True):
+                np.testing.assert_array_equal(x, y)
+        changed_examples, changed_rows = list(examples), list(rows)
+        command = Command(7, (25,))
+        changed_examples[-1] = (*examples[-1][:2], command, "excluded")
+        changed_rows[-1] = (
+            dict(action_loop=139, commands=[command.as_dict()]),
+            rows[-1][1],
+        )
+        changed = mixed_history_examples(
+            Predictor(),
+            changed_examples,
+            changed_rows,
+            (8, 12, 0),
+            {},
+            human_probability=0.5,
+            seed=31,
+        )
+        for a, b in zip(mixed, changed, strict=True):
+            for x, y in zip(a[0]["encoder"], b[0]["encoder"], strict=True):
+                np.testing.assert_array_equal(x, y)
+        with self.assertRaises(ValueError):
+            mixed_history_examples(*args, human_probability=-0.1, seed=31)
+        with self.assertRaises(TimeoutError):
+            mixed_history_examples(*args, human_probability=0.5, seed=31, deadline=0)
+
+    def test_fit_refreshes_under_no_grad_and_preserves_optimizer(self):
+        import torch
+
+        calls = []
+
+        def refresh(policy, epoch, deadline):
+            self.assertFalse(policy.training)
+            self.assertFalse(torch.is_grad_enabled())
+            self.assertGreater(deadline, 0)
+            calls.append(epoch)
+            return self.examples
+
+        with patch(
+            "src.learning.goal_first_train.torch.optim.Adam", wraps=torch.optim.Adam
+        ) as optimizer:
+            report = self.fit(
+                self.policy,
+                self.examples,
+                epochs=3,
+                batch_size=1,
+                rate=0.01,
+                seconds=2,
+                seed=3,
+                refresh_examples=refresh,
+            )
+        self.assertEqual(calls, [0, 1, 2])
+        self.assertEqual(optimizer.call_count, 1)
+        self.assertEqual(report["updates"], 3)
+        calls.clear()
+        report = self.fit(
+            self.policy,
+            self.examples,
+            epochs=3,
+            batch_size=1,
+            rate=0.01,
+            seconds=1e-12,
+            seed=3,
+            refresh_examples=refresh,
+        )
+        self.assertEqual(calls, [])
+        self.assertEqual(report["updates"], 0)
+        with self.assertRaises(ValueError):
+            self.fit(
+                self.policy,
+                self.examples,
+                epochs=1,
+                batch_size=1,
+                rate=0.01,
+                seconds=2,
+                seed=3,
+                refresh_examples=lambda p, e, d: self.examples * 2,
+            )
+
+    def test_refresh_expiry_does_not_update_parameters(self):
+        weights = {
+            k: v.detach().numpy().copy() for k, v in self.policy.state_dict().items()
+        }
+        ticks = iter((0.0, 0.0, 2.0))
+        with patch(
+            "src.learning.goal_first_train.time",
+            SimpleNamespace(monotonic=lambda: next(ticks, 2.0)),
+        ):
+            report = self.fit(
+                self.policy,
+                self.examples,
+                epochs=1,
+                batch_size=1,
+                rate=0.01,
+                seconds=1,
+                seed=3,
+                refresh_examples=lambda p, e, d: self.examples,
+            )
+        self.assertEqual(report["updates"], 0)
+        for key, value in self.policy.state_dict().items():
+            np.testing.assert_array_equal(weights[key], value.detach().numpy())
+
+    def test_refresh_cooperative_timeout_stops_without_update(self):
+        weights = {
+            k: v.detach().numpy().copy() for k, v in self.policy.state_dict().items()
+        }
+
+        def refresh(policy, epoch, deadline):
+            raise TimeoutError("History generation reached its deadline")
+
+        report = self.fit(
+            self.policy,
+            self.examples,
+            epochs=1,
+            batch_size=1,
+            rate=0.01,
+            seconds=1,
+            seed=3,
+            refresh_examples=refresh,
+        )
+        self.assertEqual(report["status"], "wall_bound")
+        self.assertEqual(report["updates"], 0)
+        for key, value in self.policy.state_dict().items():
+            np.testing.assert_array_equal(weights[key], value.detach().numpy())
+
     def test_final_example_crossing_deadline_is_discarded(self):
         weights = {
             k: v.detach().numpy().copy() for k, v in self.policy.state_dict().items()

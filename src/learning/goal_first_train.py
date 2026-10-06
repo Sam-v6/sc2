@@ -43,7 +43,13 @@ def teaching_support(policy, examples):
     return support
 
 
-def fit_goal_first(policy, examples, *, epochs, batch_size, rate, seconds, seed):
+def fit_goal_first(
+    policy, examples, *, epochs, batch_size, rate, seconds, seed, refresh_examples=None
+):
+    """Fit human targets; optional provider(policy, epoch, deadline) rebuilds inputs.
+
+    Providers must check the monotonic deadline and raise TimeoutError on expiry.
+    """
     if not examples or min(epochs, batch_size, rate, seconds) <= 0:
         raise ValueError("Choose a bounded supervised fit with teaching examples")
     if any(p.device.type != "cpu" for p in policy.parameters()):
@@ -54,8 +60,25 @@ def fit_goal_first(policy, examples, *, epochs, batch_size, rate, seconds, seed)
     updates = presentations = completed = 0
     history = []
     status = "completed"
+    example_count = len(examples)
     policy.train()
     for epoch in range(epochs):
+        if refresh_examples is not None:
+            if time.monotonic() - started >= seconds:
+                status = "wall_bound"
+                break
+            policy.eval()
+            try:
+                with torch.no_grad():
+                    examples = refresh_examples(policy, epoch, started + seconds)
+            except TimeoutError:
+                status = "wall_bound"
+                break
+            if len(examples) != example_count:
+                raise ValueError(
+                    "Refreshing history must preserve teaching sample count"
+                )
+            policy.train()
         order = rng.permutation(len(examples))
         totals = Counter()
         seen = 0
@@ -190,17 +213,73 @@ def prediction_history_examples(policy, examples, rows, vocabulary, products):
     Rebuild both event embeddings and entity references, removing human history.
     Commands are hypothetical, not engine-executed; this is not a native rollout.
     """
+    return _mixed_history_examples(
+        policy, examples, rows, vocabulary, products, human_probability=0, seed=0
+    )
+
+
+def mixed_history_examples(
+    policy,
+    examples,
+    rows,
+    vocabulary,
+    products,
+    *,
+    human_probability,
+    seed,
+    deadline=None,
+):
+    """Supervised inputs with causal human or hypothetical predicted history.
+
+    Labels/world states stay human. Choose which command to remember only after
+    constructing the current input; this does not execute commands in SC2.
+    A supplied monotonic deadline is checked before each row.
+    """
+    return _mixed_history_examples(
+        policy,
+        examples,
+        rows,
+        vocabulary,
+        products,
+        human_probability=human_probability,
+        seed=seed,
+        deadline=deadline,
+    )[0]
+
+
+def _mixed_history_examples(
+    policy,
+    examples,
+    rows,
+    vocabulary,
+    products,
+    *,
+    human_probability,
+    seed,
+    deadline=None,
+):
+    if not 0 <= human_probability <= 1:
+        raise ValueError("Human history probability must be between zero and one")
+    rng = np.random.default_rng(seed)
     history, rebuilt, records = [], [], []
     for index, (original, label, command, exclusion), row, observed in _history_rows(
         examples, rows
     ):
+        if deadline is not None and time.monotonic() >= deadline:
+            raise TimeoutError("History generation reached its deadline")
         inputs = _history_inputs(original, row, observed, history, vocabulary, products)
         prediction = policy.predict(inputs)
         records.append(
             dict(row=index, prior_prediction_events=len(history), prediction=prediction)
         )
         rebuilt.append((inputs, label, command, exclusion))
-        if prediction is not None:
+        if rng.random() < human_probability:
+            remembered = dict(
+                remember_command(command.as_dict(), observed, row["action_loop"]),
+                verified=True,
+            )
+            history = [*history, remembered][-32:]
+        elif prediction is not None:
             actual = decode_command(prediction, inputs)
             remembered = dict(
                 actual.as_dict(), game_loop=row["action_loop"], verified=True

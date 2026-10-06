@@ -3437,3 +3437,51 @@ Output `professional-retained-history-01/`, telemetry
 existing installed runtime,100epochs/1800optimizer seconds,80%host guard.
 Poll the same handle; no second concurrent fit/native/RL. Results and independent
 terminal verification are pending. A failure ends this trial without extension.
+
+The retained-history trial is now terminal exit0; independent verification
+handle19231 also exits0 and records `verified_completed_failure`. All4805
+ordinary predictions, audits and hypothetical own-history traces reproduce;
+all fourteen gates are independently recomputed. Teaching complete commands
+are1282/4513 with human history and80/4513 with predicted history. Diagnostic
+complete commands are8/292 and1/292; diagnostic macro ability is5/91 with human
+history and0/91 with predicted history. The overall gates fail. Representation
+alignment alone has not solved copying or compounding prediction failures.
+100epochs/28200updates/451000presentations take1497optimizer seconds; whole-host
+CPU peaks14.4%, below the80%guard. No extension, promotion, native games or RL.
+ComparisonSHA256`1d5cc9e53166abcca4a4b63bd983b7034c579bd4d73f89618dc91d0e255df9ac`;
+finaltelemetrySHA256`7a000395d2489ad05af61c54ccfecca48306a06bd6ec7d199566d3cb12d2808d`;
+checkpointSHA256`d0cf4326d813d5d17ab250f4d46023379bd4445edb92e31ff2d7c0a1b1cc0a58`.
+
+The user clarified that the current stage should train on human runs. This
+matches the roadmap: current targets come from human replay commands, and RL
+remains stopped. Evaluating past model predictions on unchanged human replay
+states is offline imitation evaluation, not reward-driven training or evidence
+of actual game competence. The next intervention must address useful human
+imitation before proceeding to the roadmap's later experimentation stage.
+
+Read-only retained-history ablation handle60654 exits0 in18.72seconds. On
+teaching294completecommands are124with32past human commands,47with8,25with1,
+10with none. Reused774completecommands are8,11,8,3 respectively. No weights
+change and no games run. Removing history does not rescue copying; this does
+not isolate history as the sole cause. Artifact `history-ablation.json` SHA256
+`72a268fa24d8e3ebacaa0fb7a06b9a77c0d92ef2f129ee9e187baf1a353d2a10`.
+
+Mixed-history imitation is implemented: human next-command labels remain fixed,
+but causal past history can remember the model's hypothetical command. Seeded
+probabilities0/1 reproduce own/human history; tests cover resets,32events,
+excluded labels and current-command mutation. Trainer refresh occurs under
+eval/no-grad, retains one optimizer and teaching count. Review caught a refresh
+overrun; a cooperative monotonic deadline now stops generation per row and ends
+fitting without updates. Fourteen optional tests pass1.19seconds. Default364
+tests pass10.09seconds with20optional skips after an isolated9runtime-test pass
+and rerun for one descendant-cleanup timing failure; runtime code unchanged.
+Ruff/diff checks pass. Independent implementation/fix reviews find no remaining
+blocker. No fit, native games or RL launched by this implementation change.
+The next single supervised trial's schedule/bounds/gates are declared in
+`docs/superpowers/plans/2026-10-06-mixed-history-imitation.md`.
+
+Final deadline-enabled professional294parity handle17848 exits0: all467own
+history trace records reproduce the saved parent records and both probability
+endpoints reproduce saved ordinary predictions. Receipt
+`professional-mixed-history-01.deadline-parity.json` binds current helperSHA256
+`59405eb075c9141c2b5a5bd05689633fcfc4090ca6826ad07b06a8462f75023c`.

@@ -48,8 +48,13 @@ history = [*history, remembered][-32:]
 
 **Files:** Ignored run/watch/check helpers under `logs/roadmap/`; execution ledger.
 
-- [ ] Same controller,9teaching games/774reused diagnostic and command labels. Fresh single fit/output/hashes; no architecture/loss/sampling sweep.
-- [ ] Retain all eight copying gates. Additionally require own-history teaching complete>=1000/4513 and own-history diagnostic ability>=170/292,actors>=73/292,target>=62/292,complete>=24/292,macro ability>=20/91. Human-state reconstruction alone cannot promote native policy.
-- [ ] Bind retained-history teaching, code/runtime/support/baseline/source hashes;100epochs/1800optimizer seconds, Adam.001/batch16/modelseed8140/shuffle8142/two CPU threads/80%host guard.
-- [ ] Evaluate all exact fields/timing/families, independently reproduce predictions and compare retained-gold vs predicted history. Reserved games untouched.
-- [ ] Failure ends without extension/native/RL. Any later intervention follows verified evidence; the roadmap still requires learned micro transfer, reliable all-race Hard wins and higher evaluation.
+- [x] Same controller,9teaching games/774reused diagnostic and command labels. Fresh single fit/output/hashes; no architecture/loss/sampling sweep.
+- [x] Retain all eight copying gates. Additionally require own-history teaching complete>=1000/4513 and own-history diagnostic ability>=170/292,actors>=73/292,target>=62/292,complete>=24/292,macro ability>=20/91. Human-state reconstruction alone cannot promote native policy.
+- [x] Bind retained-history teaching, code/runtime/support/baseline/source hashes;100epochs/1800optimizer seconds, Adam.001/batch16/modelseed8140/shuffle8142/two CPU threads/80%host guard.
+- [x] Evaluate all exact fields/timing/families, independently reproduce predictions and compare retained-gold vs predicted history. Reserved games untouched.
+- [x] Failure ends without extension/native/RL. Any later intervention follows verified evidence; the roadmap still requires learned micro transfer, reliable all-race Hard wins and higher evaluation.
+
+Terminal outcome: independently verified failure. Teaching complete commands
+1282/4513 with human history,80/4513 with predicted history; reused diagnostic
+8/292 and1/292 respectively. Matching the history representation alone did
+not meet the gates. This trial is closed; no extension or promotion.
