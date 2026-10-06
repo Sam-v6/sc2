@@ -63,3 +63,14 @@ class EntitySpatialTests(unittest.TestCase):
         self.assertGreater(np.linalg.norm(second - first), 0)
         np.testing.assert_array_equal(second[:, :2], first[:, :2])
         np.testing.assert_array_equal(second[:, 322:], first[:, 322:])
+
+    def test_compact_inputs_attach_spatial_patches_without_changing_targets(self):
+        from src.learning.entity_examples import state_inputs
+
+        state = dict(self.state, game_loop=1, player={}, units=[])
+        inputs = state_inputs(state, 8, 12, terrain=self.terrain)
+        self.assertEqual(inputs["point_features"].shape, (2, 386))
+        np.testing.assert_array_equal(inputs["world_points"], self.points)
+        np.testing.assert_array_equal(inputs["point_radii"], self.radii)
+        legacy = state_inputs(state, 8, 12)
+        self.assertNotIn("point_features", legacy)

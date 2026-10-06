@@ -28,10 +28,19 @@ def categorical_loss(logits, label, mask=None):
 
 
 class JointEntityPolicy:
-    def __init__(self, encoder, delays, seed=0, refinement=False, actor_cutoff=False):
+    def __init__(
+        self,
+        encoder,
+        delays,
+        seed=0,
+        refinement=False,
+        actor_cutoff=False,
+        spatial_features=2,
+    ):
         self.encoder, self.delays = encoder, tuple(delays)
         self.refinement = refinement
         self.actor_cutoff = actor_cutoff
+        self.spatial_features = spatial_features
         hidden = encoder.parameters["entity"].shape[1]
         abilities = len(encoder.parameters["abilities"])
         rng = np.random.default_rng(seed)
@@ -60,6 +69,13 @@ class JointEntityPolicy:
         if actor_cutoff:
             self.heads["actor_cutoff"] = np.zeros(hidden, np.float32)
 
+        if spatial_features > 2:
+            coordinates = self.heads["point_input"]
+            self.heads["point_input"] = np.zeros((spatial_features, hidden), np.float32)
+            self.heads["point_input"][:2] = coordinates
+            self.heads["point_bias"] = np.zeros(hidden, np.float32)
+            self.heads["spatial_context"] = np.zeros((hidden, hidden), np.float32)
+
     @property
     def parameters(self):
         return {
@@ -70,6 +86,15 @@ class JointEntityPolicy:
     def _forward(self, inputs, ability=None, actors=None, point=None):
         p = self.heads
         context, entities, encoder_cache = self.encoder.forward(*inputs["encoder"])
+        point_inputs = np.asarray(
+            inputs["point_features"] if self.spatial_features > 2 else inputs["points"]
+        )
+        points = np.tanh(
+            point_inputs @ p["point_input"]
+            + (p["point_bias"] if self.spatial_features > 2 else 0)
+        )
+        if self.spatial_features > 2:
+            context = context + points.mean(axis=0) @ p["spatial_context"]
         ability_logits = context @ p["ability"] + p["ability_bias"]
         if ability is None:
             ability = int(np.argmax(ability_logits[1:])) + 1
@@ -93,7 +118,6 @@ class JointEntityPolicy:
             raise ValueError("A command needs a nonempty eligible actor group")
         group = entities[list(actors)].mean(axis=0)
         arguments = np.tanh(conditioned + group @ p["group"])
-        points = np.tanh(np.asarray(inputs["points"]) @ p["point_input"])
         output = {
             "ability": ability_logits,
             "actor": actor_logits,
@@ -125,6 +149,7 @@ class JointEntityPolicy:
             group=group,
             arguments=arguments,
             points=points,
+            point_inputs=point_inputs,
             cell_coordinate=cell_coordinate,
         )
         return output, cache
@@ -236,7 +261,9 @@ class JointEntityPolicy:
                 entity_gradient += candidate_gradient
             else:
                 point_delta = candidate_gradient * (1 - c["points"] ** 2)
-                gradients["point_input"] = np.asarray(inputs["points"]).T @ point_delta
+                gradients["point_input"] = c["point_inputs"].T @ point_delta
+                if self.spatial_features > 2:
+                    gradients["point_bias"] = point_delta.sum(axis=0)
                 error = scores["offset"] - np.asarray(label["offset"])
                 radii = (
                     np.asarray(inputs["point_radii"])[label["point"]]
@@ -260,6 +287,15 @@ class JointEntityPolicy:
         conditioned_gradient += argument_delta
         conditioned_delta = conditioned_gradient * (1 - c["conditioned"] ** 2)
         context_gradient += conditioned_delta
+        if self.spatial_features > 2:
+            gradients["spatial_context"] = np.outer(
+                c["points"].mean(axis=0), context_gradient
+            )
+            spatial_delta = (
+                (context_gradient @ p["spatial_context"].T) / len(c["points"])
+            ) * (1 - c["points"] ** 2)
+            gradients["point_input"] += c["point_inputs"].T @ spatial_delta
+            gradients["point_bias"] += spatial_delta.sum(axis=0)
         encoder_gradients = self.encoder.backward(
             c["encoder"], context_gradient, entity_gradient
         )
@@ -281,6 +317,7 @@ class JointEntityPolicy:
             metadata=metadata,
             refinement=self.refinement,
             actor_cutoff=self.actor_cutoff,
+            spatial_features=self.spatial_features,
         )
         np.savez_compressed(
             path, **self.parameters, configuration=json.dumps(configuration)
@@ -298,6 +335,7 @@ class JointEntityPolicy:
                 configuration["delays"],
                 refinement=configuration.get("refinement", False),
                 actor_cutoff=configuration.get("actor_cutoff", False),
+                spatial_features=configuration.get("spatial_features", 2),
             )
             for name, parameter in policy.parameters.items():
                 if archive[name].shape != parameter.shape:

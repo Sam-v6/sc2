@@ -1,5 +1,7 @@
 """Compact causal inputs and reversible labels for human raw commands."""
 
+import json
+
 import numpy as np
 
 from src.learning.actor_selection import worker_construction_features
@@ -7,7 +9,13 @@ from src.learning.gameplay import Command
 
 
 def state_inputs(
-    state, unit_count, ability_count, upgrade_count=0, products=None, cell_size=8
+    state,
+    unit_count,
+    ability_count,
+    upgrade_count=0,
+    products=None,
+    cell_size=8,
+    terrain=None,
 ):
     size = np.asarray(state["map_size"], dtype=float)
     loop = state.get("decision_loop", state["game_loop"])
@@ -167,7 +175,7 @@ def state_inputs(
         radii.append((ends - starts) / 2)
     world_points = np.array([(x, y) for y in axes[1] for x in axes[0]], np.float32)
     point_radii = np.array([(x, y) for y in radii[1] for x in radii[0]], np.float32)
-    return dict(
+    inputs = dict(
         encoder=(
             entity_features,
             np.array(types, int),
@@ -183,6 +191,13 @@ def state_inputs(
         world_points=world_points,
         point_radii=point_radii,
     )
+    if terrain is not None:
+        from src.learning.entity_spatial import spatial_features
+
+        inputs["point_features"] = spatial_features(
+            state, terrain, world_points, point_radii, cell_size
+        )
+    return inputs
 
 
 def command_label(command, inputs, delays, delay):
@@ -248,7 +263,13 @@ def decode_command(prediction, inputs):
 
 
 def replay_examples(
-    directory, unit_count, ability_count, upgrade_count, delays, products=None
+    directory,
+    unit_count,
+    ability_count,
+    upgrade_count,
+    delays,
+    products=None,
+    spatial=False,
 ):
     """Keep all burst commands; only the last inherits the next event gap.
 
@@ -258,6 +279,11 @@ def replay_examples(
     """
     from src.learning.teacher_states import teacher_states, remember_command
 
+    terrain = (
+        json.loads((directory / "static.json").read_text())["terrain"]
+        if spatial
+        else None
+    )
     for row, state in teacher_states(directory):
         state = dict(
             state,
@@ -266,7 +292,12 @@ def replay_examples(
         )
         for index, raw in enumerate(row["commands"]):
             inputs = state_inputs(
-                state, unit_count, ability_count, upgrade_count, products
+                state,
+                unit_count,
+                ability_count,
+                upgrade_count,
+                products,
+                terrain=terrain,
             )
             command = Command(
                 **dict(

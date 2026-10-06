@@ -73,7 +73,7 @@ def validate_datasets(train, validation):
     return sources
 
 
-def collect(paths, counts):
+def collect(paths, counts, spatial=False):
     examples, reports = [], []
     for directory in paths:
         static = json.loads((directory / "static.json").read_text())["game_data"]
@@ -89,7 +89,13 @@ def collect(paths, counts):
             raise ValueError("All replay datasets must use the same engine vocabulary")
         start = len(examples)
         examples.extend(
-            replay_examples(directory, *counts, DELAYS, construction_products(static))
+            replay_examples(
+                directory,
+                *counts,
+                DELAYS,
+                construction_products(static),
+                spatial=spatial,
+            )
         )
         receipt = json.loads((directory / "dataset.json").read_text())
         expected = receipt["issued_command_audit"]["matched_issued_commands"]
@@ -160,6 +166,9 @@ def main():
         action="store_true",
         help="Learn a context-conditioned unit-selection cutoff",
     )
+    parser.add_argument(
+        "--spatial", action="store_true", help="Learn from full-resolution map patches"
+    )
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--hidden", type=int, default=32)
     parser.add_argument("--rate", type=float, default=0.001)
@@ -188,6 +197,9 @@ def main():
         *[
             Path(__file__).with_name(name + ".py")
             for name in (
+                "entity_spatial",
+                "spatial_construction",
+                "global_imitation",
                 "entity_encoder",
                 "entity_examples",
                 "entity_policy",
@@ -209,6 +221,7 @@ def main():
         rate=args.rate,
         refinement=args.refinement,
         actor_cutoff=args.actor_cutoff,
+        spatial=args.spatial,
         seed=args.seed,
         wall_seconds=args.wall_seconds,
         delays=DELAYS,
@@ -221,8 +234,10 @@ def main():
         json.dumps(configuration, indent=2) + "\n"
     )
     start = time.monotonic()
-    teaching, teaching_reports = collect(args.train, counts)
-    validation, validation_reports = collect(args.validation, counts)
+    teaching, teaching_reports = collect(args.train, counts, spatial=args.spatial)
+    validation, validation_reports = collect(
+        args.validation, counts, spatial=args.spatial
+    )
     fitting = [(inputs, label) for inputs, label, _, _ in teaching if label is not None]
     if not fitting:
         raise ValueError("No representable teaching commands")
@@ -241,6 +256,9 @@ def main():
         seed=args.seed + 1,
         refinement=args.refinement,
         actor_cutoff=args.actor_cutoff,
+        spatial_features=fitting[0][0]["point_features"].shape[1]
+        if args.spatial
+        else 2,
     )
     optimizer = Adam(policy, args.rate)
     rng = np.random.default_rng(args.seed + 2)
