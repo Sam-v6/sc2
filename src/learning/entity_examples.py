@@ -17,6 +17,8 @@ def state_inputs(
     cell_size=8,
     terrain=None,
 ):
+    if state.get("unknown_fields"):
+        raise ValueError("Observation requires an explicit missing-field encoder")
     size = np.asarray(state["map_size"], dtype=float)
     loop = state.get("decision_loop", state["game_loop"])
     history = state.get("recent_commands", [])[-32:]

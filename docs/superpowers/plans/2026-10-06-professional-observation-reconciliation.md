@@ -17,7 +17,9 @@ Assumption: public preconverted player observations can be reconciled with origi
 - [ ] Restore original queue flags/point precision only for verified commands. Mask/exclude unavailable observations and unknown action modes explicitly. Recover upgrades from player-visible replay events if feasible.
 - [x] Implement tested bounded tournament wire decoder; independently review it and reproduce all3543converted commands across three real records. Full252tests pass.
 - [x] Locate14player-owned completed upgrades with exact native catalog names; exclude opponent tracker upgrades and retain unknown names.
-- [ ] Build native demonstration importer with command/actor/ability reconciliation, exact-map geometry, causal own upgrades and explicit missing-field masks; verify native inference compatibility. Do not mix partial records silently into existing datasets.
+- [x] Project all3542professional observations through the native fog filter; preserve explicit unknowns and reject partial states in the legacy encoder. Upstream energy/capacity bug is confirmed and current energy masked;256tests pass.
+- [ ] Extend model inputs with explicit missing-field features and source-grid geometry; preserve old checkpoint/native behavior by default.
+- [ ] Build native demonstration importer with command/actor/ability reconciliation, exact-map geometry, causal own upgrades/deaths/history and explicit missing-field masks; verify native inference compatibility. Do not mix partial records silently into existing datasets.
 - [ ] Assemble professional teaching/validation splits by whole game and evaluate imitation before further frozen native tests. Larger corpus downloads require a concrete bounded size decision within user constraints.
 - [ ] Demonstrate competent human imitation before RL; continue full sensory/action coverage, learned micro transfer and the original all-race Hard/higher-difficulty acceptance requirements.
 
