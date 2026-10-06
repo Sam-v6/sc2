@@ -923,3 +923,42 @@ were checked against the corpus contract. Both sides of this replay stay out of
 training. It is now a ninth reconstructed named-human game, not professional
 corpus acceptance or evidence of improved learned performance. All verification
 and reconstruction jobs for this fix are terminal.
+
+### Fixed-epoch matchup coverage comparison
+
+`arguments-matchup-coverage-01/` adds only Mez's 51957 TvT teaching game to the
+original five-game argument fit: 2,325 commands, unchanged base-relative inputs,
+32-hidden architecture, seed 5001, equal-replay weighting and 600 epochs.
+Fitting/evaluation finishes in 25.03 CPU wall seconds. This is fixed epochs,
+not compute-matched: the additional game increases optimizer minibatches.
+Both player views of each evaluation replay remain outside the training split.
+The new 51959 TvZ game is a fresh test; Lyra and Huski remain reused diagnostics.
+
+The declared gate assesses decoded arguments, with the actual human ability and
+actor group supplied equally to both models. It requires exact unit target or
+point within two tiles, correct absence/presence of targets, queue and autocast,
+using native catalog mode restrictions and the same live decoder. It does not
+assess ability choice, actor selection, timing or complete command imitation.
+The gate requires improvement on both TvT diagnostics, no decline on fresh TvZ,
+and no decline in enemy-unit argument fidelity. It **fails**.
+
+All-command argument fidelity changes from 35.38% to 35.09% for Lyra, 25.90% to
+28.52% for Huski and 28.02% to 29.38% for fresh TvZ. Attack fidelity changes from
+0/52 to 0/52, 0/55 to 1/55, and 0/104 to 2/104 respectively. Enemy-unit fidelity
+remains zero on both TvT games and changes from 0/28 to 2/28 on TvZ. Meanwhile,
+mean raw target distance improves from 35.66 to 32.16, 37.22 to 32.18, and 38.48
+to 29.05 tiles. The disagreement between distance and argument fidelity shows
+why location-error improvements alone cannot support imitation competence.
+Target-alliance accuracy also falls on both TvT games. Training error is 4.96
+tiles; the held gap remains substantial even for a new game of the same player.
+
+The independent runtime reviewer verified the oracle decoder comparison and
+identified missing before-fit extracted-artifact/code bindings. A separate
+`integrity-audit.json` binds 41 current files, including teaching data, static
+catalogs, checkpoints and imported source, then exactly reproduces all held
+metrics and decoded comparisons with unchanged before/after hashes and no fit.
+This is post-run evidence; it cannot retrospectively supply missing pre-fit
+hashes. Future experiments must bind actual dataset files and source before use.
+Preserve this failed experiment; no live promotion, longer sweep, RL restart or
+full crossed-player coverage claim follows. Other-player TvP/Z and verified
+professional examples still depend on resolving exact native-engine availability.
