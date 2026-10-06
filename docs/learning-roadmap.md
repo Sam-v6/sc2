@@ -3,6 +3,8 @@
 Agreed direction recorded October 5, 2026. **Execution is active:** the user
 subsequently instructed the agent to complete this roadmap. Current implementation
 and experiment evidence are recorded in [the execution ledger](learning-execution.md).
+A concise [current status and resumption guide](current-learning-status.md) identifies
+the active phase, verified data and remaining requirements.
 The original goal remains reliable wins against computer opponents of
 all races and strategies, starting with Hard and progressing to higher difficulties.
 Bot-ladder competition is a later goal.
