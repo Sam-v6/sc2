@@ -9,14 +9,17 @@ from torch.nn import functional as F
 
 
 class GoalFirstPolicy(nn.Module):
-    def __init__(self, dimensions, delays, hidden=64, seed=8140):
+    def __init__(self, dimensions, delays, hidden=64, seed=8140, type_status=False):
         super().__init__()
         self.dimensions = tuple(dimensions)
         self.delays = tuple(delays)
         self.hidden, self.seed = hidden, seed
+        self.type_status = type_status
         features, scene, roles, types, abilities, points = dimensions
         if features < 6:
             raise ValueError("Ownership pooling requires six entity features")
+        if type_status and features not in (94, 188):
+            raise ValueError("Type status requires native entity field layout")
         with torch.random.fork_rng(devices=[]), torch.device("cpu"):
             torch.manual_seed(seed)
             self.entity = nn.Linear(features, hidden)
@@ -39,6 +42,9 @@ class GoalFirstPolicy(nn.Module):
             self.arguments = nn.Linear(2 * hidden, hidden)
             self.queue = nn.Linear(hidden, 2)
             self.delay = nn.Linear(hidden, len(delays))
+            if type_status:
+                self.status_projection = nn.Linear(types * 10, hidden, bias=False)
+                nn.init.zeros_(self.status_projection.weight)
 
     @property
     def missing_fields(self):
@@ -103,8 +109,15 @@ class GoalFirstPolicy(nn.Module):
                 + self.history_roles(self._tensor(roles))
             )
             temporal = self.history(events[None])[1][0, 0]
+        status = torch.zeros(self.hidden)
+        if self.type_status:
+            from src.learning.entity_type_status import unit_type_status
+
+            status = self.status_projection(
+                self._tensor(unit_type_status(inputs, self.dimensions[3]))
+            )
         context = torch.tanh(
-            self.scene(self._tensor(scene)) + self.pool(pooled) + temporal
+            self.scene(self._tensor(scene)) + self.pool(pooled) + temporal + status
         )
         point_inputs = inputs.get("point_features", inputs["points"])
         points = torch.tanh(self.point(self._tensor(point_inputs)))
@@ -254,6 +267,7 @@ class GoalFirstPolicy(nn.Module):
             hidden=self.hidden,
             seed=self.seed,
             metadata=metadata,
+            type_status=self.type_status,
         )
         arrays = {k: v.detach().numpy() for k, v in self.state_dict().items()}
         if any(not np.isfinite(v).all() for v in arrays.values()):
@@ -264,7 +278,13 @@ class GoalFirstPolicy(nn.Module):
     def load(cls, path):
         with np.load(path, allow_pickle=False) as archive:
             c = json.loads(str(archive["configuration"]))
-            policy = cls(c["dimensions"], c["delays"], c["hidden"], c["seed"])
+            policy = cls(
+                c["dimensions"],
+                c["delays"],
+                c["hidden"],
+                c["seed"],
+                type_status=c.get("type_status", False),
+            )
             values = {k: cls._tensor(archive[k]) for k in policy.state_dict()}
             if any(not torch.isfinite(v).all() for v in values.values()):
                 raise ValueError("Nonfinite goal-first checkpoint")

@@ -3598,3 +3598,24 @@ including unit-type-specific producer status instead of ownership-only means,
 and explicitly test teaching fit plus whole-game generalization. The closed
 linear probe does not prove nonlinear signal absent. RL, micro transfer,
 reliable all-raceHard and higher difficulty gates remain open.
+
+### October6: type-specific status intervention ready
+
+`entity_type_status` preserves current own native-type counts and known
+build/queue/progress/idle/unfinished status, explicitly masking unavailable
+values and keeping memory count-only. GoalFirstPolicy optionally adds a
+zero-initialized learned projection; all existing base initialization and old
+checkpoint predictions are preserved. Its full raw action grammar is unchanged.
+Tests observed missing-interface RED then GREEN:375normal tests pass (24optional
+skips),21focused optional-runtime tests pass, Ruff/diff checks pass. Independent
+implementation and paired-wrapper reviews found no blockers.
+
+Prefit handle47560 is terminal exit0:6teaching games3400rows/3398complete labels,
+3held development games1113rows; source validation, teaching-only support and
+initial base-weight/prediction parity pass with zero optimizer updates. No774or
+reserved inputs/predictions were used. Frozen paired run is prepared under
+`logs/roadmap/run_type_status_imitation_01.py` and matchingwatchwrapper; plan is
+[here](superpowers/plans/2026-10-06-type-status-imitation.md). It has not yet fit at
+this source milestone. The prior diagnostic remains closed. This intervention
+needs actual independently verified comparative results before any strength
+claim or broader native/RL work.

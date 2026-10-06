@@ -121,3 +121,55 @@ class DefaultPolicyLoaderTests(unittest.TestCase):
             self.assertEqual(metadata["phase"], "default_loader")
             inputs = state_inputs(fixture.state, 8, 12)
             self.assertEqual(loaded.predict(inputs), fixture.policy.predict(inputs))
+
+
+@unittest.skipUnless(importlib.util.find_spec("torch"), "optional CPU Torch absent")
+class GoalFirstTypeStatusTests(unittest.TestCase):
+    def test_zero_initialization_gradients_checkpoint_and_native_agent(self):
+        import torch
+        from src.learning.goal_first_policy import GoalFirstPolicy
+        from src.learning.entity_examples import state_inputs, command_label
+        from src.learning.entity_execution import JointCommandAgent
+        from src.learning.gameplay import Command
+        from tests.test_entity_execution import EntityExecutionTests
+
+        fixture = EntityExecutionTests()
+        fixture.setUp()
+        dimensions = (188, 26, 9, 8, 12, 2)
+        baseline = GoalFirstPolicy(dimensions, (0, 1, 8), hidden=4, seed=8156)
+        policy = GoalFirstPolicy(
+            dimensions, (0, 1, 8), hidden=4, seed=8156, type_status=True
+        )
+        for name, value in baseline.state_dict().items():
+            torch.testing.assert_close(value, policy.state_dict()[name], rtol=0, atol=0)
+        inputs = state_inputs(fixture.state, 8, 12, missing_fields=True)
+        self.assertEqual(baseline.predict(inputs), policy.predict(inputs))
+        command = Command(3, (25, fixture.tag), target_point=(4, 3), queue=True)
+        label = command_label(command, inputs, (0, 1, 8), 8)
+        sum(policy.loss(inputs, label).values()).backward()
+        gradient = policy.status_projection.weight.grad
+        self.assertTrue(torch.isfinite(gradient).all())
+        self.assertGreater(float(gradient.abs().sum()), 0)
+        with torch.no_grad():
+            policy.status_projection.weight -= 0.01 * gradient
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "policy.npz"
+            policy.save(path, {"phase": "typed_state_test"})
+            loaded, metadata = GoalFirstPolicy.load(path)
+            self.assertTrue(loaded.type_status)
+            self.assertEqual(policy.predict(inputs), loaded.predict(inputs))
+            self.assertIsNotNone(
+                JointCommandAgent(loaded, (8, 12, 0), {}).decide(fixture.state)[0]
+            )
+            baseline.save(path, {})
+            with np.load(path, allow_pickle=False) as archive:
+                arrays = {name: archive[name] for name in archive.files}
+            import json
+
+            configuration = json.loads(str(arrays["configuration"]))
+            configuration.pop("type_status")
+            arrays["configuration"] = json.dumps(configuration)
+            np.savez(path, **arrays)
+            legacy, _ = GoalFirstPolicy.load(path)
+            self.assertFalse(legacy.type_status)
+            self.assertEqual(baseline.predict(inputs), legacy.predict(inputs))
