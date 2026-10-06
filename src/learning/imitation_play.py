@@ -1,5 +1,7 @@
 """Execute the factorized imitation model through broad raw gameplay controls."""
 
+from src.learning.teacher_states import remember_command
+
 import argparse
 import gzip
 import hashlib
@@ -283,6 +285,9 @@ class ImitationBot(BotAI):
                         canonical=canonical,
                         summarize=self.policy.evidence.get("entity_encoder")
                         == "per_type_spatial_orders",
+                        semantics=self.policy.evidence.get("action_history_encoder")
+                        == "roles_targets_age",
+                        upgrade_count=self.policy.evidence.get("upgrade_count", 0),
                     )
                     output = self.policy.predict(x[None, :])
                     allowed = [0, *sorted(set().union(*abilities.values()))]
@@ -385,8 +390,10 @@ class ImitationBot(BotAI):
                         ]
                         for row, command in zip(decisions, commands):
                             row["command"] = command.as_dict()
-                        self.next_global = state["game_loop"] + int(
-                            DELAYS[output["delay"][0].argmax()]
+                        self.next_global = state["game_loop"] + (
+                            self.job["step"]
+                            if self.job.get("fixed_cadence")
+                            else int(DELAYS[output["delay"][0].argmax()])
                         )
                 else:
                     x = np.stack(
@@ -453,7 +460,8 @@ class ImitationBot(BotAI):
                     self.results[str(code)] = self.results.get(str(code), 0) + 1
                 self.view.record_commands(commands, state["game_loop"])
                 self.policy_history.extend(
-                    dict(c.as_dict(), game_loop=state["game_loop"]) for c in commands
+                    remember_command(c.as_dict(), feature_state, state["game_loop"])
+                    for c in commands
                 )
                 self.policy_history = self.policy_history[-32:]
                 if not global_decision:
@@ -582,6 +590,7 @@ def play_job(job):
         else None,
         "sampled_commands": job.get("sample", False),
         "wait_unavailable": job.get("wait_unavailable", False),
+        "fixed_cadence": job.get("fixed_cadence", False),
         "macro_decisions": "factorized entity imitation",
         "micro_decisions": "same imitation model; not roach controller",
     }
@@ -629,6 +638,11 @@ def main():
     )
     parser.add_argument("--initial-harvest", action="store_true")
     parser.add_argument(
+        "--fixed-cadence",
+        action="store_true",
+        help="Reevaluate every engine step instead of sleeping for a predicted delay",
+    )
+    parser.add_argument(
         "--wait-unavailable",
         action="store_true",
         help="Reevaluate unavailable intended commands instead of selecting an unrelated legal fallback",
@@ -640,6 +654,8 @@ def main():
     )
     args = parser.parse_args()
     policy = FactorPolicy.load(args.policy)
+    if args.fixed_cadence and "actor_type" not in policy.sizes:
+        parser.error("Fixed cadence requires global decisions")
     if args.sample and "actor_type" not in policy.sizes:
         parser.error("Command sampling currently requires a global decision checkpoint")
     if args.wait_unavailable and (args.sample or "actor_type" not in policy.sizes):
@@ -687,6 +703,7 @@ def main():
             "idle_worker_harvest",
             "sample",
             "wait_unavailable",
+            "fixed_cadence",
         )
     }
     job.update(policy=str(args.policy.resolve()), output=str(args.output.resolve()))

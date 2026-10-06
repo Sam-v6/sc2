@@ -14,12 +14,13 @@ whether it answers a necessary question in this new direction.
 
 ## Where we stand
 
-Headless game execution, bounded worker supervision, checkpointing and replay
-capture exist. Linux replay-to-video export was previously demonstrated. The
+At roadmap creation, headless game execution, bounded worker supervision, checkpointing and replay
+capture existed. Linux replay-to-video export was previously demonstrated. The
 retained macro learner won 12/30 and 13/30 games in development Hard panels; that
 is progress, but does not establish reliable strength. Its scripted micro and
 small macro vocabulary constrain what it can learn. Human-replay imitation and
-learned micro have not yet been delivered.
+learned micro were still planned at that snapshot. Their implementation and
+failed live competence/transfer gates are now documented in the execution ledger.
 
 See the [paused status](project-status-2026-10-05.md),
 [experiment results](experiment-results.md), and

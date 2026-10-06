@@ -34,6 +34,9 @@ def collect(directories, macro, seconds):
                 macro.sizes["ability"],
                 canonical=True,
                 summarize=True,
+                semantics=macro.evidence.get("action_history_encoder")
+                == "roles_targets_age",
+                upgrade_count=macro.evidence.get("upgrade_count", 0),
             )
             for command in row["commands"]:
                 selected = set(command["units"])
@@ -90,6 +93,10 @@ def main():
     policy = FactorPolicy(x.shape[1], 2, [], seed=5000)
     policy.feature_mean = x.mean(axis=0)
     policy.feature_scale = np.maximum(x.std(axis=0), 0.1)
+    # Store only nonconstant training columns in the temporary example matrix.
+    # The saved network and live inputs retain the complete engine vocabulary.
+    feature_indices = np.flatnonzero(np.any(x != policy.feature_mean, axis=0))
+    x = x[:, feature_indices]
     labels = {name: np.full(len(x), -1, dtype=int) for name in policy.sizes}
     labels["ability"] = y
     labels["point_valid"] = np.zeros(len(x), dtype=int)
@@ -105,8 +112,14 @@ def main():
                 {k: v[index] for k, v in labels.items()},
                 points[index],
                 weights=weights[index],
+                feature_indices=feature_indices,
             )
-    logits = policy.predict(x)["ability"]
+        if epoch % 25 == 0:
+            print(
+                json.dumps({"epoch": epoch, "wall_seconds": time.monotonic() - start}),
+                flush=True,
+            )
+    logits = policy.predict(x, feature_indices=feature_indices)["ability"]
     failures = []
     matched = 0
     for group in groups:
@@ -142,6 +155,8 @@ def main():
         "epochs": args.epochs,
         "weighting": "equal positive and negative total weight per human command",
         "entity_examples": len(x),
+        "training_columns": len(feature_indices),
+        "full_feature_columns": len(policy.feature_mean),
         "command_groups": len(groups),
         "exact_group_matches": matched,
         "failures": failures,

@@ -10,6 +10,65 @@ except ImportError:
 
 
 class ImitationTests(unittest.TestCase):
+    def test_projected_training_preserves_dense_updates_and_novel_live_features(self):
+        dense = FactorPolicy(100, 3, [], seed=9)
+        projected = FactorPolicy(100, 3, [], seed=9)
+        x = np.zeros((4, 100), dtype=np.float32)
+        x[:, 3] = [1.0, 0.0, 1.0, 0.0]
+        x[:, 8] = 2.0
+        columns = np.array([3, 8])
+        labels = {k: np.zeros(4, dtype=int) for k in dense.sizes}
+        labels["ability"] = np.array([1, 2, 1, 2])
+        labels["target_type"][:] = -1
+        for _ in range(5):
+            dense.learn(x, labels, np.zeros((4, 2), dtype=np.float32))
+            projected.learn(
+                x[:, columns],
+                labels,
+                np.zeros((4, 2), dtype=np.float32),
+                feature_indices=columns,
+            )
+        for k in dense.parameters:
+            np.testing.assert_allclose(
+                dense.parameters[k], projected.parameters[k], atol=1e-6
+            )
+        novel = x.copy()
+        novel[:, 90] = 1.0
+        np.testing.assert_allclose(
+            dense.predict(novel)["ability"],
+            projected.predict(novel)["ability"],
+            atol=1e-6,
+        )
+
+    def test_sparse_input_product_matches_dense_for_single_and_batched_observations(
+        self,
+    ):
+        from src.learning.imitation import input_product
+
+        rng = np.random.default_rng(11)
+        x = np.zeros((7, 200), dtype=np.float32)
+        x[:, [3, 9, 190]] = rng.normal(size=(7, 3))
+        weights = rng.normal(size=(200, 32)).astype(np.float32)
+        np.testing.assert_allclose(input_product(x, weights), x @ weights, atol=1e-6)
+        np.testing.assert_allclose(
+            input_product(x[0], weights), x[0] @ weights, atol=1e-6
+        )
+        np.testing.assert_allclose(input_product(np.zeros_like(x), weights), 0.0)
+
+    def test_sparse_adam_keeps_decay_for_dormant_previously_trained_input_rows(self):
+        policy = FactorPolicy(100, 3, [], seed=7)
+        policy.m["input"][90] = 0.5
+        policy.v["input"][90] = 0.25
+        before = policy.parameters["input"][90].copy()
+        x = np.zeros((2, 100), dtype=np.float32)
+        x[:, 3] = 1.0
+        labels = {k: np.zeros(2, dtype=int) for k in policy.sizes}
+        labels["target_type"][:] = -1
+        policy.learn(x, labels, np.zeros((2, 2), dtype=np.float32))
+        self.assertTrue(np.all(policy.parameters["input"][90] < before))
+        np.testing.assert_allclose(policy.m["input"][90], 0.45)
+        np.testing.assert_allclose(policy.v["input"][90], 0.24975)
+
     def test_entity_inputs_retain_type_health_cooldown_and_economy(self):
         self.assertIsNotNone(unit_features)
         own = {

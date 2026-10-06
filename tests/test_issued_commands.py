@@ -2,12 +2,13 @@ import unittest
 from src.learning.issued_commands import issued_rows
 
 
-def event(loop, data):
+def event(loop, data, flags=256):
     return {
         "_event": "NNet.Game.SCmdEvent",
         "_gameloop": loop,
         "_userid": {"m_userId": 1},
         "m_data": data,
+        "m_cmdFlags": flags,
     }
 
 
@@ -23,6 +24,19 @@ def command(point=None, target=None):
 
 
 class IssuedCommandTests(unittest.TestCase):
+    def test_queue_identity_is_checked_before_accepting_same_target(self):
+        rows = [{"action_loop": 20, "commands": [command(point=[1.0, 2.0])]}]
+        selected, audit = issued_rows(
+            rows, [event(20, {"TargetPoint": {"x": 4096, "y": 8192}}, flags=258)], 1
+        )
+        self.assertEqual(selected, [])
+        self.assertEqual(audit["matched_issued_commands"], 0)
+        rows[0]["commands"][0]["queue"] = True
+        selected, _ = issued_rows(
+            rows, [event(20, {"TargetPoint": {"x": 4096, "y": 8192}}, flags=258)], 1
+        )
+        self.assertEqual(len(selected), 1)
+
     def test_repeats_are_excluded_and_delay_recomputed_from_issued_events(self):
         rows = [{"action_loop": t, "commands": [command()]} for t in (20, 24, 30)]
         selected, audit = issued_rows(

@@ -306,3 +306,153 @@ cutoffs as complete games or victories. Stop after this pair before proposing RL
 or longer imitation fits. The live adapter also avoids a redundant macro forward
 pass when the engine-legal ability is already the model's raw argmax; argument
 conditioning is identical.
+
+The longer frozen checks both ended in native Defeat: Terran at 973.9 game seconds
+(11 surviving army supply, 43 workers, almost all structures destroyed); Zerg at
+1,192.9 seconds (no workers or army). They took 77.96 and 104.24 wall seconds,
+respectively. These terminal games show production and actual fighting, but fail
+useful full-game competence. Neither is a promoted model or a passed Hard gate.
+Native replays and traces remain in `imitation-long-terran-01/` and
+`imitation-long-zerg-01/`.
+
+Next bounded fit: use all five human replay prefixes through 600 seconds, with
+the same held-out Lyra game and equal replay weight, for 800 CPU-only epochs.
+The four-minute teaching cutoff omitted later production/defense examples, so
+this tests whether later recorded decisions improve sustained production. Inspect
+first commands, production recall and prediction fit before any actor/argument
+fit or live follow-up. This is one curriculum extension, not an RL batch.
+
+The dense engine-wide input is mostly zeros (58,710 macro features). Input products
+and gradients now operate on every currently nonzero column; no unit, ability or
+observation feature is removed, including novel live entities. Adam also retains
+decay for dormant rows with saved optimizer moments. Dense-reference parity and
+checkpoint/gradient tests verify this optimization. Report kernel and entire-game
+timings separately; kernel speed is not simulation speed.
+
+The input-kernel benchmark measured 2.23x speedup on a 64-frame teaching batch,
+with 456 active columns out of 58,710; maximum floating-point difference was
+9.54e-6. It is recorded in `sparse-kernel-benchmark.json`, not claimed as full-game
+speedup. The 600-second fit completed in 162.49 seconds: 1,524 commands, 99.15%
+training ability accuracy, correct first TrainSCV in all five games and production
+recall 98.7–100%. Lyra held-out ability accuracy is only 18.1% and target error
+67.8 tiles. This is strong fit to one player's demonstrations and poor independent
+generalization, not a passed imitation gate.
+
+Bounded continuation of that curriculum experiment: fit actor membership (350
+epochs), selected-group arguments (800 epochs), and spatial candidates (150
+epochs) against the same saved macro and data window. No additional replay
+acquisition or native games are included in that fitting budget. Check conditional
+fit and held-out placement before at most two fresh 1,200-second live games;
+stop to inspect if sustained army production remains absent. Do not infer strength
+from supervised command accuracy.
+
+## Semantic perception experiment
+
+The ten-minute curriculum's follow-up models finished: actor membership matched
+1,312/1,524 training groups, selected-group target error was 1.07 tiles, and
+construction placement errors averaged 2.73 training / 11.24 held-out tiles.
+Fresh Very Easy games still failed: Terran seed 40041 ended in Defeat at 773.75
+seconds with no workers or army and no damage/kills; Zerg seed 40040 reached the
+1,200-second cutoff with no workers or army, 511.85 damage and 175 killed value.
+The surviving Zerg buildings were flying. These results reject promotion and
+further blind curriculum enlargement. Evidence is retained under
+`imitation600-long-terran-01/` and `imitation600-long-zerg-01/`.
+
+A concrete information gap was found in the macro encoder: history retained only
+two ability IDs, making worker Smart orders indistinguishable from townhall Smart
+rallies. Completed upgrades and per-building assigned/ideal harvesters were also
+absent. The opt-in `--semantic-history` encoder now keeps four prior commands'
+actor types, target type/alliance/position, queue, group size and age, plus
+harvester assignments and completed upgrades. Roles are recorded using only
+information known when each command was issued, and survive subsequent unit
+death or transformation. Unknown targets remain unknown. Previous checkpoint
+shapes and default encoders remain supported. Actor, argument, spatial and live
+encoders read the same macro checkpoint flags. This is still a small feedforward
+model, not recurrent memory or a completed perception milestone.
+
+The matched four-minute fit `imitation-semantic-240-01/` took 66.99 CPU-only
+seconds: 494 commands, 99.8% training ability accuracy, all five first commands
+TrainSCV, 100% training production recall. Held-out ability accuracy is 32.3%
+(previous four-minute fit 44.4%); target error is 48.65 tiles (previous 53.3).
+Actor membership fits 478/494 groups; selected-group target error is 0.53 tiles;
+spatial training / held-out errors are 2.64 / 11.30 tiles. These are conditional
+teaching metrics, not live strength. The five training games contain TvP/TvZ;
+held-out Lyra is TvT, so this split confounds player and matchup generalization.
+
+Only one of the 494 opening commands belongs to a mixed-ability burst. Thus burst
+flattening deserves repair but cannot explain most failures in this opening
+curriculum. Burst sequencing and quiet/no-op example coverage remain open.
+
+Queue identity is now checked during issued-command reconciliation using the
+native fixture's verified SCmdEvent flag bit 2. Re-auditing all six human games
+preserved the previously reported match counts; mismatched queue settings are
+rejected. Full ability-link identity auditing remains open.
+
+The fourteen full-suite run passed 149 tests in 9.64 seconds, including sparse
+training-column parity and the initial semantic-input checks. Two additional
+focused tests verify past roles surviving death and unknown targets remaining
+unknown; the next full-suite run must include them. Ruff and `git diff --check`
+passed before the native follow-up.
+
+The semantic model's matched native openings did not improve production:
+Terran seed 40021 ended at the 300-second cutoff with 2 army supply / 28 workers;
+Zerg seed 40020 with 2 / 22. Both are Tie truncations, not victories. Terran lifted
+its Barracks at 173.2 seconds and never landed it, then repeatedly requested
+Reapers. Zerg requested Reapers hundreds of times with zero gas. The unavailable
+intent guard prevents substitutions but can preserve an impossible intention
+indefinitely. No full-game extension or promotion is authorized by these results.
+
+The broader engineering fixture `interface-extended-fourth/` passed all 20
+physical checks and all 20 command results: the original nine plus research,
+repair, depot lowering/raising, transport loading/unloading, add-on construction
+and cancellation, scan, and Barracks lift/land. The first three attempts exposed
+fixture setup problems (debug damage takes effect on the next frame, spawned
+structures alter placement, and a loaded passenger cannot participate in a
+movement assertion). Those attempts remain preserved; the fourth passed in
+7.44 wall seconds. This extends representative family evidence, not proof of
+all abilities or learned use of those commands.
+
+## Quiet-state temporal experiment (bounded)
+
+Astra's read-only review identified action-event-only teaching as the next
+specific hypothesis: the model is asked which command occurred *given that a
+command occurred*. It lacks actual intervening production/resource-accumulation
+states, and predicted delay does not supply these observations.
+
+Six four-minute prefixes were natively reconstructed again with fog enabled,
+storing 1,345 observations at four-loop stride per replay (`dense240-ID/`).
+`occupancy240-ID/` preserves each original matched event's exact pre-command
+state and adds genuine quiet samples. A quiet sample within four loops of any
+matched or unresolved issued event is excluded; unsupported commands are never
+relabelled WAIT. This is a hybrid of exact event samples and regularly spaced
+quiet samples, not exact uniform occupancy or silently rounded command timing.
+The rare multi-command event retains its ordered commands; autoregressive burst
+execution is still open. Five training prefixes retain 494 commands plus 5,659
+quiet samples; held-out Lyra retains 99 commands plus 1,124 quiet samples.
+
+One CPU-only budget is running: 600 epochs, inverse-square-root ability weights,
+equal total replay weight, semantic inputs, 900-second wall deadline,
+`imitation-occupancy-240-01/`. Temporary projected training matrices preserve the
+full saved engine vocabulary and live input; dense/projected update parity has
+been checked. Native follow-up, if justified, uses fixed four-loop reevaluation
+rather than the predicted delay, with unchanged availability/placement checks
+and explicit idle-worker harvesting assistance. Actor/argument/spatial components
+must be refitted to this exact macro checksum; old models cannot be rebound.
+
+Before native follow-up require training production-event recall >=95%, held-out
+commanded ability accuracy >=32.3% (the matched semantic event model), quiet
+accuracy >=80%, and balanced event/quiet accuracy >0.5 (always-WAIT baseline).
+Compare a teacher-forced previous-model delay scheduler as an offline diagnostic,
+reporting its assumed command acceptance separately from native legality.
+At most two matched 300-second games are planned. Close the arm if it increases
+waiting without reducing impossible-intent streaks and improving completed army
+production over the matched 5/6-army spatial baseline. Quiet human frames may
+still fail to teach recovery from learner-created errors; do not respond to a
+failure by blindly enlarging passive replay fits. Expert corrections on actual
+learner states or a deliberately identified RL bridge would then be required.
+
+The latest completed full suite passed 151 tests in 9.74 seconds. New quiet-frame,
+always-WAIT metric, and mixed-schema death-memory checks are added and require
+a fresh full-suite result before checkpointing these changes.
+
+The sixteenth full suite passed all 156 tests in 10.06 seconds; Ruff and diff whitespace checks passed. The quiet-state fitting experiment remains running and has no promotion evidence yet.

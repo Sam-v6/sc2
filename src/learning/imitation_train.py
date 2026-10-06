@@ -10,10 +10,18 @@ import numpy as np
 from src.learning.imitation import FactorPolicy, unit_features, action_labels, DELAYS
 from src.learning.global_imitation import global_features, global_labels
 from src.runner import positive
+from src.learning.teacher_states import remember_command
 
 
 def dataset(
-    paths, unit_types, seed, decision_level="unit", abilities=None, prefix_seconds=None
+    paths,
+    unit_types,
+    seed,
+    decision_level="unit",
+    abilities=None,
+    prefix_seconds=None,
+    semantics=False,
+    upgrade_count=0,
 ):
     rng = np.random.default_rng(seed)
     features = []
@@ -71,6 +79,8 @@ def dataset(
                     if "owned_memory" in state
                     else owned_memory
                 )
+                if "owned_memory" in state:
+                    owned_memory = {**memory, **{tag: owned_memory[tag] for tag in own}}
                 known_own = {**memory, **own}
                 if decision_level == "global":
                     state = dict(
@@ -80,8 +90,31 @@ def dataset(
                         ],
                     )
                     feature, origin = global_features(
-                        state, unit_types, abilities, canonical=True, summarize=True
+                        state,
+                        unit_types,
+                        abilities,
+                        canonical=True,
+                        summarize=True,
+                        semantics=semantics,
+                        upgrade_count=upgrade_count,
                     )
+                    if not row["commands"]:
+                        target = {
+                            name: -1
+                            for name in (
+                                "mode",
+                                "target_type",
+                                "alliance",
+                                "queue",
+                                "delay",
+                                "actor_type",
+                            )
+                        }
+                        target.update(ability=0, point_valid=0)
+                        features.append(feature)
+                        labels.append(target)
+                        points.append(np.full(5, np.nan, dtype=np.float32))
+                        weights.append(1.0)
                     for command in row["commands"]:
                         absent = set(command["units"]) - known_own.keys()
                         if absent:
@@ -105,7 +138,7 @@ def dataset(
                         points.append(point)
                         weights.append(1.0)
                     history.extend(
-                        dict(command, game_loop=row["action_loop"])
+                        remember_command(command, state, row["action_loop"])
                         for command in row["commands"]
                     )
                     continue
@@ -143,7 +176,7 @@ def dataset(
                     points.append(point)
                     weights.append(1 / min(2, len(others)))
                 history.extend(
-                    dict(command, game_loop=row["action_loop"])
+                    remember_command(command, state, row["action_loop"])
                     for command in row["commands"]
                 )
         audit["replay_ranges"].append((beginning, len(features)))
@@ -175,17 +208,21 @@ def balance_abilities(abilities, weights):
     return balanced * weights.sum() / balanced.sum()
 
 
-def metrics(policy, x, y, points):
+def metrics(policy, x, y, points, feature_indices=None):
     correct = {name: 0 for name in policy.sizes}
     total = {name: 0 for name in policy.sizes}
     ability_correct = ability_total = 0
+    quiet_correct = quiet_total = 0
+    command_true = command_predictions = 0
     point_error = point_total = 0.0
     loss = 0.0
     for start in range(0, len(x), 128):
         end = min(start + 128, len(x))
         batch = {k: v[start:end] for k, v in y.items()}
-        output = policy.predict(x[start:end])
-        loss += policy.loss(x[start:end], batch, points[start:end]) * (end - start)
+        output = policy.predict(x[start:end], feature_indices=feature_indices)
+        loss += policy.loss(
+            x[start:end], batch, points[start:end], feature_indices=feature_indices
+        ) * (end - start)
         for name in policy.sizes:
             valid = batch[name] >= 0
             total[name] += int(valid.sum())
@@ -197,6 +234,12 @@ def metrics(policy, x, y, points):
         ability_correct += int(
             ((output["ability"].argmax(axis=1) == batch["ability"]) & commanded).sum()
         )
+        predicted = output["ability"].argmax(axis=1)
+        quiet = batch["ability"] == 0
+        quiet_total += int(quiet.sum())
+        quiet_correct += int(((predicted == 0) & quiet).sum())
+        command_predictions += int((predicted > 0).sum())
+        command_true += int(((predicted > 0) & commanded).sum())
         targeted = batch["point_valid"].astype(bool)
         point_error += (
             float(
@@ -215,6 +258,14 @@ def metrics(policy, x, y, points):
             k: correct[k] / total[k] if total[k] else None for k in correct
         },
         "commanded_ability_accuracy": ability_correct / max(ability_total, 1),
+        "quiet_accuracy": quiet_correct / quiet_total if quiet_total else None,
+        "command_event_precision": command_true / max(command_predictions, 1),
+        "balanced_event_wait_accuracy": (
+            quiet_correct / quiet_total + ability_correct / max(ability_total, 1)
+        )
+        / 2
+        if quiet_total
+        else None,
         "target_mean_error_tiles": point_error / max(point_total, 1),
     }
 
@@ -237,13 +288,25 @@ def main():
         type=positive,
         help="Bounded opening curriculum, preserving all issued commands and equal total weight per replay",
     )
+    parser.add_argument(
+        "--semantic-history",
+        action="store_true",
+        help="Encode prior actor/target roles, harvesters and completed upgrades",
+    )
     args = parser.parse_args()
+    if args.semantic_history and args.decision_level != "global":
+        parser.error("Semantic history requires global command decisions")
     if args.prefix_seconds and args.decision_level != "global":
         parser.error("Prefix curriculum currently requires global command decisions")
     args.output.mkdir(parents=True, exist_ok=False)
     static = json.loads((args.train[0] / "static.json").read_text())["game_data"]
     unit_types = sorted({u["unit_id"] for u in static["units"]})
     abilities = max(a["ability_id"] for a in static["abilities"]) + 1
+    upgrade_count = (
+        max(u["upgrade_id"] for u in static["upgrades"]) + 1
+        if args.semantic_history
+        else 0
+    )
     train_x, train_y, train_points, train_weights, train_sources, train_audit = dataset(
         args.train,
         unit_types,
@@ -251,6 +314,8 @@ def main():
         args.decision_level,
         abilities,
         args.prefix_seconds,
+        args.semantic_history,
+        upgrade_count,
     )
     valid_x, valid_y, valid_points, valid_weights, valid_sources, valid_audit = dataset(
         args.validation,
@@ -259,6 +324,8 @@ def main():
         args.decision_level,
         abilities,
         args.prefix_seconds,
+        args.semantic_history,
+        upgrade_count,
     )
     if {s["replay_sha256"] for s in train_sources} & {
         s["replay_sha256"] for s in valid_sources
@@ -313,6 +380,10 @@ def main():
         "seed": args.seed,
         "algorithm": "factorized_entity_behavior_cloning",
         "decision_level": args.decision_level,
+        "action_history_encoder": "roles_targets_age"
+        if args.semantic_history
+        else "last_two_abilities",
+        "upgrade_count": upgrade_count,
         "entity_encoder": "per_type_spatial_orders"
         if args.decision_level == "global"
         else "unit_context",
@@ -324,6 +395,12 @@ def main():
         "head_priors": "training-only class counts plus .1 smoothing; all engine abilities retained",
         "limitations": "initial entity/context baseline; no recurrent encoder or map-grid model; missing unit targets mask target-type/alliance and target-coordinate losses",
     }
+    feature_indices = np.flatnonzero(np.any(train_x != policy.feature_mean, axis=0))
+    train_x = train_x[:, feature_indices]
+    evidence.update(
+        training_columns=len(feature_indices),
+        full_feature_columns=len(policy.feature_mean),
+    )
     before = metrics(policy, valid_x, valid_y, valid_points)
     for epoch in range(args.epochs):
         order = rng.permutation(len(train_x))
@@ -336,6 +413,7 @@ def main():
                     {k: v[index] for k, v in train_y.items()},
                     train_points[index],
                     weights=train_weights[index],
+                    feature_indices=feature_indices,
                 )
             )
         row = {
@@ -351,7 +429,7 @@ def main():
         status="completed",
         epochs=args.epochs,
         updates=policy.updates,
-        training=metrics(policy, train_x, train_y, train_points),
+        training=metrics(policy, train_x, train_y, train_points, feature_indices),
         validation_before=before,
         validation=metrics(policy, valid_x, valid_y, valid_points),
         wall_seconds=round(time.monotonic() - start, 3),
@@ -366,7 +444,7 @@ def main():
         for source, (begin, end) in zip(train_sources, train_audit["replay_ranges"]):
             x = train_x[begin:end]
             y = {k: v[begin:end] for k, v in train_y.items()}
-            output = policy.predict(x)
+            output = policy.predict(x, feature_indices=feature_indices)
             predicted = output["ability"].argmax(axis=1)
             errors = np.flatnonzero(predicted != y["ability"])
             selected = np.isin(y["ability"], list(production))

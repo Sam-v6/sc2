@@ -1,5 +1,6 @@
 """Extract fog-safe Terran demonstrations with the matching installed engine."""
 
+from contextlib import nullcontext
 import argparse
 import asyncio
 import gzip
@@ -86,6 +87,7 @@ async def extract(job):
     examples = ReplayExamples()
     rows = 0
     ended = False
+    observed_rows = 0
     async with SC2Process(
         base_build=metadata["BaseBuild"], data_hash=metadata["DataVersion"]
     ) as server:
@@ -135,7 +137,14 @@ async def extract(job):
             for name in ("pathing_grid", "terrain_height", "placement_grid")
         }
         (output / "static.json").write_text(json.dumps(static) + "\n")
-        with gzip.open(raw_path, "xt", encoding="utf-8") as stream:
+        with (
+            gzip.open(raw_path, "xt", encoding="utf-8") as stream,
+            (
+                gzip.open(output / "observations.jsonl.gz", "xt", encoding="utf-8")
+                if job.get("observation_stride")
+                else nullcontext()
+            ) as observations,
+        ):
             for _ in range(job["max_loops"] + 1):
                 packet = (
                     await server._execute(observation=pb.RequestObservation())
@@ -143,6 +152,17 @@ async def extract(job):
                 for row in examples.push(packet):
                     stream.write(json.dumps(row, separators=(",", ":")) + "\n")
                     rows += 1
+                if (
+                    observations is not None
+                    and examples.last_loop % job["observation_stride"] == 0
+                ):
+                    observations.write(
+                        json.dumps(
+                            examples.history[examples.last_loop], separators=(",", ":")
+                        )
+                        + "\n"
+                    )
+                    observed_rows += 1
                 if packet.player_result:
                     ended = True
                     break
@@ -167,6 +187,8 @@ async def extract(job):
         **teacher,
         "rows": rows,
         "raw_rows": raw_rows,
+        "observation_stride": job.get("observation_stride"),
+        "recorded_observations": observed_rows,
         "counts": dict(examples.counts),
         "last_loop": examples.last_loop,
         "alignment": "state_at_action_loop_minus_one",
@@ -194,6 +216,11 @@ def main():
     parser.add_argument(
         "--source", required=True, help="Source URL or provenance description"
     )
+    parser.add_argument(
+        "--observation-stride",
+        type=positive,
+        help="Also retain fog-safe states at this loop stride for quiet-frame teaching",
+    )
     args = parser.parse_args()
     metadata, _ = replay_metadata(args.replay)
     require_engine(Path(SC2_GAME_PATH), metadata["BaseBuild"])
@@ -206,6 +233,7 @@ def main():
         "player": args.player,
         "max_loops": args.max_loops,
         "source": args.source,
+        "observation_stride": args.observation_stride,
     }
     receipt = supervise(extract_job, (job,), args.wall_seconds)
     args.output.parent.mkdir(parents=True, exist_ok=True)

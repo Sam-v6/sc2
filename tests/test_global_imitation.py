@@ -12,6 +12,86 @@ except ImportError:
 
 
 class GlobalImitationTests(unittest.TestCase):
+    def test_semantic_history_distinguishes_worker_orders_from_townhall_rallies(self):
+        from src.learning.teacher_states import remember_command
+
+        units = [
+            {"tag": 1, "unit_type": 18, "alliance": 1, "position": [20.0, 20.0, 0.0]},
+            {"tag": 2, "unit_type": 45, "alliance": 1, "position": [24.0, 20.0, 0.0]},
+            {"tag": 3, "unit_type": 341, "alliance": 3, "position": [28.0, 20.0, 0.0]},
+        ]
+        state = {
+            "units": units,
+            "owned_memory": [],
+            "map_size": [100.0, 100.0],
+            "game_loop": 20,
+            "player": {},
+        }
+        command = {
+            "ability": 1,
+            "units": [1],
+            "target_unit": 3,
+            "target_point": None,
+            "queue": False,
+            "autocast": False,
+        }
+        first = dict(state, recent_commands=[remember_command(command, state, 10)])
+        second = dict(
+            state,
+            recent_commands=[remember_command(dict(command, units=[2]), state, 10)],
+        )
+        a, _ = global_features(
+            first,
+            [18, 45, 341],
+            600,
+            canonical=True,
+            summarize=True,
+            semantics=True,
+            upgrade_count=32,
+        )
+        b, _ = global_features(
+            second,
+            [18, 45, 341],
+            600,
+            canonical=True,
+            summarize=True,
+            semantics=True,
+            upgrade_count=32,
+        )
+        self.assertFalse(np.array_equal(a, b))
+
+    def test_rich_perception_retains_gas_assignment_and_completed_upgrades(self):
+        units = [
+            {"tag": 1, "unit_type": 18, "alliance": 1, "position": [20.0, 20.0, 0.0]},
+            {
+                "tag": 2,
+                "unit_type": 20,
+                "alliance": 1,
+                "position": [24.0, 20.0, 0.0],
+                "assigned_harvesters": 0,
+                "ideal_harvesters": 3,
+            },
+        ]
+        state = {
+            "units": units,
+            "owned_memory": [],
+            "map_size": [100.0, 100.0],
+            "game_loop": 20,
+            "player": {},
+            "upgrades": [],
+        }
+        args = dict(canonical=True, summarize=True, semantics=True, upgrade_count=32)
+        a, _ = global_features(state, [18, 20], 600, **args)
+        b, _ = global_features(
+            dict(state, units=[units[0], dict(units[1], assigned_harvesters=3)]),
+            [18, 20],
+            600,
+            **args,
+        )
+        c, _ = global_features(dict(state, upgrades=[15]), [18, 20], 600, **args)
+        self.assertFalse(np.array_equal(a, b))
+        self.assertFalse(np.array_equal(a, c))
+
     def state(self):
         return {
             "game_loop": 100,

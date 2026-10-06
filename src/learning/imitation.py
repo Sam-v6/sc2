@@ -7,6 +7,13 @@ import numpy as np
 DELAYS = np.array([1, 4, 8, 16, 32, 64, 128, 256, 512, 1024])
 
 
+def input_product(x, weights):
+    # The engine-wide categorical vocabulary is mostly zero in any batch.
+    # Include every currently nonzero feature, including novel live entities.
+    active = np.flatnonzero(np.any(x != 0, axis=0) if x.ndim == 2 else x != 0)
+    return x[..., active] @ weights[active]
+
+
 def unit_features(state, unit, unit_types):
     lookup = {kind: index for index, kind in enumerate(unit_types)}
     n = len(unit_types)
@@ -165,9 +172,24 @@ class FactorPolicy:
         self.v = {k: np.zeros_like(v) for k, v in self.parameters.items()}
         self.updates = 0
 
-    def predict(self, x, abilities=None):
-        x = (np.asarray(x) - self.feature_mean) / self.feature_scale
-        hidden = np.tanh(x @ self.parameters["input"] + self.parameters["bias"])
+    def predict(self, x, abilities=None, feature_indices=None):
+        mean = (
+            self.feature_mean
+            if feature_indices is None
+            else self.feature_mean[feature_indices]
+        )
+        scale = (
+            self.feature_scale
+            if feature_indices is None
+            else self.feature_scale[feature_indices]
+        )
+        matrix = (
+            self.parameters["input"]
+            if feature_indices is None
+            else self.parameters["input"][feature_indices]
+        )
+        x = (np.asarray(x) - mean) / scale
+        hidden = np.tanh(input_product(x, matrix) + self.parameters["bias"])
         ability_logits = (
             hidden @ self.parameters["ability"] + self.parameters["ability_bias"]
         )
@@ -191,7 +213,8 @@ class FactorPolicy:
     def command_context(self, x, ability):
         normalized = (np.asarray(x) - self.feature_mean) / self.feature_scale
         hidden = np.tanh(
-            normalized @ self.parameters["input"] + self.parameters["bias"]
+            input_product(normalized, self.parameters["input"])
+            + self.parameters["bias"]
         )
         return (
             np.tanh(hidden + self.parameters["ability_embedding"][ability])
@@ -199,10 +222,26 @@ class FactorPolicy:
             else hidden
         )
 
-    def gradients(self, x, labels, points, weights=None):
+    def gradients(self, x, labels, points, weights=None, feature_indices=None):
         weights = np.ones(len(x)) if weights is None else np.asarray(weights)
-        x = (np.asarray(x) - self.feature_mean) / self.feature_scale
-        hidden = np.tanh(x @ self.parameters["input"] + self.parameters["bias"])
+        mean = (
+            self.feature_mean
+            if feature_indices is None
+            else self.feature_mean[feature_indices]
+        )
+        scale = (
+            self.feature_scale
+            if feature_indices is None
+            else self.feature_scale[feature_indices]
+        )
+        x = (np.asarray(x) - mean) / scale
+        local = np.flatnonzero(np.any(x != 0, axis=0))
+        active = (
+            local if feature_indices is None else np.asarray(feature_indices)[local]
+        )
+        hidden = np.tanh(
+            x[:, local] @ self.parameters["input"][active] + self.parameters["bias"]
+        )
         arguments = (
             np.tanh(hidden + self.parameters["ability_embedding"][labels["ability"]])
             if self.autoregressive
@@ -275,19 +314,37 @@ class FactorPolicy:
             np.add.at(gradients["ability_embedding"], labels["ability"], argument_back)
         back += argument_back
         back *= 1 - hidden * hidden
-        gradients["input"] = x.T @ back
+        gradients["input"] = np.zeros_like(self.parameters["input"])
+        gradients["input"][active] = x[:, local].T @ back
         gradients["bias"] = back.sum(axis=0)
         return loss, gradients
 
-    def loss(self, x, labels, points):
-        return self.gradients(x, labels, points)[0]
+    def loss(self, x, labels, points, feature_indices=None):
+        return self.gradients(x, labels, points, feature_indices=feature_indices)[0]
 
-    def learn(self, x, labels, points, rate=0.001, weights=None):
-        loss, gradients = self.gradients(x, labels, points, weights)
+    def learn(self, x, labels, points, rate=0.001, weights=None, feature_indices=None):
+        loss, gradients = self.gradients(x, labels, points, weights, feature_indices)
         self.updates += 1
         norm = np.sqrt(sum(float(np.square(g).sum()) for g in gradients.values()))
         for key, gradient in gradients.items():
             gradient *= min(1.0, 5.0 / max(norm, 1e-8))
+            if key == "input":
+                active = np.flatnonzero(
+                    np.any(
+                        (gradient != 0) | (self.m[key] != 0) | (self.v[key] != 0),
+                        axis=1,
+                    )
+                )
+                self.m[key][active] = 0.9 * self.m[key][active] + 0.1 * gradient[active]
+                self.v[key][active] = (
+                    0.999 * self.v[key][active] + 0.001 * gradient[active] ** 2
+                )
+                self.parameters[key][active] -= (
+                    rate
+                    * (self.m[key][active] / (1 - 0.9**self.updates))
+                    / (np.sqrt(self.v[key][active] / (1 - 0.999**self.updates)) + 1e-8)
+                )
+                continue
             self.m[key] = 0.9 * self.m[key] + 0.1 * gradient
             self.v[key] = 0.999 * self.v[key] + 0.001 * gradient * gradient
             self.parameters[key] -= (
@@ -307,7 +364,10 @@ class FactorPolicy:
             "updates": self.updates,
             "evidence": evidence,
             "autoregressive": self.autoregressive,
-            "scope": "initial entity-and-context baseline; map grids and recurrent memory not yet encoded",
+            "scope": evidence.get(
+                "scope",
+                "initial entity-and-context baseline; map grids and recurrent memory not yet encoded",
+            ),
         }
         arrays = {
             "metadata": np.array(json.dumps(metadata)),

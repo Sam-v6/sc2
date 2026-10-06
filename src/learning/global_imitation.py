@@ -9,9 +9,9 @@ def coordinate_signs(state, origin):
     return np.where(np.asarray(origin) > np.asarray(state["map_size"]) / 2.0, -1.0, 1.0)
 
 
-def entity_summary(state, unit_types, abilities, origin, canonical):
+def entity_summary(state, unit_types, abilities, origin, canonical, semantics=False):
     lookup = {kind: index for index, kind in enumerate(unit_types)}
-    summary = np.zeros((2, len(unit_types), 10), dtype=np.float32)
+    summary = np.zeros((2, len(unit_types), 12 if semantics else 10), dtype=np.float32)
     orders = np.zeros(abilities, dtype=np.float32)
     signs = coordinate_signs(state, origin) if canonical else np.ones(2)
     for unit in state["units"]:
@@ -32,6 +32,14 @@ def entity_summary(state, unit_types, abilities, origin, canonical):
                 queue[0].get("progress", 0) if queue else 0.0,
                 float(not queue),
             ]
+            + (
+                [
+                    unit.get("assigned_harvesters", 0) / 24.0,
+                    unit.get("ideal_harvesters", 0) / 24.0,
+                ]
+                if semantics
+                else []
+            )
         )
         if side == 0:
             for order in queue:
@@ -44,7 +52,15 @@ def entity_summary(state, unit_types, abilities, origin, canonical):
     return np.concatenate((summary.ravel(), orders))
 
 
-def global_features(state, unit_types, abilities, canonical=False, summarize=False):
+def global_features(
+    state,
+    unit_types,
+    abilities,
+    canonical=False,
+    summarize=False,
+    semantics=False,
+    upgrade_count=0,
+):
     own = [u for u in state["units"] if u["alliance"] == 1]
     bases = [u for u in own if u["unit_type"] in (18, 36, 130, 132, 134)]
     origin = (
@@ -75,8 +91,55 @@ def global_features(state, unit_types, abilities, canonical=False, summarize=Fal
     components = [entity, enemies, history]
     if summarize:
         components.append(
-            entity_summary(state, unit_types, abilities, origin, canonical)
+            entity_summary(state, unit_types, abilities, origin, canonical, semantics)
         )
+    if semantics:
+        signs = coordinate_signs(state, origin) if canonical else np.ones(2)
+        roles = np.zeros(
+            (4, abilities + 2 * (len(unit_types) + 1) + 14), dtype=np.float32
+        )
+        kind_index = {kind: index + 1 for index, kind in enumerate(unit_types)}
+        for index, command in enumerate(
+            reversed(state.get("recent_commands", [])[-4:])
+        ):
+            row = roles[index]
+            ability = command["ability"]
+            if 0 <= ability < abilities:
+                row[ability] = 1
+            actor_types = command.get("actor_types", [])
+            for kind in actor_types:
+                row[abilities + kind_index.get(kind, 0)] += 1 / max(len(actor_types), 1)
+            offset = abilities + len(unit_types) + 1
+            row[offset + kind_index.get(command.get("target_type", 0), 0)] = 1
+            offset += len(unit_types) + 1
+            alliance = command.get("target_alliance", 0)
+            if 0 <= alliance < 5:
+                row[offset + alliance] = 1
+            mode = (
+                3
+                if command.get("autocast")
+                else 2
+                if command.get("target_unit") is not None
+                else 1
+                if command.get("target_point") is not None
+                else 0
+            )
+            row[offset + 5 + mode] = 1
+            position = command.get("target_position", [])
+            if position:
+                row[offset + 9 : offset + 11] = (
+                    (np.asarray(position[:2]) - origin) * signs / 128
+                )
+            row[offset + 11 :] = [
+                float(command.get("queue", False)),
+                np.log1p(len(command.get("units", []))) / 3,
+                max(0, state["game_loop"] - command["game_loop"]) / 1344,
+            ]
+        upgrades = np.zeros(upgrade_count, dtype=np.float32)
+        for upgrade in state.get("upgrades", []):
+            if 0 <= upgrade < upgrade_count:
+                upgrades[upgrade] = 1
+        components.extend((roles.ravel(), upgrades))
     return np.concatenate(components), origin
 
 

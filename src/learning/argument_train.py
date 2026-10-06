@@ -32,6 +32,9 @@ def collect(directories, macro, seconds):
                 macro.sizes["ability"],
                 canonical=True,
                 summarize=True,
+                semantics=macro.evidence.get("action_history_encoder")
+                == "roles_targets_age",
+                upgrade_count=macro.evidence.get("upgrade_count", 0),
             )
             for command in row["commands"]:
                 group = [actors[tag] for tag in command["units"]]

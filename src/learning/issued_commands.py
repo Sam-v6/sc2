@@ -18,6 +18,10 @@ from src.learning.replay_extract import load_protocol
 
 
 def target_matches(command, event):
+    # Verified with the saved native fixture's otherwise identical queued and
+    # unqueued Move commands (SCmdEvent flags differ by exactly mask 2).
+    if command["queue"] != bool(event["m_cmdFlags"] & 2):
+        return False
     data = event["m_data"]
     if "None" in data:
         return command["target_point"] is None and command["target_unit"] is None
@@ -118,6 +122,7 @@ def main():
         source_dataset=str(args.dataset.resolve()),
         examples=str((args.output / "examples.jsonl.gz").resolve()),
         command_labels="uniquely aligned human SCmdEvent; engine repeats excluded",
+        queue_identity="SCmdEvent flag mask 2; verified native queued-move fixture",
         issued_command_audit=audit,
     )
     (args.output / "dataset.json").write_text(json.dumps(receipt, indent=2) + "\n")
