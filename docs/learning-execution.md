@@ -1037,3 +1037,25 @@ No larger epoch sweep or native promotion follows this failed fixed experiment.
 All fit/evaluation/audit jobs are terminal; no GPU, large download or further RL
 was run. Exact-engine recovery for professional and other-player TvP/Z examples
 still awaits the previously requested bounded-download authorization.
+
+### Ability identity audit across reconstructed human games
+
+`issued-ability-audit-01.json` binds the nine games' replay, raw reconstruction,
+issued examples, static catalogs and receipts, then derives 93 event-ability
+mappings only from single-human-event loops with a unique native target/queue
+match. Native ability aliases are compared via each game's catalog remapping.
+No mapping conflicts appear. One accepted command's target-only event pairing is
+ambiguous in this first audit. These same-corpus mappings alone are not independent
+proof of label identity and must not become a hardcoded cross-version protocol table.
+
+`issued-ability-audit-crossgame-01.json` excludes the entire replay being checked
+from its reference mappings. It checks 3,394 labels against other games with no
+ability mismatches. Seventeen labels have no independent reference and remain
+explicitly unverified by this audit. Seven target-only ambiguities resolve via
+ability identity, including the ambiguity in the first audit; none remain among
+the independently checked labels. Bound source data are unchanged throughout.
+This is evidence against widespread ability-label corruption causing the failed
+imitation results, not proof of a complete authoritative protocol decoder.
+No dataset is relabeled and no further fit, native simulation or RL follows.
+Future alignment can use verified same-build ability identity to reject/resolve
+ambiguous matches, while retaining explicit unsupported cases and version scope.
