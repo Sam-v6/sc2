@@ -23,17 +23,83 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def validate_datasets(train, validation):
+def validate_professional_source(directory, receipt, missing_fields):
+    if (
+        not missing_fields
+        or receipt.get("requires_missing_fields") is not True
+        or receipt.get("training_eligible") is not True
+        or receipt.get("teacher_kind") != "human_professional_partial"
+        or receipt.get("alignment") != "state_at_issue_loop_before_effect"
+    ):
+        raise ValueError(
+            "Partial professional demonstrations require missing-field inputs and eligibility"
+        )
+    for group in ("source_bindings", "code_bindings"):
+        if not receipt.get(group):
+            raise ValueError(
+                "Professional source requires bound inputs and producing code"
+            )
+        for path, expected in receipt[group].items():
+            if digest(Path(path)) != expected:
+                raise ValueError("Changed professional source binding: " + path)
+    proof = receipt["source_phase_proof"]
+    phase = json.loads(Path(proof).read_text())
+    if (
+        proof not in receipt["source_bindings"]
+        or phase.get("status") != "verified_native_phase_and_converter_buffer_contract"
+    ):
+        raise ValueError("Professional source requires a bound issue-loop phase proof")
+    if not phase.get("bindings"):
+        raise ValueError("Professional phase requires evidence bindings")
+    for path, expected in phase["bindings"].items():
+        if digest(Path(path)) != expected:
+            raise ValueError("Changed professional phase evidence binding: " + path)
+    if receipt["source_bindings"].get(receipt["source_replay"]) != receipt["sha256"]:
+        raise ValueError(
+            "Professional split identity must match the bound original replay"
+        )
+    for name in ("static.json", "examples.jsonl.gz"):
+        if digest(directory / name) != receipt.get("corpus_bindings", {}).get(name):
+            raise ValueError("Changed imported professional corpus binding: " + name)
+    with gzip.open(directory / "examples.jsonl.gz", "rt") as stream:
+        for row in map(json.loads, stream):
+            observation = row["observation"]
+            if (
+                observation["game_loop"] != row["action_loop"]
+                or observation.get("history_quality") != "event_slots"
+                or len(row["commands"]) != 1
+                or any(
+                    c["game_loop"] > row["action_loop"]
+                    for c in observation["recent_commands"]
+                )
+            ):
+                raise ValueError(
+                    "Professional source requires causal single-event issue-loop rows"
+                )
+
+
+def validate_datasets(train, validation, missing_fields=False):
     sources, seen = [], set()
     if not train:
         raise ValueError("At least one teaching replay is required")
     for role, paths in (("teaching", train), ("diagnostic", validation)):
         for directory in paths:
             receipt = json.loads((directory / "dataset.json").read_text())
+            alignment = receipt.get("alignment")
+            if (
+                alignment == "state_at_issue_loop_before_effect"
+                or receipt.get("teacher_kind") == "human_professional_partial"
+                or receipt.get("requires_missing_fields")
+            ):
+                validate_professional_source(directory, receipt, missing_fields)
             if (
                 receipt["status"] != "completed"
                 or receipt.get("disable_fog") is not False
-                or receipt.get("alignment") != "state_at_action_loop_minus_one"
+                or alignment
+                not in (
+                    "state_at_action_loop_minus_one",
+                    "state_at_issue_loop_before_effect",
+                )
                 or not receipt.get("teacher_kind", "").startswith("human")
                 or receipt["player"]["player_info"]["race_actual"] != 1
             ):
@@ -193,7 +259,7 @@ def main():
         parser.error("Training sizes, rate and wall bound must be positive")
     if args.output.exists():
         parser.error("Use a fresh output directory for a frozen experiment")
-    sources = validate_datasets(args.train, args.validation)
+    sources = validate_datasets(args.train, args.validation, args.missing_fields)
     static = json.loads((args.train[0] / "static.json").read_text())["game_data"]
     counts = [
         max(x[key] for x in static[name]) + 1
@@ -219,6 +285,7 @@ def main():
                 "teacher_states",
                 "gameplay",
                 "actor_selection",
+                "tournament_import",
             )
         ],
     ]
@@ -326,7 +393,7 @@ def main():
         checkpoint_sha256=checkpoint_before,
         elapsed_seconds=time.monotonic() - start,
     )
-    after = validate_datasets(args.train, args.validation)
+    after = validate_datasets(args.train, args.validation, args.missing_fields)
     code_after = {str(p.absolute()): digest(p) for p in source_files}
     report["bindings_unchanged"] = (
         sources == after

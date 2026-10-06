@@ -2540,3 +2540,46 @@ and is superseded. No optimizer, professional fitting or RL ran. Next connect
 this explicit source alignment/availability contract to trainer eligibility,
 form whole-game splits and start bounded human imitation evaluation; retain the
 full micro/Hard/higher-difficulty roadmap.
+
+
+Professional supervised training is now connected to the explicit partial-source
+contract. The trainer accepts issue-loop pre-effect rows only with --missing-fields,
+requires_missing_fields=true, training_eligible=true, professional teacher kind,
+source/producing-code/output hashes, original replay SHA identity and a bound
+native/converter phase proof whose supporting bindings also verify. Partial
+receipts cannot bypass these gates by claiming the legacy L-1 alignment. Native
+complete sources retain their old default behavior. Independent review's two
+provenance defects were reproduced with failing tests, then fixed. Full293tests
+and changed-file Ruff checks pass.
+
+Fresh `pro-demonstrations-05/{294,774,870}` artifacts were regenerated with the
+new eligibility/output bindings. Whole-game split:294Future and870Scarlett teach;
+774Harstem is kept out of optimizer updates. No reserved51483/51886games were
+opened. `professional-fit-source-validation-01.json` records validated sources.
+
+Actual first professional fit: `logs/roadmap/joint-professional-fit-01/`.
+CPU-only, OPENBLAS/OMP2threads, seed8100, hidden32, batch16, rate0.001, refinement,
+actor cutoff, spatial+availability inputs,50epochs with600optimizer-wall-second
+cap. Terminal training shell handle81483 exits0. The run used1189representable
+teaching commands for59450presentations/3750updates;50epochs finish60.35optimizer
+seconds and79.14total seconds including collection/audit. One remembered enemy
+label remains excluded. Mean loss falls to2.4404. There were no RL updates,
+simulated training games or native strength tests.
+
+Verified reconstruction:435/1190complete teaching commands (36.6%),12/292complete
+commands on the withheld game (4.1%). Ability1142/1190teaching versus132/292withheld;
+exact actors619/1190versus45/292; targets765/1190versus68/292. Complete with timing
+206/822known-timing teaching versus2/208withheld. On the withheld first minute,
+13/18abilities and10/18exact actor groups match; first SCV commands do reconstruct
+correctly, while worker targets/build locations already diverge. Mean predicted
+point error is7.39tiles teaching and67.51withheld. This is failed generalization,
+not competent imitation or readiness for RL. Harstem is now a reused diagnostic,
+not a future untouched acceptance set.
+
+Bindings and checkpoint SHA are reverified after terminal completion in
+`logs/roadmap/joint-professional-fit-verification-01.json`; source/config/code
+and evaluated checkpoint remain unchanged. Report's oracle actor/ability metrics
+are diagnostics only. No professional checkpoint replaces the retained native
+baseline or earns a strength claim. Next improve teaching coverage and spatial/
+actor generalization, including native/professional input coverage, using bounded
+human-only fits; retain RL hold and the full micro/Hard/higher-difficulty goals.

@@ -71,6 +71,81 @@ class EntityTrainTests(unittest.TestCase):
                 all(len(digest) == 64 for digest in sources[0]["bindings"].values())
             )
 
+    def test_partial_professional_source_requires_its_encoder_and_phase_proof(self):
+        from src.learning.entity_train import digest
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            directory = self.dataset(root, "professional", "pro-replay")
+            evidence = root / "phase-evidence.bin"
+            evidence.write_bytes(b"original timing evidence")
+            proof = root / "phase.json"
+            proof.write_text(
+                json.dumps(
+                    dict(
+                        status="verified_native_phase_and_converter_buffer_contract",
+                        bindings={str(evidence): digest(evidence)},
+                    )
+                )
+            )
+            receipt = json.loads((directory / "dataset.json").read_text())
+            receipt.update(
+                alignment="state_at_issue_loop_before_effect",
+                teacher_kind="human_professional_partial",
+                requires_missing_fields=True,
+                training_eligible=True,
+                source_phase_proof=str(proof),
+                source_replay=str(proof),
+                sha256=digest(proof),
+                source_bindings={str(proof): digest(proof)},
+                code_bindings={str(proof): digest(proof)},
+            )
+            (directory / "dataset.json").write_text(json.dumps(receipt))
+            row = dict(
+                action_loop=10,
+                source_sequence=0,
+                next_action_delay=None,
+                commands=[dict(ability=3, units=[1])],
+                observation=dict(
+                    game_loop=10,
+                    history_quality="event_slots",
+                    recent_commands=[],
+                    unknown_fields=dict(world=["command_history"]),
+                ),
+            )
+            with gzip.open(directory / "examples.jsonl.gz", "wt") as stream:
+                stream.write(json.dumps(row) + "\n")
+            receipt["corpus_bindings"] = {
+                name: digest(directory / name)
+                for name in ("static.json", "examples.jsonl.gz")
+            }
+            (directory / "dataset.json").write_text(json.dumps(receipt))
+            with self.assertRaises(ValueError):
+                validate_datasets([directory], [])
+            sources = validate_datasets([directory], [], missing_fields=True)
+            self.assertEqual(sources[0]["role"], "teaching")
+            original = dict(receipt)
+            receipt.update(
+                alignment="state_at_action_loop_minus_one", training_eligible=False
+            )
+            (directory / "dataset.json").write_text(json.dumps(receipt))
+            with self.assertRaisesRegex(ValueError, "professional"):
+                validate_datasets([directory], [], missing_fields=True)
+            receipt = original
+            (directory / "dataset.json").write_text(json.dumps(receipt))
+            evidence.write_bytes(b"changed timing evidence")
+            with self.assertRaisesRegex(ValueError, "binding"):
+                validate_datasets([directory], [], missing_fields=True)
+            evidence.write_bytes(b"original timing evidence")
+            original_examples = (directory / "examples.jsonl.gz").read_bytes()
+            (directory / "examples.jsonl.gz").write_bytes(b"changed corpus")
+            with self.assertRaisesRegex(ValueError, "corpus binding"):
+                validate_datasets([directory], [], missing_fields=True)
+            (directory / "examples.jsonl.gz").write_bytes(original_examples)
+            proof.write_text("{}")
+            with self.assertRaisesRegex(ValueError, "binding"):
+                validate_datasets([directory], [], missing_fields=True)
+
     def test_supervised_optimizer_reduces_joint_loss_and_updates_shared_embeddings(
         self,
     ):

@@ -213,7 +213,9 @@ def import_game(job):
         teacher_kind="human_professional_partial",
         player={"player_info": {"race_actual": 1, "player_id": 1}},
         requires_missing_fields=True,
-        training_eligible=False,
+        training_eligible=True,
+        source_phase_proof=str(paths["phase"]),
+        source_replay=str(paths["replay"]),
         professional_engine_reconstruction=False,
         issued_command_audit=game["audit"],
         source_resource_mappings=mappings,
@@ -237,6 +239,9 @@ def import_game(job):
                     )
                 ],
             )
+        },
+        corpus_bindings={
+            name: digest(output / name) for name in ("static.json", "examples.jsonl.gz")
         },
     )
     (output / "dataset.json").write_text(json.dumps(receipt, indent=2) + "\n")

@@ -102,3 +102,19 @@ alignment and partial-source eligibility have not yet been connected to the
 trainer. One legitimate remembered enemy target remains excluded by the model
 mask and requires native legality evidence. Actual professional fitting is the
 next stage; RL remains stopped and the original roadmap remains open.
+
+
+Professional partial-source trainer eligibility is implemented and verified.
+The new alignment requires availability inputs and exact input/producing-code/
+corpus/replay/phase bindings, including nested phase evidence. Native L-1 path
+unchanged;293tests pass. Fresh pro-demonstrations-05generated and validated.
+First real human-only fit: trainFuture+Scarlett, withholdHarstem,50epochs,
+3750updates,1189usable teaching commands,79.14total seconds. Complete command
+reconstruction435/1190teaching versus12/292withheld: failed generalization.
+The dataset/importer/trainer connection is working; competent human imitation
+is not achieved. Current professional01is an experimental checkpoint, no
+baseline promotion. RL remains stopped. Next increase teaching/input coverage
+and address actor/spatial transfer; do not treat memorization as roadmap success.
+Evidence: joint-professional-fit-01/report.json and
+joint-professional-fit-verification-01.json. No new native match or strength
+acceptance, and reserved games remain untouched.
