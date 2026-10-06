@@ -3355,3 +3355,36 @@ Aggregate teaching named-oracle counts and weighted point-error summaries
 were added after review identified this coverage limit. Ruff/compile pass;
 the terminal verifier has not run. It does not fit, launch native games or
 perform RL. Current learning outcomes remain pending.
+
+### Goal-first supervised result (October6)
+
+Handle42188 is terminal exit0:100epochs,28200updates,451000presentations,
+1495.83optimizer seconds;334host samples peak13%CPU and no guard stop.
+CheckpointSHA256`17af73059ada368db54e782b61bb1cddb660f3bc4a09868d4241aee37d6ca7ef`.
+Teaching ability4259/4513,actors2829,target3120,complete2118,complete with
+timing1627. All nine teaching games improve complete commands over fit05.
+Reused774diagnostic ability157/292,actors52,target69,complete13,complete with
+timing1; macro ability6/91. Teaching gates and diagnostic target pass, but
+diagnostic ability/actors/complete/macro gates fail. No extension, sweep,
+promotion, native game or RL occurs.
+
+Own prediction-history teaching complete98/4513 versus human-history2118;
+diagnostic complete3/292 versus13. Both modes retain human states and decision
+times; neither establishes native competence. First ability differences appear
+within one to six retained commands in each game. A read-only code check shows
+the controller history encoder does not consume the absent actor-type metadata
+used by a different historical encoder, so that suspected mismatch is not a
+demonstrated cause. Prediction errors and omitted unresolved event slots must
+be separated before selecting another learning intervention.
+
+Independent verifier handle36834 is terminal exit0, reproducing4805ordinary
+predictions, all per-game/per-family audits, teaching-only support and all
+prediction-history traces. Aggregate named-oracle counts/point errors match;
+all eight gates are independently recomputed. `verification.json` records
+`verified_completed_failure`; final telemetrySHA256
+`1173f4d1298c0d8c543276f557c9fabc90306dd2adde482d0b60b2b7393161ff`.
+Read-only retained-human-history oracle launched under handle24481, two CPU
+threads, no fitting/native/RL; its result is pending. It supplies only past
+retained human commands after each current prediction, never current/future
+labels during inference. Preserve `history-diagnostic.json` and the eventual
+`retained-history-oracle.json` alongside original frozen experiment artifacts.
