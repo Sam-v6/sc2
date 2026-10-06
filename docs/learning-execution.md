@@ -2982,3 +2982,21 @@ not prove that more attention, extra epochs, or functional equivalence will fix
 the errors. These are same-state input comparisons, not hidden information or
 execution evidence. Source/code/runtime/checkpoint bindings verify; no updates.
 Receipt: `professional-small-set-relational-01/attention/actor-representation.json`.
+
+The user-authorized Astra consultation inspected the actor loss and preserved
+a frozen geometry-checkpoint gradient diagnostic on the same62teaching rows.
+Parent verification confirms receipt SHA, checkpoint/current-code/source hashes
+and evaluated-source hash. Mean actor BCE is0.00942 and ranking loss0.43394;
+the eight wrong SCV choices retain ranking losses0.986–2.489. Aggregate mean
+shared-encoder actor-gradient norm is0.04025 versus0.11569 for other losses,
+with cosine−0.08965. These are raw gradients, not Adam-preconditioned updates;
+they do not prove that loss interference causes the failed selection. Singleton
+BCE/ranking both teach the human actor, and teacher-forced actor→target is a
+valid factorization. No broken-gradient or mathematical-incapacity claim follows.
+Receipt: `professional-small-set-actor-geometry-01/astra-gradient-diagnosis.json`.
+
+Next concrete hypothesis is an opt-in nonlinear candidate/context actor-score
+residual on the best geometry architecture, with unchanged losses and encoder.
+The plan `superpowers/plans/2026-10-06-nonlinear-actor-scoring.md` freezes code
+checks and a matched small-set budget/gates. It is proposed, not implemented or
+accepted learning improvement. Human imitation remains active; RL is stopped.
