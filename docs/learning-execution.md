@@ -2871,3 +2871,25 @@ teaching rows and reproduces the terminal actor total. No extra fit or other
 replay predictions occurred. Current full-game ability generalization also
 remains poor (fit07 130/292); neither small-set success nor a possible equivalent
 worker selection establishes readiness for RL.
+
+Frozen selected-state context audit shows 7 of 11 construction substitutions
+are over two Euclidean tiles farther from the human target; several differences
+exceed 20 tiles. One is over two tiles closer. Six of 13 same-type single-actor
+substitutions have different first orders. Observed positions and first orders
+are available, but original-engine ability availability is not, so neither
+equivalence nor illegality is established. The audit reconstructs exact trainer
+inputs and matches all terminal integer fields. Its initial full-dict equality
+stopped on point means differing by 1.39e-17 due to row reduction order; only
+mean comparisons now allow 1e-10 tolerance. No training/data change or receipt
+was produced by the failed helper. Evidence: `professional-small-set-01/actor-context.json`.
+
+Plan `superpowers/plans/2026-10-06-actor-geometry.md` implements an opt-in learned
+actor score residual from relative dx/dy and squared displacements, scaled by
+32 world tiles around the eligible-actor centroid. It uses ability-conditioned
+context and player-known positions; no human target/actor is supplied at ordinary
+inference and no closest-worker rule is imposed. Zero-initialized coefficients
+preserve default parameters/scores/RNG draws. Save/load and trainer flags are
+bound. Four tests first fail then pass; an added interior-unit ranking check
+brings five focused tests. Full 327 tests pass in 10.06 seconds, Ruff/diff checks
+pass, and independent review finds no Critical, Important or Minor findings.
+No learning outcome or promotion is established by these code checks.

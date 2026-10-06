@@ -39,7 +39,9 @@ class JointEntityPolicy:
         actor_count=False,
         missing_fields=False,
         actor_relative_points=False,
+        actor_geometry=False,
     ):
+        self.actor_geometry = actor_geometry
         self.actor_relative_points = actor_relative_points
         self.missing_fields = missing_fields
         if missing_fields and (
@@ -95,6 +97,8 @@ class JointEntityPolicy:
         if actor_relative_points:
             # A zero residual preserves every existing initialization and score.
             self.heads["point_relative"] = np.zeros((4, hidden), np.float32)
+        if actor_geometry:
+            self.heads["actor_geometry"] = np.zeros((hidden, 4), np.float32)
 
     @property
     def parameters(self):
@@ -123,9 +127,20 @@ class JointEntityPolicy:
         conditioned = np.tanh(context + self.encoder.parameters["abilities"][ability])
         actor_query = conditioned @ p["actor"]
         actor_logits = entities @ actor_query
+        eligible = np.flatnonzero(inputs["actor_mask"])
+        geometry = None
+        if self.actor_geometry:
+            positions = np.asarray(inputs["entity_positions"], dtype=np.float32)
+            center = (
+                positions[eligible].mean(axis=0)
+                if len(eligible)
+                else np.zeros(2, np.float32)
+            )
+            delta = (positions - center) / 32
+            geometry = np.concatenate((delta, delta**2), axis=1)
+            actor_logits = actor_logits + geometry @ (conditioned @ p["actor_geometry"])
         if self.actor_cutoff:
             actor_logits = actor_logits + conditioned @ p["actor_cutoff"]
-        eligible = np.flatnonzero(inputs["actor_mask"])
         count_log = (
             float(conditioned @ p["actor_count"] + p["actor_count_bias"][0])
             if self.actor_count
@@ -190,6 +205,7 @@ class JointEntityPolicy:
             cell_coordinate=cell_coordinate,
             count_log=count_log,
             point_relative=relative,
+            actor_geometry=geometry,
         )
         return output, cache
 
@@ -275,6 +291,10 @@ class JointEntityPolicy:
             cutoff_delta = actor_delta.sum()
             gradients["actor_cutoff"] = c["conditioned"] * cutoff_delta
             conditioned_gradient += p["actor_cutoff"] * cutoff_delta
+        if self.actor_geometry:
+            geometry_delta = c["actor_geometry"].T @ actor_delta
+            gradients["actor_geometry"] = np.outer(c["conditioned"], geometry_delta)
+            conditioned_gradient += geometry_delta @ p["actor_geometry"].T
         query_gradient = c["entities"].T @ actor_delta
         gradients["actor"] = np.outer(c["conditioned"], query_gradient)
         conditioned_gradient += query_gradient @ p["actor"].T
@@ -374,6 +394,7 @@ class JointEntityPolicy:
             role_pooling=self.encoder.role_pooling,
             context_layer_norm=self.encoder.context_layer_norm,
             actor_relative_points=self.actor_relative_points,
+            actor_geometry=self.actor_geometry,
         )
         np.savez_compressed(
             path, **self.parameters, configuration=json.dumps(configuration)
@@ -398,6 +419,7 @@ class JointEntityPolicy:
                 spatial_features=configuration.get("spatial_features", 2),
                 missing_fields=configuration.get("missing_fields", False),
                 actor_relative_points=configuration.get("actor_relative_points", False),
+                actor_geometry=configuration.get("actor_geometry", False),
             )
             for name, parameter in policy.parameters.items():
                 if archive[name].shape != parameter.shape:
