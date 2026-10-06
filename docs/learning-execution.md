@@ -3648,3 +3648,36 @@ macro27/262(10.3%),31/1113complete commands; own-history macro10/262(3.8%).
 These are provisional until the full comparison independently verifies. The
 type-status arm has started (2027437parameters), with no final result yet. No
 frozen fitting source/plan/input binding has changed during native optimization.
+
+### October6: paired fits closed; native representation discrepancy isolated
+
+Watcher28403and independent verifier32613are terminal exit0. Both30epoch fits
+completed; type status fails all four improvement gates (held macro32/262versus
+27/262, complete26versus31, more false positives). Neither model is promoted or
+extended. Native inspection11830and reconstruction77644are terminal exit0:
+both180second openings produce zero new workers/buildings and repeatedly issue
+Smart/Attackcommands. CPU peaks6.7%/6.6%; weights frozen, no RL.
+
+A frozen opening diagnostic identifies equivalent native295/professional3666
+mining-order IDs and partial-source field availability as interacting input
+mismatches: matching both restoresTrainSCVprediction in both saved models;
+either change alone does. This warrants explicit observation-contract compatibility,
+not another training sweep or a strength claim. Full native observations must stay
+available in logs and any source projection must be explicit and tested. See
+[results and next check](superpowers/plans/2026-10-06-type-status-imitation-results.md).
+
+### October6: explicit professional input contract restores native worker production
+
+Opt-in observation profiles match missing-field declarations and engine-verified
+order aliases without changing raw traces, command grammar or weights. Known
+native dispatched history remains known. Profile derived from all rows/catalogs
+of the six paired-fit teaching games only.379normal/15focused optional tests,
+Ruff/diff and independent review pass; incorrect engine aliases are rejected.
+
+Frozen baseline native opener30437is terminal exit0. It produces three actual
+new workers (12to15), collects2175final minerals, then supply-blocks; noDepotor
+Barracks. Seventeen issued commands returnSuccess;2501unavailableTrainSCVrequests
+stay out of issued history. Trace reconstruction verifies all2518decisions.
+CPU peak9.7%, noGPU/fitting/RL. This is a concrete opening compatibility repair,
+not promotion or full-game competence. See the
+[implementation and verified limits](superpowers/plans/2026-10-06-professional-observation-contract.md).

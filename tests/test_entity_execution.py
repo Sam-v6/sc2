@@ -149,3 +149,77 @@ class DecisionStepTests(unittest.TestCase):
         self.assertEqual(decision_step(10, 18, 1), 1)
         self.assertEqual(decision_step(18, 18, 32), 1)
         self.assertEqual(decision_step(19, 18, 32), 1)
+
+
+class ObservationProjectionTests(unittest.TestCase):
+    def test_projection_normalizes_orders_without_changing_native_state(self):
+        from copy import deepcopy
+        from src.learning.entity_execution import project_observation
+
+        state = dict(
+            player={"minerals": 50, "food_used": 12},
+            units=[dict(tag=1, orders=[dict(ability_id=295, progress=0.2)])],
+            recent_commands=[dict(game_loop=0, ability=1, units=[1])],
+        )
+        original = deepcopy(state)
+        profile = dict(
+            unknown_fields=dict(
+                player=["food_used"],
+                units=["energy"],
+                world=["command_history", "upgrade_absence"],
+            ),
+            order_aliases={"295": 3666},
+        )
+        projected = project_observation(state, profile)
+        self.assertEqual(projected["units"][0]["orders"][0]["ability_id"], 3666)
+        self.assertEqual(projected["unknown_fields"]["world"], ["upgrade_absence"])
+        self.assertEqual(projected["recent_commands"], state["recent_commands"])
+        self.assertEqual(state, original)
+        self.assertIs(project_observation(state, None), state)
+
+    def test_agent_applies_profile_to_features_and_retains_issued_history(self):
+        from unittest.mock import Mock
+        from src.learning.entity_execution import JointCommandAgent
+
+        policy = Mock(missing_fields=True, spatial_features=2)
+        policy.predict.return_value = None
+        state = dict(
+            game_loop=4,
+            map_size=[10, 10],
+            player={"food_used": 12},
+            units=[
+                dict(
+                    tag=1,
+                    unit_type=2,
+                    alliance=1,
+                    position=[2, 3],
+                    orders=[dict(ability_id=3)],
+                )
+            ],
+        )
+        profile = dict(
+            unknown_fields=dict(
+                player=["food_used"], units=[], world=["command_history"]
+            ),
+            order_aliases={"3": 4},
+        )
+        agent = JointCommandAgent(policy, (8, 12, 0), {}, observation_profile=profile)
+        agent.history = [dict(game_loop=2, ability=3, units=[1])]
+        agent.decide(state)
+        encoder = policy.predict.call_args.args[0]["encoder"]
+        self.assertEqual(encoder[2].tolist(), [4])
+        self.assertEqual(encoder[4].tolist(), [3])
+        self.assertEqual(encoder[0][0, 30], 0)  # Left-padded history slots.
+        self.assertEqual(encoder[0][0, 92], 1)  # Known latest actor reference.
+        self.assertEqual(encoder[3][6], 0)  # Unavailable food_used value.
+        self.assertEqual(encoder[3][19], 0)  # Its scene availability mask.
+        self.assertEqual(state["units"][0]["orders"][0]["ability_id"], 3)
+
+    def test_profile_rejects_an_alias_not_declared_by_the_engine(self):
+        from src.learning.entity_execution import validate_order_aliases
+
+        catalog = {295: {"remaps_to_ability_id": 3666}, 3666: {}}
+        validate_order_aliases({"order_aliases": {"295": 3666}}, catalog)
+        for aliases in ({"295": 524}, {"524": 3666}, {"3666": 295}):
+            with self.assertRaisesRegex(ValueError, "engine catalog"):
+                validate_order_aliases({"order_aliases": aliases}, catalog)

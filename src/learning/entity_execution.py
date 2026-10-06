@@ -1,14 +1,42 @@
 """Execute joint-model commands with causal, model-owned action history."""
 
+from copy import deepcopy
+
 from src.learning.entity_examples import state_inputs, decode_command
 from src.learning.teacher_states import remember_command
 
 
+def validate_order_aliases(profile, catalog):
+    for specific, generic in profile["order_aliases"].items():
+        if catalog.get(int(specific), {}).get("remaps_to_ability_id") != generic:
+            raise ValueError("Observation order alias differs from engine catalog")
+
+
+def project_observation(state, profile):
+    """Match an explicit partial-source contract without changing the raw trace."""
+    if profile is None:
+        return state
+    projected = deepcopy(state)
+    unknown = deepcopy(profile["unknown_fields"])
+    # Native dispatched history is known even when the replay history is partial.
+    unknown["world"] = [k for k in unknown.get("world", []) if k != "command_history"]
+    projected["unknown_fields"] = unknown
+    for unit in projected["units"]:
+        for order in unit.get("orders", []):
+            order["ability_id"] = profile["order_aliases"].get(
+                str(order["ability_id"]), order["ability_id"]
+            )
+    return projected
+
+
 class JointCommandAgent:
-    def __init__(self, policy, vocabulary, products, terrain=None):
+    def __init__(
+        self, policy, vocabulary, products, terrain=None, observation_profile=None
+    ):
         self.policy = policy
         self.vocabulary = tuple(vocabulary)
         self.products, self.terrain = products, terrain
+        self.observation_profile = observation_profile
         self.history = []
         self.next_loop = 0
 
@@ -17,7 +45,9 @@ class JointCommandAgent:
             return None, None
         # PlayerView may contain engine echoes. Only this agent's issued decisions
         # enter the learned history, with roles frozen at their issue time.
-        features = dict(state, recent_commands=self.history[-32:])
+        features = project_observation(
+            dict(state, recent_commands=self.history[-32:]), self.observation_profile
+        )
         inputs = state_inputs(
             features,
             *self.vocabulary,

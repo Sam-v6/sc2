@@ -2,6 +2,7 @@
 
 import argparse
 import gzip
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -13,7 +14,11 @@ from sc2.player import Bot, Computer
 from s2clientprotocol import sc2api_pb2 as pb
 
 from src.learning.actor_selection import construction_products
-from src.learning.entity_execution import JointCommandAgent, command_available
+from src.learning.entity_execution import (
+    JointCommandAgent,
+    command_available,
+    validate_order_aliases,
+)
 from src.learning.entity_policy import JointEntityPolicy
 from src.learning.entity_train import digest
 from src.learning.gameplay import PlayerView, image_dict, protocol_dict
@@ -67,6 +72,16 @@ class JointImitationBot(BotAI):
         self.policy, self.metadata = load_policy(
             job["policy"], job.get("controller", "joint")
         )
+        self.observation_profile = None
+        self.observation_profile_sha256 = None
+        if job.get("observation_profile"):
+            if not self.policy.missing_fields:
+                raise ValueError(
+                    "Partial observation profiles require a missing-field model"
+                )
+            content = Path(job["observation_profile"]).read_bytes()
+            self.observation_profile = json.loads(content)
+            self.observation_profile_sha256 = hashlib.sha256(content).hexdigest()
         self.view = PlayerView()
         self.frames = self.commands = self.last_loop = 0
         self.decisions = self.availability_blocks = 0
@@ -96,8 +111,14 @@ class JointImitationBot(BotAI):
         )
         (Path(self.job["output"]) / "static.json").write_text(json.dumps(static) + "\n")
         self.catalog = {a["ability_id"]: a for a in static["game_data"]["abilities"]}
+        if self.observation_profile is not None:
+            validate_order_aliases(self.observation_profile, self.catalog)
         self.agent = JointCommandAgent(
-            self.policy, vocabulary, construction_products(static["game_data"]), terrain
+            self.policy,
+            vocabulary,
+            construction_products(static["game_data"]),
+            terrain,
+            self.observation_profile,
         )
 
     def schedule_step(self):
@@ -236,6 +257,8 @@ def play_joint_job(job):
         step=1 if job.get("max_game_step", 1) == 1 else "adaptive",
         max_game_step=job.get("max_game_step", 1),
         scheduled_step_counts=bot.scheduled_step_counts,
+        observation_profile=bot.observation_profile,
+        observation_profile_sha256=bot.observation_profile_sha256,
         training=False,
         scope="Single frozen checkpoint episode; no acceptance or RL claim",
     )
@@ -249,6 +272,11 @@ def main():
         "--controller", choices=("joint", "goal-first"), default="joint"
     )
     parser.add_argument("--policy", type=Path, required=True)
+    parser.add_argument(
+        "--observation-profile",
+        type=Path,
+        help="Explicit partial-source input projection; raw native traces stay complete",
+    )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--map", default="AcropolisLE")
     parser.add_argument("--race", choices=("Terran", "Zerg", "Protoss"), default="Zerg")
@@ -279,6 +307,9 @@ def main():
         parser.error("Use a fresh episode directory")
     job = dict(
         controller=args.controller,
+        observation_profile=str(args.observation_profile.resolve())
+        if args.observation_profile
+        else None,
         max_game_step=args.max_game_step,
         policy=str(args.policy.resolve()),
         output=str(args.output.resolve()),
