@@ -2049,3 +2049,37 @@ This is a next-step recommendation, not implemented or accepted architecture.
 The expanded macro is not combined with old actor/argument models or promoted.
 All jobs described in this section are terminal; no RL resumes. Professional
 reconstruction, complete-command competence and all-race Hard wins remain open.
+
+### Joint entity model: shared encoder core verified
+
+The implementation plan is
+`docs/superpowers/plans/2026-10-06-joint-entity-imitation.md`. Task 1 adds
+`src/learning/entity_encoder.py` without changing the old model or play defaults.
+Compact numeric features combine with learned type/order embeddings; scene
+context combines entity pooling and all 32 chronological history slots. Individual
+entity embeddings remain available to later actor/target heads. One backward
+interface propagates downstream context/entity gradients into shared projection,
+type, order and history parameters, accumulating repeated categorical IDs correctly.
+Row-shape guards prevent NumPy from silently broadcasting one entity/history role
+over multiple rows.
+
+Five missing-encoder test failures are observed before implementation, followed by
+two failing row-alignment tests before their guards. Seven targeted tests pass:
+finite-difference gradient checks, entity permutation, empty-state handling,
+oldest-of-32 history sensitivity and row alignment. The full suite passes
+194 tests in 9.769 seconds; modified files pass Ruff and diff checks. The suite
+receipt is `logs/roadmap/unittest-twentyninth.log`.
+
+`entity_encoder_smoke_01.py` uses the installed catalogue's complete 1,970 unit
+slots and 3,801 ability slots with synthetic 200-entity inputs. It completes
+1,000 forward/backward calls in 0.163 seconds including postchecks, with unchanged
+parameters/source hashes. Encoder parameters occupy 881,536 bytes; this synthetic
+numeric entity payload occupies 25,600 bytes plus 3,200 categorical bytes. These
+are encoder-only sizes/timings, not full-model memory, actual human training or
+native simulation speedups. No optimizer, GPU, replay prediction or RL runs.
+
+This completes only the encoder implementation task. The complete command heads,
+semantic example conversion, spatial candidate coverage, shared queue/target-loss
+checks, human fit and opt-in native integration remain. The old macro still uses
+its old history encoding; no joint policy or improvement is claimed, and both
+reserved games stay closed to model prediction/fitting.
