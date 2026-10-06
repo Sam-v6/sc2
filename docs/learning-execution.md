@@ -1163,3 +1163,65 @@ gradient, prediction or provenance defect is found. The failed generalization
 result remains authoritative. The next proposed bounded supervised test is
 actor-linked prior-command destination history, rather than further optimization
 or RL; its causal history and changed-destination behavior must be audited.
+
+### Causal overlapping-actor command-history diagnostic
+
+`attack-history-persistence-01.py/.json` preserves Astra's unfitted diagnostic:
+reuse the latest earlier-loop Attack point destination sharing at least one
+currently selected actor. Simultaneous commands across all rows are excluded;
+within an earlier-loop burst the final recorded command wins ties. Previous
+human commands are teacher-forced, not autonomous agent history. Categories are
+same destination (within two tiles inclusive), changed destination and first
+command without relevant history. First commands have no persistence prediction
+and count as misses in overall accuracy. This is permitted own-command memory,
+not hidden enemy information or knowledge of future commands.
+
+The three reused diagnostic games have same/changed/first counts 10/35/7 for
+Lyra, 7/36/4 for Huski and 8/68/4 for Mez TvZ. Their persistence overall hits are
+10/52, 7/47 and 8/80, versus the no-history categorical model's 1/52, 5/47 and
+2/80. This identifies useful omitted information but remains weak and cannot
+replace strategy learning with repeating orders. Source, comparison report and
+all nine datasets retain identical pre/post hashes. An independent reviewer
+reconstructs all 544 teaching/diagnostic history records from raw examples and
+confirms exact command mapping, actor overlap, prior-loop ordering and categories.
+Every actual prestate is one loop before its corresponding action.
+
+`attack-history-listwise-01/contract.json` fixes one supervised test adding six
+candidate features: previous destination relative x/y and distance, availability,
+log elapsed age and selected-actor overlap. The existing 32-unit hidden layer
+learns their contribution; current command destinations and same/changed/first
+categories are not input features. Training commands, seed, 100 epochs, grid and
+uniform command weighting match the preceding categorical experiment. The gate
+requires each diagnostic game's changed-destination accuracy to improve at least
+ten percentage points and overall accuracy to exceed both frozen no-history and
+persistence baselines by ten points. Teacher-forced history, new normalization
+and initialization remain explicit limits. A future live implementation must
+record the bot's own issued commands; this experiment has no live integration.
+
+The history fit and evaluation finish in 173.24 seconds, CPU-only. Teaching
+within-two accuracy is 268/365 (73.42%), versus the frozen categorical model's
+240/365; mean error is 1.85 versus 2.35 tiles. Diagnostic overall hits are 1/52
+versus 1/52 for Lyra, 4/47 versus 5/47 for Huski, and 5/80 versus 2/80 for Mez
+TvZ. New/baseline mean errors are 22.76/15.64, 29.06/23.77 and 12.28/13.14 tiles.
+Changed-destination hits are 1/35 versus 0/35, 3/36 versus 3/36 and 5/68 versus
+2/68. Same-destination hits are 0/10 versus 0/10, 1/7 versus 2/7 and 0/8 versus
+0/8. First-command hits are 0/7 versus 1/7, 0/4 versus 0/4 and 0/4 versus 0/4.
+All three games remain below unfitted persistence's overall 10/52, 7/47, 8/80.
+The declared per-game changed/overall gate **fails**. More reliable training fit
+has again not established useful transfer across these games. Prior history is
+measurably relevant, but this encoder/objective/corpus combination does not learn
+it adequately. No live checkpoint, further fit, native game or RL follows.
+
+The saved report treats missing persistence predictions as infinite error for
+all-command miss accounting. Its persistence mean with first commands is thus
+undefined/infinite and should not be interpreted as a finite distance metric;
+no gate uses that mean. Category counts and model means are finite. Complete
+command prediction, autonomous-history behavior, stronger independent teaching
+players and professional replay reconstruction remain unresolved.
+
+The independent final-output review recomputes every one of the 544 saved
+predictions from final checkpoint arrays and the frozen no-history baseline,
+confirms exact chosen points/errors/history/categories and all counts, verifies
+43 pre/post artifact/code/data hashes plus checkpoint integrity, and independently
+recomputes the failed gate. No material correctness concern remains beyond the
+stated teacher-forcing, reused-diagnostic and changed-initialization limits.
