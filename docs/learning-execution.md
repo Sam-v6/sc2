@@ -3866,3 +3866,20 @@ Marine38→11/217; overallaccuracy35.95% stilltrailsworkermajority37.47%.
 Balancedclassweights andmodelbothchange, so noisolatednonlinearityclaim.
 No promotion/sweep. Next audit additional localprofessionaldata and sensorycoverage
 before anotherfullcontrollerfit. See[results](superpowers/plans/2026-10-06-production-threshold-probe-results.md).
+
+### October 6: additional professional human sources verified
+
+[Bounded intake 02](superpowers/plans/2026-10-06-professional-source-expansion-02.md)
+adds five games with 2,543 commands, 2,542 representable. Teaching now contains
+11 games with 6,089 raw and 6,086 representable decisions. Existing development
+and reserved splits are preserved. All 65 initial own identities, 456,482 whole-source
+own-type checks, 2,543 independent command correspondences and every history/delay
+verify. Metadata verification reconstructs 81 producer mappings and binds 87 reader
+files. The final verification receipt binds admission evidence and next fit inputs.
+
+Transfer reservations total 5,789,851 bytes, below 16 MiB. Import CPU peaks at
+13.3 percent of the host; all imports finish normally. No GPU, native game, optimizer
+or RL. One unmatched raw game and one unobserved target label remain excluded.
+Preserve unknown energy and other missing fields. Next freeze human-only training
+on the expanded data, applying the production/generalization findings.
+See [verified intake](superpowers/plans/2026-10-06-professional-source-expansion-02-results.md).
