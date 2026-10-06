@@ -372,6 +372,7 @@ class JointEntityPolicy:
             spatial_features=self.spatial_features,
             missing_fields=self.missing_fields,
             role_pooling=self.encoder.role_pooling,
+            context_layer_norm=self.encoder.context_layer_norm,
             actor_relative_points=self.actor_relative_points,
         )
         np.savez_compressed(
@@ -386,6 +387,7 @@ class JointEntityPolicy:
                 *configuration["dimensions"],
                 hidden=configuration["hidden"],
                 role_pooling=configuration.get("role_pooling", False),
+                context_layer_norm=configuration.get("context_layer_norm", False),
             )
             policy = cls(
                 encoder,

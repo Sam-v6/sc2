@@ -254,6 +254,11 @@ def main():
     )
     parser.add_argument("--hidden", type=int, default=32)
     parser.add_argument(
+        "--context-layer-norm",
+        action="store_true",
+        help="Normalize the summed encoder context before its activation",
+    )
+    parser.add_argument(
         "--actor-relative-points",
         action="store_true",
         help="Learn a candidate-to-selected-actor geometric point-score residual",
@@ -314,6 +319,7 @@ def main():
         spatial=args.spatial,
         missing_fields=args.missing_fields,
         role_pooling=args.role_pooling,
+        context_layer_norm=args.context_layer_norm,
         actor_relative_points=args.actor_relative_points,
         seed=args.seed,
         wall_seconds=args.wall_seconds,
@@ -350,6 +356,7 @@ def main():
             hidden=args.hidden,
             seed=args.seed,
             role_pooling=args.role_pooling,
+            context_layer_norm=args.context_layer_norm,
         ),
         DELAYS,
         seed=args.seed + 1,

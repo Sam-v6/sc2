@@ -111,3 +111,20 @@ plan and `docs/learning-execution.md` with terminal evidence.
   experiment; do not start a normalization/optimizer sweep. Whole-game native
   competence, learned micro transfer and reliable all-race Hard wins remain
   separate unproved requirements of the active full roadmap.
+
+## Execution record
+
+Task1: Five tests observed failing on the absent constructor flag, then passing.
+Full317tests pass in9.97seconds; Ruff and diff checks pass. Independent Astra
+review checks exhaustive parameter finite differences with role pooling, direct
+entity gradients and nearly constant nonzero variance. It also verifies exact
+base08bd929/current disabled initialization, forward/backward parity for both
+pooling paths, and actual fit05/supported checkpoint compatibility. No blocker.
+Final: minor (deferred): retain the reviewer's role-pooling and nearly constant
+nonzero-variance cases in committed tests; reviewer checked them independently.
+No additional implementation change is justified before the fixed comparison.
+No rulings changing the intervention or experiment bounds.
+
+Task2 contract is written before launch by
+`logs/roadmap/run_professional_context_fit_01.py`, binding exact source/checkpoint/
+code and gates. Output is `logs/roadmap/joint-professional-fit-06/`.

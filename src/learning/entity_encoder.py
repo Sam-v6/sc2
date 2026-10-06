@@ -14,10 +14,12 @@ class JointEntityEncoder:
         hidden=32,
         seed=0,
         role_pooling=False,
+        context_layer_norm=False,
     ):
         if role_pooling and features < 6:
             raise ValueError("Role pooling requires ownership and observation features")
         self.role_pooling = role_pooling
+        self.context_layer_norm = context_layer_norm
         rng = np.random.default_rng(seed)
 
         def matrix(rows, scale=None):
@@ -111,12 +113,19 @@ class JointEntityEncoder:
         padded = np.zeros((32, encoded.shape[1]), dtype=events.dtype)
         if len(history):
             padded[-len(history) :] = events
-        context = np.tanh(
+        projection = (
             scene @ p["scene"]
             + pooled @ p["pool"]
             + padded.ravel() @ p["history"]
             + p["context_bias"]
         )
+        normalization = None
+        if self.context_layer_norm:
+            centered = projection - projection.mean()
+            inverse = 1 / np.sqrt(np.mean(centered**2) + 1e-5)
+            projection = centered * inverse
+            normalization = (projection, inverse)
+        context = np.tanh(projection)
         cache = {
             "entities": entities,
             "unit_types": unit_types,
@@ -130,6 +139,7 @@ class JointEntityEncoder:
             "events": events,
             "padded": padded,
             "context": context,
+            "normalization": normalization,
         }
         return context, encoded, cache
 
@@ -138,6 +148,13 @@ class JointEntityEncoder:
         p, c = self.parameters, cache
         gradients = {name: np.zeros_like(value) for name, value in p.items()}
         context_delta = np.asarray(context_gradient) * (1 - c["context"] ** 2)
+        if self.context_layer_norm:
+            normalized, inverse = c["normalization"]
+            context_delta = inverse * (
+                context_delta
+                - context_delta.mean()
+                - normalized * np.mean(context_delta * normalized)
+            )
         gradients["scene"] = np.outer(c["scene"], context_delta)
         gradients["pool"] = np.outer(c["pooled"], context_delta)
         gradients["history"] = np.outer(c["padded"].ravel(), context_delta)
