@@ -3485,3 +3485,24 @@ history trace records reproduce the saved parent records and both probability
 endpoints reproduce saved ordinary predictions. Receipt
 `professional-mixed-history-01.deadline-parity.json` binds current helperSHA256
 `59405eb075c9141c2b5a5bd05689633fcfc4090ca6826ad07b06a8462f75023c`.
+
+Mixed-history run/watch/verify wrappers are independently reviewed without
+blockers. Preflight handle84453 exits0 with no optimizer updates or trial
+output directory: all4805parent predictions reproduce saved records and the
+first mixed teaching refresh supplies4510samples in28.16seconds. PreflightSHA256
+`775135b89ad3cd95dbfd432829fdc40946210462917a8f193f53a3195031e6d0`.
+Before launch, all preflight bindings still match, prior training PID2372207
+is absent, no matching fit/watch process is live, and whole-host CPU is1.1%.
+
+The one authorized supervised trial is launched under live exec handle73442,
+childPID2384922. Initial watchdog samples peak4.4%whole-host CPU; no guard stop.
+Corpus reload is active. Output `professional-mixed-history-01/`, telemetry
+`professional-mixed-history-01.telemetry.json`. Parent weights are preserved at
+initialization; descriptive teaching support is not reapplied to weights.
+Fresh Adam.0003/batch16/50epochs/1200seconds including refresh, shuffle8143,
+human probability.5 for first20epochs then0, teaching refresh every5epochs,
+two CPU threads/CUDA hidden/80%host guard. Snapshots and input digests allow
+independent reconstruction of each recorded refresh. Final own-history
+evaluation regenerates history from the final policy rather than the fitting
+cache. All14gates remain unchanged. Poll this same handle; no concurrent fit,
+native games or RL. Terminal results and independent verification are pending.

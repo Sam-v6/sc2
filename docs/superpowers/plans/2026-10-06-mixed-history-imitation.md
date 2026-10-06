@@ -74,3 +74,8 @@ use the final policy's own predictions, rather than cached fitting histories.
 These settings are a single supervised experiment, not a guarantee of improved
 generalization. Wrapper preflight/review and terminal independent verification
 remain to be completed; no fit launched at this implementation milestone.
+
+Subsequent execution: wrapper review finds no blockers and preflight handle84453
+passes without updates. The single bounded trial is now live under handle73442
+with childPID2384922; see the execution ledger for bindings and telemetry.
+Terminal evaluation and independent verification remain pending.
