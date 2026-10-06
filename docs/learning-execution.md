@@ -3168,3 +3168,43 @@ pass and the full350-test suite passes10.00seconds with six optional skips.
 Ruff/diff pass. The wrapper reuses the hash-bound117MBteaching cache, reconstructs
 it exactly and adds post-fit score parity for every4510fitting rows.
 Independent fitting/wrapper review and the actual frozen comparison are pending.
+
+Independent fitting/wrapper review reports no blocking findings, eight focused
+tests pass and90independent gradient coordinates agree within1.69e-11.
+The reviewed wrapper checks all4510post-fit cached logits against the reloaded
+policy, ordinary predictions/other arrays, fixed gates and source/control/cache
+bindings. CPU-only guard launch is live under execution handle13949; terminal
+result and final telemetry binding remain pending. No native/RL is authorized
+by this launch. Artifact root: `professional-context-query-01/`.
+
+The frozen comparison completes terminal exit0 in105.75seconds. L-BFGS uses
+250iterations/272evaluations and21.38optimizer seconds, stopping on the fixed
+iteration bound rather than convergence. Actor loss0.636428→0.403963, selection
+parameter norm27.24. Teaching actors1869→2172, complete825→953; all nine
+teaching games improve complete counts. Against the frozen linear comparison,
+this is1965→2172actors and853→953complete commands. This demonstrates increased
+teaching capacity, not successful transfer.
+
+Reused774diagnostic actors53→47, complete6→4, targets62→60. Unchanged ability
+predictions remain3814/4513teaching and149/292diagnostic, row by row. The
+teaching-size and all diagnostic improvement gates fail; only nine-game gains
+and unchanged ability gates pass. No extension, sweep, promotion, native game
+or RL. Saved/reloaded predictions all match, other arrays remain unchanged and
+all4510cached/policy logits agree (maximum absolute error1.37033e-5).
+
+Parent verification binds final contract/report/checkpoint/cache/control/source
+and terminal telemetry. HostCPU peaks10.6%, childRSS5.58GB, no load stop.
+Contract SHA256`cc61de886843d754a43e94b225740778fc764b22da03f9b3fd29c7e3b51c363b`,
+checkpoint`d65e8c82ca8d236ecde038b597098227dd8bdedf7bd772d325b75c4c4a96c326`,
+final telemetry`ae635b0065d5e79a2f5ed161d29eecdb7b4e86b9e0590f7a6af8b76b040eaf84`.
+Artifacts: `professional-context-query-01/{contract,comparison,verification}.json`,
+`lbfgs/{policy.npz,report.json}` and sidecar telemetry.
+
+Read-only error summaries reproduce report totals: teaching589fixed actor
+errors and286new ones, diagnostic17fixed and23new. Correct group cardinality
+is2564/4513teaching,158/292diagnostic; both ability and exact actors occur on
+2104/4513and38/292respectively. Diagnostic abilities outside three common
+commands are mostly wrong, alongside persistent selection/target errors. Thus
+another selection-head optimization extension is not justified. A next
+experiment must address wider imitation/representation/data transfer; this
+result does not prove the existing observations sufficient or missing.

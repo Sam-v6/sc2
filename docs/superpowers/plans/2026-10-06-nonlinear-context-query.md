@@ -60,3 +60,14 @@ The separately prepared wrapper reconstructs the bound cache, preserves
 initial ordinary predictions and checks post-fit cached/policy scores on all
 4510rows, using atol5e-5/rtol2e-5. This parity tolerance verifies implementation,
 not copying acceptance. Fitter/wrapper review and launch remain pending.
+
+Independent review has no blocking findings;90finite-difference coordinates
+agree within1.69e-11. Completed fixed fit250iterations/272evaluations in21.38
+optimizer seconds, total105.75seconds, terminal exit0. Teaching actors2172,
+complete953, nine games improve; diagnostic actors47, complete4, target60.
+All size/diagnostic improvement gates fail. Actor loss0.403963, norm27.24;
+abilities remain row-identical to parent. Every4510cached/policy logit agrees,
+maximum absolute error1.37033e-5; all saved/reloaded predictions match and other
+parameters are frozen. Parent verifies final evidence/telemetry bindings,
+CPU peak10.6%, no load stop. No extensions/sweeps/promotion/native/RL.
+Greater teaching capacity is verified; useful cross-game copying is not.
