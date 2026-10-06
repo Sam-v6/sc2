@@ -1868,3 +1868,53 @@ and this result does not complete the action-space milestone. Human imitation
 remains the next learning phase; RL, including micro RL, stays on hold until
 human-trained behavior works competently in actual games. Professional replay
 reconstruction and broader human-data transfer are still unresolved.
+
+### Human-only corpus expansion: three audited full games, two pending
+
+On 2026-10-06, `logs/roadmap/expand_human_corpus_01.py` starts native extraction
+of five previously downloaded, compatible games: 51572, 51685, 51885, 51754 and
+51483. Roles are assigned as candidate teaching before extraction; no model is
+loaded, fitted or evaluated, no RL runs and no assets are downloaded. All five
+observe human Terran player 1, Mez. They add map/opponent examples, not another
+teacher or verified professional. Reserved validation replay 51886 is excluded.
+
+Three full reconstructions and their human-event alignment are terminal:
+
+| Replay | Map | Consecutive fog-enabled observations | Matched human commands | Unresolved events | Masked timing rows |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 51572 | Cyber Forest LE | 8,480 | 217 | 1 | 1 |
+| 51685 | Kairos Junction LE | 13,121 | 345 | 2 | 2 |
+| 51885 | Thunderbird LE | 14,738 | 375 | 9 | 8 |
+
+These datasets contain 937 matched commands in 936 decision rows, retaining the
+single simultaneous-command burst. Every engine loop is retained, including
+quiet moments. `audit_human_expansion_completed3_01.py` verifies all retained
+observation timestamps, visible-unit serialization, causal command/memory times,
+strict pre-command state alignment, command grammar roundtrips, human-event
+accounting and every masked timing gap. It verifies bound sources against the
+pre-extraction contract and current files, and every terminal output digest
+against a retained progress snapshot. This is an audit of these three datasets,
+not closure of the running five-game batch or independent proof of every fog
+pixel. Its receipt is `human-corpus-expansion-01/integrity-audit-completed3-01.json`.
+The initial audit invocation omitted PYTHONPATH and failed before reading data;
+the corrected invocation uses `PYTHONPATH=.` and completes.
+
+Replay 51754 reaches the first attempt's 300-second wall limit without a terminal
+dataset receipt. Its partial output is excluded from teaching. Only after
+`human-51754-expansion-01.supervision.json` reports `wall_timeout` does
+`retry_human_51754_02.py` start a fresh output under a 600-second native bound,
+preserving the first attempt. Replay 51483 continues in the original batch under
+its 300-second bound. Neither pending game is counted as complete here. Subsequent
+agents must inspect their process/terminal receipts before retrying or auditing.
+The original batch handle is 47205; the separate 51754 retry handle is 91704.
+
+A small in-memory compression probe checks a 16 MiB decoded prefix from 51572.
+Compression plus decompression verification takes 0.034–0.110 seconds across
+levels 1/3/6/9, producing 458–581 kB. This does not locate the full extraction
+bottleneck or prove an end-to-end speedup; defaults remain unchanged. The report
+is `human-corpus-expansion-01/compression-probe.json`.
+
+No checkpoint/default changes occur. The usable human data increases, but model
+competence, professional replay reconstruction and the eventual all-race Hard
+goal remain unproven. Human imitation remains the learning priority; RL stays
+held. The pending native jobs only reconstruct recorded human games.
