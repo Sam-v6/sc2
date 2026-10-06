@@ -2,6 +2,7 @@
 
 import numpy as np
 from src.learning.global_imitation import coordinate_signs
+from src.learning.imitation import FactorPolicy
 
 
 def target_features(state, group, ability, unit_types, ability_count, origin):
@@ -50,3 +51,52 @@ def select_target(policy, features, units):
         return None
     logits = policy.predict(features)["ability"]
     return units[int((logits[:, 1] - logits[:, 0]).argmax())]["tag"]
+
+
+class TargetPolicy(FactorPolicy):
+    """Two-logit scorer trained to select one candidate per human command.
+
+    Labels contain contiguous candidate ``ranges`` and a local ``target`` index
+    for each command. Weights apply to commands, independently of unit count.
+    The inherited checkpoint, predictor and Adam optimizer remain unchanged.
+    """
+
+    def gradients(self, x, labels, points, weights=None, feature_indices=None):
+        active = (
+            np.arange(len(self.feature_mean))
+            if feature_indices is None
+            else np.asarray(feature_indices)
+        )
+        x = (np.asarray(x) - self.feature_mean[active]) / self.feature_scale[active]
+        local = np.flatnonzero(np.any(x != 0, axis=0))
+        columns = active[local]
+        hidden = np.tanh(
+            x[:, local] @ self.parameters["input"][columns]
+            + self.parameters["bias"]
+        )
+        logits = hidden @ self.parameters["ability"] + self.parameters["ability_bias"]
+        scores = logits[:, 1] - logits[:, 0]
+        weights = (
+            np.ones(len(labels["ranges"])) if weights is None else np.asarray(weights)
+        )
+        norm = weights.sum()
+        delta = np.zeros(len(x))
+        loss = 0.
+        for (begin, end), target, weight in zip(
+            labels["ranges"], labels["target"], weights
+        ):
+            shifted = scores[begin:end] - scores[begin:end].max()
+            probability = np.exp(shifted)
+            total = probability.sum()
+            loss += weight * (np.log(total) - shifted[target]) / norm
+            probability /= total
+            probability[target] -= 1.
+            delta[begin:end] = probability * weight / norm
+        categorical_delta = np.column_stack((-delta, delta))
+        gradients = {name: np.zeros_like(value) for name, value in self.parameters.items()}
+        gradients["ability"] = hidden.T @ categorical_delta
+        gradients["ability_bias"] = categorical_delta.sum(axis=0)
+        back = (categorical_delta @ self.parameters["ability"].T) * (1 - hidden**2)
+        gradients["input"][columns] = x[:, local].T @ back
+        gradients["bias"] = back.sum(axis=0)
+        return float(loss), gradients

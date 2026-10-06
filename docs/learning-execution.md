@@ -1406,3 +1406,108 @@ change must address target prediction as well as action and actor choice and be
 measured on complete commands, rather than promoting an isolated head score.
 Rom remains reused diagnostic/candidate teaching data. Reserved 51886 is unused;
 no live game, model update, RL, or promotion occurs in these checks.
+
+### Command-wise supervised unit-target objective
+
+`TargetPolicy` in `src/learning/target_selection.py` reuses the existing CPU
+network, predictor/checkpoint format and Adam optimizer, replacing only its loss
+with a categorical choice among the current command's visible candidates. The
+score is binary-logit difference; probabilities normalize across candidates for
+that command, not across yes/no examples for each candidate. Other heads receive
+zero gradients. Training labels are local candidate indices with contiguous row
+ranges; optional weights apply to whole commands. Use `TargetPolicy` explicitly
+for further fitting of this objective; ordinary `FactorPolicy` loads are suitable
+for inference, but their training loss is different.
+
+Three new tests first fail because the new policy is absent, then pass with the
+implementation: finite-difference gradients for input/hidden/output parameters,
+variable group sizes and permutation-stable target identity, checkpoint/prediction
+persistence, sparse-column equivalence and zero loss/gradient for one candidate.
+All 182 tests pass in 9.712 seconds (`unittest-twentyseventh.log`); Ruff checks of
+the changed module/test pass. This establishes optimizer mechanics, not imitation
+quality. There is no live integration or checkpoint promotion.
+
+The fixed `target_listwise_human_01.py` experiment completes in
+`target-listwise-human-02/` in 7.930 seconds: 150 epochs, seed 5004, 16 command
+minibatches, rate .001, five full Mez training games, corrected timing datasets.
+It uses inverse replay-command-count weights normalized within each minibatch,
+not exact equal aggregate replay weighting. Lyra, Huski and Rom are reused
+whole-game diagnostics; both player views remain disjoint from training. Human
+ability/group and unit-target mode are supplied; it does not choose complete
+commands. The first output directory was an empty failed attempt caused by a
+wrong Huski dataset path, before the contract, collection or fitting; it is not a
+successful batch or an alternative model.
+
+Training copies 152/289 target identities (52.60%), below the declared 90% sanity
+gate. Diagnostic exact identities, new listwise scorer versus frozen earlier
+binary scorer trained on the same five games:
+
+| Diagnostic | Listwise | Earlier binary |
+| --- | --- | --- |
+| Lyra | 12/51 | 12/51 |
+| Huski | 12/56 | 16/56 |
+| Rom | 12/37 | 16/37 |
+
+Enemy-Attack target copying also declines: Huski 3/7 versus 4/7, Rom 7/22 versus
+10/22 (Lyra has no such examples). The declared +10 percentage point improvement
+on every diagnostic and nondecreasing enemy-Attack accuracy fails. Batch/update
+structure differs from the binary fit, so this does not isolate the loss alone
+as the cause. Keep the failed checkpoint as evidence, not a gameplay default.
+`integrity-audit.json` recomputes every stratum's command/hit counts and verifies
+all listed source/data/model hashes and checkpoint identity against disk. No
+professional-data claim follows from these Masters-level examples, and reserved
+51886 remains unused. RL remains held. Repeated failures justify consulting the
+user-authorized Astra adviser about a systemic observation/teaching change before
+another target-head experiment.
+
+The independent runtime reviewer passes the three new tests and reproduces every
+saved training/diagnostic target prediction without refitting. It verifies all 57
+source/data/model bindings, normalization and checkpoint identity, and 2,850 Adam
+updates (150 × ceil(289/16)). The grouped score-difference gradients and inherited
+optimizer/checkpoint state are correct; no actionable implementation defect is
+found. This validates the failed experiment's accounting, not its quality.
+
+The Astra adviser recommends auditing complete-command reconstruction on all five
+teaching games, split before/after 240 seconds, before another fit. Macro and actor
+checkpoints were fitted only on prefixes while the argument checkpoint used whole
+games. Unmasked reconstruction must be labelled explicitly where native ability
+sidecars do not exist. Poor teaching-game joint fidelity would justify rebuilding
+the components on consistent full-game inputs; strong teaching copying but poor
+other-player copying would instead support widening teacher diversity. Neither
+outcome would itself establish autonomous competence or permit resuming RL.
+
+### Teaching-game reconstruction identifies a prefix/full-game mismatch
+
+The advised audit completes in `command-stage-teaching-01/`, 85.654 seconds,
+using the five original Mez teaching games and corrected timing datasets. It
+freezes prefix-240 macro and actor checkpoints plus the existing full-five-game
+argument checkpoint. It conditions on human event times and prior human history,
+without fitting. Native availability is **not** supplied: raw macro argmax is
+used, every known own actor is synthetically eligible, and engine target-mode
+rules still govern decoding. Therefore these are unmasked reconstruction scores,
+not executable-command rates or live-game evidence.
+
+| Teaching period | Commands | Joint complete | Correct ability supplied | Correct ability and actors supplied |
+| --- | --- | --- | --- | --- |
+| Through 240 game seconds | 494 | 278 | 279 | 290 |
+| After 240 game seconds | 1,505 | 2 | 11 | 851 |
+
+Joint ability copying declines from 491/494 (99.39%) to 144/1,505 (9.57%). Exact
+actor-set copying declines from 480/494 to 6/1,505; even with teacher ability it
+reaches only 14/1,505 later actor sets. With teacher ability and actors, argument
+reconstruction reaches 81/255 actual point targets within two tiles and 61/91
+actual unit targets in the prefix; after 240 seconds it reaches 253/845 and
+136/198 respectively. These targeted-command counts exclude shared null targets.
+Exact coordinate copying remains limited even on teaching games; the all-fields
+complete score is stricter than equivalent useful strategy.
+
+The aggregate and every per-game/per-stage count are recomputed from saved records
+in `integrity-audit.json`, and all listed source/model/dataset bindings match disk.
+This is a concrete component-training mismatch, not evidence that another target
+loss alone will solve full-game imitation. Stop transfer-only target sweeps. The
+next fit must rebuild macro, actor and argument components using one consistent
+full-game teaching set and frozen shared representation, then repeat this joint
+teaching audit before spending fresh validation data. Broad independent-player
+and verified professional teaching remain required after this sanity check; this
+Masters corpus is not a substitute for the requested professional corpus. No
+native game, RL or checkpoint promotion occurs, and reserved 51886 remains unused.
