@@ -35,9 +35,9 @@ Do not describe the changed objective as preserving human action frequency.
 
 Files: `src/learning/entity_train.py`, `tests/test_entity_importance.py`.
 
-- [ ] Observe failing tests for weights/bounds/global mean, unit-weight default
+- [x] Observe failing tests for weights/bounds/global mean, unit-weight default
   parity and weighted-batch/duplicated-example equivalence.
-- [ ] Implement `ability_importance_weights(abilities, replay_count)`:
+- [x] Implement `ability_importance_weights(abilities, replay_count)`:
 
   ```python
   counts = Counter(abilities)
@@ -53,24 +53,24 @@ Files: `src/learning/entity_train.py`, `tests/test_entity_importance.py`.
   example's loss/gradient before batch averaging. Add --ability-importance and
   bind the rule, actual counts and weights in configuration. Derive weights
   after filtering teaching labels. Preserve shuffled order and update count.
-- [ ] Focused/full unittest, Ruff/diff checks, independent review, commit before
+- [x] Focused/full unittest, Ruff/diff checks, independent review, commit before
   fitting. No encoder architecture or supervised loss-internal changes.
 
 ## Task 2: Fixed human-only experiment
 
-- [ ] Freeze fit07 against fit05: identical nine teachers and774,hidden32,
+- [x] Freeze fit07 against fit05: identical nine teachers and774,hidden32,
   seed8100,rate.001,batch16,50epochs/14100updates,600optimizer-second cap,
   refinement/actor cutoff/spatial/availability/role pooling/actor-relative points.
   Context normalization false in both; add only ability importance.
-- [ ] Verify terminal/source/code/checkpoint and matched updates. Report frozen
+- [x] Verify terminal/source/code/checkpoint and matched updates. Report frozen
   unweighted loss separately from the weighted training objective. All diagnostics
   use trainer.collect, and aggregate fields must match trainer reports.
-- [ ] Diagnostic gates: at least24/292complete; at least35/88correct abilities
+- [x] Evaluate diagnostic gates: at least24/292complete; at least35/91correct abilities
   among Build/Train/Research commands; at least one correct ability for each
   SupplyDepot,Barracks,Marine production (319,321,560); total ability at least
   139/292; Smart/Attack ability at least119/198. Teaching complete at least825.
   These development gates do not establish competence or Hard wins.
-- [ ] Report per-family actors/targets and natural-frequency copying. No reserved
+- [x] Report per-family actors/targets and natural-frequency copying. No reserved
   predictions/promotion without later frozen functional evidence. Failure ends
   this experiment; success still needs native imitation competence, learned micro
   transfer, reliable all-race Hard and higher-difficulty evaluation.
@@ -99,4 +99,28 @@ will be determined by the frozen gates and terminal evidence, not code review.
 
 Task2 launcher `logs/roadmap/run_professional_importance_fit_01.py` freezes the
 contract before subprocess launch, checking source hashes/nativeSmart identity
-and diagnostic macro denominator88. Fresh output `joint-professional-fit-07/`.
+and diagnostic macro denominator91. Fresh output `joint-professional-fit-07/`.
+
+Ruling: preflight sums91macro commands, correcting the manually counted88 before
+any contract, optimizer or model result. Preserve the absolute35correct-ability
+threshold; use the actual91denominator. Cost if wrong: the benchmark denominator
+would be inconsistent with its frozen command set. No training was launched by
+the rejected preflight and no checkpoint/output/contract was created.
+
+Terminal result: fit07 completed 50 epochs and 14,100 updates in 331.97 optimizer
+seconds / 387.11 total seconds. Teaching complete copying is 892/4,513;
+diagnostic complete copying is 11/292, ability 130, actors 53 and target 69.
+Macro ability choice is 13/91, Smart/Attack 117/198. Supply Depot ability is 2/11,
+but none has correct actors or target; Barracks 0/4 and Marine production 0/12.
+Five diagnostic gates fail; only teaching complete copying passes. The frozen
+unweighted teaching loss worsens from 4.260686 to 4.750104. Weighted training
+loss is a different objective and must not be compared directly to baseline.
+
+`professional-importance-comparison-01.json` verifies matched configuration,
+sources, code, checkpoint, updates, teaching-only weight counts and diagnostic
+field aggregates. The loss helper checks all 4,510 component sums against the
+actual optimizer loss; its teaching totals match the terminal report. The first
+comparison-helper attempt stopped on unnamed static catalog entries before any
+receipt; using the catalog's optional friendly names fixes that read-only audit.
+Training was neither changed nor repeated. No promotion, native games, reserved
+predictions or RL. This experiment ends; no weighting sweep follows.

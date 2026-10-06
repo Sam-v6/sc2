@@ -2814,3 +2814,60 @@ Review finds no other blocker or minor. No re-review is needed for the reproduce
 fix. Next one fixed fit07 uses fit05architecture (context normalization false),
 same nine teachers/774 and50epochs/14100updates/600optimizer-second cap. Macro
 and micro guardrail gates are frozen before fitting. No reserved/native/RL work.
+
+Fit07 is terminal: 50 epochs, 14,100 updates, 331.97 optimizer seconds and
+387.11 total seconds. Complete copying rises from 825 to 892/4,513 teaching
+commands and 6 to 11/292 diagnostic commands, below the required 24. Diagnostic
+ability choice is 130/292, macro choice 13/91 and Smart/Attack 117/198. Supply
+Depot choice improves to 2/11 but correct actors and targets remain zero;
+Barracks is 0/4 and Marine production 0/12. Five of six frozen gates fail.
+Natural-frequency teaching loss worsens from 4.260686 to 4.750104; weighting
+changes the objective, so its training loss cannot be compared directly.
+
+`professional-importance-comparison-01.json` binds the checkpoint, matched
+configuration, source/code hashes, exact updates, weight counts and per-ability
+audits. Its diagnostic field sums reproduce the trainer report. The separate
+`professional-importance-loss-01.json` uses exact trainer.collect inputs; every
+component sum matches loss_and_gradients and teaching totals match the report.
+No model is promoted. This bounded experiment ends without a sweep or extension.
+The user's clarification is explicit: current training is human imitation;
+RL remains stopped until useful human copying and live competence are proved.
+
+Next diagnostic is `superpowers/plans/2026-10-06-human-small-set-check.md`:
+can the unchanged architecture learn a small, varied set of human teaching
+commands? At most two commands per demonstrated ability, chosen deterministically
+from the nine teachers, receive one fresh 200-epoch / 120-optimizer-second run.
+Source/code and selected row indices are bound before fitting. This separates
+basic fitting limitations from cross-game generalization; passing would only
+prove memorization. It changes no gameplay controls and introduces no scripted
+strategy, diagnostic/reserved predictions, native games or RL. The full roadmap,
+learned micro transfer and reliable all-race Hard/higher difficulties remain open.
+
+The small-set diagnostic is terminal: 62 selected commands cover all 33 teaching
+abilities; 200 epochs / 800 Adam updates take 11.98 optimizer seconds. Ability,
+mode and queue are 62/62; timing is 43/43 known labels; targets are 59/62 and
+actors 46/62. Complete copying is 44/62, below the frozen 56 threshold. With
+human actors supplied explicitly, complete copying reaches 59/62. All 23 point
+commands have ordinary mean target error 0.084 tiles. The model can fit small-set
+command choices and geometry; unit membership remains a major fitting failure.
+This diagnoses training behavior and establishes no cross-game competence.
+Contract, selected row indices, code/source hashes, saved policy and terminal
+report are in `logs/roadmap/professional-small-set-01/`. Bindings are unchanged.
+Next a read-only audit separates membership threshold errors from actor ranking
+using human group size only as a named diagnostic oracle. No fit extension or
+promotion follows; RL and native simulations remain stopped.
+
+Frozen small-set actor diagnosis narrows the interpretation: correct group size
+and type/count composition are both 59/62, while exact tags are 46/62. Supplying
+human group size to top-K ranking reaches only 47/62. All 16 failures have one
+human actor; 13 select another same-type single actor, including 11 construction
+SCVs. Three select multiple same-type production/research buildings. Improving
+count alone would barely help. An alternate SCV is not automatically a failed
+gameplay decision; the next actor investigation must distinguish functional
+execution/travel/order constraints from exact human unit identity. Exact copying
+gates remain unchanged and failed. No equivalence or live competence is claimed.
+Receipt `professional-small-set-01/actor-diagnosis.json` binds exact selected
+teaching rows and reproduces the terminal actor total. No extra fit or other
+replay predictions occurred. Current full-game ability generalization also
+remains poor (fit07 130/292); neither small-set success nor a possible equivalent
+worker selection establishes readiness for RL.
