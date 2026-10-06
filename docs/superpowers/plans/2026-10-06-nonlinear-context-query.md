@@ -46,3 +46,10 @@ both only permits a separately frozen imitation-only native competence test
 with replay/native observation gaps and untaught feature support addressed.
 The full roadmap remains incomplete until native competence, learned micro
 transfer and later independent full-game RL/difficulty gates pass.
+
+Policy implementation complete: five RED→GREEN tests, final347-test suite
+passes10.02seconds (six optional skips), Ruff/diff clean. Independent review
+checks68gradient coordinates and genuine legacy checkpoint behavior. The
+linear fitter now explicitly rejects this residual family, covering the
+reviewed API guard gap. No model fitting or prediction campaign has started;
+the compact nonlinear fitter/wrapper remains pending.

@@ -17,7 +17,7 @@ def actor_weights(policy):
 
 def actor_cache(policy, examples):
     if not (policy.actor_geometry and policy.actor_cutoff and policy.refinement) or (
-        policy.actor_count or policy.actor_nonlinear
+        policy.actor_count or policy.actor_nonlinear or policy.actor_context_query
     ):
         raise ValueError(
             "Actor fitting requires the linear geometry/cutoff score family"
@@ -83,6 +83,10 @@ def actor_objective(weights, cache):
 
 def fit_actor_heads(policy, cache, *, optimizer, iterations, seconds):
     """Update only selection heads; a wall bound retains the best evaluated point."""
+    if policy.actor_context_query:
+        raise ValueError(
+            "The linear actor fitter does not support context query residuals"
+        )
     if optimizer not in ("adam", "lbfgs") or iterations <= 0 or seconds <= 0:
         raise ValueError("Choose a bounded Adam or L-BFGS actor fit")
     initial = actor_weights(policy)

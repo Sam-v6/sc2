@@ -41,7 +41,11 @@ class JointEntityPolicy:
         actor_relative_points=False,
         actor_geometry=False,
         actor_nonlinear=False,
+        actor_context_query=False,
     ):
+        if actor_context_query and not (actor_geometry and actor_cutoff):
+            raise ValueError("Context query requires geometry and cutoff")
+        self.actor_context_query = actor_context_query
         self.actor_nonlinear = actor_nonlinear
         self.actor_geometry = actor_geometry
         self.actor_relative_points = actor_relative_points
@@ -111,6 +115,13 @@ class JointEntityPolicy:
             ).astype(np.float32)
             self.heads["actor_nonlinear_bias"] = np.zeros(32, np.float32)
             self.heads["actor_nonlinear_output"] = np.zeros(32, np.float32)
+        if actor_context_query:
+            extra_rng = np.random.default_rng(seed + 101)
+            self.heads["actor_context_input"] = extra_rng.normal(
+                0, 1 / np.sqrt(hidden), (hidden, 64)
+            ).astype(np.float32)
+            self.heads["actor_context_bias"] = np.zeros(64, np.float32)
+            self.heads["actor_context_output"] = np.zeros((64, hidden + 5), np.float32)
 
     @property
     def parameters(self):
@@ -163,6 +174,18 @@ class JointEntityPolicy:
             actor_logits = actor_logits + nonlinear @ p["actor_nonlinear_output"]
         if self.actor_cutoff:
             actor_logits = actor_logits + conditioned @ p["actor_cutoff"]
+        query_hidden = query_features = None
+        if self.actor_context_query:
+            query_hidden = np.tanh(
+                conditioned @ p["actor_context_input"] + p["actor_context_bias"]
+            )
+            residual = query_hidden @ p["actor_context_output"]
+            query_features = np.column_stack(
+                (entities, geometry, np.ones(len(entities)))
+            )
+            actor_logits = actor_logits + query_features @ residual
+            # The shared entity gradient includes both contributions to its query.
+            actor_query = actor_query + residual[: entities.shape[1]]
         count_log = (
             float(conditioned @ p["actor_count"] + p["actor_count_bias"][0])
             if self.actor_count
@@ -230,6 +253,8 @@ class JointEntityPolicy:
             actor_geometry=geometry,
             actor_nonlinear=nonlinear,
             actor_nonlinear_inputs=nonlinear_inputs,
+            actor_context_hidden=query_hidden,
+            actor_context_features=query_features,
         )
         return output, cache
 
@@ -336,6 +361,17 @@ class JointEntityPolicy:
                 @ p["actor_nonlinear_entity"][: c["entities"].shape[1]].T
             )
         query_gradient = c["entities"].T @ actor_delta
+        if self.actor_context_query:
+            residual_delta = c["actor_context_features"].T @ actor_delta
+            gradients["actor_context_output"] = np.outer(
+                c["actor_context_hidden"], residual_delta
+            )
+            hidden_delta = (residual_delta @ p["actor_context_output"].T) * (
+                1 - c["actor_context_hidden"] ** 2
+            )
+            gradients["actor_context_input"] = np.outer(c["conditioned"], hidden_delta)
+            gradients["actor_context_bias"] = hidden_delta
+            conditioned_gradient += hidden_delta @ p["actor_context_input"].T
         gradients["actor"] = np.outer(c["conditioned"], query_gradient)
         conditioned_gradient += query_gradient @ p["actor"].T
         entity_gradient += np.outer(actor_delta, c["actor_query"])
@@ -436,6 +472,7 @@ class JointEntityPolicy:
             actor_relative_points=self.actor_relative_points,
             actor_geometry=self.actor_geometry,
             actor_nonlinear=self.actor_nonlinear,
+            actor_context_query=self.actor_context_query,
             encoder_backend=getattr(self.encoder, "backend", "numpy"),
             relational_attention=getattr(self.encoder, "relational_attention", False),
         )
@@ -474,6 +511,7 @@ class JointEntityPolicy:
                 actor_relative_points=configuration.get("actor_relative_points", False),
                 actor_geometry=configuration.get("actor_geometry", False),
                 actor_nonlinear=configuration.get("actor_nonlinear", False),
+                actor_context_query=configuration.get("actor_context_query", False),
             )
             for name, parameter in policy.parameters.items():
                 if archive[name].shape != parameter.shape:

@@ -306,6 +306,11 @@ def main():
         help="Learn a nonlinear unit-selection residual conditioned on game context",
     )
     parser.add_argument("--wall-seconds", type=float, required=True)
+    parser.add_argument(
+        "--actor-context-query",
+        action="store_true",
+        help="Learn a nonlinear context-to-selection query; requires geometry and cutoff",
+    )
     args = parser.parse_args()
     encoder_kind = JointEntityEncoder
     encoder_options = {}
@@ -382,6 +387,7 @@ def main():
         actor_relative_points=args.actor_relative_points,
         actor_geometry=args.actor_geometry,
         actor_nonlinear=args.actor_nonlinear,
+        actor_context_query=args.actor_context_query,
         relational_attention=args.relational_attention,
         encoder_runtime=runtime,
         seed=args.seed,
@@ -452,6 +458,7 @@ def main():
         actor_relative_points=args.actor_relative_points,
         actor_geometry=args.actor_geometry,
         actor_nonlinear=args.actor_nonlinear,
+        actor_context_query=args.actor_context_query,
     )
     optimizer = Adam(policy, args.rate)
     rng = np.random.default_rng(args.seed + 2)

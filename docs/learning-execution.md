@@ -3138,3 +3138,21 @@ residual, preserving the frozen candidates and zero-initialized baseline
 behavior. This differs from the failed per-candidate nonlinear scorer. Keep
 the previous wider copying/diagnostic gates; no additional optimizer sweep,
 native run or RL follows a failed result.
+
+The opt-in context-query policy is implemented with64hidden units and a
+zero-initialized entity/geometry/cutoff query residual. It uses a separate RNG,
+preserving the old initial parameters and scores. Ordinary selection takes
+only legitimate conditioned context and existing candidate features. Save/load
+and the training CLI record the option; the default remains disabled.
+
+Four new policy tests are RED on the absent option, then GREEN for default
+parity, shared/head finite differences, permutation/checkpoint behavior and
+required geometry/cutoff. A fifth test reproduces the old linear fitter silently
+accepting the new family, then verifies explicit rejection (RED→GREEN).
+Independent review also checks68gradient coordinates (maximum error2.88e-5)
+and a genuine legacy checkpoint missing the option; no remaining findings.
+The review's full suite overlapped the guard edit and saw an error-string
+case mismatch; the fresh final suite passes347tests in10.02seconds with six
+optional-framework skips. Ruff/diff pass. No training/native/RL is launched.
+The compact nonlinear objective/fitter and frozen full-corpus wrapper remain
+to implement and review before testing copying gains.
