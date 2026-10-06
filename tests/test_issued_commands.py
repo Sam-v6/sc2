@@ -46,6 +46,16 @@ class IssuedCommandTests(unittest.TestCase):
         self.assertEqual(selected[0]["next_action_delay"], 10)
         self.assertEqual(audit["excluded_engine_commands"], 1)
 
+    def test_timing_cannot_skip_an_unresolved_human_command(self):
+        rows = [{"action_loop": t, "commands": [command()]} for t in (20, 30, 40)]
+        events = [event(t, {"None": None}) for t in (20, 24, 30, 40)]
+        selected, audit = issued_rows(rows, events, 1)
+        self.assertIsNone(selected[0]["next_action_delay"])
+        self.assertEqual(selected[1]["next_action_delay"], 10)
+        self.assertIsNone(selected[2]["next_action_delay"])
+        self.assertEqual(audit["masked_timing_rows"], 1)
+        self.assertEqual(audit["matched_issued_commands"], 3)
+
     def test_same_loop_target_update_is_not_mistaken_for_new_command(self):
         rows = [{"action_loop": 20, "commands": [command(point=[1.0, 2.0]), command()]}]
         selected, audit = issued_rows(rows, [event(20, {"None": None})], 1)

@@ -81,7 +81,18 @@ def issued_rows(rows, events, user_id):
         audit["unresolved_events"].extend(
             {"event": e, "candidate_count": 0} for e in events
         )
-    return list(label_timing(selected)), audit
+    labeled = list(label_timing(selected))
+    unresolved_loops = {item["event"]["_gameloop"] for item in audit["unresolved_events"]}
+    audit["masked_timing_rows"] = 0
+    for row in labeled:
+        gap = row["next_action_delay"]
+        if gap is not None and any(
+            row["action_loop"] < loop < row["action_loop"] + gap
+            for loop in unresolved_loops
+        ):
+            row["next_action_delay"] = None
+            audit["masked_timing_rows"] += 1
+    return labeled, audit
 
 
 def main():

@@ -13,7 +13,7 @@ The commands below run from that worktree. Run artifacts are ignored under
 | Gate | Implemented and checked | Remaining |
 | --- | --- | --- |
 | A: shared controls | Raw ability, unit group, unit/point target, queue and autocast schema; full visible-map entities, scouting memory, map grids, recent commands; hidden-health checks | Broader physical command-family inventory and learned selection |
-| B: replay extraction | Matching-build preflight; fog enabled; observation before command; full anonymous replay reconstructed (559 commands); source-labelled Masters trio fully reconstructed; issued-command repeats audited | Verified professional Terran games, wider corpus, issued/executed event audit |
+| B: replay extraction | Matching-build preflight; fog enabled; observation before command; eleven source-labelled human games from four Terran players reconstructed; issued-command repeats audited; unresolved timing intervals masked | Verified professional Terran games, wider corpus, issued/executed event audit |
 | C: imitation | Saved CPU-only command-conditioned imitation models; whole-game/held-out-player split; raw unit groups, arguments and delay labels | Wider training corpus and useful live-game competence |
 | D: micro | Native DefeatRoaches adapter using shared entities/commands; trace, scores and replay; CPU-only return-driven policy search; held-out combat-score gains; ordinary-game transfer measured | Other scenarios and successful full-game transfer |
 | E: full-game RL | CPU raw-ability PPO bridge and native collection/update/paired evaluation; fresh combat-return mechanism gains | Native wins over frozen imitation; learned arguments and durable competence |
@@ -76,10 +76,11 @@ required-file failure; a missing exact replay map dependency also remains. Compa
 human replay work can proceed independently. Assets/diagnostics are under
 `logs/roadmap/runtime-4.9.3/` and `logs/roadmap/pro-replays/`.
 
-Spawning Tool's date filter requires M/D/YY: ISO dates silently return unfiltered
-results. Search after_played_on=8/13/19 and before_played_on=8/19/19 for the local
-build's week; metadata/build and actual Terran identity still need independent
-inspection before acceptance.
+An early Spawning Tool screen appeared to ignore ISO dates. The later
+`pro-date-filter-audit-02.json` gets identical filtered links with M/D/YY,
+MM/DD/YYYY and ISO dates when using the same Terran/pro filters, so the earlier
+claim that ISO dates are unsupported is not established. Use binary metadata
+and actual Terran identity for acceptance regardless of site date/tag results.
 
 ## Commands
 
@@ -1225,3 +1226,80 @@ confirms exact chosen points/errors/history/categories and all counts, verifies
 43 pre/post artifact/code/data hashes plus checkpoint integrity, and independently
 recomputes the failed gate. No material correctness concern remains beyond the
 stated teacher-forcing, reused-diagnostic and changed-initialization limits.
+
+### Additional compatible human-source screening and fourth player
+
+`pro-date-filter-audit-02.json` checks three date formats with Terran and pro
+filters and gets the same two replay links. Both are already screened games
+whose professional participant is not the Terran teacher. This bounded search
+is not evidence that no compatible professional Terran replay exists anywhere.
+Do not infer professional teaching quality from an opponent or site-level tag.
+
+`stronger-source-window-01.json` and `stronger-source-narrow-01.json` retain
+bounded search responses. The two metadata screens examine 16 and 24 candidates,
+including cached files. New replay bytes total 3,345,243 (about 3.19 MiB).
+`stronger-source-audit-01.json` independently rechecks each local replay SHA.
+The wider sample's sixteen games all require Base75800. The narrower sample
+contains fifteen Base75025 and nine Base75689 games. Seven of those compatible
+games are newly screened here; the other two are existing 51957 and 50925.
+These are modest human examples, not a substitute for professional provenance.
+Six new compatible games are additional Mez examples; the seventh adds Rom.
+
+Rom's replay 51482 is a 4.10.0.75689 Acropolis Terran mirror, player 1 rated 4,678,
+winning against Mez rated 4,568. The player name/race/MMR/outcome are verified
+from both replay metadata and native engine replay info. The whole replay SHA is
+99927f978ee5999ef4702ea7db448b0efd7e71017b8db5d5d9b7b5e004b93572.
+`human-51482-rom-01/` reconstructs fully in 36.225 seconds with 5,244 consecutive
+fog-enabled observations, 47 retained quiet-frame states and 299 native gameplay
+records; no untranslated gameplay actions occur. `issued-51482-rom-01/` matches
+180 of 181 human events in 180 rows, excluding 119 engine repeats. The remaining
+point event at loop 4825 has no native candidate and is retained in the audit,
+not silently relabeled as wait or claimed covered. Rom is a fourth named human
+Terran player in the reconstructed corpus, with no verified professional claim.
+This is a short game and does not establish broad teaching strategy coverage.
+
+`compatible-expansion-split-01.json` assigns whole-game roles before model use:
+Rom is a candidate teaching game; 51886, Mez versus a 4,580-rated Zerg, is reserved
+fresh validation; the other new games are unassigned. Roles cover both player
+views, so an opponent view cannot cross the split. No model fits or predictions
+are run on these new games in this acquisition step. Old-engine recovery still
+awaits the previously requested capped prefix-download authorization.
+
+The reserved validation reconstruction completes in 176.393 seconds:
+`human-51886-reserved-01/` has 14,746 consecutive fog-enabled observations,
+132 retained quiet states and 1,062 gameplay records in 1,060 rows; no untranslated
+gameplay occurs. `issued-51886-reserved-01/` aligns 388 of 392 human events in
+388 rows, excludes 674 engine repeats, and audits four unresolved events. Neither
+player view is fitted or evaluated by a model in this acquisition step, so its
+fresh-validation role remains intact. The native corpus now contains eleven
+source-labelled games across four named Terran teachers, still no verified pro.
+
+The reviewer finds a concrete cadence-label issue in the original Rom issued
+artifact: the row at loop 4819 reports delay 23 to the next matched command at
+4842, skipping an unresolved human event at 4825. The regression test reproduces
+that error before the fix. `issued_rows` now masks a delay to None whenever an
+unresolved human event falls strictly between its current and following matched
+command. Existing training consumers already map None to ignored delay label -1;
+command identity/target labels remain usable. Events at interval endpoints do
+not invalidate the interval. The audit reports how many timing rows were masked.
+This is uncertain-timing supervision, not an invented wait or resolved action.
+
+`issued-51482-rom-masked-01/` retains Rom's 180 matched commands and masks the
+one crossing interval; original acquired data remain immutable.
+`issued-51886-reserved-01/` has four masked intervals.
+`mask_legacy_cadence_01.py` creates corrected copies of all nine older issued
+datasets under `issued-timing-masked-01/`, masking 51 crossing intervals while
+binding and verifying unchanged source files. Use those corrected variants for
+future cadence training; completed experiments retain their original data and
+are not retrospectively treated as corrected. No new fit follows this fix.
+The full suite passes 179 tests in 9.704 seconds (`unittest-twentysixth.log`),
+and Ruff passes the modified production module and regression test.
+
+The independent final review confirms strict interval boundaries and verifies
+None becomes delay -1, skipping only the delay gradient while preserving other
+gameplay labels. It independently passes 17 issued-command/imitation tests,
+compares all nine legacy copies and confirms only the 51 uncertain delay values
+change, verifies unchanged original hashes and Rom's single mask, and reconstructs
+all 388 reserved-validation rows/audit fields from the actual replay protocol.
+No material correctness concern remains. The missing commands themselves are
+still unreconstructed; timing masking does not imply complete action coverage.
