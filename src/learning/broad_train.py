@@ -89,6 +89,11 @@ def main():
     parser.add_argument("--workers", type=positive, default=3)
     parser.add_argument("--wall-seconds", type=positive, default=240)
     parser.add_argument("--seed", type=int, default=40200)
+    parser.add_argument(
+        "--learned-cadence",
+        action="store_true",
+        help="Use validated predicted durations after accepted commands",
+    )
     args = parser.parse_args()
     if args.episodes % 3 or args.workers > 4:
         parser.error("Use whole three-race batches and at most four workers")
@@ -111,7 +116,8 @@ def main():
         initial_harvest=False,
         idle_worker_harvest=True,
         wait_unavailable=False,
-        fixed_cadence=True,
+        fixed_cadence=not args.learned_cadence,
+        learned_cadence=args.learned_cadence,
         wall_seconds=args.wall_seconds,
     )
     contract = {
@@ -120,6 +126,9 @@ def main():
         "seconds": args.seconds,
         "workers": args.workers,
         "epsilon": policy.epsilon,
+        "command_cadence": "predicted_after_native_acceptance"
+        if args.learned_cadence
+        else "fixed_four_loops",
         "reward": "incremental killed-resource value /100 +100 victory -100 defeat; timeout 0",
         "gate": "six fresh paired cases must increase native wins AND ordinary combat return; no automatic extension",
         "components": {

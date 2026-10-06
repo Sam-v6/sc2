@@ -115,6 +115,11 @@ class MicroSandbox(BotAI):
             self.callback_error = repr(error)
             raise
 
+    async def on_end(self, result):
+        packet = (await self.client.observation()).observation
+        self.last_score = micro_score(packet)
+        self.final_game_loop = packet.observation.game_loop
+
 
 def sandbox_job(job):
     from loguru import logger
@@ -148,7 +153,7 @@ def sandbox_job(job):
         "frames": bot.frames,
         "commands": bot.commands,
         "action_results": bot.action_results,
-        "game_seconds": bot.time,
+        "game_seconds": bot.final_game_loop / 22.4,
         "step": job["step"],
         "score": bot.last_score,
         "ordinary_game_strength": False,

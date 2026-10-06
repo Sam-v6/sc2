@@ -45,3 +45,24 @@ class SandboxTests(unittest.TestCase):
                 "score": 0,
             },
         )
+
+
+class SandboxTerminalTests(unittest.IsolatedAsyncioTestCase):
+    async def test_final_kills_are_not_lost_between_last_step_and_game_end(self):
+        from src.learning.sandbox import MicroSandbox
+        from s2clientprotocol import sc2api_pb2 as pb
+        from types import SimpleNamespace
+
+        response = pb.Response()
+        response.observation.observation.game_loop = 172
+        response.observation.observation.score.score_details.killed_value_units = 150
+
+        async def observe():
+            return response
+
+        bot = object.__new__(MicroSandbox)
+        bot.last_score = {"killed_value": 125}
+        bot.client = SimpleNamespace(observation=observe)
+        await bot.on_end(None)
+        self.assertEqual(bot.last_score["killed_value"], 150)
+        self.assertEqual(bot.final_game_loop, 172)

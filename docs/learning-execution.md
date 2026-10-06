@@ -580,3 +580,45 @@ observations and are excluded from training. The
 game/tracker events rather than our causal fog-safe player observations. It does
 not presently replace the matching-engine extraction step; no bulk dataset was
 downloaded.
+
+### Command-duration screening: passed execution gate
+
+Commit `44f9386`, `cadence-screen-01/`: all twelve native games and trace audits
+completed in 198.34 seconds. Learned accepted-command durations increased
+completed army units in 5/6 pairs (deltas 10, 0, 10, 1, 14, 24), versus zero
+completed army in every fixed-cadence arm. Queue-full errors per command fell
+from 6.4–25.4% to zero in all six learned-duration arms. Mean combat-return
+difference was +23.4583; this includes one avoided Defeat and additional kills.
+No native wins occurred. Potential construction-interruption counts remain
+diagnostic rather than confirmed cancelled-building counts. The predeclared
+army-production/return gate passed; no professional or Hard acceptance follows.
+
+Next declared RL arm: `broad-duration-24-01/`, 24 x 600-second Very Easy games,
+three workers, seeds 41700–41723, same frozen four-minute model family, fresh
+zero residual, unchanged epsilon/reward/PPO/GAE. Accepted commands use predicted
+durations; failed/WAIT attempts retry after four loops. Evaluate six fresh paired
+greedy cases at seeds 42700–42705 against zero residual under the **same learned
+duration** control. Require more native wins AND better mean combat return;
+no automatic extension. Duration-aware rollout elapsed times are handled by
+the existing tested elapsed-loop returns.
+
+In parallel, the installed `DefeatZerglingsAndBanelings` sandbox was checked with
+the existing nearest-target baseline: native Defeat, 125 killed value, 214.53
+damage dealt, terminal 405 damage taken, 7.5 game seconds. This exposed a small
+reward-accounting omission: the old micro receipt used its final callback frame,
+before the last five damage points and terminal clock. A regression reproduced
+missing terminal kills; micro now queries the final nested native observation.
+`banelings-baseline-02/` confirms the corrected terminal score/clock. Old micro
+evidence retains its historical scoring convention; use fresh paired controls.
+
+Next second-scenario micro arm: four generations x twelve candidates, one worker,
+60-second horizon, training seed 42110, existing 12-parameter movement/visible-
+targeting policy search and unchanged reward formula. After the fixed 48 games,
+compare eight fresh paired seeds 42200–42207 to nearest-target control using
+corrected terminal scores. Require mean killed value at least 1.5x baseline,
+no greater mean damage taken and more native wins; survival alone cannot pass.
+This remains a primitive experiment and does not establish ordinary-game transfer.
+
+The complete suite passed 167 tests in 9.770 seconds (`unittest-twentieth.log`),
+including both terminal-response adapters. Ruff passed. `broad_train` exposes
+`--learned-cadence`; its original fixed-cadence default remains unchanged.
