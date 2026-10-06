@@ -10,7 +10,10 @@ Assumption: public preconverted player observations can be reconciled with origi
 - [ ] Independently verify ability mappings and selected actor tags using official replay events/native catalog evidence.
 - [x] Decode complete unit/neutral blocks with schema/bounds verification and exact byte consumption. All3543converted commands use present Self actors; first TrainSCV observations retain50minerals and empty CommandCenter orders.
 - [ ] Confirm later pre-command observations and player fog visibility. Resolve visibility-grid coordinates before importing.
-- [ ] Resolve selection-mask/subgroup semantics: preliminary reconstruction corroborates1039groups, with343known-selection disagreements and799unknown selections excluded.
+- [x] Correct packed selection-mask interpretation and corroborate all1027matched commands across Future/BackupI and Harstem games; retain2034corroborated actor groups total.
+- [ ] Resolve or explicitly exclude remaining39Scarlett selection disagreements and108unknown selections; verify mixed subgroup dispatch.
+- [x] Retrieve exact original map archives by replay cache hash inside16MiBbudget and verify dimensions. Correct two stale converted map headers.
+- [ ] Apply verified world-coordinate flip/uniform-scale geometry and confirm residual unit-footprint visibility cases.
 - [ ] Restore original queue flags/point precision only for verified commands. Mask/exclude unavailable observations and unknown action modes explicitly. Recover upgrades from player-visible replay events if feasible.
 - [ ] Build an importer with meaningful fixture tests, source receipts and compatibility checks against native inference. Do not mix partial records silently into existing datasets.
 - [ ] Assemble professional teaching/validation splits by whole game and evaluate imitation before further frozen native tests. Larger corpus downloads require a concrete bounded size decision within user constraints.
