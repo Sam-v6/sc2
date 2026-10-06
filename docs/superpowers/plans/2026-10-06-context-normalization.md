@@ -42,7 +42,7 @@ that boolean in checkpoint configuration and load absent values as false. Add
 `--context-layer-norm` to the trainer and bind it in experiment configuration.
 Do not add parameters or change initialization draws.
 
-- [ ] Write tests and observe their failure before implementation. Cover
+- [x] Write tests and observe their failure before implementation. Cover
   finite differences through scene, pool, history and context bias, including a
   nearly constant context. Cover false/default parity and checkpoint roundtrip.
   Use this numerical-gradient check against the actual encoder forward/backward:
@@ -57,7 +57,7 @@ Do not add parameters or change initialization draws.
   np.testing.assert_allclose(analytic[index], numeric, rtol=.01, atol=.001)
   ```
 
-- [ ] Implement only the opt-in branch, caching normalized context and inverse
+- [x] Implement only the opt-in branch, caching normalized context and inverse
   standard deviation. Here `z` is the existing summed context projection:
 
   ```python
@@ -74,7 +74,7 @@ Do not add parameters or change initialization draws.
   unchanged. Centering/normalizing removes common mean and magnitude information;
   this is an architectural tradeoff, not a proven correction.
 
-- [ ] Run focused tests, then `OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2
+- [x] Run focused tests, then `OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2
   PYTHONPATH=. .venv/bin/python -m unittest discover -s tests -q`, Ruff and
   `git diff --check`. Independently review derivatives/default compatibility.
 
@@ -83,29 +83,29 @@ Do not add parameters or change initialization draws.
 Files: ignored experiment helpers/receipts under `logs/roadmap/`; update this
 plan and `docs/learning-execution.md` with terminal evidence.
 
-- [ ] Freeze configuration before fitting: fit05's exact nine sources, counts,
+- [x] Freeze configuration before fitting: fit05's exact nine sources, counts,
   seed8100, hidden32, batch16, rate.001, refinement, actor cutoff, spatial,
   availability, role pooling and actor-relative points. Add only context
   normalization. Use50epochs/14100updates and600optimizer-second wall bound.
   If the wall bound prevents the matched update count, report that limitation;
   do not silently call it a matched comparison or extend the budget.
 
-- [ ] Fit once, preserving source/code/checkpoint hashes. No extra epochs,
+- [x] Fit once, preserving source/code/checkpoint hashes. No extra epochs,
   epsilon/gain sweep, alternate initialization or data expansion.
 
-- [ ] Recompute both checkpoints' total supervised loss on identical teaching
+- [x] Recompute both checkpoints' total supervised loss on identical teaching
   commands, with ability, actor, mode, queue, timing, target and point-offset
   contributions separately. Check the component sum against the existing
   `loss_and_gradients` total; use read-only instrumentation, not a new objective.
   Report complete copying per teaching game and ordinary diagnostic copying.
 
-- [ ] Apply all gates: total teaching loss at least20% lower; complete teaching
+- [x] Apply all gates: total teaching loss at least20% lower; complete teaching
   matches at least1277/4513 (ten percentage points above825), improvement in at
   least7of9games; ordinary diagnostic complete at least24/292; diagnostic
   ability/actor accuracy each no more than five percentage points below fit05
   (149/292 and53/292). Report saturation for explanation only.
 
-- [ ] Record outcome without promotion or RL. Teaching-only improvement means
+- [x] Record outcome without promotion or RL. Teaching-only improvement means
   optimization improved but transfer remains unresolved. Failed teaching gates
   reject this intervention as the next useful step. Either outcome ends this
   experiment; do not start a normalization/optimizer sweep. Whole-game native
@@ -128,3 +128,23 @@ No rulings changing the intervention or experiment bounds.
 Task2 contract is written before launch by
 `logs/roadmap/run_professional_context_fit_01.py`, binding exact source/checkpoint/
 code and gates. Output is `logs/roadmap/joint-professional-fit-06/`.
+
+Task2 terminal: run66254exit0,50epochs/14100updates,239.69optimizer seconds,
+294.95total seconds. Exact source/configuration/update comparison verifies.
+Teaching879/4513, diagnostic14/292; complete copying improves in6of9games.
+Frozen checked total loss4.26069to3.93665(7.61%lower). Four improvement gates
+fail; ability/actor regression guardrails pass. Checkpoint is not promoted.
+No RL, native match, reserved prediction, extra epochs or parameter sweep.
+Verification receipt `logs/roadmap/professional-context-comparison-01.json`.
+
+Audit correction: helper01 omitted trainer construction features; per-game
+aggregate verification rejected its measurements. Preserve invalid receipts,
+supersede with helper02 using trainer.collect and require every predicted-field
+sum to match terminal reports. Historical auxiliary geometry/actor-role audits
+are likewise corrected; actual trainer metrics remain unchanged. Binding-key
+path spelling is canonicalized without weakening hash/source-order checks.
+
+Final: minor (deferred) remains the additional committed gradient cases noted
+above; independent review checked them. The bounded experiment is complete;
+the actual learning roadmap is not. Next diagnose the remaining imitation
+failure rather than treating normalization or a green test suite as competence.

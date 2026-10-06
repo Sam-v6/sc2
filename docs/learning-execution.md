@@ -2738,3 +2738,49 @@ the context bottleneck; it does not prove saturation causes the learning failure
 or that normalization improves copying. A focused follow-up consultation with
 the previously authorized Astra advisor is pending. Do not infer an approved
 experiment, competent imitation or RL readiness from this measurement.
+
+The authorized advisor recommended one fixed context normalization comparison;
+plan `superpowers/plans/2026-10-06-context-normalization.md` is now executed.
+Optional fixed LayerNorm before context tanh has correct derivatives through
+all branches, no new parameters/initialization draws, absent/false checkpoint
+compatibility and a bound CLI flag. Five tests observed failing then passing;
+full317tests pass. Independent review exhaustively checks role-pooling and
+nearly constant context derivatives plus actual old checkpoint parity. No blocker.
+
+Fit06 completes the matched50epochs/14100updates in239.69optimizer seconds,
+294.95total seconds, with the exact same source hashes and configuration except
+normalization. Checkpoint SHA256:
+`9f53942db2c9905dc7a6c5a0b4625e547e3a4a00906fbc6c612a1d0548a6e92e`.
+Complete copying825to879/4513teaching and6to14/292diagnostic remains weak.
+Diagnostic ability153/292,actors68/292,target66/292. Frozen total teaching loss
+4.26069to3.93665 (7.61%lower), with actor/target/offset loss improvements but
+slightly worse ability loss. Only6of9teaching games improve complete copying.
+Loss reduction, teaching completeness, per-game coverage and diagnostic
+completeness gates fail. Receipt `professional-context-comparison-01.json`
+verifies terminal/code/source/checkpoint/matched configuration and update count.
+No promotion, native game, reserved prediction or RL. No extension/sweep follows.
+Context saturation falls70.72%to6.56%teaching and68.87%to6.54%diagnostic; this
+mechanical improvement establishes no competence. Geometry still has zero
+ordinary point targets within two tiles among158gold point commands.
+
+The initial loss-comparison helper omitted construction_products supplied by the
+trainer; the verifier caught per-game totals disagreeing with terminal reports.
+Those helper01loss/per-game receipts are explicitly invalidated in
+`professional-context-loss-audit-01-invalid.json`. Corrected helper02 uses
+`entity_train.collect` directly. Every representable command's component sum
+matches loss_and_gradients; every aggregated teaching field matches each
+terminal report exactly. Relative/absolute binding-key spelling is canonicalized
+to absolute paths, while source hashes and ordering remain required to match.
+The training runs themselves were never changed or repeated.
+
+Earlier independent point-head helper01 and actor-role helper05 also omitted
+construction products. Their auxiliary metrics are superseded, not production
+trainer metrics. Corrected geometry receipt
+`professional-point-heads-corrected-02.json` binds each checkpoint's own sources
+and uses collect. Fit03-to04 oracle mean55.945to33.635tiles still supports the
+limited relative-geometry mechanism (39.88%reduction); ordinary67.708to71.405
+worsens. Fit05ordinary60.197/oracle34.725tiles; fit06ordinary58.025/oracle32.120,
+oracle within-two-tiles0to5. None supports promotion. Use these corrected values
+instead of earlier auxiliary point summaries. The construction-feature support
+and saturation audits already supplied construction products and remain valid.
+The full human-imitation/micro/full-game/Hard/higher-difficulty roadmap is open.
