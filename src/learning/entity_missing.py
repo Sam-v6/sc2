@@ -113,6 +113,8 @@ def append_availability(state, units, encoder):
             scene_mask[i] = 0
     if "upgrades" in world:
         scene_mask[13:] = 0
+    elif "upgrade_absence" in world:
+        scene_mask[13:] = scene[13:] != 0
     # Unknown values never reach the model, even when a source supplied them.
     return (
         np.concatenate((np.where(masks, entities, 0), masks), axis=1),

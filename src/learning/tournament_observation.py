@@ -37,7 +37,7 @@ FIELDS = {
 }
 
 
-def partial_observation(record, index, map_size, view, upgrade_ids=None):
+def partial_observation(record, index, map_size, view, upgrade_ids=None, own_deaths=()):
     """Preserve known values; map size must come from the verified original map."""
     packet = pb.ResponseObservation()
     obs = packet.observation
@@ -52,6 +52,7 @@ def partial_observation(record, index, map_size, view, upgrade_ids=None):
     ):
         setattr(obs.player_common, target, int(record["steps"][source][index]))
     obs.raw_data.player.upgrade_ids.extend(() if upgrade_ids is None else upgrade_ids)
+    obs.raw_data.event.dead_units.extend(own_deaths)
     cargo = {}
     for name in ("units", "neutral"):
         block = record[name]

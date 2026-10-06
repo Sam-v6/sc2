@@ -115,3 +115,18 @@ class MissingFieldInputsTests(unittest.TestCase):
         partial["recent_commands"][0].pop("verified")
         with self.assertRaisesRegex(ValueError, "verified"):
             self.encode(partial)
+
+    def test_uncertain_upgrade_absences_preserve_verified_completed_upgrades(self):
+        partial = copy.deepcopy(self.state)
+        partial["upgrades"] = [1]
+        partial["unknown_fields"] = dict(world=["upgrade_absence"])
+        encoder = state_inputs(partial, 8, 12, 3, missing_fields=True)["encoder"]
+        np.testing.assert_array_equal(encoder[3][13:16], [0, 1, 0])
+        np.testing.assert_array_equal(encoder[3][16 + 13 : 16 + 16], [0, 1, 0])
+        native = dict(partial, unknown_fields={})
+        np.testing.assert_array_equal(
+            state_inputs(native, 8, 12, 3, missing_fields=True)["encoder"][3][
+                16 + 13 :
+            ],
+            [1, 1, 1],
+        )

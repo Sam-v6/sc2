@@ -67,3 +67,17 @@ class TournamentObservationTests(unittest.TestCase):
         self.assertNotIn("energy", state["units"][0])
         self.assertEqual(state["units"][0]["energy_max"], 200)
         self.assertIn("energy", state["unknown_fields"]["units"])
+
+    def test_causal_own_deaths_remove_last_seen_actor_memory(self):
+        from src.learning.tournament_observation import partial_observation
+
+        data = decode_record(record())
+        fields = data["units"]["fields"]
+        fields["alliance"] = np.ones_like(fields["alliance"])
+        fields["observation"] = np.ones_like(fields["observation"])
+        view = PlayerView()
+        first = partial_observation(data, 0, (176, 184), view, [])
+        tag = first["units"][0]["tag"]
+        second = partial_observation(data, 1, (176, 184), view, [], [tag])
+        self.assertEqual(second["owned_memory"], [])
+        self.assertNotIn(tag, view.owned)

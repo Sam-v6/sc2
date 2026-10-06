@@ -88,3 +88,17 @@ Evidence: `logs/roadmap/pro-preconverted-probe-01/target-exclusions-audit-01.jso
 checks, not a training-eligible professional corpus or learned competence. The
 actual professional importer, own causal deaths/upgrades, source map inputs,
 training eligibility and human imitation fit remain open. RL remains stopped.
+
+
+Actual importer implemented: tournament_import writes native-schema partial
+human rows with exact source/map/proof bindings, original commands and causal
+neutral-ID/history translations, own tracker deaths/upgrades and dynamic
+feature-minimap planes. Height remains explicitly unavailable. Final local
+outputs pro-demonstrations-04/{294,774,870}; source-row reader checks recover
+1481/1482labels, including all60mineral commands. Known completed upgrades are
+preserved while uncertain absences are masked after independent review.
+292tests pass. Records still training_eligible=false; separate issue-loop
+alignment and partial-source eligibility have not yet been connected to the
+trainer. One legitimate remembered enemy target remains excluded by the model
+mask and requires native legality evidence. Actual professional fitting is the
+next stage; RL remains stopped and the original roadmap remains open.

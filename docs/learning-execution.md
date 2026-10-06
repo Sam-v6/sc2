@@ -2495,3 +2495,48 @@ Evidence: `logs/roadmap/pro-preconverted-probe-01/target-exclusions-audit-01.jso
 checks, not a training-eligible professional corpus or learned competence. The
 actual professional importer, own causal deaths/upgrades, source map inputs,
 training eligibility and human imitation fit remain open. RL remains stopped.
+
+
+Professional demonstration files are now implemented by
+`python -m src.learning.tournament_import <job.json>`. The job binds local
+record/replay/map/catalog/reconciliation/phase paths, record_index and a new
+output directory. Import verifies reconciliation hashes, converted record
+SHA256, original replay/catalog identity, native phase proof and exact original
+map cache hash. It emits static.json, examples.jsonl.gz (one original event per
+row) and dataset.json; original commands remain alongside translated labels.
+Outputs remain explicitly training_eligible=false until the trainer supports
+and verifies this separate partial source alignment.
+
+Neutral resource labels translate only when the original tracker supplies the
+same native resource type, original target ownership is neutral, and exactly
+one visible source resource has the exact original target position. Native
+commands never use this translation. Prior verified history references are
+translated only through mappings established causally. This restores all60
+mineral commands (17Future,16Harstem,27Scarlett) without converting them to
+point commands or altering actor/queue arguments.
+
+Own deaths and completed upgrades consume only original tracker events strictly
+before the decision loop. Actual source evidence shows a command-induced Depot
+change logged at965 but observation965 still raised; another autonomous add-on
+change at4778 already appears in observation4778. No universal inclusive phase
+is claimed. Same-loop previous/new type IDs are used only for vocabulary checks;
+features retain the actual observed type. Over311209own type samples match
+verified original tracker/native names. Opponent death/upgrade events do not
+enter model inputs. Unmapped own upgrades remain causal metadata; known upgrade
+ones retain availability1 and uncertain absences availability0. Independent
+review found this partial-upgrade boundary and the new red/green test fixes it.
+
+Actual corpus: `logs/roadmap/pro-demonstrations-04/{294,774,870}`. Training reader
+checks with spatial/missing inputs produce467/467,292/292,722/723representable
+commands respectively. All representable labels round-trip exactly to their
+source command, all features are finite, histories remain causal and input/code
+bindings verify. The one excluded command is Smart targeting an Infestor seen
+11loops earlier; its original identity is sound and present in enemy memory.
+Investigate native remembered-target legality before changing the model mask.
+Final evidence: pro-preconverted-probe-01/imported-examples-verification-04.json
+and unittest-professional-import-02.log (292tests pass). Partial import artifacts
+01/02failed safely on type-boundary checks;03predates the upgrade absence fix
+and is superseded. No optimizer, professional fitting or RL ran. Next connect
+this explicit source alignment/availability contract to trainer eligibility,
+form whole-game splits and start bounded human imitation evaluation; retain the
+full micro/Hard/higher-difficulty roadmap.
