@@ -3106,3 +3106,35 @@ exact collisions is no proof of shared-query separability or raw observation
 adequacy. Thus the next decision must address wider fitting/representation and
 transfer, rather than another head-optimizer budget extension. Receipt:
 `professional-wider-actor-01/frozen-feature-diagnosis.json`.
+
+## Wider selection support and context diagnosis (October 6)
+
+The independent query audit completes in6.53seconds. Every one of4510teaching
+rows admits a bounded linear query that selects its human group:2422singletons
+and2088multi-unit groups, all solver statuses optimal. The saved wider model
+gets1232singletons and732groups right among these representable rows. This
+denominator excludes three target-excluded rows; its1964matches are not the
+aggregate1965/4513reported above. Parent recomputation verifies every stored
+coefficient and margin; minimum margin2.90447e-6, median4.36422, coefficients
+finite with maximum absolute value1. These are separate label-assisted oracle
+queries, never deployed or supplied to ordinary inference. They establish
+candidate support per example, not a learnable shared mapping or strength.
+Evidence: `professional-wider-selection-support-01/{contract,report}.json`
+and `coefficients.npz`; contractSHA256
+`4fe212b26f4b892c4cf32626ff1fe9b0f7aae77f6004ec1511cc254f9eb62d1a`.
+
+A further read-only audit of the bound cache finds4510unique conditioned
+contexts, centered numerical rank32/32 and3.25%ofcoordinates with absolute
+value>.99. Nearest same-ability context distance has median1.8014and minimum
+0.0002925. There are no exact duplicate contexts. This rules out literal
+context collapse in this cache; it does not establish that the encoder retains
+all relevant information or that nearby decisions are functionally equivalent.
+Receipt: `professional-context-mapping-01.json`, source helper
+`audit_professional_context_mapping_01.py`. No extra policy predictions,
+parameter updates, native games or RL occur in either audit.
+
+Next test the shared context-to-selection mapping with one small nonlinear
+residual, preserving the frozen candidates and zero-initialized baseline
+behavior. This differs from the failed per-candidate nonlinear scorer. Keep
+the previous wider copying/diagnostic gates; no additional optimizer sweep,
+native run or RL follows a failed result.
