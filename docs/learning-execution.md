@@ -3800,3 +3800,31 @@ Next design a bounded human imitation experiment on the repaired source, explici
 reporting the recovered production families and ordinary complete-command fidelity.
 RL/native promotion and the remaining micro/Hard/higher roadmap gates stay pending.
 See [recovery evidence and limitations](superpowers/plans/2026-10-06-production-identity-audit-results.md).
+
+### October6: matched source-version human imitation run active
+
+Frozen [paired source-version plan](superpowers/plans/2026-10-06-repaired-production-imitation.md)
+compares fresh original/repaired controllers with identical initialization and
+teaching-only union support. Each arm gets3,398examples/epoch,30epochs,
+6,390updates/101,940presentations if complete; repaired sampling draws without
+replacement from3,544representable rows. Full planned indices/exposure are saved;
+actual exposure is calculated from completed optimizer updates, including partial
+epochs. Source repair includes shared-row history/timing changes, not just146labels.
+
+Preflight95519 is terminal exit0, CPUpeak5.0%, zerooptimizer updates. Tenoptional
+CPU-Torchfit/provider checks, partial-epoch exposure reference checks, Ruff/diff
+and independent read-only review pass. Reporting amendments preserve the executed
+preflight script snapshot and repeat all initialization/sampling assertions before
+the final fit. Final contract SHA256:
+`4e85ce4716ab286005e2bdcc608cc22ee582551b628cc976b49deb5169211cda`.
+
+Watchdog session53923 is live, with original-arm fit-start output observed. Each
+arm is capped at600optimizer seconds, whole run1,800seconds, CPUguard80%.
+NoGPU/native/RL. Use this existing handle for subsequent waits; its childPID39 is
+local to the watchdog execution namespace, so another shell's PIDlookup cannot
+prove job termination. Telemetry is
+`logs/roadmap/repaired-production-imitation-01.telemetry.json`.
+
+No result or checkpoint promotion is claimed. Next await this exact run and
+independently reconstruct both ordinary and own-history metrics, including recovered
+families. Close at bounds without extension/sweep. The full roadmap remains active.
