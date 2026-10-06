@@ -994,3 +994,46 @@ than raw distance alone. Start as an explicit component experiment; no live
 promotion, complete imitation claim or RL follows without subsequent full-command
 and native evidence. Professional and crossed-player corpus requirements remain
 open independently of representation experiments.
+
+### Full-map attack point scorer experiment
+
+`attack-point-scorer-01/` fits one fixed supervised point-component experiment,
+with human Attack ability, actor group and point-mode supplied to both models.
+It retains all map positions on a two-tile grid; it does not script an enemy
+choice. Inputs reuse terrain and currently observed unit/candidate relations,
+frozen macro context, and a training-derived selected-actor type vocabulary.
+Six teaching games supply 365 point commands. Positives are nearest grid points;
+64 global/local/actor-near negatives per command are class-balanced then weighted
+equally per replay. Code, actual dataset files and frozen checkpoints are hashed
+before fitting and checked unchanged afterward. All three evaluation games are
+now reused diagnostic validation. No game is described as a new untouched test.
+
+One 100-epoch CPU fit and full-grid diagnostic evaluation finish in 11.28 seconds.
+Mean error drops from 39.70 to 17.20 tiles on Lyra, 32.42 to 16.50 on Huski, and
+45.78 to 12.54 on TvZ. The two-tile fidelity changes from zero on each game to
+2/52 (3.85%), 5/47 (10.64%), and 5/80 (6.25%). All 179 teacher points have a grid
+candidate within two tiles, so quantization does not explain these misses.
+The predeclared gate requires at least ten percentage points higher fidelity and
+ten percent lower mean error on each game; it **fails**. This supports a spatial
+representation direction, not live competence, full-command imitation or RL.
+The point artifact is an absolute-grid scorer, not a replacement for the live
+base-relative coordinate decoder. It remains experimental and unwired.
+
+The independent reviewer found a tied-distance edge case in local-negative
+sampling: `argsort(d)[1:65]` need not remove `argmin(d)`. A separate no-fit audit
+reproduces the defect on a synthetic point at (1,1), and verifies that explicitly
+filtering the positive index removes it. Replaying all actual seed-5007 draws
+finds zero positive-in-local-pool cases and zero conflicting labels across all
+365 commands. Thus this run is not invalidated by that edge case, but its sampler
+must not be reused without explicit positive-index exclusion. Preserve original
+source and its pre/post hashes rather than changing a completed experiment.
+
+`training-and-sampler-audit.json` also evaluates full-map training predictions:
+only 58/365 (15.89%) fall within two tiles, with per-game mean error 5.57–10.04
+tiles. Even training examples are not reliably copied by this scorer. Coverage,
+representation and ranking objective/capacity remain distinct unresolved issues;
+the result does not justify assigning all failures to inadequate replay count.
+No larger epoch sweep or native promotion follows this failed fixed experiment.
+All fit/evaluation/audit jobs are terminal; no GPU, large download or further RL
+was run. Exact-engine recovery for professional and other-player TvP/Z examples
+still awaits the previously requested bounded-download authorization.
