@@ -2685,3 +2685,44 @@ pro-corpus-expansion-01/corpus-verification-07.json. Original051history is retai
 human-only fit05uses unchanged fit04architecture/seed/batch/rate,50epochs,
 600optimizer seconds andCPU2threads. Larger data also means more presentations;
 this is not equal-compute attribution. No new reserved-game predictions or RL.
+
+Human-only fit05 is terminal: 50 epochs, 14,100 updates, 225,500 command
+presentations, 233.56 optimizer seconds and 288.60 total seconds. Teaching
+complete-command matches are 825/4513 (18.28%); reused Harstem diagnostic matches
+are 6/292 (2.05%), below the predeclared 24/292 progress gate. Ability prediction
+alone reaches 149/292, but actor matches are 53/292 and target matches 62/292.
+Actor errors include wrong unit types/counts, not just interchangeable worker
+tags. All-gold point-head diagnostic mean error is 60.80 tiles ordinarily and
+34.88 with true ability/actors; neither gets a target within two tiles. No
+competence or promotion is established. Receipt:
+`logs/roadmap/joint-professional-fit-verification-05.json`. RL stays stopped;
+human imitation is the current learning phase. A frozen gameplay test would
+measure inference without optimizer updates, not start RL.
+
+A teaching-only numeric-input audit finds 6/188 entity, 566/618 scene and 1/9
+history-role columns always zero. Their corresponding weight rows receive no
+data gradient and retain random initialization. Five previously recorded native
+frames each activate 284 never-taught scene columns; clearing those rows changes
+the internal context, including one predicted ability. This establishes an
+unlearned-input influence, not improved play. It does not explain the poor
+professional diagnostic results, whose inputs share the teaching representation.
+
+`JointEntityEncoder.clear_unseen_inputs` explicitly zeros only those numeric
+weight rows using teaching support. No input, command or roster is removed;
+future nonzero inputs still receive gradients. Defaults remain unchanged. A
+separate frozen derivative is saved at
+`logs/roadmap/joint-professional-fit-05-supported/policy.npz`, SHA256
+`ee78b58788436c527f19544a09f513fb8f79723edc64b864d5e1eb2a2fa38482`.
+The bound `verification.json` confirms all 4513 teaching commands' exact encoder
+output parity, unchanged supported parameters, save/load parity and unchanged
+parent checkpoint. The helper recomputes support using only the nine teaching
+games and verifies their source hashes. No optimizer, diagnostic/reserved data,
+native match or RL is used to derive it. This correction covers numeric rows;
+unused categorical embeddings are not changed. Three focused tests and the full
+312-test suite pass; Ruff is clean. Independent review finds no blocker.
+
+Next diagnose the remaining imitation errors before another fit or promotion.
+Reserved professional 848 and original 51483/51886 remain excluded from model
+predictions and optimizer input. Learned micro transfer, reliable all-race Hard
+wins and higher-difficulty evaluation remain unproved. The full goal remains
+active.

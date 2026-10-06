@@ -38,6 +38,20 @@ class JointEntityEncoder:
             "history_bias": np.zeros(hidden, dtype=np.float32),
         }
 
+    def clear_unseen_inputs(self, support):
+        """Neutralize never-taught numeric rows without freezing future learning."""
+        masks = {
+            name: np.asarray(support[name], dtype=bool)
+            for name in ("entity", "scene", "history_roles")
+        }
+        if any(
+            mask.shape != (self.parameters[name].shape[0],)
+            for name, mask in masks.items()
+        ):
+            raise ValueError("Input support must match encoder feature dimensions")
+        for name, mask in masks.items():
+            self.parameters[name][~mask] = 0
+
     def forward(self, entities, unit_types, orders, scene, history, history_roles):
         """Return context, per-entity embeddings and a backward-pass cache.
 
