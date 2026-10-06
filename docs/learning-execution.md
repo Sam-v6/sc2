@@ -3528,3 +3528,17 @@ JointEntityPolicy and validates its NumPy encoder fields; GoalFirstPolicy is
 not yet wired to that runner. A tested adapter is still needed before native
 evaluation of a useful new controller. No native competence is inferred from
 offline copying results, and the full roadmap remains incomplete.
+
+User-authorized Astra consultation challenges repeated failed imitation fits.
+Parent independently counts mixed774own predictions:243Smart(ability1),
+45Attack(3674),4TrainSCV(524), no other abilities; human Smart count157of292.
+Thus160correct abilities barely exceed the Smart-frequency baseline, and
+ownmacro2/91cannot be explained only by exact worker/target tolerance. The
+advisor recommends one game-held-out state-vs-human-history-vs-both ability
+probe on the nine teaching games, with fold-only preprocessing, a300second
+combined bound and explicit macro false positives/absent classes. Frozen empty
+history ablation is distribution shift, and corrupted command histories on
+human states are not environment-consistent rollouts. These are diagnostic
+hypotheses, not competence claims. Advice is applied in the next probe plan
+`docs/superpowers/plans/2026-10-06-intention-sufficiency-probe.md`; no new fit
+is launched before current independent verification finishes.
