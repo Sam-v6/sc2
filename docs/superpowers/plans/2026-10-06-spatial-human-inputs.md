@@ -6,7 +6,7 @@ First implementation: reuse the existing native grid decoder; encode all pixels 
 
 - [x] Test native orientation, binary/byte images, cell-edge padding, pixel sensitivity and identical candidate coverage.
 - [x] Add a learned shared spatial embedding to point ranking and global command context; analytic gradients, checkpoint compatibility, explicit opt-in trainer flag and source bindings. Keep legacy outputs unchanged.
-- [ ] Check representative memory/compute costs before a frozen supervised run. Same split/seed/budget; diagnose field-level errors and compare full commands. No RL or native promotion merely from a sensory implementation.
+- [x] Check representative memory/compute costs before a frozen supervised run. Same split/seed/budget; diagnose field-level errors and compare full commands. No RL or native promotion merely from a sensory implementation.
 
 Do not edit fit04's bound production files while its handle32360 is live. The new spatial utility and tests can be developed independently. Wait for fit04's terminal report and checkpoint comparison before connecting it to the current model. Professional demonstration extraction and the full micro/Hard/higher-difficulty roadmap remain open.
 
@@ -17,3 +17,11 @@ The opt-in policy now projects the 386-dimensional patches into shared spatial e
 Next frozen fit05: same three-player teaching/Rom diagnostic split, seeds7000/7001, hidden32, batch16, rate0.001,169epochs /44278updates /707941presentations, refinement and cutoff enabled, spatial enabled. CPU-only two threads. Increase fit wall bound to1500s/caller1650s for spatial computation; update/example budgets match, computational cost does not. Preserve teaching gates and report all exclusions. Effects/radar and broader observation fields remain open. No native/RL/reserved evaluation.
 
 Fit05 dispatched under live handle60586, contract `logs/roadmap/joint-entity-fit-contract-05.json`, output `logs/roadmap/joint-entity-fit-05/`. Follow this handle until terminal; bound production files must remain unchanged while fitting. Comparison helper `logs/roadmap/compare_human_spatial_fit_01.py` is prepared but unexecuted; run only after a completed169epoch report. Baseline fit04 and compatibility/comparison handles are terminal.
+
+## Terminal fit and comparison
+
+Fit60586 completed all169epochs /44278updates /707941presentations in673.285fit seconds /712.458total. Comparison18788 regenerated both complete saved audits exactly on the same cohorts, with source/code/checkpoint bindings unchanged (51.358s). Receipt `logs/roadmap/human-spatial-fit-comparison-01.json`; checkpoint SHA256 `4ee4968232482ce75c9d93dfcb2b6de26df89e75fa181d4e485e32b9050f4210`.
+
+Teaching complete1447->1896/4190 (34.5%->45.3%), ability4167->4171, exact groups2268->2420, targets2328->2935. Per-player complete: Mez1188->1558/3543, Lyra135->171/342, Huski124->167/305. With human ability/group supplied, correct cells1051->1797/2302 (45.7%->78.1%); offsets with human cell1904->1885/2302. Group over-selection1206->977, under-selection523->559, same-size wrong members193->234. These are teacher-state or explicit oracle diagnostics, not student-history/native competence.
+
+Rom diagnostic complete5->4/180, ability92->80, exact groups49->42; no independent-player improvement. Teaching gate still fails, reserved replays remain closed, RL and learner promotion stay held. Spatial sensing produces material teaching gains but does not solve transfer or group reconstruction. Full professional/native/micro/Hard/higher-difficulty requirements remain open.
