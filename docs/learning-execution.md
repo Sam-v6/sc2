@@ -3342,3 +3342,16 @@ and preflight evidence remain ignored in `logs/roadmap/`; output is
 `professional-goal-first-01/`, telemetry is
 `professional-goal-first-01.telemetry.json`. Poll the same live handle rather
 than restarting. Terminal results and parent verification remain pending.
+
+The same handle42188 is confirmed live after preflight, with host CPU peak12%
+and an active two-thread child accumulating CPU time. A separate terminal
+verifier is prepared at `logs/roadmap/verify_professional_goal_first_01.py`.
+It requires completed watchdog telemetry, verifies source/checkpoint/support
+bindings, reconstructs all4805ordinary predictions, exact per-family reports,
+teaching support and each game's prediction-derived history, then recomputes
+the eight frozen gates. Review caught JSON tuple/list equality mismatches;
+normalization fixes them and a small regression reproduces/checks that fix.
+Aggregate teaching named-oracle counts and weighted point-error summaries
+were added after review identified this coverage limit. Ruff/compile pass;
+the terminal verifier has not run. It does not fit, launch native games or
+perform RL. Current learning outcomes remain pending.
