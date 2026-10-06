@@ -2648,3 +2648,40 @@ professional teaching corpus instead of continuing architecture/optimizer sweeps
 The optional residual remains available for future frozen comparisons.
 See `superpowers/plans/2026-10-06-actor-relative-points.md` for thresholds and
 receipts. No native match, reserved-game evaluation or large download occurred.
+
+Professional data expansion now uses a separate32MiB exact-range transfer cap.
+Nine originals/candidate records cost12,759,289reserved bytes, without full
+archives, installers, GPU or large asset downloads. Existing map cache hashes
+match exact local Acropolis/Disco files. Eight candidates match all13initial Self
+native types and ownership;910has zero matching types and17identity failures,
+so is excluded. Reconciliation recovers4180/5777issued commands for8games, preserving
+unsupported events as unknown history. Teaching candidates955,887,839,991,920,851,
+523add3323decisions from HeRoMaRinE,uThermal,TIME,SpeCial and BackupI/Future.
+HeRoMaRinE848is reserved for later frozen evaluation, not optimizer/model input.
+Current Harstem774diagnostic and reserved51483/51886 retain their roles.
+
+This expansion exposed a real importer assumption: player1need not be replay
+user0, because tournament observers occupy lobby user slots. The importer now
+resolves details workingSetSlotId through the unique assigned initData lobby slot,
+requires reconciliation player/user agreement, filters commands by resolved user,
+and tracks ownership/upgrades for the actual player. Known foreign-only Self tags
+reject; unknown ownership stays unknown; exact same-loop owner alternatives permit
+the documented phase uncertainty without injecting tracker boundary data into
+observations. Independent review found the ownership gap; reproduced failing tests
+cover it and the same-loop-only case. Full309tests pass, Ruff clean. Actual legacy
+294reimport07 preserves all467example rows/labels exactly with verified bindings.
+Actual955imports681commands forplayer2/user3with160730own-type checks. Remaining
+corpus07imports are sequential and their terminal/source validation is the next
+gate. No new professional fitting, model predictions, native matches or RL ran.
+See superpowers/plans/2026-10-06-professional-corpus-expansion.md and
+logs/roadmap/pro-corpus-expansion-01/ for exact receipts. Full roadmap remains open.
+
+The remaining imports are now terminal and source-validated: corpus07contains
+9teaching games/4513commands, reused diagnostic774/292commands and reserved848/
+857commands, with1,202,029own-type checks. Whole-replay SHA splits are disjoint;
+producing-code/input/output/phase bindings verify. Verification receipt:
+pro-corpus-expansion-01/corpus-verification-07.json. Original051history is retained;
+07regenerates the existing Clem sources under the new importer. Next one fixed
+human-only fit05uses unchanged fit04architecture/seed/batch/rate,50epochs,
+600optimizer seconds andCPU2threads. Larger data also means more presentations;
+this is not equal-compute attribution. No new reserved-game predictions or RL.

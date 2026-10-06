@@ -30,6 +30,28 @@ def check_bindings(receipt):
             raise ValueError("Changed source binding: " + path)
 
 
+def replay_user_id(details, init, player):
+    """Resolve gameplay user IDs through player working slots, past observers."""
+    if not 1 <= player <= len(details["m_playerList"]):
+        raise ValueError("Invalid replay player")
+    working_slot = details["m_playerList"][player - 1]["m_workingSetSlotId"]
+    slots = init["m_syncLobbyState"]["m_lobbyState"]["m_slots"]
+    matches = [s for s in slots if s["m_workingSetSlotId"] == working_slot]
+    if len(matches) != 1 or matches[0]["m_userId"] is None:
+        raise ValueError("Require a unique assigned gameplay user identity")
+    return matches[0]["m_userId"]
+
+
+def verify_owned_identity(tracker, tag, loop, boundary_owners):
+    """Reject positively foreign Self tags; unknown ownership stays unknown."""
+    owners = set(boundary_owners.get((loop, tag), set()))
+    owner = tracker.owners.get(tag)
+    if owner is not None:
+        owners.add(owner)
+    if owners and tracker.player not in owners:
+        raise ValueError("Source Self unit has a known foreign tracker owner")
+
+
 def import_game(job):
     paths = {
         name: Path(job[name])
@@ -62,8 +84,15 @@ def import_game(job):
         raise ValueError("Require the exact original replay map")
     map_info = mpyq.MPQArchive(str(paths["map"])).read_file("MapInfo")
     size = list(struct.unpack_from("<II", map_info, 16))
-    if record["header"]["player"] != 1 or record["header"]["race"] != 0:
-        raise ValueError("Require the reconciled human Terran player-one record")
+    player = record["header"]["player"]
+    init = protocol.decode_replay_initdata(archive.read_file("replay.initData"))
+    user_id = replay_user_id(details, init, player)
+    if (
+        record["header"]["race"] != 0
+        or game.get("source_player_id", 1) != player
+        or game.get("source_user_id", 0) != user_id
+    ):
+        raise ValueError("Require the reconciled human Terran player/user identity")
     static = json.loads(paths["catalog"].read_text())
     catalog = static["game_data"]
     tracker_events = list(
@@ -71,7 +100,16 @@ def import_game(job):
             archive.read_file("replay.tracker.events")
         )
     )
-    tracker = CausalTracker(tracker_events, 1, catalog)
+    tracker = CausalTracker(tracker_events, player, catalog)
+    boundary_owners = defaultdict(set)
+    for event in tracker_events:
+        if event["_event"].rsplit(".", 1)[-1] in (
+            "SUnitBornEvent",
+            "SUnitInitEvent",
+            "SUnitOwnerChangeEvent",
+        ):
+            tag = (event["m_unitTagIndex"] << 18) | event["m_unitTagRecycle"]
+            boundary_owners[(event["_gameloop"], tag)].add(event["m_upkeepPlayerId"])
     native_names = {u["name"]: u["unit_id"] for u in catalog["units"]}
     boundary_types = {
         (
@@ -92,7 +130,7 @@ def import_game(job):
     events = [
         e
         for e in events
-        if e["_event"].endswith(".SCmdEvent") and e["_userid"]["m_userId"] == 0
+        if e["_event"].endswith(".SCmdEvent") and e["_userid"]["m_userId"] == user_id
     ]
     event_by_key = {(e["_gameloop"], e["m_sequence"]): e for e in events}
     accepted = []
@@ -141,6 +179,10 @@ def import_game(job):
                 state["unknown_fields"]["world"].append("upgrade_absence")
                 state["unmapped_own_upgrades"] = sorted(tracker.unmapped_upgrades)
             for unit in state["units"]:
+                if unit["alliance"] == 1:
+                    verify_owned_identity(
+                        tracker, unit["tag"] & 0xFFFFFFFF, loop, boundary_owners
+                    )
                 expected = tracker.own_types.get(unit["tag"] & 0xFFFFFFFF)
                 if unit["alliance"] == 1 and expected is not None:
                     # A tracker change at L may precede or follow the source's
@@ -211,7 +253,8 @@ def import_game(job):
         disable_fog=False,
         alignment="state_at_issue_loop_before_effect",
         teacher_kind="human_professional_partial",
-        player={"player_info": {"race_actual": 1, "player_id": 1}},
+        player={"player_info": {"race_actual": 1, "player_id": player}},
+        source_user_id=user_id,
         requires_missing_fields=True,
         training_eligible=True,
         source_phase_proof=str(paths["phase"]),
