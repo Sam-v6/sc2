@@ -3208,3 +3208,53 @@ commands are mostly wrong, alongside persistent selection/target errors. Thus
 another selection-head optimization extension is not justified. A next
 experiment must address wider imitation/representation/data transfer; this
 result does not prove the existing observations sufficient or missing.
+
+## Cross-game human task audit and Astra advice (October 6)
+
+Under the user's conditional authorization, Astra reviews the stalled wider
+imitation evidence and recommends stopping isolated selection-head work.
+Parent independently verifies the decisive existing oracle totals: supplying
+both human ability and actors yields2040/4513teaching complete commands but
+only75/292diagnostic, target76/292. Diagnostic point error averages33.02tiles
+even with those two human answers. An actor-only fix cannot address the current
+intent/target transfer failures. These oracles are diagnostics, never inference
+inputs. The advice proposes causal event-sequence learning that predicts a
+target before selecting actors, conditional on an observation/coverage audit;
+it is an advisory hypothesis, not an implemented or accepted controller.
+
+Parent applies the advice first through read-only data audits, without new
+model predictions. `professional-context-query-01/ability-support-audit.json`
+binds the existing report. All19diagnostic abilities appear among33teaching
+abilities; no diagnostic rows have an unseen ability label. Marine training
+has233rows across eight games,177correct teaching ability predictions but0/12
+diagnostic; SCV306/459versus8/38; SupplyDepot58/105versus1/11. Missing labels
+alone cannot explain the failures. Ability distribution total variation0.1698
+does not establish sufficient state/strategy coverage.
+
+`audit_professional_raw_support_01.py` reads only the bound nine teaching and
+reused774datasets. Its first invocation fails on a sample-container type error
+before writing evidence; the corrected invocation completes terminal exit0.
+The source/report/configuration/helper-bound `professional-raw-support-01.json`
+contains27fixed examples (first five per six common command families, only two
+CommandCenter examples exist). It decodes saved predictions, checks gold actor
+indices against ordinary input ordering, compares actor type/counts and point
+errors, and finds nearby same-ability teaching states in explicitly scaled
+resources/time/own-unit-count/order/history features. It does not treat nearby
+states or interchangeable unit types as acceptance or adequate observations.
+
+This verifies4513retained commands out of6069issued teaching events,1556
+unresolved (25.6%). Histories contain32724unknown slots out of140359(23.3%).
+The unresolved table retains raw ability-link/command-index/target families,
+without inventing native ability identities. Partial source masks remain
+explicit, including food used, energy, add-ons/passengers and other fields.
+Their causal contribution to failures is unproved.
+
+The opening774TrainSCV state is7.44048e-5from teaching955row0in the declared
+interpretable features; only one game loop differs. The saved ordinary ability
+is Smart for774andTrainSCVfor955. Opening own CommandCenter locations differ:
+774[160.5,64.5]on200×184,955[33.5,138.5]on176×184. Every teaching opening on
+200×184starts at[39.5,115.5]; this does not assert identical map identities.
+Teaching870also mispredicts its opening worker command, so missing diagnostic
+spawn coverage alone is not established as the cause. This supports examining
+spatial/context transfer and legitimate canonical geometry before another fit.
+No new training, reserved prediction, native game or RL occurs in these audits.
