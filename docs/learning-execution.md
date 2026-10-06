@@ -3066,3 +3066,43 @@ the run is4.1%CPU/22.7%memory on32logical CPUs; BLAS uses two threads. No GPU,
 downloads, other replay predictions or native games. Artifacts:
 `professional-convex-actor-01/{contract,comparison}.json` and both run
 reports/checkpoints (all62ordinary predictions and actor margins included).
+
+The successful small-set head fit does not transfer in the fixed wider test.
+An optional compact fitter caches contexts/candidate features separately rather
+than every outer product. Five focused tests pass; full342tests pass10.30seconds
+with six optional-framework skips, Ruff/diff pass. Independent review validates
+original/dense/factored gradients and optimizer behavior, including optional
+SciPy absence. Default joint training/checkpoint behavior remains unchanged.
+
+The full-corpus wrapper binds fit05/configuration/source/code/cache, exactly
+preserves every initial prediction when zero geometry heads are added, and
+reproduces baseline aggregate fields. Nine games yield4513commands/4510fitting
+rows; reused774has292diagnostic rows. Compact cache117.09MB replaces3.52GBdense
+outer products. Review's missing whole-host CPU monitor was addressed before
+launch with a hash-bound watchdog; re-review has no remaining findings.
+
+Adam finishes250evaluations/19.25seconds, L-BFGS275evaluations/21.34seconds;
+both250iterations, L-BFGSiteration-bound rather than converged. Actor objective
+0.636428→0.595732(Adam), →0.586038(L-BFGS). Adam teaching actors1946/complete843,
+diagnostic actors47/complete5. L-BFGS teaching actors1965/complete853, diagnostic
+actors43/complete5/targets61; baseline1869/825and53/6/62respectively. Abilities
+stay3814teaching and149diagnostic, row by row. Seven teaching games improve,
+but all teaching-size and diagnostic improvement gates fail. No extension or
+promotion. Parameter norm14.54, substantially less extreme than the small-set
+731.75, is still no transfer evidence.
+
+Encoder/other heads remain byte-identical; every saved/reloaded ordinary
+prediction matches. Final source/configuration/code/checkpoint/cache/telemetry
+hashes and terminal exit0 verify. HostCPU peaks15.7%, memory31.0%, childRSS5.58GB;
+the watchdog does not need to stop the run. Full147.78second comparison, no
+native game, reserved prediction or RL. Artifacts:
+`professional-wider-actor-01/{contract,comparison,verification}.json`, cache,
+both reports/checkpoints and `professional-wider-actor-01.telemetry.json`.
+
+Frozen-cache read-only diagnosis finds zero exactly identical candidate feature
+vectors with opposite actor-membership labels across4510teaching rows. Final
+gradient norm0.00213145(max0.00048069) does not establish convergence. Lack of
+exact collisions is no proof of shared-query separability or raw observation
+adequacy. Thus the next decision must address wider fitting/representation and
+transfer, rather than another head-optimizer budget extension. Receipt:
+`professional-wider-actor-01/frozen-feature-diagnosis.json`.

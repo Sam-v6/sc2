@@ -48,3 +48,28 @@ skips. Ruff/diff pass. Independent review verifies dense/original/factored math
 and both optimizers; no remaining findings. Simulated SciPy absence passes four
 tests/skips one, preserving the optional dependency boundary. Default training
 and checkpoint formats are unchanged. No wider fitting result yet.
+
+Terminal wider comparison: initial ordinary predictions equal fit05 row by row,
+and original aggregate fields reproduce. Cache117,087,296bytes versus
+3,517,408,256bytes for dense outer products. Both optimizers finish250iterations:
+Adam250evaluations/19.25seconds, L-BFGS275evaluations/21.34seconds, the latter
+stops at the iteration limit. Actor objective0.636428→0.595732(Adam),
+→0.586038(L-BFGS). L-BFGS teaching actors1869→1965, complete825→853; diagnostic
+actors53→43, complete6→5, targets62→61, abilities remain3814/149. Only7of9game
+improvement and ability-parity gates pass; all other gates fail. No extension.
+
+Frozen encoder/non-actor parameters, exact row-by-row save/reload predictions,
+code/configuration/source/checkpoint/cache hashes and terminal telemetry verify.
+Whole-host CPU peaks15.7%, memory31.0%; child RSS5,580,959,744bytes. Watchdog
+completes exit0 without stopping. Independent wrapper review's CPU-monitor gap
+was fixed before launch and re-review found no remaining findings. No model
+promotion, native games, reserved predictions or RL. Evidence:
+`logs/roadmap/professional-wider-actor-01/{contract,comparison,verification}.json`,
+both run reports/checkpoints/cache and the final telemetry sidecar.
+
+A subsequent frozen-cache diagnostic finds no exact opposite-membership feature
+collisions across4510rows. Final actor gradient norm0.00213145; it does not prove
+convergence or that the shared score family can fit the wider corpus. This
+rejects exact frozen-feature collisions as the direct explanation here; it
+does not establish raw observation adequacy or justify another optimizer sweep.
+Receipt: `professional-wider-actor-01/frozen-feature-diagnosis.json`.
