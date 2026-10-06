@@ -683,3 +683,17 @@ still fail competent imitation. Do not promote it to live gameplay on the
 strength of training accuracy. Expand compatible human coverage across players,
 maps and matchups, and evaluate target identity/geometry on held games before
 another native training campaign. Professional replay extraction remains open.
+
+Further bounded source screening retained six small originals and SHA receipts:
+51753 (Mez Terran vs BattleB Protoss) requires Base75025; 52108 is ZvZ on
+Base75800; 51996 contains PANDA Terran at 5800 MMR on Base75800; 52090 contains
+Uzikoti Terran at 6040 MMR on Base75800; 55330 contains JimRising Terran at
+4940 MMR on Base75800. The one compatible candidate, 53513, contains ROOT Terran
+at 2611 MMR versus Very Easy AI. None adds verified compatible professional
+Terran teaching. No candidate was silently admitted to the strong-teacher corpus.
+Source filter pages are retained in `pro-terran-window-01.json` and
+`human-terran-window-02.json`; replay metadata, rather than the site's broad patch
+filter or professional tag, determines actual build and observed player's race.
+The remaining supervision work includes learning current-target identity directly
+from entities, rather than relying solely on separate type/alliance logits plus
+an extrapolated point. Evaluate that change on held human games before live use.
