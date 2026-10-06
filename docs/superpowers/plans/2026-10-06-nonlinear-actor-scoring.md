@@ -51,3 +51,17 @@ passes337tests in10.02seconds with six optional-framework tests skipped; Ruff
 and diff checks pass. Independent review reports no actionable findings, passes
 16focused tests, and additionally checks nonlinear scoring without the geometry
 flag and loading an older checkpoint lacking the flag. This verifies code only.
+
+Terminal matched experiment: both finish200epochs/800updates, baseline12.95
+and residual14.26optimizer seconds. Baseline reproduces actors52/complete51;
+residual also gives actors52/complete51, targets60, all62abilities/modes/queues
+and43known timing labels correct. Last-epoch mean minibatch loss decreases
+0.64441→0.57684 without passing actors/complete56gates. No extension or promotion.
+Initial audits, selected rows, source/code/checkpoint bindings and schedules
+verify. Frozen error comparison resolves one baseline SCV error (870:437) but
+introduces another (294:462). Correct count/type composition remains60/62 and
+human-cardinality diagnostic exact selection54/62. Eight SCV ranking errors and
+two extra-building selection errors remain. These are learning failures on
+teaching rows, not held-out/native strength results.
+Evidence: `logs/roadmap/professional-small-set-nonlinear-01/comparison.json`, both
+run reports/checkpoints and `nonlinear/actor-diagnosis.json` (includes margins).

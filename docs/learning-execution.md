@@ -3000,3 +3000,25 @@ residual on the best geometry architecture, with unchanged losses and encoder.
 The plan `superpowers/plans/2026-10-06-nonlinear-actor-scoring.md` freezes code
 checks and a matched small-set budget/gates. It is proposed, not implemented or
 accepted learning improvement. Human imitation remains active; RL is stopped.
+
+Nonlinear scoring is now implemented and independently reviewed: four new tests
+RED→GREEN; full default337tests pass in10.02seconds (six optional-framework skips),
+Ruff/diff pass. Review finds no actionable issues and checks old checkpoint and
+nonlinear-without-geometry compatibility. The optional flag persists through
+CLI/config/checkpoints. Default scores and initialization retain exact parity.
+
+The fixed matched run completes200epochs/800updates each, baseline12.95seconds
+and nonlinear14.26seconds. Source/code/contract/checkpoint bindings, identical
+initial audits and schedules verify. Both give actors52, targets60, complete51,
+all62abilities/modes/queues and43known timing labels. The residual lowers last
+epoch's mean minibatch loss0.64441→0.57684 but leaves complete and actor totals
+unchanged, failing the56gates. Ability/target gates pass. No extension, wider
+fit, promotion, native game, diagnostic/reserved prediction or RL follows.
+
+Frozen matched actor audit reproduces52exact,60correct count/type groups and
+54exact with human count supplied. It resolves870:437 but newly misses294:462;
+eight SCV ranking errors and two extra-building errors remain. Margins are
+recorded for every singleton teaching label. This is no demonstrated selection
+gain and no reason to resume RL. Artifacts:
+`professional-small-set-nonlinear-01/{contract,comparison}.json`, both run
+reports/checkpoints and `nonlinear/actor-diagnosis.json`.
