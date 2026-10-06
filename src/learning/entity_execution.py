@@ -22,6 +22,7 @@ class JointCommandAgent:
             features,
             *self.vocabulary,
             products=self.products,
+            missing_fields=self.policy.missing_fields,
             terrain=self.terrain if self.policy.spatial_features > 2 else None,
         )
         decision = self.policy.predict(inputs)

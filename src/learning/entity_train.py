@@ -73,7 +73,7 @@ def validate_datasets(train, validation):
     return sources
 
 
-def collect(paths, counts, spatial=False):
+def collect(paths, counts, spatial=False, missing_fields=False):
     examples, reports = [], []
     for directory in paths:
         static = json.loads((directory / "static.json").read_text())["game_data"]
@@ -95,6 +95,7 @@ def collect(paths, counts, spatial=False):
                 DELAYS,
                 construction_products(static),
                 spatial=spatial,
+                missing_fields=missing_fields,
             )
         )
         receipt = json.loads((directory / "dataset.json").read_text())
@@ -174,6 +175,11 @@ def main():
     parser.add_argument(
         "--spatial", action="store_true", help="Learn from full-resolution map patches"
     )
+    parser.add_argument(
+        "--missing-fields",
+        action="store_true",
+        help="Include availability indicators for partial replay observations",
+    )
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--hidden", type=int, default=32)
     parser.add_argument("--rate", type=float, default=0.001)
@@ -207,6 +213,7 @@ def main():
                 "global_imitation",
                 "entity_encoder",
                 "entity_examples",
+                "entity_missing",
                 "entity_policy",
                 "entity_audit",
                 "teacher_states",
@@ -228,6 +235,7 @@ def main():
         actor_cutoff=args.actor_cutoff,
         actor_count=args.actor_count,
         spatial=args.spatial,
+        missing_fields=args.missing_fields,
         seed=args.seed,
         wall_seconds=args.wall_seconds,
         delays=DELAYS,
@@ -240,9 +248,14 @@ def main():
         json.dumps(configuration, indent=2) + "\n"
     )
     start = time.monotonic()
-    teaching, teaching_reports = collect(args.train, counts, spatial=args.spatial)
+    teaching, teaching_reports = collect(
+        args.train, counts, spatial=args.spatial, missing_fields=args.missing_fields
+    )
     validation, validation_reports = collect(
-        args.validation, counts, spatial=args.spatial
+        args.validation,
+        counts,
+        spatial=args.spatial,
+        missing_fields=args.missing_fields,
     )
     fitting = [(inputs, label) for inputs, label, _, _ in teaching if label is not None]
     if not fitting:
@@ -263,6 +276,7 @@ def main():
         refinement=args.refinement,
         actor_cutoff=args.actor_cutoff,
         actor_count=args.actor_count,
+        missing_fields=args.missing_fields,
         spatial_features=fitting[0][0]["point_features"].shape[1]
         if args.spatial
         else 2,

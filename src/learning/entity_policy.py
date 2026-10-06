@@ -37,7 +37,15 @@ class JointEntityPolicy:
         actor_cutoff=False,
         spatial_features=2,
         actor_count=False,
+        missing_fields=False,
     ):
+        self.missing_fields = missing_fields
+        if missing_fields and (
+            encoder.parameters["entity"].shape[0] != 188
+            or encoder.parameters["scene"].shape[0] < 26
+            or encoder.parameters["scene"].shape[0] % 2
+        ):
+            raise ValueError("Incompatible missing-field encoder dimensions")
         self.encoder, self.delays = encoder, tuple(delays)
         self.refinement = refinement
         self.actor_cutoff = actor_cutoff
@@ -343,6 +351,7 @@ class JointEntityPolicy:
             actor_cutoff=self.actor_cutoff,
             actor_count=self.actor_count,
             spatial_features=self.spatial_features,
+            missing_fields=self.missing_fields,
         )
         np.savez_compressed(
             path, **self.parameters, configuration=json.dumps(configuration)
@@ -362,6 +371,7 @@ class JointEntityPolicy:
                 actor_cutoff=configuration.get("actor_cutoff", False),
                 actor_count=configuration.get("actor_count", False),
                 spatial_features=configuration.get("spatial_features", 2),
+                missing_fields=configuration.get("missing_fields", False),
             )
             for name, parameter in policy.parameters.items():
                 if archive[name].shape != parameter.shape:

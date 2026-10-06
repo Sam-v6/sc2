@@ -2351,3 +2351,41 @@ promoted into training. Command reconciliation and competent imitation remain
 open. Full260tests pass (`logs/roadmap/unittest-missing-fields-01.log`). The bounded
 real-record check and code hashes are in
 `logs/roadmap/pro-preconverted-probe-01/missing-input-verification-01.json`.
+
+### Missing-field checkpoint and spatial inference compatibility
+
+The trainer now exposes `--missing-fields` and records the input format in both
+its experiment configuration and checkpoint. Native inference automatically uses
+the checkpoint's format and still validates the full unit/ability/upgrade
+vocabularies. Checkpoints without the flag retain legacy behavior. Masked policy
+dimensions are checked before use.
+
+With both spatial and missing-field inputs enabled, map patches add ten source
+resolution values (world units per pixel for each plane) and five availability
+bits, for401point features. Feature minimaps are sampled at world-tile centers
+using the verified world-y flip and uniform scale; native grids preserve their
+original values. Absent/unverified planes are explicitly unavailable and their
+bytes are not read. This permits partial replay sensory information without
+representing missing terrain as observed flat terrain.
+
+Verification:270tests pass, including native-agent/trainer input parity,
+checkpoint round trips, legacy checkpoints, source-grid transforms and unavailable
+planes (`logs/roadmap/unittest-missing-runtime-geometry-01.log`). A separate probe
+projected all observations and checked36sampled professional states through
+spatial inputs, saved/reloaded random policies and raw command serialization
+(`logs/roadmap/pro-preconverted-probe-01/missing-runtime-verification-01.json`).
+No optimizer, gameplay episode or RL ran. These records remain ineligible for
+training pending command reconciliation. Height-map source audit confirms the two
+Disco games have identical height pixels despite different header dimensions;
+the observer copies height from the first feature observation separately from
+GetGameInfo. Independent comparison to the original map remains open, and this
+probe marks height unavailable.
+
+Independent read-only review found no other concrete checkpoint/native/geometry
+issue and reproduced the remaining partial-source history boundary: enabling
+`--missing-fields` does not make incomplete command history trustworthy. A second
+partial demonstration row is rejected once teacher reconstruction adds history
+that the source still declares unknown. A regression assertion now preserves
+that rejection. The professional importer must explicitly reconcile history
+quality before those rows become eligible; silently removing this guard would
+fabricate complete history. This is still an open importer requirement.

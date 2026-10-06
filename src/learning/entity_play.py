@@ -35,7 +35,9 @@ def validate_engine(policy, data):
     expected = (
         len(policy.encoder.parameters["types"]),
         len(policy.encoder.parameters["abilities"]),
-        policy.encoder.parameters["scene"].shape[0] - 13,
+        policy.encoder.parameters["scene"].shape[0]
+        // (2 if policy.missing_fields else 1)
+        - 13,
     )
     if vocabulary != expected:
         raise ValueError("Joint checkpoint and engine vocabularies differ")

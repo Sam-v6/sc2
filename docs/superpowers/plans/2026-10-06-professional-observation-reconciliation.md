@@ -29,3 +29,9 @@ Missing-field step progress: opt-in entity/scene availability features implement
 and tested; default legacy input format preserved. Trainer/checkpoint/native-agent
 configuration and coarse-grid geometry remain open, so the step above remains
 unchecked. No professional fitting or RL started.
+
+Missing-field integration progress: trainer flag/checkpoint metadata/native
+inference now share the format; source geometry and plane availability accompany
+spatial patches.270tests and36professional-state format probes pass. Original
+map height reconciliation and command chronology/labels remain open. The full
+importer and professional fitting are still not completed; no RL restarted.

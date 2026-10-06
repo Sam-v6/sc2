@@ -206,7 +206,12 @@ def state_inputs(
         from src.learning.entity_spatial import spatial_features
 
         inputs["point_features"] = spatial_features(
-            state, terrain, world_points, point_radii, cell_size
+            state,
+            terrain,
+            world_points,
+            point_radii,
+            cell_size,
+            source_geometry=missing_fields,
         )
     return inputs
 
@@ -281,6 +286,7 @@ def replay_examples(
     delays,
     products=None,
     spatial=False,
+    missing_fields=False,
 ):
     """Keep all burst commands; only the last inherits the next event gap.
 
@@ -309,6 +315,7 @@ def replay_examples(
                 upgrade_count,
                 products,
                 terrain=terrain,
+                missing_fields=missing_fields,
             )
             command = Command(
                 **dict(
