@@ -12,11 +12,11 @@ The commands below run from that worktree. Run artifacts are ignored under
 
 | Gate | Implemented and checked | Remaining |
 | --- | --- | --- |
-| A: shared controls | Raw ability, unit group, unit/point target, queue and autocast schema; full visible-map entities, scouting memory, map grids, recent commands; hidden-health checks | Broader physical command-family inventory and learned selection |
-| B: replay extraction | Matching-build preflight; fog enabled; observation before command; eleven source-labelled human games from four Terran players reconstructed; issued-command repeats audited; unresolved timing intervals masked | Verified professional Terran games, wider corpus, issued/executed event audit |
-| C: imitation | CPU-only full-game models on a shared teaching set; staged command audits; raw unit groups, arguments and delay labels | Worker selection/queue execution, independent-player transfer and useful live-game competence |
+| A: shared controls | Raw ability, unit group, unit/point target, queue and autocast schema; full visible-map entities, scouting memory, map grids, recent commands; hidden-health checks; debug census of 52 Terran states and 121 queried abilities | Contextual ability states, physical execution beyond representative families and learned selection |
+| B: replay extraction | Matching-build preflight; fog enabled; observation before command; sixteen source-labelled human games from four Terran players reconstructed; issued-command repeats audited; unresolved timing intervals masked | Verified professional Terran games, wider player coverage and issued/executed event audit |
+| C: imitation | Consistent five-game component pipeline; expanded nine-game macro fit; staged command audits; raw unit groups, arguments and delay labels | Shared entity/context learning, consistent expanded full-command fit, worker selection/queue execution, independent-player transfer and useful live-game competence |
 | D: micro | Native DefeatRoaches adapter using shared entities/commands; trace, scores and replay; CPU-only return-driven policy search; held-out combat-score gains; ordinary-game transfer measured | Other scenarios and successful full-game transfer |
-| E: full-game RL | CPU raw-ability PPO bridge and native collection/update/paired evaluation; fresh combat-return mechanism gains | Native wins over frozen imitation; learned arguments and durable competence |
+| E: full-game RL | Historical CPU raw-ability PPO bridge and native collection/update/paired evaluation; combat-return mechanism experiments; all RL currently held for human imitation | Native wins over frozen imitation; learned arguments and durable competence |
 | F: Hard and beyond | Historical narrow learner development results remain documented | Reliable fresh all-race wins, map/build variation, harder evaluations |
 
 The interface fixture `logs/roadmap/interface-third/` physically checked SCV
@@ -1918,3 +1918,134 @@ No checkpoint/default changes occur. The usable human data increases, but model
 competence, professional replay reconstruction and the eventual all-race Hard
 goal remain unproven. Human imitation remains the learning priority; RL stays
 held. The pending native jobs only reconstruct recorded human games.
+
+### Fourth complete human game and expanded macro fit
+
+The original five-attempt extraction batch is now terminal `incomplete` after
+1,028.459 seconds, with unchanged bound sources. Both 51754 and 51483 hit their
+300-second native limits; those partial outputs remain excluded. Replay 51754's
+fresh 600-second retry completes in 382.069 seconds. Its terminal datasets are
+`human-51754-expansion-02/` and `issued-51754-expansion-02/`: 23,995 consecutive
+fog-enabled observations, 607 matched commands in 602 rows, 609 original human
+events, two unresolved events and one masked timing interval. Retry source and
+output hashes are recorded in `human-51754-retry-02-receipts/`.
+
+`audit_human_expansion_completed4_01.py` verifies the fourth game's source/output
+bindings, full observation continuity, event accounting, pre-command alignment,
+causal histories, serializer roundtrips and timing masks alongside the original
+three. Independent review exactly regenerates the fourth's issued rows from
+actual replay init/game events and reproduces its audit entry. The four-game
+total is 1,544 matched commands and 60,334 observations. The receipt's
+`whole_batch_terminal: false` refers to the planned five-game expansion; the
+original first-attempt subprocess is separately terminal `incomplete`.
+
+Only after 51483's terminal timeout does `retry_human_51483_02.py` start its fresh
+600-second retry. Output goes to `human-51483-expansion-02/` and
+`issued-51483-expansion-02/`, with receipts in
+`human-51483-retry-02-receipts/`. Its live handle at this snapshot is 97005.
+Do not restart from the old timeout or assume the retry is complete.
+
+`project_actor_memory_01.py` measures actual candidate-unit counts for the old
+five teaching games and first three new games: 2,936 command groups and 275,609
+actor examples. At the existing 11,745 float32 columns, one dense feature matrix
+needs 12,948,110,820 bytes; retaining the list of dense rows while stacking needs
+at least 25,896,221,640 bytes, excluding objects, groups and normalization/training
+temporaries. These are arithmetic lower bounds, not a measured process peak or
+the size of the subsequently expanded nine-game set. The previous actor fit used
+only 339 varying columns. Before enlarging the actor fit, test compact temporary
+storage against dense feature/prediction/update parity while preserving the full
+saved/live input vocabulary; do not drop human examples or gameplay controls to
+avoid memory use. No production collector change has occurred yet. The report
+is `actor-memory-projection-01/report.json`.
+
+`expanded_human_macro_01.py` starts one supervised macro fit on nine complete
+games: the original five plus 51572, 51685, 51885 and verified 51754 retry, totaling
+3,543 human commands. Settings match `consistent-fullgame-02`: 600 epochs, seed
+4000, global decisions, ability balancing, whole-game 10,000-second inclusion
+bound and two BLAS threads. Reused Lyra is diagnostic validation only. No GPU,
+RL or native bot evaluation runs. All teachers in this fit are Mez; it adds
+examples, not professional or cross-player teaching coverage.
+
+Before the fit starts, its contract changes 51483 from candidate teaching to
+`reserved_fresh_expansion_validation`. Its human states are not loaded by the
+fit; this deterministic last-pending-game choice is not a randomized benchmark.
+Reserved 51886 remains untouched. The macro fit freezes its actual local source
+dependencies and training/diagnostic artifacts in
+`expanded-human-macro-01/contract.json`; its live handle is 23482. Inspect the
+terminal report before claiming a saved fit. The actor and argument components
+still need consistent expanded-data fits using this same frozen macro before any
+combined native evaluation. Do not mix it with old components and call that a
+trained full policy or resume RL.
+
+### Five-game data closure and same-cohort macro result
+
+Replay 51483's fresh retry completes in 478.051 seconds, with unchanged bound
+sources. It retains 26,064 consecutive observations and 685 matched commands in
+681 rows; 14 of 699 human command events are unresolved and 12 timing intervals
+are masked. `audit_human_expansion_completed5_01.py` completes the final integrity
+audit without loading any model: five games, 2,229 matched commands and 86,398
+observations. Four games are teaching candidates; 51483 is reserved fresh
+expansion validation under the role assignment made before fitting. The original
+first-attempt batch remains historically incomplete, while the combined retry
+workflow is terminal. All native extraction handles above are now terminal.
+The final receipt is `human-corpus-expansion-01/integrity-audit-completed5-01.json`.
+
+The nine-game macro fit completes in 149.769 seconds, 600 epochs and 16,800 updates,
+with unchanged bound sources. The checkpoint SHA-256 is
+`7991636bb52049099825b7baccc4167cbaf01a9ecf39c4823af0bc5eb5b88cce`.
+It copies 93.56% of training command abilities; the reused Lyra diagnostic is
+56/342 (16.37%), versus 61/342 (17.84%) for the five-game baseline. This does not
+demonstrate better independent-player transfer. Different training cohorts make
+the two reported training percentages unsuitable as a direct comparison.
+
+`compare_expanded_macro_01.py` therefore evaluates both frozen macros on the same
+teaching examples, with prior human history and event times:
+
+| Common cohort | Commands | Five-game baseline ability copying | Expanded macro ability copying |
+| --- | ---: | ---: | ---: |
+| Original five teaching games | 1,999 | 96.85% | 92.95% |
+| Four added teaching games | 1,544 | 23.06% | 94.37% |
+| All nine teaching games | 3,543 | 64.69% | 93.56% |
+
+The frozen comparison completes in 6.246 seconds with unchanged source/model/data
+bindings and exactly reproduces the baseline original-cohort and expanded
+whole-cohort counts. It confirms learning of the added human situations alongside
+some loss on the old ones. These are conditional macro-head predictions, not
+exact complete commands, native wins or a promoted policy. Neither reserved game
+is predicted or fitted. The comparison receipt is
+`expanded-macro-comparison-01/report.json`.
+
+Independent review exactly regenerates the fifth game's event/timing audit,
+verifies final corpus/role/source/output bindings, and reproduces every macro
+comparison metric and training-only normalization value using two BLAS threads.
+It checks the fit's 42 bindings and comparison's 35 bindings. Exact ability hits
+are 1,936 to 1,858 on the original five, 356 to 1,457 on the added four, and 2,292
+to 3,315 over all nine. The expanded fit has 16,800 updates versus 9,600 for the
+old fit: matching epochs is not matching compute. Added-game accuracy is training
+reconstruction, not fresh validation or isolated proof of a data-only causal effect.
+
+The user-authorized Astra consultation recommends one jointly trained entity-based
+command model as the next architecture experiment. Its source inspection finds
+that 32 commands are stored, but the ordinary global encoder reads only the last
+two ability IDs; optional semantic encoding reads four richer commands. This is
+confirmed directly in `global_imitation.global_features`, and must not be described
+as learning from all 32 stored commands. Per-type summaries also discard individual
+relationships, and frozen 32-value contexts separate actor and queue/target
+learning. The traced builder interruption is a coordination failure even though
+the pending construction order is already available to the learner.
+
+The proposed experiment shares a compact entity encoder across ability, actor,
+target and queue prediction, with argument losses updating the shared representation.
+It uses entity pointers for unit targets and candidate scoring for spatial targets,
+preserving the broad native command vocabulary. Fix one configuration/update budget;
+compare complete commands and actor/ability-oracle diagnostics before native play.
+Use the nine teaching games and reused diagnostics first. If teaching reconstruction
+remains poor, investigate representation/optimization; if it improves without
+other-player fidelity, prioritize more independent-player teaching. Do not invent
+recovery labels by substituting student histories beneath unchanged human commands.
+Both reserved games remain closed until a complete candidate/protocol is frozen.
+This is a next-step recommendation, not implemented or accepted architecture.
+
+The expanded macro is not combined with old actor/argument models or promoted.
+All jobs described in this section are terminal; no RL resumes. Professional
+reconstruction, complete-command competence and all-race Hard wins remain open.
