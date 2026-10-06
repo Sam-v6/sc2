@@ -24,3 +24,8 @@ Assumption: public preconverted player observations can be reconciled with origi
 - [ ] Demonstrate competent human imitation before RL; continue full sensory/action coverage, learned micro transfer and the original all-race Hard/higher-difficulty acceptance requirements.
 
 Evidence: `logs/roadmap/pro-preconverted-probe-01/`. No model fitting, native match, optimizer or RL ran during the compatibility probe. No full tournament archive/database or pending legacy-client download was retrieved.
+
+Missing-field step progress: opt-in entity/scene availability features implemented
+and tested; default legacy input format preserved. Trainer/checkpoint/native-agent
+configuration and coarse-grid geometry remain open, so the step above remains
+unchecked. No professional fitting or RL started.

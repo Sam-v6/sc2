@@ -2333,3 +2333,21 @@ An additional original tracker-event probe recovers14player1completed upgrades b
 Independent review exposed a genuine upstream field bug: both current and bound historical17da `observer_utils.cpp` assign `dst.energy = src->energy_max`. All13255energy-capable samples across these records equal capacity. The historical implementation is now cached and hash-bound (`historical-observer-implementation-binding.json`); current energy is omitted and declared unknown, while verified capacity is retained. A regression fixture failed before the correction and passes after it. Hidden nonfinite dynamic fields are not read or validated, ensuring invisible values cannot change projection behavior. Reviewer rechecked the fix and reported no remaining concrete issues in scope.
 
 Final projection verification02 processes all3542observations across the three records,476061visible unit rows (102468/59279/314314respectively). Every returned entity is Visible/non-blip; enemy memory contains identity/position/last-seen only; current energy is absent; missing player fields stay absent and all upgrades are gated by original completion loop. Runtime28.80seconds CPU-only, no native simulation or optimizer. Receipt `logs/roadmap/pro-preconverted-probe-01/partial-observation-verification-02.json` binds adapter, native fog filter, encoder guard, upgrade source and verifier. Receipt01 predates the energy correction and is superseded. Focused4tests and full256tests pass9.945seconds (`logs/roadmap/unittest-tournament-observation-02.log`); Ruff/diff checks pass. Still no professional dataset is training-eligible: command/ability/selection reconciliation, original-map resampling, chronology/death handling and missing-field model inputs must be completed before fitting. RL remains stopped and the full roadmap remains active.
+
+### Missing-field inputs for professional imitation
+
+Added opt-in `state_inputs(..., missing_fields=True)`: numeric entity and scene
+inputs carry matching availability bits. Missing player values, unknown current
+energy, resource contents, remembered unit dynamics, truncated order counts and
+imprecise order coordinates are zeroed and marked unavailable. Unknown command
+history cannot supply actor/target references. Default inputs retain the original
+94 entity features and scene dimensions; the opt-in format uses188 entity
+features and doubles the scene width. This is preparation for human imitation,
+not a fitted policy or resumed RL.
+
+The new format still needs checkpoint/trainer/native-agent configuration and
+correct handling of coarse source grids before professional examples can be
+promoted into training. Command reconciliation and competent imitation remain
+open. Full260tests pass (`logs/roadmap/unittest-missing-fields-01.log`). The bounded
+real-record check and code hashes are in
+`logs/roadmap/pro-preconverted-probe-01/missing-input-verification-01.json`.

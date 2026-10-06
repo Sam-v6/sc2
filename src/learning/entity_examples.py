@@ -16,9 +16,14 @@ def state_inputs(
     products=None,
     cell_size=8,
     terrain=None,
+    missing_fields=False,
 ):
-    if state.get("unknown_fields"):
+    if state.get("unknown_fields") and not missing_fields:
         raise ValueError("Observation requires an explicit missing-field encoder")
+    if missing_fields:
+        from src.learning.entity_missing import without_unknown_values
+
+        state = without_unknown_values(state)
     size = np.asarray(state["map_size"], dtype=float)
     loop = state.get("decision_loop", state["game_loop"])
     history = state.get("recent_commands", [])[-32:]
@@ -193,6 +198,10 @@ def state_inputs(
         world_points=world_points,
         point_radii=point_radii,
     )
+    if missing_fields:
+        from src.learning.entity_missing import append_availability
+
+        inputs["encoder"] = append_availability(state, units, inputs["encoder"])
     if terrain is not None:
         from src.learning.entity_spatial import spatial_features
 
