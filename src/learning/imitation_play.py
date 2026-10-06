@@ -389,6 +389,9 @@ class ImitationBot(BotAI):
                                     self.policy.sizes["ability"],
                                     origin,
                                     context,
+                                    self.actor_policy.evidence.get(
+                                        "worker_construction_products"
+                                    ),
                                 )
                                 for index, u in enumerate(actors)
                             ]
@@ -413,6 +416,9 @@ class ImitationBot(BotAI):
                                 self.policy.sizes["ability"],
                                 origin,
                                 self.policy.command_context(x, ability),
+                                self.argument_policy.evidence.get(
+                                    "worker_construction_products"
+                                ),
                             )
                             output = replace_arguments(
                                 output,

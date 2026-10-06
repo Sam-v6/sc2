@@ -6,20 +6,28 @@ import json
 from pathlib import Path
 import time
 import numpy as np
-from src.learning.actor_selection import actor_features, select_actors
+from src.learning.actor_selection import (
+    actor_features,
+    select_actors,
+    construction_products,
+)
 from src.learning.global_imitation import global_features
 from src.learning.imitation import FactorPolicy
 from src.runner import positive
 from src.learning.teacher_states import teacher_states, own_actors
 
 
-def collect(directories, macro, seconds):
+def collect(directories, macro, seconds, build_products=None):
     features = []
     labels = []
     weights = []
     groups = []
     sources = []
     for directory in directories:
+        if build_products is not None:
+            static = json.loads((directory / "static.json").read_text())
+            if construction_products(static["game_data"]) != build_products:
+                raise ValueError("Construction catalogue mismatch")
         receipt = json.loads((directory / "dataset.json").read_text())
         if receipt["status"] != "completed":
             raise ValueError("Actor teaching requires terminal reconstruction")
@@ -57,6 +65,7 @@ def collect(directories, macro, seconds):
                             macro.sizes["ability"],
                             origin,
                             context,
+                            build_products,
                         )
                     )
                     labels.append(int(positive_label))
@@ -84,12 +93,22 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--seconds", type=positive, default=120)
     parser.add_argument("--epochs", type=positive, default=250)
+    parser.add_argument("--worker-construction", action="store_true")
     args = parser.parse_args()
     macro = FactorPolicy.load(args.macro)
     if macro.evidence.get("entity_encoder") != "per_type_spatial_orders":
         raise ValueError("Use the spatial macro checkpoint for this actor fit")
     args.output.mkdir(parents=True, exist_ok=False)
-    x, y, weights, groups, sources = collect(args.datasets, macro, args.seconds)
+    build_products = (
+        construction_products(
+            json.loads((args.datasets[0] / "static.json").read_text())["game_data"]
+        )
+        if args.worker_construction
+        else None
+    )
+    x, y, weights, groups, sources = collect(
+        args.datasets, macro, args.seconds, build_products
+    )
     policy = FactorPolicy(x.shape[1], 2, [], seed=5000)
     policy.feature_mean = x.mean(axis=0)
     policy.feature_scale = np.maximum(x.std(axis=0), 0.1)
@@ -146,6 +165,7 @@ def main():
     report = {
         "status": "completed",
         "role": "actor_selection",
+        "worker_construction_products": build_products,
         "scope": "initial supervised pointer fit; frozen macro context; no strength claim",
         "macro_sha256": hashlib.sha256(args.macro.read_bytes()).hexdigest(),
         "feature_unit_types": macro.unit_types,

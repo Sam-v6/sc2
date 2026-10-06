@@ -100,9 +100,9 @@ approximately 80% total machine load. A sample during two-worker search measured
 GPU work. Keep native replays; do not show victory demonstrations before the
 user's goal is complete.
 
-Latest production unit verification: 182 tests passed in 9.712 seconds, saved in
-`logs/roadmap/unittest-twentyseventh.log`. The subsequent consistent-fit work changes
-experiment artifacts and documentation, with production code unchanged. Native search/extraction results must be
+Latest production unit verification: 187 tests passed in 9.674 seconds, saved in
+`logs/roadmap/unittest-twentyeighth.log`. Five new tests cover opt-in worker
+construction cues and legacy feature compatibility. Native search/extraction results must be
 inspected after completion before recording gains or moving gates forward.
 
 ## First terminal learning results
@@ -1692,3 +1692,72 @@ examples, not a demonstrated fix. Preserve humans' queued harvest and explicit
 cancel/retreat actions rather than installing an unconditional builder guard.
 Professional teacher extraction remains open, and no checkpoint is promoted or
 RL resumed from these diagnostics.
+
+### Opt-in worker construction cues: fixed argument experiment fails transfer gate
+
+`actor_selection.py` now optionally appends five per-worker cues: a pending Build
+order, a known order target location, a currently visible matching foundation,
+its progress and worker-to-target distance divided by 32 (capped at two).
+The target-location flag does not imply visible terrain: a known order point is
+causal information even when terrain there is unseen. Foundation matching uses
+currently observed/display-visible own units of the product type within one tile
+of that target. Enemy units, snapshots and owned memory cannot create a foundation.
+The cue covers an SCV's first order only; it does not restrict allowed actions.
+
+Product types come from Terran Build entries in the extracted engine catalogue.
+`actor_train` and `argument_train` enable the feature only with
+`--worker-construction`, require consistent source catalogues and persist
+`worker_construction_products` in checkpoint evidence. Live actor and argument
+encoders independently read their own checkpoint metadata. Missing/None metadata
+retains the old dimensions and values. Group inputs average the selected actors'
+cues, as with their other features. No old checkpoint is rewritten or made the
+default. Five tests first fail for the missing API, then pass with the minimal
+feature implementation; the full 187-test suite and Ruff pass. Independent source
+review finds no material defect and confirms training/runtime consistency,
+compatibility and observation limits.
+
+`worker_construction_pipeline_01.py` completes `worker-construction-arguments-01/`
+in 116.787 seconds: argument fit 28.324, queue audit 1.918, full teaching audit
+86.490. Its fixed bounds are 300/60/300 seconds. Only the argument model is refit:
+the same five complete Mez games, 1,999 commands, 600 epochs, seed 5001, equal
+replay weights and unchanged hidden architecture. Macro and actor checkpoints
+remain frozen. The extra input dimensions also change initialization, so this is
+a model comparison, not an isolated estimate of the cue's effect. Training uses
+two BLAS threads, no GPU; a process sample is 187% of one core, roughly 5.84% of
+32-thread capacity, about 193 MiB RSS during evaluation.
+
+The new argument checksum is
+`0b133aa976363d8e27bf3f46aa93311b0b1112ef9f18683a426f168a89ae21f8`.
+Mean teaching target error is 2.061 tiles, compared with baseline 1.997. Queue
+copying remains 57/68 mineral commands and 14/19 commands selecting builders
+without foundations. The latter still splits 11/11 teaching and 3/8 reused
+other-player diagnostics. Model-queued commands change from 22 to 24 overall;
+that count alone is not an accuracy gain.
+
+`worker-queue-construction-01/` evaluates the traced native loop 1448 without
+executing a command. The new model queues mining with margin +1.656872, versus
+baseline -5.301648. This is a frozen counterfactual, not demonstrated preservation
+of the Barracks or improved gameplay. Its `correct:false` means disagreement with
+the recorded old model's nonqueued flag, not evidence that queueing is wrong.
+
+`command-stage-worker-construction-01/` evaluates all 1,999 teaching commands with
+human times/history, as in the previous staged audit. Joint complete copying is
+334/494 in the opening, down from 342, and 778/1,505 later, unchanged. Macro ability
+and actor selection counts stay identical. The preregistered gate requires
+other-player no-foundation queue copying at least 6/8, teaching 11/11, total queue
+copying at least 57/68, and no decrease from either joint teaching baseline.
+Diagnostic transfer and opening nonregression fail. No functional game is run,
+checkpoint promoted or RL resumed. Reserved 51886 remains unused.
+
+The independent reviewer checks all 52 pipeline bindings, shared macro/five-game
+source identity, model digest, update counts and terminal bounds. It reproduces
+all 68 queue predictions exactly, every saved staged aggregate, and a deterministic
+21-command/63-stage prediction subset exactly with two BLAS threads. Full staged
+forward reproduction is not claimed. No blocking correctness issue is found.
+
+The cue remains available for broader human supervision, off by default. One
+improved traced decision does not justify further isolated tuning or a competence
+claim. Prioritize obtaining compatible independently sourced professional teaching
+and defining whole-game splits before the next larger fit. Reused Lyra/Huski
+diagnostics can become teaching only through an explicit split-role change; their
+subsequent copying must then be reported as training, not independent transfer.
