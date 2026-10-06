@@ -15,7 +15,9 @@ Assumption: public preconverted player observations can be reconciled with origi
 - [x] Retrieve exact original map archives by replay cache hash inside16MiBbudget and verify dimensions. Correct two stale converted map headers.
 - [ ] Apply verified world-coordinate flip/uniform-scale geometry and confirm residual unit-footprint visibility cases.
 - [ ] Restore original queue flags/point precision only for verified commands. Mask/exclude unavailable observations and unknown action modes explicitly. Recover upgrades from player-visible replay events if feasible.
-- [ ] Build an importer with meaningful fixture tests, source receipts and compatibility checks against native inference. Do not mix partial records silently into existing datasets.
+- [x] Implement tested bounded tournament wire decoder; independently review it and reproduce all3543converted commands across three real records. Full252tests pass.
+- [x] Locate14player-owned completed upgrades with exact native catalog names; exclude opponent tracker upgrades and retain unknown names.
+- [ ] Build native demonstration importer with command/actor/ability reconciliation, exact-map geometry, causal own upgrades and explicit missing-field masks; verify native inference compatibility. Do not mix partial records silently into existing datasets.
 - [ ] Assemble professional teaching/validation splits by whole game and evaluate imitation before further frozen native tests. Larger corpus downloads require a concrete bounded size decision within user constraints.
 - [ ] Demonstrate competent human imitation before RL; continue full sensory/action coverage, learned micro transfer and the original all-race Hard/higher-difficulty acceptance requirements.
 
