@@ -72,11 +72,16 @@ all three Rush games failed. Results: zero wins, three defeats, three ten-minute
 cutoffs. Macro worker peaks40/49/48and military peaks27/28/29. Panel CPU peak27.2percent.
 See [native result and diagnosed issues](superpowers/plans/2026-10-06-human-production-goals-native-results.md).
 
-A tested fix now prevents shared addon ability aliases from selecting the wrong
-production building; native revalidation is still needed. Next resolve physical
-addon/spawn clearance and acknowledged-but-unstarted Refineries, then recheck the
-same frozen model. The all-race useful-start gate remains failed. RL stays off;
-learned micro, broad learned raw controls and reliable Hard wins remain unfinished.
+Addon caster and production clearance repairs are now natively checked. The
+same frozen six-game panel starts Factory TechLabs in all six games and records
+no delayed action errors. Still zero wins: three Rush defeats and three Macro
+cutoffs. Macro worker peaks decline to35/31/37; military peaks29/25/30.
+CPU peak30.1percent. See [repair results and limits](superpowers/plans/2026-10-06-production-clearance-results.md).
+
+Next audit the timing/resource boundary: a45-second future outcome forecast is
+currently treated as immediate work on every replan. Avoid another unchanged
+fit or scripted strategic goals. RL stays off. Learned micro, broad learned raw
+controls and reliable all-race Hard wins remain unfinished.
 
 The validated intake manifest is
 `logs/roadmap/pro-source-expansion-02/final-verification.json`. Future fits must

@@ -19,7 +19,7 @@ from src.learning.entity_execution import validate_order_aliases
 from src.learning.gameplay import Command, PlayerView, protocol_dict
 from src.learning.imitation_play import idle_worker_harvest
 from src.learning.live import ability_query, issue
-from src.learning.placement import resolve_placements
+from src.learning.production_clearance import reservations, resolve_production_placement, PRODUCERS, claimed_geysers
 from src.learning.production_execution import (canonical, eligible_actors,
                                               goal_catalog, queued_work)
 from src.learning.production_goal_policy import current_features, predict_goals
@@ -161,6 +161,8 @@ class ProductionGoalBot(BotAI):
                       for tag, abilities in available[0].items()}
             selected = {item['actor'] for item in self.ledger.pending.values()}
             commands, tickets, execution = [], [], []
+            reserved = reservations(state, self.units_by_id, self.catalog)
+            geyser_claims = claimed_geysers(state, self.catalog)
             minerals = state['player'].get('minerals', 0)
             gas = state['player'].get('vespene', 0)
             requests = sorted(predicted, key=lambda g: (self.last_sent.get(g, -1), self.goals[g]['ability']))
@@ -182,7 +184,7 @@ class ProductionGoalBot(BotAI):
                 target = None
                 mode = info['descriptor'].get('target', 1)
                 if mode == 3:
-                    geysers = [u for u in state['units'] if u['alliance'] == 3 and u.get('vespene_contents', 0) > 0
+                    geysers = [u for u in state['units'] if u['alliance'] == 3 and u.get('vespene_contents', 0) > 0 and u['tag'] not in geyser_claims
                                and not any(v['unit_type'] == info['unit_type'] and math.dist(v['position'][:2], u['position'][:2]) < 1
                                            for v in state['units'] if v['alliance'] == 1)]
                     if not geysers:
@@ -204,11 +206,19 @@ class ProductionGoalBot(BotAI):
                     continue
                 command = Command(info['ability'], (actor['tag'],), target_point=point,
                                   target_unit=target['tag'] if target else None)
-                resolved, placement = await resolve_placements(self.client, [command], self.catalog, state)
+                resolved, placement = await resolve_production_placement(self.client, command, self.catalog, state, info['unit_type'], reserved)
                 if not resolved:
                     self.blocks['placement:' + goal] += 1
                     continue
                 command = resolved[0]
+                if target is not None:
+                    geyser_claims.add(target['tag'])
+                if command.target_point is not None and info['descriptor'].get('is_building'):
+                    x, y = command.target_point
+                    radius = 2.5 if info['unit_type'] in PRODUCERS else info['descriptor'].get('footprint_radius', 1)
+                    reserved.append((x, y, radius))
+                    if info['unit_type'] in PRODUCERS:
+                        reserved.append((x + 2.5, y - .5, 1))
                 ticket = self.ledger.reserve(goal, actor['tag'], loop)
                 commands.append(command)
                 tickets.append((ticket, goal))

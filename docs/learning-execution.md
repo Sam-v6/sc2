@@ -3917,3 +3917,15 @@ A source-trace-backed addon alias regression now restricts Factory Tech Lab goal
 to actual Factories. It passes its formerly failing test. Native revalidation and
 addon/spawn placement investigation are next; no unchanged model sweep. Preserve
 `human-goal-native-01/panel/source-snapshot` as the original execution code.
+
+### October6: clearance repair and fixed-model native recheck
+
+Native debug fixture verifies clear/blocked addon pads. Generic execution reserves
+addon/spawn space, pending/batch footprints and claimed geysers. Same six Hard jobs
+complete; predictions and original replay production verify. Actual FactoryTechLab
+starts improve3/6to6/6, delayed action errors1to0; zero victories persists.
+Macro workers decline40/49/48to35/31/37, with three sustained Macro passes and
+three Rush failures. Peak CPU30.1percent, no fit/RL.419tests pass with31skips.
+See [repair result](superpowers/plans/2026-10-06-production-clearance-results.md).
+Next audit temporal/resource interpretation of human outcome forecasts; no
+unchanged fit/sim sweep or hidden strategic recipe. Full roadmap remains active.
