@@ -3041,3 +3041,28 @@ frozen, rather than claiming missing information or impossible scoring. Plan
 `superpowers/plans/2026-10-06-convex-actor-heads.md` specifies a same-objective,
 same-initial-weight Adam/L-BFGS comparison on62human rows, with fixed budgets and
 ordinary complete-command gates. It is proposed; no acceptance follows from LP.
+
+The frozen-feature optimizer comparison is now terminal. Independent review
+first identified missing per-command/reload evidence, configuration binding,
+finite guards and direct cached-logit parity; all were repaired before fitting,
+and re-review found no remaining actionable issues. Actual preflight verifies
+maximum logit discrepancy4.84e-6, gradient8.08e-8 and finite-difference5.39e-11.
+
+Both treatments reach250iterations: Adam250evaluations/0.58seconds, L-BFGS281
+evaluations/0.89seconds. L-BFGS stops at its predeclared iteration limit, not
+convergence. Actor objective starts0.443365 and ends0.357067(Adam) versus
+0.0179665(L-BFGS). Adam gives actors54/complete53; L-BFGSactors61/complete59.
+Both retain targets60 and all62abilities/modes/queues/43known timings. L-BFGS
+passes all small-set gates, Adam fails actor/complete. Nine baseline actor errors
+are fixed with no newly wrong rows;523:513remains. Selection-weight norm grows
+8.39→731.75(max164.05), requiring explicit reporting in wider tests.
+
+Unchanged encoder/non-actor arrays and exact per-row checkpoint reload
+predictions verify, together with source/code/configuration/checkpoint hashes.
+This supports better head optimization on this finite teaching set; it does not
+establish generalization or strength. A fresh wider human-imitation comparison
+is permitted; native play/RL remain stopped. Whole-host utilization sample during
+the run is4.1%CPU/22.7%memory on32logical CPUs; BLAS uses two threads. No GPU,
+downloads, other replay predictions or native games. Artifacts:
+`professional-convex-actor-01/{contract,comparison}.json` and both run
+reports/checkpoints (all62ordinary predictions and actor margins included).

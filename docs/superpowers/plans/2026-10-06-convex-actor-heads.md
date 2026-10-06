@@ -30,3 +30,24 @@ Checkpoint reload predictions and unchanged data/encoder/non-actor parameters
 must verify. A success only enables separately frozen cross-game imitation;
 neither optimizer is accepted for native play/RL here. Failure stops this test.
 No other replay predictions, native games, large downloads or GPU.
+
+Completed after independent review and pre-launch repairs: configuration hashes,
+direct cached logits, finite-value guards and exact per-row reload predictions
+are verified. Cached logit max error4.84e-6, gradient8.08e-8, finite difference
+5.39e-11. Both optimizers finish their250iteration budget: Adam250evaluations in
+0.58seconds; L-BFGS281evaluations in0.89seconds, status1iteration limit rather
+than convergence. Actor objective0.443365→0.357067(Adam), →0.0179665(L-BFGS).
+
+Adam reaches actors54/complete53; L-BFGSactors61/complete59. Both retain
+targets60, all62abilities/modes/queues and43known timings. L-BFGS passes all
+small-set gates; Adam fails actor/complete gates. L-BFGS fixes nine of ten
+baseline actor errors with no new ones; only523:513remains. Encoder and other
+parameters are byte-identical, and every saved/reloaded ordinary command
+prediction matches. Source/code/configuration/checkpoint bindings verify.
+
+L-BFGS selection-weight norm rises8.39→731.75(max coefficient164.05); this must
+be reported in subsequent generalization tests. It is no evidence of native
+competence or reliable Hard wins. No promotion, other replay predictions,
+native games or RL. Evidence:
+`logs/roadmap/professional-convex-actor-01/{contract,comparison}.json` and both
+run reports/checkpoints, including all62predictions/margins/fixed/new errors.
