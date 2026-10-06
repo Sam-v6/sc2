@@ -3258,3 +3258,39 @@ Teaching870also mispredicts its opening worker command, so missing diagnostic
 spawn coverage alone is not established as the cause. This supports examining
 spatial/context transfer and legitimate canonical geometry before another fit.
 No new training, reserved prediction, native game or RL occurs in these audits.
+
+## Goal-first sequence controller implementation (October 6)
+
+Rechecking local compatibility does not reveal a new professional native
+source: installed Base75689 maps to4.10.0; existing fuller-observation datasets
+are Masters examples, while named GuMiho/Bunny require75025and the professional
+tournament cohort76052. Historical failed asset probes are not restarted and
+no additional assets/downloads occur. These source gaps remain explicit.
+
+The new declared experiment addresses joint intent/target/selection rather
+than continuing the failed selection-head fit. `goal_first_policy.py` is a
+separate optional CPU Torch controller using the same raw input and prediction
+schema. A GRU processes the32causal event slots, observed ownership groups
+provide pooled entities/counts, and ability/mode/target precede actor selection.
+Selection receives the proposed target embedding and candidate-to-target
+geometry. Queue/delay follow the selected group; autocast and arbitrary groups
+remain available. Teacher mode/target/group condition losses only; ordinary
+inference predicts each component, without human current selection or recipes.
+
+Four tests are observed RED before the relevant API implementation, then GREEN
+for all-head gradient flow, target-dependent selection, permutation/checkpoint,
+history order, empty masks and explicitly named ability/group oracles that do
+not supply targets. Optional installed Torch CPU runtime passes four tests in
+0.55seconds. Default full354tests pass10.03seconds with ten optional skips;
+Ruff/diff pass. The production-sized model has766637parameters, two CPU threads,
+CUDA uninitialized; construction preserves global CPU RNG.
+
+Independent controller review finds no blocker, verifies all four modes and
+six numerical gradients including GRU/target/geometry/refinement, safe NPZ
+loading and default imports independent of Torch. Reviewed sourceSHA256
+`e053e58052e4fd0548716e78318c553a3b892824674cea170bf92c48584e8523`.
+No fitting/native/RL occurs. Trainer, teaching-only input-support neutralization,
+corpus integration, frozen reports and prediction-derived history evaluation
+remain pending; implementation tests do not establish copying or strength.
+Plan: `2026-10-06-goal-first-sequence-imitation.md`, including a single bounded
+end-to-end fit and improvement gates for the now-learned ability classifier.
