@@ -3828,3 +3828,20 @@ prove job termination. Telemetry is
 No result or checkpoint promotion is claimed. Next await this exact run and
 independently reconstruct both ordinary and own-history metrics, including recovered
 families. Close at bounds without extension/sweep. The full roadmap remains active.
+
+### October6: repaired-source imitation trial closed after independent verification
+
+Run53923and verifier51260are terminal exit0. Botharms30epochs/6,390updates/
+101,940presentations; optimizer339.20/346.31seconds, peakwholeCPU11.6%.
+All9,318ordinary and2,226own-history predictions/metrics/gates independently reproduce.
+Matched budgets and false-positive tolerance pass; allfive improvement gates fail:
+heldmacro27→21/262, complete31→28/1,113, own-historymacro10→4/262.
+No extension, promotion, native game, GPU or RL.
+
+Newteaching146rows: ordinary complete0→19; ability0→26. Given correct ability,
+conditional complete3→122; given ability+actors, repaired146/146. This establishes
+conditional argument learning on these teaching states, not autonomous planning.
+Next test upcoming human production intent/timing supervision separately from the
+next raw click, with censored target-only future labels and no future-input leakage.
+Preserve full raw controls and sensory information; no recipe/primitive action-space
+replacement. See [verified source-version result](superpowers/plans/2026-10-06-repaired-production-imitation-results.md).
