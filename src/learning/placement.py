@@ -30,17 +30,48 @@ async def resolve_placements(client, commands, catalog, state, ranked_points=Non
     trace = []
     for command in commands:
         descriptor = catalog[command.ability]
-        if not descriptor.get("is_building") or command.target_point is None:
+        unit_target = command.target_point is None and command.target_unit is not None
+        if not descriptor.get("is_building") or (
+            command.target_point is None and not unit_target
+        ):
             resolved.append(command)
             continue
+        target = None
+        if unit_target:
+            target = next(
+                (
+                    u
+                    for u in state["units"]
+                    if u["tag"] == command.target_unit
+                    and u.get("observed", True)
+                    and u.get("display_type", 1) == 1
+                ),
+                None,
+            )
+            if target is None:
+                trace.append(
+                    dict(
+                        ability=command.ability,
+                        units=list(command.units),
+                        requested_target_unit=command.target_unit,
+                        source="engine_unit_target_placement",
+                        rejected="unobserved_construction_target",
+                    )
+                )
+                continue
         learned = (
-            ranked_points is not None
+            not unit_target
+            and ranked_points is not None
             and (command.ability, command.units) in ranked_points
         )
         points = (
-            ranked_points[(command.ability, command.units)]
-            if learned
-            else candidates(command.target_point, state)
+            [tuple(target["position"][:2])]
+            if unit_target
+            else (
+                ranked_points[(command.ability, command.units)]
+                if learned
+                else candidates(command.target_point, state)
+            )
         )
         request = query.RequestQuery(
             placements=[
@@ -62,15 +93,31 @@ async def resolve_placements(client, commands, catalog, state, ranked_points=Non
         row = {
             "ability": command.ability,
             "units": list(command.units),
-            "requested_point": list(command.target_point),
+            "requested_point": list(points[0] if unit_target else command.target_point),
             "source": "learned_spatial_candidates"
             if learned
             else "local_engine_placement",
         }
+        if unit_target:
+            row.update(
+                source="engine_unit_target_placement",
+                requested_target_unit=command.target_unit,
+                placement_result=response.placements[0].result,
+            )
         if index is None:
             row["rejected"] = (
-                "no_legal_spatial_candidate" if learned else "no_legal_local_placement"
+                "invalid_unit_target_placement"
+                if unit_target
+                else (
+                    "no_legal_spatial_candidate"
+                    if learned
+                    else "no_legal_local_placement"
+                )
             )
+        elif unit_target:
+            resolved.append(command)
+            row["issued_target_unit"] = command.target_unit
+            row["validated_target_point"] = list(points[0])
         else:
             resolved.append(replace(command, target_point=points[index]))
             row["issued_point"] = list(points[index])

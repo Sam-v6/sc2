@@ -91,3 +91,54 @@ class PlacementTests(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual(commands, [command])
         self.assertEqual(trace, [])
+
+    async def test_unit_construction_validates_exact_selected_target(self):
+        class Client:
+            async def _execute(self, **kwargs):
+                self.request = kwargs["query"]
+                return pb.Response(
+                    query=query.ResponseQuery(
+                        placements=[query.ResponseQueryBuildingPlacement(result=1)]
+                    )
+                )
+
+        client = Client()
+        command = Command(320, (7,), target_unit=9, queue=True)
+        state = dict(
+            units=[dict(tag=9, position=[10.5, 12.5], observed=True)], map_size=[64, 64]
+        )
+        commands, trace = await resolve_placements(
+            client, [command], {320: dict(is_building=True)}, state
+        )
+        self.assertEqual(commands, [command])
+        self.assertEqual(len(client.request.placements), 1)
+        point = client.request.placements[0].target_pos
+        self.assertEqual((point.x, point.y), (10.5, 12.5))
+        self.assertEqual(trace[0]["requested_target_unit"], 9)
+        self.assertEqual(trace[0]["issued_target_unit"], 9)
+
+    async def test_invalid_or_unobserved_unit_construction_never_changes_target(self):
+        class Client:
+            async def _execute(self, **kwargs):
+                self.request = kwargs["query"]
+                return pb.Response(
+                    query=query.ResponseQuery(
+                        placements=[query.ResponseQueryBuildingPlacement(result=41)]
+                    )
+                )
+
+        command = Command(320, (7,), target_unit=9)
+        client = Client()
+        state = dict(units=[dict(tag=9, position=[10.5, 12.5])], map_size=[64, 64])
+        commands, trace = await resolve_placements(
+            client, [command], {320: dict(is_building=True)}, state
+        )
+        self.assertEqual(commands, [])
+        self.assertEqual(len(client.request.placements), 1)
+        self.assertEqual(trace[0]["rejected"], "invalid_unit_target_placement")
+        state["units"][0]["observed"] = False
+        commands, trace = await resolve_placements(
+            None, [command], {320: dict(is_building=True)}, state
+        )
+        self.assertEqual(commands, [])
+        self.assertEqual(trace[0]["rejected"], "unobserved_construction_target")

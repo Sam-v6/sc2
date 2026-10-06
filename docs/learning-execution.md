@@ -3743,3 +3743,22 @@ a repairedBarracksattempt, reliable planning or a full-game win. See
 Next inspect the rejected unit-target gas positions before changing target behavior;
 existing point resolution deliberately does not replace the model's selected geyser.
 The full human-imitation/micro/Hard-and-higher roadmap remains incomplete.
+
+### October6: unit construction validation; learned barracks intent remains weak
+
+Exact selected visible unit positions now receive one engine placement query;
+valid commands retain their unit target, invalid/unobserved ones do not dispatch
+or enter history. No alternategeyserchosen.392normaltests (31optional skips),
+32focusedoptional/execution checks, Ruff/diff and independent review pass.
+
+Watcher72828and verifier12437are terminal exit0.101sampled decisions reconstruct
+with98actualdispatches. Two invalidrefineryplacements and one localCCplacement
+are blocked; fourremainingNotSupported responses areSmartcommands. Final24workers,
+2Depots,1Refinery,oneadditionalCC, noBarracks/army. CPUpeak6.3%; noGPU/fitting/RL.
+
+Barracksis engine-eligible in41of101states, but frozen probabilities at first/
+middle/last eligible states are only.37%/.25%/.30%. Teaching sources do contain
+18Barracksand162Marine commands over six8–14minute games. The next work should
+address human production-intent supervision, with a coverage/predictability audit
+before another controller fit, rather than more unchanged execution openers.
+See [verified result and next learning question](superpowers/plans/2026-10-06-unit-construction-validation-results.md).
