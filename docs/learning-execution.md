@@ -1303,3 +1303,56 @@ change, verifies unchanged original hashes and Rom's single mask, and reconstruc
 all 388 reserved-validation rows/audit fields from the actual replay protocol.
 No material correctness concern remains. The missing commands themselves are
 still unreconstructed; timing masking does not imply complete action coverage.
+
+### Native replay legality and full-command imitation audit
+
+Saved human examples previously lacked the engine availability input used by the
+live controller. `capture_replay_legality_01.py` attempts to query that input at
+Rom's exact pre-command times. Jumping directly between command loops fails
+exact own-unit-state matching at loop 4049. The independent diagnostic copy
+`replay-legality-rom-02/state-mismatch.json` identifies only position differences
+for three Reapers, approximately ten tiles apart. The cause is not established;
+this does not prove different underlying combat outcomes. Neither failed capture
+is treated as a complete sidecar for the saved observations.
+
+The per-frame capture `replay-legality-rom-03/` succeeds for all 180 saved command
+states in 36.015 seconds. A stronger per-frame capture `replay-legality-rom-04/`
+checks exact player economy and every visible unit, including own units, against
+the saved observations; all 180 states match in 35.854 seconds. Its native query
+uses only known own-unit tags, with resource requirements enabled and fog intact.
+`equivalence-audit.json` verifies all 180 availability records are identical across
+the two successful captures. The records expose ability availability, not full
+target/placement validity or guaranteed command execution. Of 180 teacher
+commands, 179 have their ability available for every actor in the prestate query;
+one SCV-training command at loop 787 is absent. That limitation is retained;
+no future-state mask or teacher-ability bypass is introduced.
+
+`full-command-audit-rom-01/` evaluates frozen prefix-240 macro, actor-membership
+and argument checkpoints against Rom with the native masks. No human ability,
+actor group or target is supplied. All those choices come from predictions;
+engine target-mode rules constrain decoding. It remains conditional on human
+event times and previous human command history, with no autonomous scheduling,
+quiet-frame coverage or spatial-placement postprocessor. Rom is the teaching
+candidate, not the still-reserved 51886 validation game. No fitting occurs.
+
+Only 2/180 commands match ability, exact actor set, queue/autocast and target
+(unit tag exact or point within two tiles) together. Individual field hits are
+88/180 ability, 33/180 actor set, 23/180 target-point field, 124/180 target-unit
+field, 168/180 queue and 180/180 autocast. Target-field scores include correctly
+absent targets, so they are not spatial/targeted-command accuracy. Delay-bucket
+hits are 35/178 known timing labels; masked and terminal timing are excluded.
+The game has no multi-command rows in this selected dataset. Evaluation completes
+in 0.705 seconds; code, datasets, captures and checkpoints listed in the contract
+retain identical pre/post hashes. These scores establish poor joint imitation,
+not autonomous competence, and do not justify RL or checkpoint promotion.
+Further isolated target fits cannot establish full-command learning by themselves.
+
+The independent reviewer reproduces every saved prediction, field comparison and
+count for all 180 commands without fitting or output modification. It verifies
+capture04 source/data bindings and digest and confirms its 180 masks are exactly
+identical to capture03. The greedy macro→actor→argument decode matches the live
+component path before placement/execution; human history is updated only after
+predicting each current row. No blocking defect is found. Exact actor/target
+copying is a stricter metric than strategically equivalent behavior; these scores
+are fidelity measurements, not game-outcome measurements or an acceptance gate
+for Hard opponents. The reserved validation replay remains untouched by models.
