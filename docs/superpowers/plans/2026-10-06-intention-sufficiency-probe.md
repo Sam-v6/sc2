@@ -30,7 +30,13 @@ probe. Preserve all completed failed artifacts; no controller extension or RL.
 - Fit scaling and class statistics on each training fold only. Use all
   demonstrated ability IDs; explicitly count held labels absent from training.
   This is an ability diagnostic; the full gameplay action grammar is unchanged.
-- Freeze one regularization setting/solver limit before executing; combined
+- Fixed objective: mean multinomial cross-entropy plus0.01/2times squared
+  non-bias weights; deterministic training-frequency bias initialization.
+  Training-only RMS scaling and nonzero-column selection; L-BFGS-B at most
+  100iterations, ftol1e-9/gtol1e-5/maxcor10, no class weighting. Model classes
+  come from training labels only; held absent classes always count as errors.
+  Reported cross-entropy uses a1e-12probability floor, including present classes.
+  Combined
   preparation/fitting wall bound300seconds, two CPU threads, no GPU/install.
   Failure to converge within bounds makes the relevant result inconclusive.
 - Report held-game cross-entropy, top1/top3accuracy, macro recall/false-positive
@@ -44,8 +50,8 @@ probe. Preserve all completed failed artifacts; no controller extension or RL.
 
 ## Implementation and verification
 
-- [ ] Implement/test causal feature conversion and fold-only preprocessing.
-- [ ] Test bounded solver behavior, class coverage and independent metrics.
+- [x] Implement/test causal feature conversion and fold-only preprocessing.
+- [x] Test bounded solver behavior, class coverage and independent metrics.
 - [ ] Freeze runtime/source/configuration bindings and independent review.
 - [ ] Run the single diagnostic after prior verification; independently check
   outputs. Use failures to audit source/coverage before another architecture.
@@ -56,3 +62,8 @@ modeling with truthful history. If all arms fail, a linear probe cannot establis
 unlearnability; source/coverage evidence is needed. The full roadmap, learned
 micro transfer, native playback adapter, Hard panel and higher difficulties
 remain open.
+
+Implementation review finds no blockers. Unknown/current-command values do not
+enter state features; history preserves unknown/present slots. Expired fits
+report wall_bound and cannot count as positive signal. Corpus execution and
+wrapper review remain pending; tiny tests establish mechanics only.

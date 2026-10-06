@@ -3542,3 +3542,28 @@ human states are not environment-consistent rollouts. These are diagnostic
 hypotheses, not competence claims. Advice is applied in the next probe plan
 `docs/superpowers/plans/2026-10-06-intention-sufficiency-probe.md`; no new fit
 is launched before current independent verification finishes.
+
+Mixed-history verifier handle87351 is now terminal exit0:
+`verified_completed_failure`. All10saved teaching refreshes (45100inputs) and
+all4805final ordinary predictions reproduce independently; complete reports,
+oracles, hypothetical own histories and all14failed gates agree. Final telemetry
+SHA256`8ed30837212c7a49240629d717d3de457b9ff89230a83637b876b45a0d6939f5`;
+comparisonSHA256`7c111b3b38d5be102957cfc82b79f51692a840e88112e9c1086ac207201b7d3b`;
+verifierSHA256`d1ebf455ca0efd923d3db379933aeb40787b78ffa539c6678ddfc401d9368d37`.
+No fitting or native/RL process from this trial remains active.
+
+`intention_probe.py` implements the next optional-SciPy diagnostic: masked
+current scalars/upgrades and native type/order counts separate from causal
+human event history; no labels/actor tags/current targets enter features.
+Training-fold-only sparse RMS/column/class statistics and bounded regularized
+multinomial fitting. Exact macro recall, family recall, false positives and
+absent-class errors are separately reported; cross-entropy floors probability
+at1e-12. Four tests observed missing-interface RED then GREEN0.13seconds,
+including independently calculated metrics and deadline expiry. Independent
+implementation review finds no blockers; existing SciPy is available, with no
+install. No corpus fit has run yet; wrapper/deadline/independent result checks
+remain required. The fixed solver settings are declared in the probe plan.
+
+Full default suite now passes368tests in10.08seconds with20optional skips;
+Ruff/diff checks pass. Source/test implementation review is clean. No diagnostic
+corpus predictions or optimizer run has occurred at this milestone.
