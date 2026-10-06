@@ -1059,3 +1059,67 @@ imitation results, not proof of a complete authoritative protocol decoder.
 No dataset is relabeled and no further fit, native simulation or RL follows.
 Future alignment can use verified same-build ability identity to reject/resolve
 ambiguous matches, while retaining explicit unsupported cases and version scope.
+
+### Bounded old-runtime asset recovery, offline preparation
+
+`src/learning/casc_asset.py` extracts a requested physical CASC record from a
+caller-supplied encrypted ZIP prefix. It caps input and retained content at
+250 MiB and drains decoded output in chunks of at most 1 MiB. Verification
+checks the physical key, framed BLTE header/chunk hashes, decoded size and content
+key. Unsupported frame formats fail explicitly. It does not verify the whole
+ZIP CRC, install assets or perform network requests.
+
+Eight regression tests cover bounded reads, high-expansion skipped prefixes,
+corrupt content and oversized compressed frames. The complete suite passes
+178 tests (`unittest-twentyfourth.log`); Ruff passes the module and tests.
+`old-casc-probe/casc-asset-offline-prefix-check-02.json` recovers and verifies the
+already cached encoding record from 37,748,736 encrypted bytes and independently
+verifies the cached root record. Both match previous verified content; this
+check uses no network and completes in 12.25 seconds.
+
+The ignored one-off `old-casc-probe/recover_assetsproduct.py` defaults to offline
+cache reads. Any authorized online attempt reserves its entire requested range
+before HTTP in a locked, atomically written, plan-hash-bound shared ledger.
+Reservations survive failed/interrupted attempts and new output directories.
+Exact 206/Content-Range checks precede bounded body reads. Its `network_bytes`
+counts completed returned body reads only; it is not an exact count after an
+interruption. `reserved_network_bytes_cumulative` is the conservative enforced
+bound. `recovery-budget-audit-01.json` reproduces a mocked interruption, rejects
+a second attempt before HTTP at the cumulative limit, and confirms offline
+refusal without HTTP. An independent reviewer confirms the accounting repair.
+No actual asset prefix download or installation has occurred. The requested
+large-download authorization remains unanswered, and professional replay
+playback remains unverified. Further RL remains held pending competent imitation.
+
+### Categorical map-location training-copy diagnostic
+
+`attack-listwise-sanity-01/` tests whether the sampled binary candidate objective
+contributes to the poor training fit. One predeclared CPU fit uses exactly sixteen
+teaching Attack point commands: first three in each of the first four teaching
+games and first two in each of the last two. Human ability, actor group and point
+mode remain supplied. The same fog-safe candidate features and two-tile full-map
+grid feed a 32-hidden-unit scorer. Categorical cross entropy compares every map
+candidate within each command; it does not sample negatives. Seed 5010, learning
+rate .001 and 100 epochs are fixed before fitting. No validation games or live
+policy are used, and this checkpoint has no live decoder integration.
+
+The fit completes in 2.38 seconds. Training-copy accuracy within two tiles is
+10/16 (62.5%), compared with the prior binary model's 3/16 (18.75%) on exactly
+these sixteen commands. Mean error falls from 9.80 to 2.31 tiles. The predeclared
+90% training-copy gate **fails**. This is a small diagnostic comparison of two
+checkpoints with different training-set sizes and objectives, not a controlled
+objective-only ablation: the old model fit 365 commands, the new one sixteen.
+It motivates testing categorical location prediction on the real corpus; it
+proves neither held-out generalization nor full-command competence. Source,
+datasets and frozen checkpoints listed in the contract retain identical pre/post
+hashes. The recorded inventory is not a complete transitive dependency manifest.
+No epoch sweep, native promotion or RL follows this failed sanity gate.
+
+The reviewer independently recomputes all sixteen new/baseline predictions from
+saved checkpoints and confirms the failed gate and correct softmax/tanh/Adam
+math. `dependency-audit.json` additionally binds the two consumed reports and
+five omitted imported helpers at audit time. Six of those seven additional
+files match bindings from the original completed candidate experiment; the new
+report has no inherited earlier binding. This does not retroactively establish
+complete pre-run provenance for the new diagnostic. The comparison remains
+confounded by sixteen-command specialization versus the 365-command baseline.
