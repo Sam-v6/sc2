@@ -2,6 +2,9 @@
 
 Updated October 6, 2026. The **initial scripted Hard baseline is verified**;
 the active next phase is reconnecting human imitation to the verified primitives.
+The [producer topology audit](human-producer-topology.md) verifies five shared
+addon identities in the winning human opening. Fixed-plan playback must preserve
+producer bindings and landing-site relationships through those transfers.
 Research queue accounting now preserves specific upgrade levels, and specific
 level-one availability no longer permits level-two requests. These fixes pass
 regression tests using the specific command IDs observed in the native research

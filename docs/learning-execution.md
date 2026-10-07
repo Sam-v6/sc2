@@ -4494,3 +4494,19 @@ upgrade completion. Eight focused tests pass; full suite passes 524 tests with
 Ruff passes. Useful human imitation and learned Hard wins remain unproven; no
 training or RL restart. Next audit source producer/addon binding before the fixed
 winning human-plan execution witness.
+
+### October 6: observed producer/addon transfer topology
+
+Previous turn made implementation progress (research tier identity repair,
+commit 346f647). Current audit uses the latest 851-label source and original full
+converted binary through 600 seconds. It records 58 producer transitions and 80
+producer commands, with zero ambiguous geometric matches. Independent vectorized
+verification reconstructs 138 rows and confirms five addon identities shared by
+multiple producers, including Barracks→Starport→Factory on one TechLab.
+Converted unit types briefly lag the flying flag during landing; truncated addon
+tags cannot identify attachments. Archived scripts, source hashes, audit and
+verification are in logs/roadmap/human-producer-topology-01; both runs exit zero.
+No training or native simulation ran. Geometry alone is not proof of native
+attachment. Fixed-plan playback must retain source/native producer and addon
+bindings and verify each actual landing/attachment before dependent production.
+See [the topology result](human-producer-topology.md).
