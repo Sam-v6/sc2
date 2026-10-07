@@ -86,3 +86,9 @@ scripted execution as learned competence.
 Landing regressions and the full suite pass549 tests with32 optional skips. The
 full human imitation, micro learning, learned Hard and higher-difficulty roadmap
 remains incomplete.
+
+October7 follow-up: the [reactive-supply experiment](reactive-supply-assistance-result.md)
+is now verified. Native25 produces53 SCVs versus45 by9224 and reduces confirmed
+stalls159.29→10 combined producer-seconds. It preserves187/247 instructions and
+stops at the same later Cyclone funding deadline10552. This closes most of the
+observed worker gap through an explicit scripted assist; no learned win is claimed.

@@ -5,8 +5,19 @@ for the production-imitation experiment, not a learned full-game strategy.
 """
 import math
 
-from src.bots.terran_primitives import combat_command, mining_commands, changes_order, destination_reached
+from src.bots.terran_primitives import combat_command, mining_commands, changes_order, destination_reached, scripted_targets
 from src.learning.gameplay import Command
+from src.learning.production_execution import queued_supply
+
+
+def supply_assistance_needed(state, data):
+    own = [u for u in state['units'] if u['alliance'] == 1]
+    if any(u['unit_type'] == 19 and u.get('build_progress', 1) < 1
+           or any(o['ability_id'] == 319 for o in u.get('orders', [])) for u in own):
+        return False
+    player = dict(state['player'])
+    player['food_used'] += queued_supply(state, data)
+    return bool(scripted_targets(dict(state, player=player))['supply'])
 
 
 def ground_army(state, types):

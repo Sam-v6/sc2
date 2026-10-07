@@ -1,6 +1,6 @@
 import math
 import unittest
-from src.learning.production_primitives import primitive_assistance, scripted_army_destination
+from src.learning.production_primitives import primitive_assistance, scripted_army_destination, supply_assistance_needed
 from tests.test_terran_primitives import unit, TYPES
 
 DATA = {**TYPES, 45: dict(name='SCV'), 48: dict(weapons=[dict(type=3, range=5)], attributes=[3], food_required=1),
@@ -15,6 +15,24 @@ def state(units):
 
 
 class ProductionPrimitiveTests(unittest.TestCase):
+    def test_reactive_supply_counts_paid_queues_and_respects_pending_depots_and_cap(self):
+        st = state([unit(1, 18), unit(2, 132)])
+        st['player'].update(food_cap=23, food_used=16)
+        data = dict(abilities=[dict(ability_id=524, friendly_name='Train SCV')],
+                    units=[dict(unit_id=45, ability_id=524, food_required=1)])
+        self.assertFalse(supply_assistance_needed(st, data))
+        st['units'][0]['orders'] = [dict(ability_id=524, progress=0)] * 2
+        self.assertTrue(supply_assistance_needed(st, data))
+        self.assertEqual(st['player']['food_used'], 16)
+        st['units'].append(unit(3, 19, build_progress=.5))
+        self.assertFalse(supply_assistance_needed(st, data))
+        st['units'].pop()
+        st['units'].append(dict(unit(3, 45), orders=[dict(ability_id=319)]))
+        self.assertFalse(supply_assistance_needed(st, data))
+        st['units'].pop()
+        st['player'].update(food_cap=200, food_used=200)
+        self.assertFalse(supply_assistance_needed(st, data))
+
     def test_clearance_avoids_structures_and_holds_units_out_until_landing_ends(self):
         marine = unit(1, 48, x=10, y=10)
         st = state([marine, unit(2, 21, x=13.25, y=10, radius=1.8125)])

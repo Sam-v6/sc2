@@ -1,4 +1,5 @@
 import unittest
+import asyncio
 from types import SimpleNamespace
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -12,6 +13,18 @@ except ModuleNotFoundError:
 
 @unittest.skipIf(FixedHumanPlanBot is None, 'SC2 SDK unavailable')
 class FixedPlanFoundationTests(unittest.TestCase):
+    def test_supply_assistance_reserves_overdue_production_request(self):
+        st = dict(game_loop=100, units=[], player=dict(minerals=240, vespene=200,
+                  food_cap=23, food_used=20))
+        context = SimpleNamespace(job=dict(reactive_supply=True),
+                                  data=dict(abilities=[], units=[]),
+                                  tickets=[dict(command=dict(ability=321))],
+                                  costs={321: (150, 0)}, food={321: 0}, index=0,
+                                  pending_heads=lambda loop: [0])
+        self.assertIsNone(asyncio.run(FixedHumanPlanBot.reactive_supply_command(context, st, [], set())))
+        context.job['reactive_supply'] = False
+        self.assertIsNone(asyncio.run(FixedHumanPlanBot.reactive_supply_command(context, {}, [], set())))
+
     def test_due_landing_correction_replaces_only_unsubmitted_unqueued_destination(self):
         tickets = [dict(loop=10, name='Land Factory', command=dict(units=[1], target_point=[10, 10])),
                    dict(loop=20, name='Land Factory', command=dict(units=[1], target_point=[10, 11], queue=False))]

@@ -25,7 +25,9 @@ from src.learning.production_execution import (
 from src.learning.production_primitives import (
     primitive_assistance,
     scripted_army_destination,
+    supply_assistance_needed,
 )
+from src.learning.production_clearance import reservations, resolve_production_placement
 
 
 class FixedHumanPlanBot(BotAI):
@@ -168,6 +170,34 @@ class FixedHumanPlanBot(BotAI):
                     heads.append(index)
         return heads
 
+    async def reactive_supply_command(self, state, commands, selected):
+        if not self.job.get('reactive_supply') or not supply_assistance_needed(state, self.data):
+            return None
+        if any(c.ability == 319 for c in commands):
+            return None
+        spent = sum(command_cost(c.ability, self.data)[0] for c in commands)
+        reserved = next((self.costs[self.tickets[i]['command']['ability']][0]
+                         for i in self.pending_heads(state['game_loop'])
+                         if (i != self.index or not commands)
+                         and self.costs[self.tickets[i]['command']['ability']][0] > 0
+                         and self.food.get(self.tickets[i]['command']['ability'], 0) == 0), 0)
+        if state['player']['minerals'] - spent - reserved < 100:
+            return None
+        point = tuple(self.start_location.towards(self.game_info.map_center, 10))
+        workers = [u for u in state['units'] if u['alliance'] == 1 and u['unit_type'] == 45
+                   and u['tag'] not in selected and u['tag'] not in self.builder_tags.values()
+                   and not worker_constructing(u, state, self.catalog)
+                   and all(self.catalog.get(o['ability_id'], {}).get('friendly_name', '')
+                           .startswith('Harvest Gather') for o in u.get('orders', []))]
+        if not workers:
+            return None
+        worker = min(workers, key=lambda u: math.dist(u['position'][:2], point))
+        placement_state = dict(state, map_size=(self.game_info.map_size.x, self.game_info.map_size.y))
+        resolved, _ = await resolve_production_placement(
+            self.client, Command(319, (worker['tag'],), target_point=point), self.catalog,
+            placement_state, 19, reservations(state, self.types, self.catalog))
+        return resolved[0] if resolved else None
+
     def retire_unsubmitted_cancellations(self, loop):
         for index, ticket in enumerate(self.tickets):
             if (
@@ -283,7 +313,7 @@ class FixedHumanPlanBot(BotAI):
                     if waiting_for_supply(error, state, self.catalog):
                         self.history.append(dict(event='production_waiting_for_supply',
                                                  loop=loop, error=error,
-                                                 ticket=submitted['ticket']))
+                                                 ticket=submitted.get('ticket')))
                         continue
                     self.divergence = dict(
                         loop=loop,
@@ -505,6 +535,9 @@ class FixedHumanPlanBot(BotAI):
                                 if older is not None
                                 else (0, 0)
                             )
+                            if (self.job.get('reactive_supply') and ticket['name'].startswith('Train ')
+                                    and supply_assistance_needed(state, self.data)):
+                                reserved = (max(reserved[0], 100), reserved[1])
                             price = self.costs.get(command.ability, (0, 0))
                             if price != (0, 0) and any(
                                 state["player"].get(resource, 0) - cost < hold
@@ -574,6 +607,9 @@ class FixedHumanPlanBot(BotAI):
                     for o in u["orders"]
                 )
             )
+            supply = await self.reactive_supply_command(state, commands, selected)
+            if supply:
+                selected.update(supply.units)
             destination, self.attacking, self.search = scripted_army_destination(
                 state,
                 self.types,
@@ -607,8 +643,14 @@ class FixedHumanPlanBot(BotAI):
                 landing_points,
                 self.landing_hold,
             )
-            batch = commands + assists
+            batch = commands + ([supply] if supply else []) + assists
             result = await issue(self.client, batch) if batch else pb.ResponseAction()
+            if supply:
+                entry = dict(event='reactive_supply_assistance', loop=loop,
+                             command=supply.as_dict(), result=result.result[len(commands)])
+                self.history.append(entry)
+                if entry['result'] != 1:
+                    self.divergence = dict(loop=loop, reason='rejected_supply_assistance', detail=entry)
             if sent:
                 sent["result"] = result.result[0]
                 self.history.append(sent)

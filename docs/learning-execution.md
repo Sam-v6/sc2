@@ -4623,3 +4623,31 @@ scripted versus learned responsibility explicit. Full roadmap remains active.
 Evidence: plan06/verification.json and worker-queue-stalls-22/audit.json under
 logs/roadmap, plus docs/human-worker-queue-diagnosis.md. Full suite549 tests/32
 optional skips; focused landing regressions pass. No training or RL resumed.
+
+### October 7: native reactive supply assistance
+
+Previous goal turn made progress: committed verified landing retargeting and
+worker-queue diagnosis e3d9e63. This turn tests current-state supply behavior from
+the existing scripted Hard baseline, plus paid waiting queues. Opt-in job flag
+reactive_supply preserves original callers/control. Protect human builder bindings,
+construction and selected commands; query native placement/pathing near owned base.
+All extra commands explicitly logged, no source future positions used.
+
+Native23 terminal76960: two physically completed extra Depots,32 versus33 births
+before6000,86/247; Liberator funding deadline6968. No success claim. Native24
+terminal8216 reserves overdue commitments,47 versus45 births and105 versus159.29
+stalled producer-seconds before9224,148/247, same early Cyclone funding stop9224.
+Native25 terminal82054 prioritizes100 Depot minerals before further unit training,
+while protecting overdue zero-food commitments.53 versus45 births before9224,
+source55; confirmed stalls10 versus159.29 producer-seconds.187/247, same later
+Cyclone funding deadline10552 as control22.66 workers versus control54 at that
+same stop; no inference from unequal times. Extra Depots first complete728/7904;
+third starts10208 but remains incomplete at exit. Seven retained queue warnings,
+zero other errors, CPU8.1%. Source snapshots preserve all three candidates.
+
+Independent verifiers23/24/25 exit0 check source hashes, actual unique Depot
+foundations/completions, control seed817501 and tracker births at shared cutoffs.
+Full suite551 tests/32 optional skips, Ruff/diff checks pass. No trained model/RL
+or victory claim. Carry verified supply assist into next imitation execution and
+inspect remaining mineral allocation. Full roadmap stays active/incomplete.
+See docs/reactive-supply-assistance-result.md and native23–25 verification.json.

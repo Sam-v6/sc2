@@ -8,16 +8,17 @@ player/unit/map observations. The reimported winning game contains1156 labels.
 Command-manager repetitions and target updates carry original provenance outside
 observations;399 uncertain contexts remain explicit unknown history slots.
 The [worker-queue diagnosis](human-worker-queue-diagnosis.md) restores four issued
-requests previously misclassified by unchanged queue counts. Plan06 has247
-instructions; native22 resolves186 and verifies a corrected Factory landing.
-It stops on a Cyclone request with85minerals. All21 supply warnings retain queued
-orders, with no other action errors. At the same cutoff9224, source/native tracker
-SCV births remain55/45; restoring requests did not close this worker gap.
-Native22 records159.29 combined Command Center seconds stalled at full supply.
-Source and native match33 workers at6000, then army retention changes supply needs.
-Next test reactive supply assistance based on current state, using the scripted
-Hard baseline as reference, before another fit. These are forced diagnostic exits
-against VeryEasy, not learned victories.
+requests previously misclassified by unchanged queue counts; plan06 has247
+instructions. The [reactive-supply experiment](reactive-supply-assistance-result.md)
+now verifies53 SCV births versus45 without assistance at the same cutoff9224,
+near the source's55. Confirmed worker queue stalls fall159.29→10 combined
+producer-seconds. Native25 resolves187/247 and reaches the same later Cyclone
+funding deadline10552 as native22. Two extra Depots complete; a third is under
+construction. All seven supply warnings retain matching queued orders, with no
+other action errors; CPU peaks8.1%. This is explicit scripted supply priority
+through a fixed human plan, not learned supply behavior or a victory. Use the
+verified assist in the next imitation-execution experiment; audit remaining
+resource allocation before another fit. Training and RL remain paused.
 The [producer topology audit](human-producer-topology.md) and
 [earlier fixed-plan diagnosis](fixed-human-plan-native-result.md) remain partial
 evidence. Useful imitation and complete source command coverage remain unproven.
