@@ -80,6 +80,9 @@ def command_cost(ability, data):
                 or catalog.get(u.get('ability_id'), {}).get('friendly_name') == name]
     elif name.startswith(('Build ', 'Train ')) or name in ('Morph OrbitalCommand', 'Morph PlanetaryFortress'):
         rows = [u for u in data['units'] if u.get('ability_id') == ability]
+        if not rows:
+            rows = [u for u in data['units'] if u.get('ability_id') is not None
+                    and canonical(u['ability_id'], catalog) == canonical(ability, catalog)]
     else:
         return 0, 0
     prices = {(u.get('mineral_cost', 0), u.get('vespene_cost', 0)) for u in rows}

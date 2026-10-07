@@ -9,7 +9,13 @@ Mining, combat and protected WorkerScout assistance are connected. The fresh
 200-second native scout fixture verifies selection, protection, damage retreat
 and observed return to mining, with zero raw/delayed errors and 5.4% sampled host
 CPU peak. Production in that fixture was explicitly scripted; it proves execution,
-not learned competence. Reactive supply is not yet transferred there.
+not learned competence. Reactive supply is now available as an explicit
+`--reactive-supply` assist alongside `--primitive-assistance`. Matched native
+90-second checks verify one requested/completed Depot and supply cap 23 versus
+15 in control, zero action errors and 23.8% sampled host CPU peak. The checkpoint
+still makes nine submissions and no army. At loop 832 it requests Train Marine
+from an SCV without a Barracks; all 1,185 unavailable requests repeat that action.
+This is a model choice/actor error, not evidence that accepted unit training fails.
 Check requested actions against actual income,
 construction, production and combat effects before resuming learning.
 
@@ -50,8 +56,9 @@ and stays separate from learned history. Rejected learned actions no longer star
 waits or enter history. Full suite: 555 tests, 32 optional skips. Native pair:
 13 assisted mining submissions, zero action errors, 7.6% host CPU peak. Both are
 90-second cutoffs with 15 workers and no Depot/army; the old checkpoint still
-fails macro, and no training or strength claim follows. This broad adapter does
-not yet add reactive supply or the production experiment's WorkerScout.
+fails macro, and no training or strength claim follows. This broad adapter
+did not include reactive supply or WorkerScout at that initial snapshot; both now
+have separately documented native execution checks, with supply explicitly opt-in.
 The [nine-game command cohort recovery](human-command-cohort-recovery.md) is now
 terminal and independently verified: 6,748 command labels, including 1,737
 recovered commands (227 production commands), with preserved owned/player/map

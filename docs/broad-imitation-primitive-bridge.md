@@ -26,8 +26,9 @@ construction resumption, attack destinations/timing and per-unit combat. They do
 not train workers or soldiers or start production buildings. This adapter now
 includes the production experiment's protected WorkerScout, with selection,
 damage/deadline return and learned-actor protection. Scout events and commands
-are separately logged; they never enter learned history. It does not yet include
-the fixed-plan reactive Depot assist. Supply construction remains a model request.
+are separately logged; they never enter learned history. Explicit
+`--reactive-supply` now enables scripted Depot assistance as well. Without it,
+supply construction remains a model request. It requires `--primitive-assistance`.
 All assistance and its native acknowledgements are logged separately from learned
 commands and acknowledgements. Assistance never enters learned command history.
 
@@ -93,9 +94,42 @@ The 200-second cutoff is not a victory or learned competence result. The precedi
 fixture `broad-scout-canary-01` failed because the baseline's own scouting routine
 reclaimed the adapter scout; its failed receipt is preserved, not counted as a pass.
 
-Further imitation and RL are paused. Next coordinate reactive supply with model
-resource use, verify execution through this adapter, and diagnose the first
-requested-action/observed-effect divergence before another fit.
+Further imitation and RL are paused. Supply coordination is now verified as below;
+next exercise production and combat through this adapter with explicit execution
+fixtures, then reconnect useful human decisions. A scripted fixture is not a
+learned competence result.
+
+### Reactive supply transfer
+
+Supply assistance uses the existing queue-aware supply rule, native availability,
+placement and builder pathing queries. It protects a newly accepted builder until
+the observation echoes the order or foundation; an absent echo after 44 loops is
+an explicit timeout event. Existing foundations/orders suppress duplicate requests.
+Successful model production on the same step reserves its mineral cost and
+construction footprint/addon space before supply is considered. All assistance
+stays outside learned history. Generic addon prices require agreement between
+native alias products; ambiguous prices still fail instead of being guessed.
+
+Four integration tests cover supply during model waits, pending builder protection,
+same-step spending, existing/model-requested Depots and building-site conflicts.
+The full suite passes 581 tests, with 36 optional skips; Ruff and whitespace checks
+pass. Native catalogue checks price generic and specific TechLabs at 50/25 and
+Reactors at 50/50 minerals/gas.
+
+`logs/roadmap/broad-supply-canary-01` binds two 90-second games, the same frozen
+historical checkpoint and seed 823101. Both use mining/scouting/combat assistance;
+only the second enables reactive supply. The independent replay/trace verifier
+confirms one scripted Depot submission and one completed Depot, raising the cap
+from 15 to 23. Control has none and remains at 15. Both have three SCV births,
+15 workers, nine model submissions, no army and zero raw/delayed errors. Sampled
+host CPU peaks at 23.8%. These are cutoffs, not victories.
+
+The first unavailable model request at loop 832 is Train Marine (560) from SCV
+4349231105, with no Barracks present. All 1,185 unavailable requests repeat Train
+Marine. Supply execution is repaired, but this checkpoint's choice and actor
+selection are unusable. Do not rerun it hoping that additional supply will teach
+it production. Source snapshots preserve the native-tested code; the subsequent
+generic-addon price repair has separate regression and native-catalogue checks.
 
 `logs/roadmap/broad-primitive-canary-01` holds the frozen contract, two original
 replays, raw traces, receipts, report, source snapshot and `verification.json`.

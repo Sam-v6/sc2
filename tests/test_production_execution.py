@@ -39,6 +39,18 @@ class ProductionExecutionTests(unittest.TestCase):
         self.assertEqual(command_cost(452, data), (0, 0))
         self.assertEqual(command_cost(864, data), (100, 100))
 
+    def test_generic_addon_price_requires_native_alias_agreement(self):
+        from src.learning.production_execution import command_cost
+        data = dict(abilities=[dict(ability_id=3682, friendly_name='Build TechLab'),
+                               dict(ability_id=421, friendly_name='Build TechLab Barracks', remaps_to_ability_id=3682),
+                               dict(ability_id=454, friendly_name='Build TechLab Factory', remaps_to_ability_id=3682)],
+                    units=[dict(ability_id=421, mineral_cost=50, vespene_cost=25),
+                           dict(ability_id=454, mineral_cost=50, vespene_cost=25)], upgrades=[])
+        self.assertEqual(command_cost(3682, data), (50, 25))
+        data['units'][1]['mineral_cost'] = 75
+        with self.assertRaisesRegex(ValueError, 'No unique production price'):
+            command_cost(3682, data)
+
     def test_waiting_units_reserve_supply_across_producers(self):
         from src.learning.production_execution import queued_supply
         data = dict(abilities=[dict(ability_id=524, friendly_name='Train SCV'),

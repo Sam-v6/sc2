@@ -4,6 +4,7 @@ import argparse
 import gzip
 import hashlib
 import json
+import math
 from pathlib import Path
 import sys
 from types import SimpleNamespace
@@ -25,10 +26,13 @@ from src.learning.entity_execution import (
 from src.learning.entity_policy import JointEntityPolicy
 from src.learning.entity_train import digest
 from src.learning.gameplay import PlayerView, image_dict, protocol_dict
+from src.learning.gameplay import Command
 from src.learning.live import ability_query, issue
 from src.learning.placement import resolve_placements
 from src.learning.sandbox import micro_score
-from src.learning.production_primitives import primitive_assistance, scripted_army_destination
+from src.learning.production_primitives import primitive_assistance, scripted_army_destination, supply_assistance_needed
+from src.learning.production_execution import command_cost
+from src.learning.production_clearance import reservations, resolve_production_placement, site_reservations
 from src.learning.production_scout import WorkerScout
 from src.runner import positive, validate_map
 from src.runtime import supervise
@@ -75,6 +79,8 @@ class JointImitationBot(BotAI):
     def __init__(self, job, stream):
         super().__init__()
         self.job, self.stream = job, stream
+        if job.get("reactive_supply") and not job.get("primitive_assistance"):
+            raise ValueError("Reactive supply requires primitive assistance")
         self.policy, self.metadata = load_policy(
             job["policy"], job.get("controller", "joint")
         )
@@ -111,6 +117,8 @@ class JointImitationBot(BotAI):
         self.primitive_commands = 0
         self.primitive_results = {}
         self.scout = WorkerScout()
+        self.supply_pending = None
+        self.supply_events = []
 
     async def on_start(self):
         self.client.game_step = 1
@@ -131,6 +139,7 @@ class JointImitationBot(BotAI):
         )
         (Path(self.job["output"]) / "static.json").write_text(json.dumps(static) + "\n")
         self.catalog = {a["ability_id"]: a for a in static["game_data"]["abilities"]}
+        self.data = static["game_data"]
         self.units_by_id = {u["unit_id"]: u for u in static["game_data"]["units"]}
         if self.observation_profile is not None:
             validate_order_aliases(self.observation_profile, self.catalog)
@@ -153,7 +162,58 @@ class JointImitationBot(BotAI):
             self.scheduled_step_counts.get(str(step), 0) + 1
         )
 
-    async def run_primitives(self, state, protected):
+    async def reactive_supply_command(self, state, protected, submitted):
+        if self.supply_pending or not supply_assistance_needed(state, self.data):
+            return None
+        if any(c.ability == 319 for c in submitted):
+            return None
+        spent = sum(command_cost(c.ability, self.data)[0] * len(c.units) for c in submitted)
+        if state["player"]["minerals"] - spent < 100:
+            return None
+        workers = [u for u in state["units"] if u["alliance"] == 1
+                   and u["unit_type"] == 45 and u.get("health", 0) > 0
+                   and u["tag"] not in protected
+                   and all(o["ability_id"] in (295, 3666) for o in u.get("orders", []))]
+        if not workers:
+            return None
+        available = (await self.client._execute(query=ability_query([u["tag"] for u in workers]))).query
+        legal = {a.unit_tag for a in available.abilities
+                 if any(b.ability_id == 319 for b in a.abilities)}
+        workers = [u for u in workers if u["tag"] in legal]
+        if not workers:
+            return None
+        point = tuple(self.start_location.towards(self.game_info.map_center, 10))
+        worker = min(workers, key=lambda u: (math.dist(u["position"][:2], point), u["tag"]))
+        reserved = reservations(state, self.units_by_id, self.catalog)
+        for command in submitted:
+            info = self.catalog[command.ability]
+            if info.get("is_building") and command.target_point:
+                products = [u["unit_id"] for u in self.data["units"]
+                            if u.get("ability_id") == command.ability]
+                reserved.extend(site_reservations(
+                    products[0] if len(products) == 1 else 0,
+                    command.target_point, info.get("footprint_radius", 1)))
+        commands, trace = await resolve_production_placement(
+            self.client, Command(319, (worker["tag"],), target_point=point),
+            self.catalog, state, 19, reserved)
+        self.supply_events.append(dict(event="placement", trace=trace))
+        return commands[0] if commands else None
+
+    async def run_primitives(self, state, protected, submitted=()):
+        protected = set(protected)
+        self.supply_events = []
+        if self.supply_pending:
+            command, loop = self.supply_pending
+            observed = any(u["alliance"] == 1 and (
+                u["tag"] in command.units and any(o["ability_id"] == 319 for o in u.get("orders", []))
+                or u["unit_type"] in (19, 47) and math.dist(u["position"][:2], command.target_point) < 1
+            ) for u in state["units"])
+            if observed or state["game_loop"] - loop >= 44:
+                self.supply_events.append(dict(event="observed" if observed else "unobserved_timeout",
+                                               command=command.as_dict()))
+                self.supply_pending = None
+            else:
+                protected.update(command.units)
         mining = state["game_loop"] >= self.next_mining
         if mining:
             self.next_mining = state["game_loop"] + 24
@@ -167,8 +227,13 @@ class JointImitationBot(BotAI):
             state, protected, tuple(self.enemy_start_locations[0]),
             tuple(self.start_location),
         )
-        commands = scout_commands + primitive_assistance(
-            state, set(protected) | self.scout.protected,
+        protected.update(self.scout.protected)
+        supply = (await self.reactive_supply_command(state, protected, submitted)
+                  if mining and self.job.get("reactive_supply") else None)
+        if supply:
+            protected.update(supply.units)
+        commands = scout_commands + ([supply] if supply else []) + primitive_assistance(
+            state, protected,
             self.units_by_id, self.catalog, destination,
             lambda p: self.in_map_bounds(Point2(p)) and self.in_pathing_grid(Point2(p)),
             mining,
@@ -176,6 +241,11 @@ class JointImitationBot(BotAI):
         result = await issue(self.client, commands) if commands else pb.ResponseAction()
         if len(result.result) != len(commands):
             raise ValueError("Incomplete primitive acknowledgement batch")
+        if supply:
+            code = result.result[len(scout_commands)]
+            self.supply_events.append(dict(event="submitted", command=supply.as_dict(), result=code))
+            if code == 1:
+                self.supply_pending = supply, state["game_loop"]
         self.primitive_commands += len(commands)
         for code in result.result:
             key = str(code)
@@ -217,6 +287,7 @@ class JointImitationBot(BotAI):
                     self.stream.write(json.dumps(dict(
                         phase="primitives", observation=feature_state,
                         scout_events=self.scout.events,
+                        supply_events=self.supply_events,
                         primitive_protected=sorted(self.learned_control),
                         assistance=[c.as_dict() for c in assistance],
                         assistance_results=list(result.result), score=self.last_score,
@@ -274,7 +345,10 @@ class JointImitationBot(BotAI):
             if self.job.get("primitive_assistance"):
                 if self.last_loop >= self.agent.next_loop:
                     self.learned_control.clear()
-                assistance, assistance_result = await self.run_primitives(state, self.learned_control)
+                assistance, assistance_result = await self.run_primitives(
+                    state, self.learned_control,
+                    [dispatched] if result.result and result.result[0] == 1 else [],
+                )
             self.schedule_step()
             for code in result.result:
                 self.action_results[str(code)] = (
@@ -299,6 +373,8 @@ class JointImitationBot(BotAI):
                         assistance=[c.as_dict() for c in assistance],
                         assistance_results=list(assistance_result.result),
                         scout_events=self.scout.events
+                        if self.job.get("primitive_assistance") else [],
+                        supply_events=self.supply_events
                         if self.job.get("primitive_assistance") else [],
                         score=self.last_score,
                     ),
@@ -382,9 +458,10 @@ def play_joint_job(job):
         final_observed_own_units=bot.final_units,
         action_results=bot.action_results,
         primitive_assistance=bool(job.get("primitive_assistance")),
+        reactive_supply=bool(job.get("reactive_supply")),
         primitive_commands=bot.primitive_commands,
         primitive_results=bot.primitive_results,
-        assistance="Scripted mining/gas, construction resumption, MULEs, depot lowering, protected worker scouting, attack destinations and combat micro; no worker/army/building production fallback"
+        assistance="Scripted mining/gas, construction resumption, MULEs, depot lowering, protected worker scouting, attack destinations and combat micro; reactive Depot construction only if explicitly enabled, no worker/army/production-building fallback"
         if job.get("primitive_assistance") else None,
         game_seconds=bot.last_loop / 22.4,
         score=bot.last_score,
@@ -453,10 +530,16 @@ def main():
         "--primitive-assistance", action="store_true",
         help="Keep verified mining/scouting/combat execution active between learned decisions; production remains learned",
     )
+    parser.add_argument(
+        "--reactive-supply", action="store_true",
+        help="Explicit scripted Depot assistance; requires --primitive-assistance",
+    )
     parser.add_argument("--seed", type=int, default=120001)
     parser.add_argument("--seconds", type=positive, default=600)
     parser.add_argument("--wall-seconds", type=positive, default=120)
     args = parser.parse_args()
+    if args.reactive_supply and not args.primitive_assistance:
+        parser.error("--reactive-supply requires --primitive-assistance")
     validate_map(args.map)
     load_policy(args.policy, args.controller)
     if args.output.exists():
@@ -478,6 +561,7 @@ def main():
         condition_available=args.condition_available,
         engine_placement=args.engine_placement,
         primitive_assistance=args.primitive_assistance,
+        reactive_supply=args.reactive_supply,
         ability_seed=args.ability_seed,
         seconds=args.seconds,
     )
