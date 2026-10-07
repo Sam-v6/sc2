@@ -22,6 +22,7 @@ from sc2.player import Bot, Computer
 BOTS = {
     'primitives': ('src.bots.primitive_terran', 'PrimitiveTerranBot', Race.Terran),
     'learned-strategy': ('src.bots.learned_strategy_terran', 'LearnedStrategyTerranBot', Race.Terran),
+    'searched-strategy': ('src.bots.searched_strategy_terran', 'SearchedStrategyTerranBot', Race.Terran),
     'reaper': ('src.bots.mass_reaper', 'MassReaperBot', Race.Terran),
     'battlecruiser': ('src.bots.one_base_battlecruiser', 'BCRushBot', Race.Terran),
     'proxy': ('src.bots.proxy_rax', 'ProxyRaxBot', Race.Terran),
@@ -78,9 +79,11 @@ def play_job(job):
     module, name, race = BOTS[job['bot']]
     bot = getattr(import_module(module), name)()
     bot.requested_game_step = job['game_step']
-    if job['bot'] == 'learned-strategy':
+    if job['bot'] in ('learned-strategy', 'searched-strategy'):
         bot.policy_path = job['strategy_policy']
-    if job['bot'] in ('primitives', 'learned-strategy'):
+    if job['bot'] == 'searched-strategy':
+        bot.offsets = job['strategy_offsets']
+    if job['bot'] in ('primitives', 'learned-strategy', 'searched-strategy'):
         bot.trace_path = str(Path(job['replay']).with_suffix('.primitives.jsonl.gz'))
     start = time.monotonic()
     result = run_game(validate_map(job['map']),
@@ -92,7 +95,7 @@ def play_job(job):
     replay = Path(job['replay'])
     if not replay.is_file() or replay.stat().st_size == 0:
         raise RuntimeError('Game did not save a replay')
-    return {**({'primitives': bot.summary} if job['bot'] in ('primitives', 'learned-strategy') else {}),
+    return {**({'primitives': bot.summary} if job['bot'] in ('primitives', 'learned-strategy', 'searched-strategy') else {}),
             'status': 'truncated' if result.name == 'Tie' else 'completed',
             'result': result.name, 'game_seconds': bot.time, 'engine_wall_seconds': time.monotonic() - start,
             'replay_bytes': replay.stat().st_size}
