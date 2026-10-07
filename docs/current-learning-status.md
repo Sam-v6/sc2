@@ -7,7 +7,12 @@ failed its quality gates; its simple human-derived majority baseline performed
 better. The [native execution comparison](human-prior-native-result.md) found
 and corrected an expiry stall. A fresh positive-rearm canary passes its engineering
 gate: Barracks by 51 seconds, six Marines and 34 workers at four minutes. The
-six-game all-race sustained-production development panel is running, unverified.
+six-game all-race development panel is [verified](human-prior-development-panel-result.md):
+production continues in all games, but zero victories and 54–78 Depot starts expose
+repeated spending from standing forecasts. The [cadence diagnostic](human-production-cadence-result.md) reduces this to
+14 Depots, but still banks 7,000 minerals with only one Barracks. Its opening gate
+passes; its strict one-Depot cadence gate does not. The next task is a verified
+human inventory-target teaching contract, not another unchanged count-model run.
 RL remains paused. The full roadmap is incomplete, and scripted victories are
 not learned-controller victories.
 
@@ -38,7 +43,7 @@ experiments are references, not an instruction to rerun every failed variant.
 | Reliable execution primitives and scripted baseline | Verified 30/30 fresh scripted wins; initial all-race gate passes | Reconnect the verified primitives to human decisions; retain baseline and audit rare action failures |
 | Broad gameplay controls and player-visible information | Raw command schema, native catalogue, missing-field masks, fog filtering and argument execution exist | Prove the learned controller uses the necessary controls reliably, including simultaneous unit control |
 | Strong human examples | Eleven professional teaching games: 6,089 verified decisions, 6,083 representable after visibility repair; whole-game development split and untouched reserved games | More varied verified data, including Terran opponents; resolve unavailable observations where actual source evidence permits |
-| Learn to copy human decisions | Full command imitation failed; fresh production-outcome fit passes offline, but native production timing fails | Useful generalization and actual game competence |
+| Learn to copy human decisions | Full command imitation failed; fresh production-outcome fit passes offline; native all-race sustained production verifies, but macro overproduction and zero development victories remain | Useful generalization and actual game competence |
 | Learn better micro in a sandbox | Sandbox/training infrastructure and earlier experiments exist | Reliable held-out improvement and transfer to the full controller |
 | Learn beyond humans through RL | Earlier constrained experiments exist | Resume only after a useful imitation starting point; prove improvement on fresh games |
 | Beat Hard reliably, then harder opponents | Scripted baseline 30/30; earlier constrained macro policy had partial learned success | Full-roadmap learned controller must pass its own all-race Hard panel and harder evaluations |

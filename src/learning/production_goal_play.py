@@ -274,6 +274,8 @@ class ProductionGoalBot(BotAI):
                 priority=priority, unsupported_prior_pairs=unsupported, prior_cycles=cycles, allocations=allocations,
                 intents=self.ledger.intents if self.intent_mode else {},
                 intent_events=self.ledger.events if self.intent_mode else [],
+                recent_fulfilments=self.ledger.recent if self.intent_mode else [],
+                effective_queued=self.ledger.effective_queued if self.intent_mode else queued,
                 pending=self.ledger.pending, assistance_destination=self.assistance_destination, execution=execution,
                 assistance=[c.as_dict() for c in assistance], results=list(result.result)),
                 separators=(',', ':'))+'\n')

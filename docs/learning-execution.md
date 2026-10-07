@@ -8,6 +8,41 @@ Implementation is in `.worktrees/terran-rl`, branch `Sam-v6/terran-rl`.
 The commands below run from that worktree. Run artifacts are ignored under
 `logs/roadmap/`; preserve those directories when handing off or archiving.
 
+## Cadence diagnostic terminal; demand representation remains inadequate
+
+Native9943, verifier8360 and tests80766 are terminal. Replay confirms14Depot starts,
+68livingworkers,34militarybirths and Barracks at50.76seconds. Opening gate passes,
+strict one-Depot cadence gate fails because fresh trajectories include two-count
+forecasts. Do not retrospectively change that gate. History/queue/admission accounting
+independently verifies; full suite485tests/32skips and Ruff pass. Sources are archived.
+See [result and limits](human-production-cadence-result.md).
+
+No running processes remain from this batch. The next safe action is an inventory
+label/alias/ownership audit and frozen teaching contract using the existing human
+corpus, not another unchanged native count run or RL. The bot banks7050minerals
+with one Barracks/Factory; better command execution cannot invent learned macro
+capacity demand. Preserve all original count/cadence outcomes and the full roadmap.
+
+## Verified all-race production and live cadence diagnostic
+
+Previous goal turn progressed through the expiry correction and started session
+36478. This turn completed that specific panel and independent verifier13244.
+Both are terminal. All six sustained-production gates pass; zero wins at the
+600-second cutoff, 54–78 Depot starts. Full results/source snapshots/replays are
+preserved under `human-prior-native-panel-01`; see the
+[panel diagnosis](human-prior-development-panel-result.md). Its narrow gates do not
+establish competent macro or unlock RL.
+
+The new cadence diagnostic tracks observed fulfilments over the1008-loop forecast
+horizon and uses maximum(history, current queue) for conservative rate accounting.
+Fresh Zerg Rush/VeryEasy seed816201,600game seconds/240wall seconds ran as
+native session **9943** (now terminal) under `human-production-cadence-native-01`. Poll that handle;
+keep its bound sources fixed. Prepared verifier is
+`logs/roadmap/verify_human_production_cadence_native_01.py` with borrowed sklearn
+runtime and repository SDK PYTHONPATH. No model fit or RL. Preserve the previous
+panel's original verification and immutable snapshots when inspecting historical
+sources after this change. Full-suite check80766 is terminal and passes485tests/32skips.
+
 ## Fresh-positive rearm correction and live development panel
 
 C native session 25984 and verifier 86134 are terminal. The unchanged native

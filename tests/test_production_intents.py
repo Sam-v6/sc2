@@ -25,6 +25,7 @@ class IntentTests(unittest.TestCase):
         ledger.reconcile(set(), {12}, 224)
         self.assertEqual(ledger.intents[first]['expires'], 1008)
         self.assertFalse(ledger.pending)
+        self.assertFalse(ledger.recent)
 
     def test_observed_order_consumes_and_queue_prevents_duplicate_worker(self):
         ledger = ProductionIntents()
@@ -35,8 +36,10 @@ class IntentTests(unittest.TestCase):
         ledger.plan({'worker': 1}, {'worker': 1}, 48)
         self.assertFalse(ledger.requests())
         ledger.plan({'worker': 1}, {}, 336)
+        self.assertFalse(ledger.requests())
+        ledger.plan({'worker': 1}, {}, 1056)
         self.assertEqual(ledger.requests(), ['worker'])
-        self.assertNotEqual(ledger.reserve('worker', 10, 336), ticket)
+        self.assertNotEqual(ledger.reserve('worker', 10, 1056), ticket)
 
     def test_expiry_requires_later_observation_but_accepts_fresh_positive_forecast(self):
         ledger = ProductionIntents()
@@ -68,3 +71,33 @@ class IntentTests(unittest.TestCase):
     def test_reservation_preserves_priority_without_hardcoded_families(self):
         self.assertEqual(remaining_budget((85, 0), (100, 0)), (0, 0))
         self.assertEqual(remaining_budget((600, 200), (400, 300)), (200, 0))
+
+    def fulfil(self, ledger, goal, loop, actor=10):
+        ticket = ledger.reserve(goal, actor, loop)
+        ledger.acknowledge(ticket, True)
+        ledger.reconcile({(actor, goal)}, {actor}, loop+8)
+
+    def test_standing_count_cannot_repeat_fulfilment_within_forecast_horizon(self):
+        ledger = ProductionIntents()
+        ledger.plan({'depot': 1}, {}, 0)
+        self.fulfil(ledger, 'depot', 0)
+        ledger.plan({'depot': 1}, {}, 48)
+        self.assertFalse(ledger.requests())
+        ledger.plan({'depot': 1}, {}, 1008)
+        self.assertFalse(ledger.requests())
+        ledger.plan({'depot': 1}, {}, 1016)
+        self.assertEqual(ledger.requests(), ['depot'])
+
+    def test_count_increase_allows_new_work_and_families_are_independent(self):
+        ledger = ProductionIntents()
+        ledger.plan({'marine': 1}, {}, 0)
+        self.fulfil(ledger, 'marine', 0)
+        ledger.plan({'marine': 2, 'depot': 1}, {}, 48)
+        self.assertEqual(set(ledger.requests()), {'marine', 'depot'})
+
+    def test_engine_queue_and_recent_fulfilment_are_not_charged_twice(self):
+        ledger = ProductionIntents()
+        ledger.plan({'marine': 2}, {}, 0)
+        self.fulfil(ledger, 'marine', 0)
+        ledger.plan({'marine': 2}, {'marine': 1}, 48)
+        self.assertEqual(ledger.requests(), ['marine'])

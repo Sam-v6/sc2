@@ -1,5 +1,7 @@
 """Unique learned production intentions through delays, retries and expiry."""
 
+from collections import Counter
+
 
 def remaining_budget(budget, cost):
     return tuple(max(0, value-price) for value, price in zip(budget, cost, strict=True))
@@ -10,10 +12,16 @@ class ProductionIntents:
         self.intents, self.pending, self.expired = {}, {}, {}
         self.sequence = 0
         self.events = []
+        self.recent = []
+        self.effective_queued = {}
 
     def plan(self, goals, queued, loop):
+        self.recent = [(time, goal) for time, goal in self.recent if loop-time < 1008]
+        fulfilled = Counter(goal for _, goal in self.recent)
+        self.effective_queued = {g: max(queued.get(g, 0), fulfilled[g])
+                                 for g in set(queued) | set(fulfilled)}
         for goal, count in goals.items():
-            if count <= queued.get(goal, 0) or any(i['goal'] == goal for i in self.intents.values()):
+            if count <= self.effective_queued.get(goal, 0) or any(i['goal'] == goal for i in self.intents.values()):
                 continue
             if goal in self.expired:
                 if loop <= self.expired[goal]:
@@ -51,6 +59,7 @@ class ProductionIntents:
             pending = self.pending.get(ticket)
             if pending and pending['acknowledged'] and (pending['actor'], item['goal']) in active_orders:
                 status = 'observed_order'
+                self.recent.append((loop, item['goal']))
                 del self.intents[ticket]
             elif loop >= item['expires']:
                 status = 'expired'
