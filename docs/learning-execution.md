@@ -8,6 +8,33 @@ Implementation is in `.worktrees/terran-rl`, branch `Sam-v6/terran-rl`.
 The commands below run from that worktree. Run artifacts are ignored under
 `logs/roadmap/`; preserve those directories when handing off or archiving.
 
+## Inventory audit/fit terminal; source-backed goal transfer next
+
+Previous goal turn progressed through cadence accounting and verified the native
+capacity-demand failure. This turn verifies6354future stock labels, all imported
+current stocks, and97same-loop phase discrepancies. Preparation01 omitted owned
+memory and was not fitted;02uses inclusive-event timing;03uses the declared strict
+future boundary. Original artifacts remain preserved. New inventory helper has
+fourmeaningful tests; full suite489tests/32skips and Ruff pass.
+
+Inventory fit15732 is terminal1 after a wrapper returned None; checkpoint/report
+were already saved. No refit. Independent verifier53859 is terminal0: production
+MAE0.25180vs persistence0.14578 fails the frozen gate. Integer decoding also fails.
+All source/support/prediction/metric evidence is preserved under
+`human-inventory-targets-03`, including wrapper traceback and missing outer samples.
+No native inventory regressor promotion or RL. Boundary audit71563 verifies all97
+remaining SDK/tracker differences are compatible with same-loop event prefixes.
+
+Astra read-only advisory recommends economic-stage retrieval of a single coherent
+human inventory, held45seconds, as a separate capacity-recovery diagnostic. The
+baseline scout is absent from human assistance; transfer/test that primitive first.
+Public SelectedRace exists in original metadata and can be matched to native
+race_requested, without using hidden AssignedRace. Teacher cohort2TvT/4TvZ/5TvP;
+development1TvZ/2TvP. Follow the frozen
+[retrieval plan](superpowers/plans/2026-10-06-human-goal-retrieval.md), including
+support/attribution checks and matched native controls. No processes remain from
+this completed fit/audit batch. Full roadmap remains active/incomplete.
+
 ## Cadence diagnostic terminal; demand representation remains inadequate
 
 Native9943, verifier8360 and tests80766 are terminal. Replay confirms14Depot starts,
