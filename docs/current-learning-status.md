@@ -1,17 +1,18 @@
 # Current learning status
 
-Updated October 6, 2026. The **initial scripted Hard baseline is verified**;
+Updated October 7, 2026. The **initial scripted Hard baseline is verified**;
 the active next phase is reconnecting human imitation to the verified primitives.
-The [producer topology audit](human-producer-topology.md) verifies five shared
-addon identities in the winning human opening. Fixed-plan playback must preserve
-producer bindings and landing-site relationships through those transfers.
-Persistent producer bindings now pass tests and an isolated native Reactor swap.
-The swap required waiting for the producer's construction order to clear after
-visible addon completion. Fixed-plan controller integration remains outstanding.
-The [fixed human command plan](fixed-human-production-plan.md) now compiles and
-independently verifies 203 production instructions plus four repeated orders.
-Exact research tiers and actor-specific aliases resolve; native playback remains
-outstanding and does not yet establish useful imitation.
+The [fixed-plan native diagnosis](fixed-human-plan-native-result.md) now verifies
+actual Factory attachment through a shared Tech Lab, stable producer/worker
+bindings and nine original builder movements. The latest bounded canary resolves
+127 of212 instructions with zero delayed action errors before stopping on a
+missing source Factory. Its original replay uses a command-target update omitted
+by the importer; inherited ability and worker selection must be recovered next.
+These are forced diagnostic exits against VeryEasy, not learned victories.
+The [producer topology audit](human-producer-topology.md) and
+[203-command source compilation](fixed-human-production-plan.md) remain useful
+partial evidence. The expanded fixed plan has212 instructions; useful imitation
+and complete source command coverage remain unproven.
 Research queue accounting now preserves specific upgrade levels, and specific
 level-one availability no longer permits level-two requests. These fixes pass
 regression tests using the specific command IDs observed in the native research

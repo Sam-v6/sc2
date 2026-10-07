@@ -1,5 +1,7 @@
 """Compile issued human production commands, preserving actor and event identity."""
 
+import math
+
 from src.learning.production_execution import canonical
 
 
@@ -68,3 +70,37 @@ def compile_commands(accepted, events, data, own_at_loop, metadata_mappings):
                             actor_types=[actor['unit_type'] for actor in actors],
                             original_flags=event['m_cmdFlags']))
     return dict(tickets=tickets, unresolved=unresolved)
+
+
+def compile_builder_moves(accepted, events, tickets, own_at_loop, neutral_positions):
+    """Label actual SCV movements near the same worker's next building site."""
+    moves = []
+    for row in accepted:
+        command = row['command']
+        if command['ability'] not in (1, 16) or command.get('target_point') is None or len(command['units']) != 1:
+            continue
+        actor = own_at_loop.get(row['loop'], {}).get(command['units'][0])
+        if actor is None or actor['unit_type'] != 45:
+            continue
+        key = (row['loop'], row['sequence'])
+        next_build = next((t for t in tickets if (t['loop'], t['sequence']) > key
+                           and t['actor_types'] == [45]
+                           and t['command']['units'] == command['units']
+                           and t['name'].startswith('Build ')), None)
+        if next_build is None:
+            continue
+        target = next_build['command'].get('target_point') or neutral_positions.get(next_build['command'].get('target_unit'))
+        if target is None or math.dist(target, command['target_point']) >= 6:
+            continue
+        event = events[key]
+        point = event.get('m_data', {}).get('TargetPoint')
+        precise = [point[axis]/4096 for axis in ('x', 'y')] if point else None
+        if precise != command['target_point']:
+            raise ValueError('Builder movement differs from original precise point')
+        moves.append(dict(loop=key[0], sequence=key[1], name='Move builder',
+                          command=dict(command, queue=bool(event['m_cmdFlags'] & 2)),
+                          actor_types=[45], imported_ability=command['ability'],
+                          original_flags=event['m_cmdFlags'],
+                          source_build=dict(loop=next_build['loop'], sequence=next_build['sequence']),
+                          evidence_is_label_only=True))
+    return moves

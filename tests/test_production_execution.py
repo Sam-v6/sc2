@@ -3,6 +3,51 @@ from src.learning.production_execution import queued_work, eligible_actors
 
 
 class ProductionExecutionTests(unittest.TestCase):
+    def test_smart_resume_worker_is_not_available_for_other_construction(self):
+        state = dict(units=[dict(tag=1, alliance=1, unit_type=45,
+                            orders=[dict(ability_id=1, target_unit_tag=2)]),
+                           dict(tag=2, alliance=1, unit_type=21, build_progress=.5)])
+        self.assertEqual(eligible_actors(state, 321, {1: [321]}, {}, {45: 'SCV'}), [])
+
+    def test_prices_distinguish_morph_research_and_free_lift(self):
+        from src.learning.production_execution import command_cost
+        data = dict(abilities=[dict(ability_id=1516, friendly_name='Morph OrbitalCommand'),
+                               dict(ability_id=452, friendly_name='Lift Barracks'),
+                               dict(ability_id=2297, friendly_name='Research ArmorLevel1'),
+                               dict(ability_id=864, friendly_name='Research ArmorLevel1')],
+                    units=[dict(name='CommandCenter', mineral_cost=400),
+                           dict(name='OrbitalCommand', ability_id=1516, mineral_cost=550),
+                           dict(name='BarracksFlying', ability_id=452, mineral_cost=150)],
+                    upgrades=[dict(ability_id=2297, mineral_cost=100, vespene_cost=100),
+                              dict(name='PassiveUpgrade', mineral_cost=999)])
+        self.assertEqual(command_cost(1516, data), (150, 0))
+        self.assertEqual(command_cost(452, data), (0, 0))
+        self.assertEqual(command_cost(864, data), (100, 100))
+
+    def test_waiting_units_reserve_supply_across_producers(self):
+        from src.learning.production_execution import queued_supply
+        data = dict(abilities=[dict(ability_id=524, friendly_name='Train SCV'),
+                               dict(ability_id=595, friendly_name='Train Hellion')],
+                    units=[dict(ability_id=524, food_required=1),
+                           dict(ability_id=595, food_required=2)])
+        state = dict(units=[dict(alliance=1, orders=[
+            dict(ability_id=524, progress=.3), dict(ability_id=524, progress=0)]),
+            dict(alliance=1, orders=[dict(ability_id=595, progress=.75),
+                 dict(ability_id=595, progress=.2), dict(ability_id=595, progress=0)]),
+            dict(alliance=4, orders=[dict(ability_id=595, progress=0)])])
+        self.assertEqual(queued_supply(state, data), 3)
+
+    def test_cancel_last_uses_unique_current_native_queue_ability(self):
+        from src.learning.production_execution import queried_command_ability
+        catalog = {306: dict(remaps_to_ability_id=3671),
+                   304: dict(remaps_to_ability_id=3671),
+                   864: dict(remaps_to_ability_id=3700),
+                   865: dict(remaps_to_ability_id=3700)}
+        self.assertEqual(queried_command_ability(3671, [306], catalog), 306)
+        self.assertIsNone(queried_command_ability(3671, [304, 306], catalog))
+        self.assertIsNone(queried_command_ability(3671, [], catalog))
+        self.assertIsNone(queried_command_ability(865, [864], catalog))
+
     def test_research_tiers_keep_specific_queue_identity(self):
         catalog = {864: dict(remaps_to_ability_id=3700),
                    865: dict(remaps_to_ability_id=3700)}

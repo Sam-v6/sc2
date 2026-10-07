@@ -39,13 +39,33 @@ def scripted_army_destination(state, types, start, enemy_start, center, expansio
     return tuple(target), attacking, search_index
 
 
-def primitive_assistance(state, selected, types, catalog, destination, can_walk, mining):
+def primitive_assistance(state, selected, types, catalog, destination, can_walk, mining, landing_points=()):
     own = [u for u in state['units'] if u['alliance'] == 1 and u.get('health', 0) > 0]
     enemies = [u for u in state['units'] if u['alliance'] == 4]
     claimed, commands = set(selected), []
     def append(unit, command):
         if unit['tag'] not in claimed and 5 not in unit.get('buff_ids', []) and command and changes_order(unit, command):
             commands.append(command)
+            claimed.add(unit['tag'])
+    # Keep the space clear throughout flight, not only at the placement query.
+    for unit in own:
+        if (unit['tag'] in claimed or unit.get('is_flying')
+                or 8 in types[unit['unit_type']].get('attributes', [])):
+            continue
+        margin = 1.5 + unit.get('radius', .5) + .75
+        point = unit['position'][:2]
+        if not any(abs(point[0]-x) < margin and abs(point[1]-y) < margin
+                   for x, y in landing_points):
+            continue
+        candidates = [(x+dx, y+dy) for x, y in landing_points
+                      for dx, dy in ((margin+.5, 0), (-margin-.5, 0),
+                                     (0, margin+.5), (0, -margin-.5))]
+        free = [p for p in candidates if can_walk(p) and
+                all(abs(p[0]-x) >= margin or abs(p[1]-y) >= margin
+                    for x, y in landing_points)]
+        if free:
+            target = min(free, key=lambda p: math.dist(point, p))
+            append(unit, Command(16, (unit['tag'],), target_point=target))
             claimed.add(unit['tag'])
     army = ground_army(state, types)
     centroid = tuple(sum(u['position'][i] for u in army)/len(army) for i in range(2)) if army else destination

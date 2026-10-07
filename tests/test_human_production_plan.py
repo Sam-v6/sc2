@@ -1,9 +1,23 @@
 import unittest
 
-from src.learning.human_production_plan import compile_commands
+from src.learning.human_production_plan import compile_commands, compile_builder_moves
 
 
 class HumanProductionPlanTests(unittest.TestCase):
+    def test_queued_worker_movement_retains_original_building_relation(self):
+        accepted = [dict(loop=10, sequence=1, command=dict(ability=1, units=[99],
+                        target_point=[131.5, 47.5], queue=False))]
+        events = {(10, 1): dict(m_cmdFlags=266, m_data=dict(TargetPoint=dict(x=538624, y=194560)))}
+        tickets = [dict(loop=20, sequence=2, actor_types=[45], name='Build Barracks',
+                        command=dict(units=[99], target_point=[131.5, 47.5]))]
+        own = {10: {99: dict(unit_type=45)}}
+        moves = compile_builder_moves(accepted, events, tickets, own, {})
+        self.assertEqual(len(moves), 1)
+        self.assertTrue(moves[0]['command']['queue'])
+        self.assertEqual(moves[0]['source_build'], dict(loop=20, sequence=2))
+        tickets[0]['command']['units'] = [100]
+        self.assertEqual(compile_builder_moves(accepted, events, tickets, own, {}), [])
+
     def test_original_precise_point_and_queue_recovered(self):
         data = dict(units=[dict(unit_id=45, name='SCV')], abilities=[
             dict(ability_id=321, friendly_name='Build Barracks')])

@@ -1,3 +1,4 @@
+import math
 import unittest
 from src.learning.production_primitives import primitive_assistance, scripted_army_destination
 from tests.test_terran_primitives import unit, TYPES
@@ -14,6 +15,22 @@ def state(units):
 
 
 class ProductionPrimitiveTests(unittest.TestCase):
+    def test_landing_clearance_overrides_gathering_and_holds_existing_move(self):
+        marine = unit(1, 48, x=10, y=10)
+        st = state([marine, unit(2, 21, x=10, y=10),
+                    unit(3, 35, x=10, y=10, is_flying=True),
+                    unit(4, 48, alliance=4, x=10, y=10)])
+        def assist():
+            return primitive_assistance(st, set(), DATA, {}, (10, 10), lambda p: True,
+                                        False, [(10, 10)])
+        move = next(c for c in assist() if c.units == (1,))
+        self.assertEqual(move.ability, 16)
+        self.assertGreater(math.dist(move.target_point, (10, 10)), 2.5)
+        marine['orders'] = [dict(ability_id=16, target_world_space_pos=dict(
+            x=move.target_point[0], y=move.target_point[1]))]
+        self.assertFalse(any(c.units == (1,) for c in assist()))
+        self.assertFalse(any(c.units in ((2,), (4,)) for c in assist()))
+
     def commands(self, st, selected=(), mining=True):
         return primitive_assistance(st, set(selected), DATA, {}, (30, 30), lambda p: True, mining)
 

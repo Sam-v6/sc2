@@ -32,6 +32,57 @@ def canonical(ability, catalog):
     return catalog.get(ability, {}).get('remaps_to_ability_id') or ability
 
 
+def worker_constructing(unit, state, catalog):
+    foundations = {u['tag'] for u in state['units']
+                   if u['alliance'] == 1 and u.get('build_progress', 1) < 1}
+    return any(catalog.get(o['ability_id'], {}).get('friendly_name', '').startswith('Build ')
+               or o.get('target_unit_tag') in foundations for o in unit.get('orders', []))
+
+
+def queried_command_ability(ability, available, catalog):
+    """Use exact availability; resolve generic Cancel Last only when unique."""
+    if ability in available:
+        return ability
+    if ability != 3671:
+        return None
+    matches = [a for a in available if canonical(a, catalog) == ability]
+    return matches[0] if len(matches) == 1 else None
+
+
+def queued_supply(state, data):
+    """Reserve supply for observed waiting train orders, excluding active progress."""
+    catalog = {a['ability_id']: a for a in data['abilities']}
+    food = {}
+    for unit in data['units']:
+        ability = canonical(unit.get('ability_id'), catalog)
+        food[ability] = max(food.get(ability, 0), unit.get('food_required', 0))
+    return sum(food.get(canonical(order['ability_id'], catalog), 0)
+               for unit in state['units'] if unit['alliance'] == 1
+               for order in unit.get('orders', [])
+               if order.get('progress', 0) == 0
+               and catalog.get(order['ability_id'], {}).get('friendly_name', '').startswith('Train '))
+
+
+def command_cost(ability, data):
+    """Price actual production; flying transitions do not repurchase the building."""
+    catalog = {a['ability_id']: a for a in data['abilities']}
+    name = catalog[ability].get('friendly_name', '')
+    if name.startswith('Research '):
+        rows = [u for u in data['upgrades'] if u.get('ability_id') == ability
+                or catalog.get(u.get('ability_id'), {}).get('friendly_name') == name]
+    elif name.startswith(('Build ', 'Train ')) or name in ('Morph OrbitalCommand', 'Morph PlanetaryFortress'):
+        rows = [u for u in data['units'] if u.get('ability_id') == ability]
+    else:
+        return 0, 0
+    prices = {(u.get('mineral_cost', 0), u.get('vespene_cost', 0)) for u in rows}
+    if len(prices) != 1:
+        raise ValueError('No unique production price for ' + name)
+    minerals, gas = prices.pop()
+    if name in ('Morph OrbitalCommand', 'Morph PlanetaryFortress'):
+        minerals -= next(u['mineral_cost'] for u in data['units'] if u['name'] == 'CommandCenter')
+    return minerals, gas
+
+
 def order_goals(unit, goals, catalog, unit_names):
     """Keep specific order identities; resolve generic addons by producer type."""
     parent = unit_names.get(unit['unit_type'], '').removesuffix('Flying')
@@ -97,8 +148,7 @@ def eligible_actors(state, ability, available, catalog, unit_names):
                 and wanted not in actor_abilities):
             continue
         if unit_names.get(unit['unit_type']) == 'SCV':
-            if any(catalog.get(o['ability_id'], {}).get('friendly_name', '').startswith('Build ')
-                   for o in unit.get('orders', [])):
+            if worker_constructing(unit, state, catalog):
                 continue
         elif unit.get('orders'):
             continue  # One production order per structure; no queue flooding.

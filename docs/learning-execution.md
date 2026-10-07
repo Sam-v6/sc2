@@ -4543,3 +4543,24 @@ Snapshots in logs/roadmap/fixed-human-production-plan-02. Full suite62052 termin
 530 tests/32skips, Ruff passes. No native playback, training or RL. Entity creation
 binding, placement/target translation and cancellations remain integration work.
 See [the plan result](fixed-human-production-plan.md).
+
+### October 7: native fixed-plan execution and target-update diagnosis
+
+The previous goal turn only restated the active roadmap (no progress). Continued
+from terminal native11, archived its exact bound source, decoded CantLandLocationInvalid
+and inspected ground-unit occupancy. Landing clearance repair passes a regression
+and native12/13 physically attach the Factory to the intended shared Tech Lab at
+loop8592, with zero delayed errors; independent verification checks both traces,
+replay seeds, archived source hashes and CPU5.5%/5.4%. Builder plan03 independently
+verifies203 unchanged macro instructions plus9 original source movements.
+Explicit unqueued worker movements may interrupt construction; helpers recover
+abandoned foundations. Native12 exposed an unsubmitted Depot request superseded
+by a human move; explicit retirement passes tests. Native13 terminal43887 resolves
+127/212 and stops because the source Factory is unbound. Original protocol audit
+exit zero finds SCmdUpdateTargetPointEvent at7171, manager sequence637, omitted
+from raw command dump; matching source Factory first observed7262 at134.5,37.5.
+Actor/inherited-command semantics need validation before label synthesis. No
+imitation fit or RL restarted. Full suite1035 terminal:543 tests/32skips; Ruff
+passes and diff whitespace check passes. See fixed-human-plan-native-result.md
+for all native01–13 failures, repairs and limits, including startup/callback
+failures07/09 and the intentional diagnostic leaves.
