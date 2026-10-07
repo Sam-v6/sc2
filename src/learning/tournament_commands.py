@@ -31,19 +31,23 @@ def ability_matches(action, event, catalog, replay_names, unit_types=None):
     )
     if direct:
         return True
-    # Replay commands name the producer; converted actions use generic Lift/Land.
+    # Replay commands name the producer; converted actions can use generic aliases.
     # Require every converted actor's pre-effect type, rather than infer it from
     # the human selection or accept unrelated catalogue aliases.
-    if action["ability"] not in (3678, 3679) or not name or not unit_types:
+    if action["ability"] not in (3678, 3679, 3682, 3683) or not name or not unit_types:
         return False
     for specific in catalog.values():
         friendly = specific.get("friendly_name", "")
+        parent = friendly.removeprefix(native["friendly_name"] + " ")
+        spellings = {friendly.replace(" ", "").lower()}
+        if action["ability"] in (3682, 3683) and parent != friendly:
+            # The reader calls Build TechLab Barracks "BuildBarracksTechLab".
+            spellings.add(("Build" + parent + native["friendly_name"].split()[1]).lower())
         if (
             specific.get("remaps_to_ability_id") == action["ability"]
-            and friendly.replace(" ", "").lower() == name.replace(" ", "").lower()
+            and name.replace(" ", "").lower() in spellings
             and original["m_abilCmdIndex"] == specific.get("link_index")
         ):
-            parent = friendly.removeprefix(native["friendly_name"] + " ")
             return bool(action["tags"]) and all(
                 unit_types.get(tag, "").removesuffix("Flying") == parent
                 for tag in action["tags"]
@@ -72,7 +76,7 @@ def reconcile_commands(events, observations, selections, catalog, replay_names):
 
     Selection keys are (original loop, sequence), using original 32-bit tags.
     Converted commands retain full native 64-bit tags. Unknown selections are
-    represented by None; a missing selection is also unknown. Generic Lift/Land
+    represented by None; a missing selection is also unknown. Generic producer/addon
     aliases additionally require pre-effect unit_types keyed by full native tag.
     """
     by_loop = defaultdict(list)

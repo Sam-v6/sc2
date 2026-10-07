@@ -36,9 +36,11 @@ the original replay needs an unavailable engine version. The
 increases and four repeated/present orders, but zero imported addon commands
 despite nine original own addon starts. The
 [source-backed Lift/Land repair](human-lift-land-recovery.md) recovers32commands
-and preserves all804oldlabels in a fresh teaching-game rebuild. Addon targets,
-flags and attachment reconstruction still need verification before a fixed-plan
-trial. Do not infer exact paid
+and preserves all804oldlabels in a fresh teaching-game rebuild. The
+[addon relocation repair](human-addon-recovery.md) adds three verified point
+commands, giving839labels, and four native fixtures prove build-in-place versus
+relocation behavior. Five flagged commands, grouped effects and attachment
+reconstruction still need verification before a fixed-plan trial. Do not infer exact paid
 production starts from eventual unit births.
 No promotion, unchanged fit or RL restart.
 RL remains paused. The full roadmap is incomplete, and scripted victories are

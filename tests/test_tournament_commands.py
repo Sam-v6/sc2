@@ -153,3 +153,44 @@ class TournamentCommandsTests(unittest.TestCase):
                        remaps_to_ability_id=3679)}, {(7, 0): 'LiftFactory'})
         self.assertEqual(accepted, [])
         self.assertEqual([e['candidate_count'] for e in audit['unresolved_events']], [1, 1])
+
+    def test_generic_reactor_alias_keeps_point_and_specific_command_index(self):
+        event = self.event(flags=256)
+        event['m_abil']['m_abilCmdIndex'] = 1
+        action = dict(ability=3683, tags=[17], target_type=2, target=[10, 20])
+        catalog = {
+            3683: dict(friendly_name='Build Reactor', link_index=0),
+            422: dict(friendly_name='Build Reactor Barracks', link_index=1,
+                      remaps_to_ability_id=3683),
+        }
+        names = {(7, 1): 'BuildBarracksReactor'}
+        for types, expected in [({17: 'BarracksFlying'}, 1),
+                                ({17: 'FactoryFlying'}, 0), ({}, 0)]:
+            accepted, _ = tournament_commands.reconcile_commands(
+                [event], [dict(loop=12, actions=[action], unit_types=types)],
+                {(12, 1): [17]}, catalog, names)
+            self.assertEqual(len(accepted), expected)
+            if accepted:
+                self.assertEqual(accepted[0]['command'].target_point,
+                                 (40961 / 4096, 81923 / 4096))
+        event['m_abil']['m_abilCmdIndex'] = 0
+        accepted, _ = tournament_commands.reconcile_commands(
+            [event], [dict(loop=12, actions=[action], unit_types={17: 'Barracks'})],
+            {(12, 1): [17]}, catalog, {(7, 0): 'BuildBarracksReactor'})
+        self.assertEqual(accepted, [])
+
+    def test_addon_point_cannot_be_dropped_or_unknown_flags_admitted(self):
+        event = self.event(flags=256)
+        catalog = {
+            3682: dict(friendly_name='Build TechLab', link_index=0),
+            421: dict(friendly_name='Build TechLab Barracks', link_index=0,
+                      remaps_to_ability_id=3682),
+        }
+        for target_type, flags in [(0, 256), (2, 256 | 0x1000000)]:
+            event['m_cmdFlags'] = flags
+            accepted, _ = tournament_commands.reconcile_commands(
+                [event], [dict(loop=12, unit_types={17: 'Barracks'}, actions=[
+                    dict(ability=3682, tags=[17], target_type=target_type,
+                         target=[10, 20] if target_type == 2 else None)])],
+                {(12, 1): [17]}, catalog, {(7, 0): 'BuildBarracksTechLab'})
+            self.assertEqual(accepted, [])

@@ -4414,3 +4414,20 @@ selections, genericwireactions, observedtypes, flags, precise landpoints and139
 new-row visibleenemies. Prior own/player/map/memory/unknownfields unchanged.
 Source snapshots archived. No fit/native/RL. Addon target/flag/attachment semantics
 remain next. See [recovery](human-lift-land-recovery.md).
+
+### October6: three human addon relocations recovered; native conformance verified
+
+Source target audit terminalexit0. Four native fixture70886 terminalexit0;
+independent native replay/trace verifier terminalexit0. No-target/ownpoint builds
+at origin; grounded/flying remote point relocates and starts at destination. All
+accepted without errors, groundremote95%complete at30s, otherscomplete/attached.
+Debug-engineeringonly, no strength/trainingclaim. CPUpeak6%.
+
+Two new alias regressions red/green.512tests32skips+Ruffpass. Reimport71342
+terminalexit0:839labels; verifier88426 terminalexit0 preserves836previouslabels
+and independently checks3regularflagpointcommands at7534/7976/8112. Unknown
+flags remain excluded. All source archived. See [addon result](human-addon-recovery.md).
+Five flagged commands remain; firstthree rawpoints equal grounded actor positions
+withsame-loopstarts, nativeownpoint/no-target equivalence is next source-canonical
+label hypothesis. Later remote/grouped effects must not inherit that exception.
+No fit/RL or complete-production-plan claim.
