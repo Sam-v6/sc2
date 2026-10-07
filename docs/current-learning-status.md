@@ -14,8 +14,12 @@ A fresh 30-game scripted Hard baseline panel is running in
 `logs/roadmap/primitives-hard-baseline-01/panel`: ten games per race, five named
 strategies, two maps, fresh seeds, with gates of21/30overall and7/10perrace.
 This is scripted execution, not learned competence. Imitation and RL stay paused.
-The human visibility audit identified a feature/native coordinate mismatch; the
-importer is repaired, but existing corpora still require re-import and verification.
+The human visibility repair has now been re-imported into a new corpus and
+independently verified: all 7,202 command labels and own-unit observations are
+preserved. Two targets became unavailable after filtering. Full command-label checks pass:
+6,083/6,089 teaching commands and 1,112/1,113 development commands are
+representable; unsupported targets have explicit exclusion reasons. See
+[the repair evidence](human-visibility-repair.md).
 
 Start here, then read [the roadmap](learning-roadmap.md). Use
 [the execution ledger](learning-execution.md) for detailed evidence. Historical

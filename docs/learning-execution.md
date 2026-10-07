@@ -4028,3 +4028,26 @@ puts67,358on visiblecells and6,366elsewhere,1,429without visibleimmediate neighb
 This is coarse diagnostic evidence, not native proof. PlayerView/tournament
 importer now support correctfeature mapping, regression passes. Existingcorpora
 are unchanged; new re-import/intake verification is required before anyfit.
+
+### October 6: verified human visibility re-import
+
+All 14 prior teaching/development games re-import into a new corpus; original
+phase/source/reconciliation binding checks remain enabled. Independent verifier
+passes all 7,202 label rows, unchanged own units/player/map fields, and 67,358
+current enemy observations on visible supplied feature cells. Enemy memory has
+no current dynamic fields. Three targets are unavailable, two newly unavailable
+Smart targets in teaching games 163/1032. Source grid coarseness and partial
+professional reconstruction remain limits; no native fog-proof overclaim.
+Peak re-import host CPU9.5 percent. No fitting, RL or reserved reads.
+
+Streaming full raw-command representability inventory is active, session16144.
+It explicitly preserves original commands and excludes unsupported labels.
+Baseline panel remains active, session96434; ten completed games all win at this
+checkpoint, not a terminal gate. Preserve its frozen source until all30finish.
+See [human repair evidence](human-visibility-repair.md).
+
+The representability inventory is now terminal: 6,083/6,089 teaching commands and
+1,112/1,113 development commands supported, all seven exclusions explicitly
+outside observed target candidates. Runtime79.1seconds, no optimizer/model.
+Use these counts for a new contract; earlier6,086teaching-count assertions are
+not valid for the repaired corpus.

@@ -179,3 +179,11 @@ This guards future imports; it does not retroactively repair saved datasets.
 Re-import into new directories, verify original label/phase/source bindings and
 fog/memory accounting, and handle unsupported targets explicitly before fitting.
 Do not overwrite historical corpus evidence or claim it is repaired already.
+
+The required human re-import and independent verification are now terminal in
+`logs/roadmap/human-visibility-reimport-01`. All 7,202 labels and own-unit fields
+are preserved. Full encoding inventory reports 6,083/6,089 teaching and
+1,112/1,113 development commands representable; seven unsupported target labels
+are explicit exclusions. See [the source repair](human-visibility-repair.md).
+This completes the observation/label engineering prerequisite for a new fitting
+contract; it does not establish imitation quality or native game competence.
