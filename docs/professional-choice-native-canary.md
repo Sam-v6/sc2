@@ -281,3 +281,42 @@ No checkpoint fitting, extra pair, sweep or gate relaxation follows this attempt
 Next verify occupied-geyser exclusion and expansion-site targeting in a native
 primitive fixture before another policy comparison. Broad imitation, learned
 timing, offensive competence and the full roadmap remain unproven.
+
+## Expansion gas primitive verified before another policy comparison
+
+`refinery_sites(state, catalog)` now selects observed, unclaimed gas near any
+completed owned ground town hall, rather than the initial starting base alone.
+It excludes occupied gas through `claimed_geysers` and excludes unfinished,
+enemy and flying bases. The existing production-goal controller uses the shared
+helper, retaining its per-batch claims and worker selection. Broad raw commands
+remain available; this is the Terran assistance site's default scope. A regression
+using native 09 home/expansion positions fails before implementation and passes
+afterward. All 604 default tests pass (40 optional skips); named-file Ruff and
+whitespace checks pass.
+
+`logs/roadmap/refinery-expansion-fixture-03/verification.json` independently
+verifies a 120-game-second native engineering fixture on AcropolisLE, Zerg
+VeryEasy, seed 825101. Debug setup supplies resources, one completed expansion
+CommandCenter and four SCVs. All three Refineries are built using normal
+commands and native placement queries: two at home, then a free observed site
+near the completed expansion. The verifier reconstructs site eligibility,
+occupied claims, pending request starts, protected builders and command results
+from raw observations, and decodes the replay's three starts and three
+completions. Expansion harvesting appears in 451 worker observations and removes
+188 gas from that Refinery. Global collected gas increases 580 after its
+completion. There are zero immediate/delayed action errors. The cutoff Tie is
+normal, with a saved replay. Wall time is 10.197 seconds and sampled host CPU
+peak 5.8 percent. This establishes site selection, construction and harvesting
+for the fixture, not learned expansion strategy or competitive macro.
+
+Attempts 01 and 02 remain preserved with receipts and source snapshots. They
+expose harness defects (tuple positions instead of SDK Point2, then issuing
+before debug setup reaches the next observation), and are not counted as passing
+primitive tests. Attempt 03 corrects the harness and observes actual payment/
+build commands and gas extraction.
+
+The prior decoder pair stays closed as interrupted. Before another policy test,
+wire this verified gas-site helper into both newly frozen arms, rather than
+reuse the old starting-base-only recipe. Keep model weights and all existing
+gates fixed, inspect intent disposition/actual production, and retain separate
+scripted, learned-selection and full-imitation claims. No RL is running.

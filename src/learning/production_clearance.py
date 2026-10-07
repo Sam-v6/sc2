@@ -133,6 +133,18 @@ async def resolve_production_placement(client, command, catalog, state, unit_typ
     return [], trace
 
 
+def refinery_sites(state, catalog):
+    """Observed unclaimed gas sites near completed owned ground town halls."""
+    bases = [u for u in state['units'] if u['alliance'] == 1
+             and u['unit_type'] in (18, 132, 130) and u.get('build_progress', 1) >= 1
+             and not u.get('is_flying')]
+    claimed = claimed_geysers(state, catalog)
+    return [u for u in state['units'] if u['alliance'] == 3
+            and u.get('vespene_contents', 0) > 0 and u['tag'] not in claimed
+            and any(math.dist(u['position'][:2], base['position'][:2]) < 15
+                    for base in bases)]
+
+
 def claimed_geysers(state, catalog):
     claimed = set()
     for unit in state['units']:

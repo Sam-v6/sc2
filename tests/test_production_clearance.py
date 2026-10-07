@@ -6,6 +6,21 @@ from s2clientprotocol import sc2api_pb2 as pb, query_pb2 as query
 
 
 class ProductionClearanceTests(unittest.TestCase):
+    def test_refinery_sites_include_completed_expansion_and_exclude_occupied_home(self):
+        from src.learning.production_clearance import refinery_sites
+        home = dict(tag=1, alliance=1, unit_type=18, position=[33.5, 138.5])
+        expansion = dict(tag=2, alliance=1, unit_type=18, position=[31.5, 113.5])
+        occupied = dict(tag=3, alliance=3, position=[26.5, 135.5], vespene_contents=1862)
+        refinery = dict(tag=4, alliance=1, unit_type=20,
+                        position=[26.5, 135.5], vespene_contents=1862)
+        free = dict(tag=5, alliance=3, position=[28.5, 106.5], vespene_contents=2000)
+        state = dict(units=[home, expansion, occupied, refinery, free])
+        self.assertEqual(refinery_sites(state, {}), [free])
+        for change in (dict(build_progress=.5), dict(alliance=4), dict(is_flying=True)):
+            with self.subTest(change=change):
+                state['units'][1] = dict(expansion, **change)
+                self.assertEqual(refinery_sites(state, {}), [])
+
     def test_existing_producer_keeps_addon_pad_and_spawn_perimeter(self):
         state = dict(units=[dict(tag=1, alliance=1, unit_type=27, position=[10, 10])])
         reserved = reservations(state, {27: dict(footprint_radius=1.5)}, {})

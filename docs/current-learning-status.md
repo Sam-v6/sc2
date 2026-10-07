@@ -411,3 +411,23 @@ observed-target handling is a reference to reuse. Next verify occupied exclusion
 and expansion targeting in a native primitive fixture. Do not repeat fitting or
 claim this interrupted pair demonstrates reservation efficacy. See the detailed
 [canary record](professional-choice-native-canary.md); the full goal stays active.
+
+### Expansion gas execution now independently verified
+
+The shared `refinery_sites` helper includes free observed gas near completed
+owned expansion bases and excludes occupied gas, unfinished bases and flying
+bases. The production-goal controller now uses it. A captured-position regression
+is observed failing before implementation. All 604 default tests pass (40 skips),
+with Ruff/diff checks passing.
+
+The native `refinery-expansion-fixture-03` verifies three actual Refinery starts
+and completions from replay events, including expansion construction followed
+by 188 gas extracted there. There are zero errors and a normal 120-second cutoff.
+Wall time 10.197 seconds; host CPU peak 5.8 percent. Debug resources, a pre-created
+expansion CommandCenter and four added SCVs isolate execution; this is not a
+learned macro or game-strength result. Prior two harness failures remain saved.
+
+Next wire the verified gas targeting into both fresh policy comparison arms.
+The earlier interrupted pair and failing gates remain unchanged. Continue with
+the frozen model and explicit intent budgets before deciding whether another
+imitation fit is warranted; RL stays paused.

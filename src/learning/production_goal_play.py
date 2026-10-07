@@ -21,7 +21,7 @@ from src.learning.actor_selection import construction_products
 from src.learning.entity_execution import validate_order_aliases
 from src.learning.gameplay import Command, PlayerView, protocol_dict
 from src.learning.live import ability_query, issue
-from src.learning.production_clearance import reservations, resolve_production_placement, claimed_geysers, site_reservations
+from src.learning.production_clearance import reservations, resolve_production_placement, claimed_geysers, site_reservations, refinery_sites
 from src.learning.production_execution import (canonical, eligible_actors,
                                               goal_catalog, queued_work)
 from src.learning.production_goal_policy import current_features, predict_goals
@@ -227,9 +227,8 @@ class ProductionGoalBot(BotAI):
                 target = None
                 mode = info['descriptor'].get('target', 1)
                 if mode == 3:
-                    geysers = [u for u in state['units'] if u['alliance'] == 3 and u.get('vespene_contents', 0) > 0 and u['tag'] not in geyser_claims
-                               and not any(v['unit_type'] == info['unit_type'] and math.dist(v['position'][:2], u['position'][:2]) < 1
-                                           for v in state['units'] if v['alliance'] == 1)]
+                    geysers = [u for u in refinery_sites(state, self.catalog)
+                               if u['tag'] not in geyser_claims]
                     if not geysers:
                         self.blocks['no_geyser:' + goal] += 1
                         continue
