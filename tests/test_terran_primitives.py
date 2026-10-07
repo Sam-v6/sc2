@@ -107,6 +107,14 @@ class CombatTests(unittest.TestCase):
         command = combat_command(unit(1, 48), [shade, enemy], types, (20, 20), lambda p: True)
         self.assertEqual(command.target_unit, 11)
 
+    def test_phoenix_lifted_actor_waits_until_it_can_receive_commands(self):
+        marine = unit(1, 48)
+        marine['buff_ids'] = [27, 5]
+        self.assertIsNone(combat_command(marine, [unit(10, 108, x=2, alliance=4, is_flying=True)],
+            TYPES, (20, 20), lambda p: True))
+        marine['buff_ids'] = [27]
+        self.assertIsNotNone(combat_command(marine, [], TYPES, (20, 20), lambda p: True))
+
     def test_dead_actor_does_not_issue_an_order(self):
         self.assertIsNone(combat_command(unit(1, 48, health=0), [], TYPES, (20, 20), lambda p: True))
 

@@ -4066,3 +4066,27 @@ The verifier checks those hashes, reports per-map/per-build/per-race results and
 rejects any timeout receipt whose replay contains a winner. Do not edit bound
 source until the panel and its final verifier finish. Next poll the same live
 handle; no restart solely from an observation timeout.
+
+### October 6: scripted Hard baseline accepted; imitation integration next
+
+Baseline session96434 and verifier15052 are terminal. All30fresh games win and
+independently verify:10/10each race,15/15each map,6/6each build. Initial21overall/
+7perrace gate passes. CPUpeak9.3percent; enginewall1,459.6seconds. No learning.
+Source snapshot/runtime/assets/replay/production/trace evidence preserved.
+
+Error audit42452 is terminal:35raw errors (26disabled actors,2closeTank shots,
+1visibility,6ground-target failures around Viking morphs) and3delayed errors.
+A new Graviton Beam actor guard passes a formerly failing test. Native replay
+control query64789 verifies the disabled actor has no move/attack abilities and
+an unlifted control does. Full suite455tests/32skips and separate native smoke
+pass. Subsequent guard evidence is distinct from the frozen30-win controller.
+
+The active phase can reconnect human decisions to verified execution primitives.
+Existing human executor still has older harvesting/combat assistance; replace
+that execution behavior with shared tested primitives while tracing command
+ownership and preserving learned production choices. Freeze a new teaching
+contract on the repaired corpus; prior counts/unsafe-source metrics do not apply.
+The52-family production forecast is only an intermediate macro experiment.
+Broad raw-command imitation and learned attack/micro decisions remain required.
+RL stays gated on useful native imitation; do not claim roadmap completion.
+See [baseline proof and limits](scripted-hard-baseline.md).

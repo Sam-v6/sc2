@@ -108,7 +108,8 @@ def mining_commands(state, gas_workers, protected=()):
 
 
 def combat_command(unit, enemies, types, destination, can_walk):
-    if unit.get('health', 0) <= 0:
+    if unit.get('health', 0) <= 0 or 5 in unit.get('buff_ids', []):
+        # Graviton Beam disables commands until the unit is released.
         return None
     if unit['unit_type'] in (32, 33) and any(o['ability_id'] in (388, 390) for o in unit.get('orders', [])):
         return None

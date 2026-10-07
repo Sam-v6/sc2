@@ -1,25 +1,23 @@
 # Current learning status
 
-Updated October 6, 2026. The active phase is **loss diagnosis and reliable
-primitives**. Human-imitation training and reinforcement learning are paused.
-The full roadmap remains incomplete. The user explicitly authorized using
-established bots to build reliable resource, production, attacking and combat
-micro behavior before returning to professional imitation, then RL.
+Updated October 6, 2026. The **initial scripted Hard baseline is verified**;
+the active next phase is reconnecting human imitation to the verified primitives.
+RL remains paused. The full roadmap is incomplete, and scripted victories are
+not learned-controller victories.
 
-The [Terran primitives controller](terran-primitives-implementation.md) passes its
-native smoke and 454-test suite. Wider construction spacing repaired trapped
-Tanks, and the six-game all-race development panel now wins all six games,
-independently verified. The Adept-shade attack exclusion is also repaired.
-A fresh 30-game scripted Hard baseline panel is running in
-`logs/roadmap/primitives-hard-baseline-01/panel`: ten games per race, five named
-strategies, two maps, fresh seeds, with gates of21/30overall and7/10perrace.
-This is scripted execution, not learned competence. Imitation and RL stay paused.
-The human visibility repair has now been re-imported into a new corpus and
-independently verified: all 7,202 command labels and own-unit observations are
-preserved. Two targets became unavailable after filtering. Full command-label checks pass:
-6,083/6,089 teaching commands and 1,112/1,113 development commands are
-representable; unsupported targets have explicit exclusion reasons. See
-[the repair evidence](human-visibility-repair.md).
+The [Terran primitives controller](terran-primitives-implementation.md) won all
+30 fresh baseline games: ten per race, five named strategies, two maps. Original
+replays, tracker production, sampled visibility/weapon compatibility and action
+failure accounting independently verify. Whole-host CPU peaked at 9.3 percent.
+Jobs requested API Hard (value 5); the engine names this opponent Harder in replays.
+See [the baseline result](scripted-hard-baseline.md) for exact scope and limits.
+
+The [repaired human corpus](human-visibility-repair.md) is independently verified:
+all 7,202 original command labels and own-unit observations are preserved.
+6,083 teaching and 1,112 development commands are representable, with explicit
+unsupported-target exclusions. The native executor still needs the verified
+mining/combat primitives before a new human fit and controlled native comparison.
+Do not rerun the unchanged full-command fit or credit scripted assistance as learning.
 
 Start here, then read [the roadmap](learning-roadmap.md). Use
 [the execution ledger](learning-execution.md) for detailed evidence. Historical
@@ -27,13 +25,13 @@ experiments are references, not an instruction to rerun every failed variant.
 
 | Requirement | Current evidence | Still needed |
 |---|---|---|
-| Reliable execution primitives and scripted baseline | Tank exit blockage repaired; all six development games win; fresh baseline panel active | Finish and verify fresh baseline panel; inspect strategy/map/race failures |
+| Reliable execution primitives and scripted baseline | Verified 30/30 fresh scripted wins; initial all-race gate passes | Reconnect the verified primitives to human decisions; retain baseline and audit rare action failures |
 | Broad gameplay controls and player-visible information | Raw command schema, native catalogue, missing-field masks, fog filtering and argument execution exist | Prove the learned controller uses the necessary controls reliably, including simultaneous unit control |
-| Strong human examples | Eleven professional teaching games: 6,089 verified decisions, 6,086 representable; whole-game development split and untouched reserved games | More varied verified data, including Terran opponents; resolve unavailable observations where actual source evidence permits |
-| Learn to copy human decisions | Full command imitation failed; simultaneous production-outcome imitation passes offline gates | Useful generalization and actual game competence |
+| Strong human examples | Eleven professional teaching games: 6,089 verified decisions, 6,083 representable after visibility repair; whole-game development split and untouched reserved games | More varied verified data, including Terran opponents; resolve unavailable observations where actual source evidence permits |
+| Learn to copy human decisions | Full command imitation failed; prior production-outcome model passed offline gates on the older corpus | Useful generalization and actual game competence |
 | Learn better micro in a sandbox | Sandbox/training infrastructure and earlier experiments exist | Reliable held-out improvement and transfer to the full controller |
 | Learn beyond humans through RL | Earlier constrained experiments exist | Resume only after a useful imitation starting point; prove improvement on fresh games |
-| Beat Hard reliably, then harder opponents | Earlier constrained macro policy had partial Hard success | Full-roadmap controller must meet the defined all-race Hard panel and subsequent harder evaluations |
+| Beat Hard reliably, then harder opponents | Scripted baseline 30/30; earlier constrained macro policy had partial learned success | Full-roadmap learned controller must pass its own all-race Hard panel and harder evaluations |
 | Observe games/replays | Headless capture and prior Linux replay-to-video export exist | Keep artifacts usable; user does not want replay demonstrations before the goal is complete |
 
 ## What the recent experiments showed

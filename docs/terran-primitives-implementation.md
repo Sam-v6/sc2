@@ -187,3 +187,13 @@ are preserved. Full encoding inventory reports 6,083/6,089 teaching and
 are explicit exclusions. See [the source repair](human-visibility-repair.md).
 This completes the observation/label engineering prerequisite for a new fitting
 contract; it does not establish imitation quality or native game competence.
+
+## Initial scripted baseline accepted
+
+The fresh 30-game panel and independent verifier are terminal: 30 victories,
+10/10 per race, 15/15 per map and 6/6 per named build. Peak host CPU9.3 percent.
+See [the result and remaining limitations](scripted-hard-baseline.md). Frozen
+source is preserved; subsequent Graviton Beam guard verification is separate.
+Full suite455tests/32optional skips and native smoke pass after that guard.
+No human fit or RL ran in this phase. Reconnect verified primitives to human
+choices next; the broad-action learned-policy roadmap remains unfinished.
