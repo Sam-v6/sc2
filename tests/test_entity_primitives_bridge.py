@@ -9,6 +9,7 @@ from sc2.position import Point2
 from src.learning.entity_play import JointImitationBot
 from src.learning.entity_execution import JointCommandAgent
 from src.learning.gameplay import Command
+from src.learning.production_scout import WorkerScout
 from tests.test_terran_primitives import economy, unit
 from tests.test_production_primitives import DATA
 
@@ -76,6 +77,7 @@ class PrimitiveBridgeTests(unittest.IsolatedAsyncioTestCase):
             learned_control=set(),
             primitive_commands=0,
             primitive_results={},
+            scout=WorkerScout(),
             scheduled_step_counts={},
         )
         bot.run_primitives = JointImitationBot.run_primitives.__get__(bot)
@@ -128,3 +130,39 @@ class PrimitiveBridgeTests(unittest.IsolatedAsyncioTestCase):
         await JointImitationBot.on_step(bot, 0)
         self.assertEqual(actions, [])
         self.assertEqual(bot.stream.getvalue(), "")
+
+    async def test_wait_scout_is_not_reassigned_by_mining_and_returns_when_hurt(self):
+        bot, state, actions = self.bot()
+        state["game_loop"] = 1688
+        state["units"].append(unit(400, 21))
+        bot.units_by_id[21] = dict(name="Barracks", attributes=[8])
+        bot.agent.next_loop = 4000
+        await JointImitationBot.on_step(bot, 0)
+        scout_commands = [a.action_raw.unit_command for a in actions
+                          if 1 in a.action_raw.unit_command.unit_tags]
+        self.assertEqual([c.ability_id for c in scout_commands], [16])
+        self.assertEqual(bot.scout.protected, {1})
+        row = json.loads(bot.stream.getvalue().splitlines()[0])
+        self.assertEqual(row["scout_events"][0]["event"], "selected")
+        actions.clear()
+        state["game_loop"] += 24
+        worker = next(u for u in state["units"] if u["tag"] == 1)
+        worker.update(health=20, health_max=45)
+        await JointImitationBot.on_step(bot, 1)
+        scout_commands = [a.action_raw.unit_command for a in actions
+                          if 1 in a.action_raw.unit_command.unit_tags]
+        self.assertEqual([c.ability_id for c in scout_commands], [295])
+        self.assertIsNone(bot.scout.tag)
+        self.assertEqual(bot.agent.history, [])
+
+    async def test_scout_does_not_override_a_learned_worker_request(self):
+        bot, state, actions = self.bot(Command(16, (1,), target_point=(15, 15)))
+        state["game_loop"] = 1688
+        state["units"].append(unit(400, 21))
+        bot.units_by_id[21] = dict(name="Barracks", attributes=[8])
+        await JointImitationBot.on_step(bot, 0)
+        self.assertEqual(bot.scout.tag, 2)
+        worker_commands = [a.action_raw.unit_command for a in actions
+                           if 1 in a.action_raw.unit_command.unit_tags]
+        self.assertEqual(len(worker_commands), 1)
+        self.assertEqual(len(bot.agent.history), 1)

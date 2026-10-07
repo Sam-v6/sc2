@@ -23,9 +23,11 @@ builder protection and interruption-resumption behavior.
 
 The shared helpers explicitly script mining/gas assignment, MULEs, Depot lowering,
 construction resumption, attack destinations/timing and per-unit combat. They do
-not train workers or soldiers or start production buildings. This adapter does
-not yet include the fixed-plan reactive Depot assist or the production experiment's
-WorkerScout. Supply construction and scouting decisions remain model requests.
+not train workers or soldiers or start production buildings. This adapter now
+includes the production experiment's protected WorkerScout, with selection,
+damage/deadline return and learned-actor protection. Scout events and commands
+are separately logged; they never enter learned history. It does not yet include
+the fixed-plan reactive Depot assist. Supply construction remains a model request.
 All assistance and its native acknowledgements are logged separately from learned
 commands and acknowledgements. Assistance never enters learned command history.
 
@@ -77,6 +79,23 @@ covered by regression tests. Keep the broad model's macro failure explicit.
 The completed scripted 30/30 Hard baseline remains a different controller/result.
 
 ## Artifacts and next action
+
+The scout transfer adds two integration regressions, observed failing before the
+change and passing afterward. The full suite now passes 576 tests, with 36 optional
+skips. `logs/roadmap/broad-scout-canary-02` preserves a native execution fixture,
+replay, observations, frozen source, contract and independent verification. Its
+production was the existing scripted baseline; the actual assistance call was
+`JointImitationBot.run_primitives`. One scout was selected at loop 1928, protected
+through 126 observations, returned after damage at loop 2928, and had an observed
+mining order at loop 2936. All assistance acknowledgements succeeded, delayed
+errors were absent, collected minerals reached 2,810 and sampled CPU peaked 5.4%.
+The 200-second cutoff is not a victory or learned competence result. The preceding
+fixture `broad-scout-canary-01` failed because the baseline's own scouting routine
+reclaimed the adapter scout; its failed receipt is preserved, not counted as a pass.
+
+Further imitation and RL are paused. Next coordinate reactive supply with model
+resource use, verify execution through this adapter, and diagnose the first
+requested-action/observed-effect divergence before another fit.
 
 `logs/roadmap/broad-primitive-canary-01` holds the frozen contract, two original
 replays, raw traces, receipts, report, source snapshot and `verification.json`.

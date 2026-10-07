@@ -29,6 +29,7 @@ from src.learning.live import ability_query, issue
 from src.learning.placement import resolve_placements
 from src.learning.sandbox import micro_score
 from src.learning.production_primitives import primitive_assistance, scripted_army_destination
+from src.learning.production_scout import WorkerScout
 from src.runner import positive, validate_map
 from src.runtime import supervise
 
@@ -109,6 +110,7 @@ class JointImitationBot(BotAI):
         self.learned_control = set()
         self.primitive_commands = 0
         self.primitive_results = {}
+        self.scout = WorkerScout()
 
     async def on_start(self):
         self.client.game_step = 1
@@ -161,8 +163,13 @@ class JointImitationBot(BotAI):
             [tuple(p) for p in self.expansion_locations_list],
             self.attacking, self.search_index,
         )
-        commands = primitive_assistance(
-            state, protected, self.units_by_id, self.catalog, destination,
+        scout_commands = self.scout.update(
+            state, protected, tuple(self.enemy_start_locations[0]),
+            tuple(self.start_location),
+        )
+        commands = scout_commands + primitive_assistance(
+            state, set(protected) | self.scout.protected,
+            self.units_by_id, self.catalog, destination,
             lambda p: self.in_map_bounds(Point2(p)) and self.in_pathing_grid(Point2(p)),
             mining,
         )
@@ -209,6 +216,7 @@ class JointImitationBot(BotAI):
                     assistance, result = await self.run_primitives(state, self.learned_control)
                     self.stream.write(json.dumps(dict(
                         phase="primitives", observation=feature_state,
+                        scout_events=self.scout.events,
                         primitive_protected=sorted(self.learned_control),
                         assistance=[c.as_dict() for c in assistance],
                         assistance_results=list(result.result), score=self.last_score,
@@ -290,6 +298,8 @@ class JointImitationBot(BotAI):
                         if self.job.get("primitive_assistance") else [],
                         assistance=[c.as_dict() for c in assistance],
                         assistance_results=list(assistance_result.result),
+                        scout_events=self.scout.events
+                        if self.job.get("primitive_assistance") else [],
                         score=self.last_score,
                     ),
                     separators=(",", ":"),
@@ -374,7 +384,7 @@ def play_joint_job(job):
         primitive_assistance=bool(job.get("primitive_assistance")),
         primitive_commands=bot.primitive_commands,
         primitive_results=bot.primitive_results,
-        assistance="Scripted mining/gas, construction resumption, MULEs, depot lowering, attack destinations and combat micro; no worker/army/building production fallback"
+        assistance="Scripted mining/gas, construction resumption, MULEs, depot lowering, protected worker scouting, attack destinations and combat micro; no worker/army/building production fallback"
         if job.get("primitive_assistance") else None,
         game_seconds=bot.last_loop / 22.4,
         score=bot.last_score,
@@ -441,7 +451,7 @@ def main():
     )
     parser.add_argument(
         "--primitive-assistance", action="store_true",
-        help="Keep verified mining/combat execution active between learned decisions; production remains learned",
+        help="Keep verified mining/scouting/combat execution active between learned decisions; production remains learned",
     )
     parser.add_argument("--seed", type=int, default=120001)
     parser.add_argument("--seconds", type=positive, default=600)

@@ -14,6 +14,21 @@ architecture. Preserve that experiment and its evidence as baselines.
 
 ## October 6 reset: establish reliable primitives first
 
+Reaffirmed October 7: pause further imitation fits and RL while diagnosing the
+current losing controller. The scripted baseline already has a verified 30/30
+Hard panel, but this does not prove that the learning controller uses those
+primitives correctly. The immediate gate is execution through the learning
+adapter: demonstrate resource income, completed buildings, worker and military
+births, supply recovery, scouting, offensive movement and combat micro. Audit
+the first divergence between requested action and observed effect in saved
+losses. Identify separately a bad model choice, an execution failure and a
+missing assistance primitive. Repair and verify the latter two before resuming
+human imitation; do not cover bad choices with an undisclosed scripted strategy.
+Keep mining, supply, scouting and combat assistance separately attributed. Use
+the inspected Sharpy and Burny source references in
+[the primitives diagnosis](primitives-reset-2026-10-06.md), rather than assuming
+a bot is the best without evidence. Retain broad controls for later learning.
+
 The user explicitly redirected the work after repeated losses: pause imitation
 and RL training, understand the losses, and establish reliable primitives using
 established open-source bots as engineering references. This supersedes earlier

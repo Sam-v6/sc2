@@ -1,7 +1,24 @@
 # Current learning status
 
 Updated October 7, 2026. The **initial scripted Hard baseline is verified**;
-the active next phase is reconnecting human imitation to the verified primitives.
+the immediate priority is diagnosing losses and verifying those primitives
+through the learning controller's execution adapter. Further imitation fits and
+RL are paused under the user's renewed primitives-first direction. The scripted
+baseline's 30/30 Hard wins do not establish reliable execution in that adapter.
+Mining, combat and protected WorkerScout assistance are connected. The fresh
+200-second native scout fixture verifies selection, protection, damage retreat
+and observed return to mining, with zero raw/delayed errors and 5.4% sampled host
+CPU peak. Production in that fixture was explicitly scripted; it proves execution,
+not learned competence. Reactive supply is not yet transferred there.
+Check requested actions against actual income,
+construction, production and combat effects before resuming learning.
+
+The latest mixed-source timing fit is terminal and failed its frozen gates.
+Independent verification found no qualifying cutoff on calibration or either
+evaluation game. Its diagnostic cutoff is unqualified; no production-choice
+fit, native rollout or RL followed. Evidence is preserved under
+`logs/roadmap/mixed-production-fit-01/`. The data-readiness records below describe
+earlier preparation, not the current next action.
 The [mixed-source data preparation](mixed-source-production-data.md) is terminal
 and independently verified: native teaching supplies 467 production / 1,002 wait / 205
 unknown intervals; all eight games cover 99.85% elapsed time at actual 44-loop cadence.
@@ -10,8 +27,8 @@ windows. Native teaching is five Mez games; Lyra calibrates, Huski/Rom evaluate,
 all reused diagnostics clearly labeled. Reserved games unchanged. Source naming
 repairs require native catalogue proof; uncertain commands stay censored.
 Full suite 570 tests / 32 optional skips, CPU peak 23.2%, no fit/predictions/bot games/RL.
-Next implement the frozen mixed-source timing/choice experiment and retain its
-offline gates; this is data readiness, not useful native imitation yet.
+The planned mixed-source timing/choice experiment subsequently failed the timing
+gate described above; this preparation establishes data readiness only.
 The [mixed-source production experiment](mixed-source-production-experiment.md)
 now has a verified dense-data pilot: reused diagnostic Rom yields 120 states
 every 44 loops, preserves all 299 native actions, and covers 99.87% of elapsed
