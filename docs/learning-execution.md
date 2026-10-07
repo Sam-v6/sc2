@@ -4732,3 +4732,17 @@ or RL. See [result, scope and missing supply/scout assistance](broad-imitation-p
 Bound sources were frozen during both games and snapshotted after terminal exit.
 Next use repaired source commands for state-conditioned production/timing while
 preserving the full raw action roadmap. Do not rerun this old model unchanged.
+
+## October 7: close unsupported production timing fit before training
+
+Rebuilt and independently verified 2,044 actual current observation windows;
+no human history, future arguments or interpolated states. Five new decision
+window tests pass; full suite 560 tests / 32 optional skips. A bounded numeric
+source-ability classification pass separates positive gate evidence from
+first-command identity, retaining uncertain manager events. Independent proof
+and interval accounting pass. Teaching: 816 confirmed act, 122 wait, 619 unknown
+out of 1,557; actual windows cover roughly 75–80% of elapsed time. This source
+does not support a representative act/wait fit; the experiment is closed without
+training, native games or RL. Resolve quiet-period observations or explicitly
+limit the next experiment to conditional command identity, preserving broad
+controls and verified primitives. See [evidence and limits](human-production-timing-coverage.md).

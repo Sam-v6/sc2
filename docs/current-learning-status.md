@@ -2,6 +2,13 @@
 
 Updated October 7, 2026. The **initial scripted Hard baseline is verified**;
 the active next phase is reconnecting human imitation to the verified primitives.
+The [production timing coverage audit](human-production-timing-coverage.md) closes
+the proposed two-second act/wait fit without training: source-backed classification
+leaves 619/1,557 teaching intervals unknown, only 122 confirmed waits, and 20–25%
+of elapsed game time uncovered. Both source-state and interval verifiers pass.
+Full suite now 560 tests / 32 optional skips. Resolve quiet-period coverage before
+learning timing; verified command identities remain useful, but scripted cadence
+would need explicit attribution. No training, simulation or RL in this audit.
 The [broad-controller primitive bridge](broad-imitation-primitive-bridge.md) now
 passes regression checks and two native integration canaries. Its opt-in mining
 and combat assistance runs during model waits, protects model-controlled actors,
