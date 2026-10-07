@@ -26,6 +26,7 @@ from src.learning.production_goal_policy import current_features, predict_goals
 from src.learning.production_ledger import ProductionLedger
 from src.learning.production_intents import ProductionIntents, remaining_budget
 from src.learning.production_prior import prior_scores
+from src.learning.production_scout import WorkerScout
 from src.runner import validate_map
 from src.learning.production_primitives import primitive_assistance, scripted_army_destination
 
@@ -62,6 +63,8 @@ class ProductionGoalBot(BotAI):
         self.acknowledged = Counter()
         self.blocks = Counter()
         self.snapshots = []
+        self.scout = WorkerScout()
+        self.scout_commands = []
 
     async def on_start(self):
         self.client.game_step = 8
@@ -128,7 +131,7 @@ class ProductionGoalBot(BotAI):
             tuple(self.game_info.map_center), [tuple(p) for p in self.expansion_locations_list],
             self.attacking, self.search_index)
         self.assistance_destination = destination
-        return primitive_assistance(state, selected, self.units_by_id, self.catalog,
+        return self.scout_commands + primitive_assistance(state, selected, self.units_by_id, self.catalog,
             destination, lambda p: self.in_map_bounds(Point2(p)) and self.in_pathing_grid(Point2(p)), mining)
 
     async def on_step(self, iteration):
@@ -136,15 +139,17 @@ class ProductionGoalBot(BotAI):
             state = self.view.observe(self.state.response_observation)
             state['map_size'] = [self.game_info.map_size.x, self.game_info.map_size.y]
             loop = state['game_loop']
+            claimed = {item['actor'] for item in self.ledger.pending.values()}
+            self.scout_commands = self.scout.update(state, claimed, tuple(self.enemy_start_locations[0]), tuple(self.start_location))
             if loop < self.next_plan:
-                selected = {item['actor'] for item in self.ledger.pending.values()}
+                selected = claimed | self.scout.protected
                 assistance = self.assistance(state, selected)
                 result = await issue(self.client, assistance) if assistance else pb.ResponseAction()
                 if len(result.result) != len(assistance):
                     raise ValueError('Incomplete primitive acknowledgement batch')
                 self.result_counts.update(map(str, result.result))
                 self.stream.write(json.dumps(dict(phase='micro', observation=state, goals=None,
-                    pending=self.ledger.pending, assistance_destination=self.assistance_destination, execution=[],
+                    pending=self.ledger.pending, scouting=dict(tag=self.scout.tag, protected=sorted(self.scout.protected), events=self.scout.events), assistance_destination=self.assistance_destination, execution=[],
                     assistance=[c.as_dict() for c in assistance], results=list(result.result)),
                     separators=(',', ':'))+'\n')
                 return
@@ -169,7 +174,7 @@ class ProductionGoalBot(BotAI):
                           for row in packet.abilities} for packet in packets]
             actual = {tag: {canonical(a, self.catalog) for a in abilities}
                       for tag, abilities in available[0].items()}
-            selected = {item['actor'] for item in self.ledger.pending.values()}
+            selected = {item['actor'] for item in self.ledger.pending.values()} | self.scout.protected
             commands, tickets, execution = [], [], []
             reserved = reservations(state, self.units_by_id, self.catalog)
             geyser_claims = claimed_geysers(state, self.catalog)
@@ -276,7 +281,7 @@ class ProductionGoalBot(BotAI):
                 intent_events=self.ledger.events if self.intent_mode else [],
                 recent_fulfilments=self.ledger.recent if self.intent_mode else [],
                 effective_queued=self.ledger.effective_queued if self.intent_mode else queued,
-                pending=self.ledger.pending, assistance_destination=self.assistance_destination, execution=execution,
+                pending=self.ledger.pending, scouting=dict(tag=self.scout.tag, protected=sorted(self.scout.protected), events=self.scout.events), assistance_destination=self.assistance_destination, execution=execution,
                 assistance=[c.as_dict() for c in assistance], results=list(result.result)),
                 separators=(',', ':'))+'\n')
         except Exception as error:
@@ -308,6 +313,6 @@ def play_production_goals(job):
                   frames=bot.frames, requested=dict(bot.requested), acknowledged=dict(bot.acknowledged),
                   blocks=dict(bot.blocks), results=dict(bot.result_counts),
                   production=bot.production, snapshots=bot.snapshots,
-                  assistance='scripted mining/gas assignment, construction execution, MULEs, depot lowering, attack timing/destinations, per-unit combat micro; production choices learned')
+                  assistance='scripted mining/gas assignment, protected worker scouting, construction execution, MULEs, depot lowering, attack timing/destinations, per-unit combat micro; production choices learned')
     (output/'episode.json').write_text(json.dumps(report, indent=2)+'\n')
     return report

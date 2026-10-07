@@ -4293,3 +4293,16 @@ The52-family production forecast is only an intermediate macro experiment.
 Broad raw-command imitation and learned attack/micro decisions remain required.
 RL stays gated on useful native imitation; do not claim roadmap completion.
 See [baseline proof and limits](scripted-hard-baseline.md).
+
+### October 6: protected scouting transfer verified
+
+Original native01 failed: scout selected97.5seconds but global135second cutoff
+truncated travel; first enemy248.93seconds. Original bound source is archived.
+A relative60second outing fixes that measured timing mismatch. Native02/session77332
+and independent verifier40783 are terminal with exit0. Scout selected97.5seconds,
+first enemy138.93, damage return139.64 and later mining; owned accepted commands
+and builder/harvest protection verify. Revised scout gate passes; game Tie,
+33military births/70workers, strict cadence gate remains false. Wall48.341seconds,
+CPUpeak5.3%. Fullsuite498tests/32skips and named-fileRuff pass. No training/RL.
+See [scout result](human-scout-transfer-result.md); source snapshots preserve both
+frozen protocols. Next is source-backed inventory-goal retrieval, not another fit.

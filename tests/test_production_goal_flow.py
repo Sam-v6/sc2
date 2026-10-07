@@ -6,6 +6,7 @@ from unittest.mock import AsyncMock, Mock, patch
 from s2clientprotocol import sc2api_pb2 as pb, query_pb2 as q
 from src.learning.production_goal_play import ProductionGoalBot
 from src.learning.production_ledger import ProductionLedger
+from src.learning.production_scout import WorkerScout
 from tests.test_terran_primitives import unit
 
 
@@ -15,7 +16,9 @@ class GoalFlowTests(unittest.IsolatedAsyncioTestCase):
         st = dict(units=[unit(10, 18)], game_loop=24, upgrades=[], player=dict(minerals=50, vespene=0))
         bot.view = NS(observe=Mock(return_value=st))
         bot.state = NS(response_observation=None)
-        bot.game_info = NS(map_size=NS(x=64, y=64))
+        bot.game_info = NS(map_size=NS(x=64, y=64), player_start_location=(0,0), start_locations=[(30,30)])
+        bot.scout = WorkerScout()
+        bot.scout_commands = []
         bot.next_plan = bot.frames = 0
         bot.prior = None
         bot.intent_mode = False
@@ -109,3 +112,19 @@ class GoalFlowTests(unittest.IsolatedAsyncioTestCase):
         bot, issue = await self.run_intent(supply=True)
         self.assertEqual([c.ability for c in issue.call_args.args[1]], [524])
         self.assertEqual(bot.blocks['supply:expensive'], 1)
+
+    async def test_scout_is_excluded_from_production_and_gets_one_assistance_command(self):
+        bot = self.bot()
+        state = bot.view.observe.return_value
+        state.update(game_loop=1800, units=[unit(10,18), unit(20,45), unit(21,45), unit(100,21)])
+        state['player']['minerals'] = 200
+        bot.assistance = lambda state, selected: bot.scout_commands
+        bot.client._execute.return_value = pb.Response(query=q.ResponseQuery(abilities=[q.ResponseQueryAvailableAbilities(unit_tag=21, abilities=[dict(ability_id=1)])]))
+        with patch('src.learning.production_goal_play.current_features', return_value=None), \
+             patch('src.learning.production_goal_play.predict_goals', return_value=({'expensive': 1}, NS(tolist=lambda: [1]))), \
+             patch('src.learning.production_goal_play.eligible_actors', return_value=[unit(20,45), unit(21,45)]), \
+             patch('src.learning.production_goal_play.resolve_production_placement', side_effect=self.resolved), \
+             patch('src.learning.production_goal_play.issue', new_callable=AsyncMock, return_value=pb.ResponseAction(result=[1,1])) as issue:
+            await bot.on_step(0)
+        commands = issue.call_args.args[1]
+        self.assertEqual([(c.ability,c.units) for c in commands], [(1,(21,)),(16,(20,))])

@@ -13,7 +13,9 @@ repeated spending from standing forecasts. The [cadence diagnostic](human-produc
 14 Depots, but still banks 7,000 minerals with only one Barracks. Its opening gate
 passes; its strict one-Depot cadence gate does not. The [inventory label audit and first fit](human-inventory-target-result.md) now
 verify: labels are usable, but the regressor fails production-capacity accuracy.
-Next is a source-backed human-goal retrieval diagnostic with transferred scouting,
+The [protected scouting transfer](human-scout-transfer-result.md) now passes a
+native canary: enemy vision by139seconds, damage retreat and return to mining.
+Next is a source-backed human-goal retrieval diagnostic through those primitives,
 not another unchanged fit or count-model run.
 RL remains paused. The full roadmap is incomplete, and scripted victories are
 not learned-controller victories.
