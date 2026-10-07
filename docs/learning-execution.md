@@ -4051,3 +4051,18 @@ The representability inventory is now terminal: 6,083/6,089 teaching commands an
 outside observed target candidates. Runtime79.1seconds, no optimizer/model.
 Use these counts for a new contract; earlier6,086teaching-count assertions are
 not valid for the repaired corpus.
+
+### October 6: baseline panel remains live; reproducibility evidence saved
+
+Previous goal turn completed the human corpus repair; this turn is a verified
+wait on the live baseline session96434, with additional verification preparation.
+At this checkpoint21of30games are terminal victories,7perrace. All30outcomes and
+independent replay checks are still required before declaring scripted acceptance.
+No learning or changes to the frozen controller during the panel.
+
+The original source snapshot and runtime receipt are saved under the panel.
+Engine/map hashes were captured during execution, not before its initial result.
+The verifier checks those hashes, reports per-map/per-build/per-race results and
+rejects any timeout receipt whose replay contains a winner. Do not edit bound
+source until the panel and its final verifier finish. Next poll the same live
+handle; no restart solely from an observation timeout.
