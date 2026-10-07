@@ -112,6 +112,40 @@ def mining_commands(state, gas_workers, protected=()):
     return commands
 
 
+def worker_defense_commands(state, types, protected=()):
+    """Pull SCVs against ground attackers at a base when the nearby army is weaker.
+
+    Pulls twice the supply deficit plus one from idle, mining or already-fighting SCVs;
+    builders and injured SCVs stay out.
+    Released workers become idle when their target dies and resume mining.
+    """
+    own = [u for u in state['units'] if u['alliance'] == 1]
+    bases = [u for u in own if u['unit_type'] in (18, 132, 130) and u.get('build_progress', 1) == 1]
+    threats = [e for e in state['units'] if e['alliance'] == 4 and e.get('display_type', 1) == 1
+               and not e.get('is_flying') and e.get('health', 1) > 0
+               and 8 not in types.get(e['unit_type'], {}).get('attributes', [])
+               and any(w['type'] in (1, 3) for w in types.get(e['unit_type'], {}).get('weapons', []))
+               and any(distance(e, b) < 12 for b in bases)]
+    if not threats:
+        return []
+    enemy = sum(types[e['unit_type']].get('food_required', 1) for e in threats)
+    army = sum(types.get(u['unit_type'], {}).get('food_required', 0) for u in own
+               if u['unit_type'] != 45 and any(distance(u, b) < 15 for b in bases))
+    if army >= enemy:
+        return []
+    workers = sorted((u for u in own if u['unit_type'] == 45 and u['tag'] not in protected
+                      and u.get('health', 45) >= 20
+                      and all(o['ability_id'] in (23, 295, 296, 3666, 3667) for o in u.get('orders', []))),
+                     key=lambda u: min(distance(u, e) for e in threats))
+    commands = []
+    for worker in workers[:math.ceil(2*(enemy - army)) + 1]:
+        target = min(threats, key=lambda e: distance(worker, e))
+        command = Command(23, (worker['tag'],), target_unit=target['tag'])
+        if changes_order(worker, command):
+            commands.append(command)
+    return commands
+
+
 def combat_command(unit, enemies, types, destination, can_walk):
     if unit.get('health', 0) <= 0 or 5 in unit.get('buff_ids', []):
         # Graviton Beam disables commands until the unit is released.

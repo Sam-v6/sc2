@@ -248,3 +248,61 @@ class CombatTests(unittest.TestCase):
         self.assertIsNotNone(command)
         self.assertIsNone(command.target_unit)
         self.assertEqual(command.target_point, (20, 20))
+
+
+DEFENSE_TYPES = {
+    45: dict(name='SCV', food_required=1, attributes=[1, 3, 4], weapons=[dict(type=1, range=.1)]),
+    48: dict(name='Marine', food_required=1, attributes=[1, 3], weapons=[dict(type=3, range=5)]),
+    105: dict(name='Zergling', food_required=.5, attributes=[1, 3], weapons=[dict(type=1, range=.1)]),
+    108: dict(name='Mutalisk', food_required=2, attributes=[1, 3], weapons=[dict(type=3, range=3)]),
+    18: dict(name='CommandCenter', attributes=[2, 4, 8]),
+    86: dict(name='Hatchery', attributes=[2, 4, 8]),
+}
+
+
+def base_under(enemies, workers=12, army=()):
+    units = [unit(100, 18, build_progress=1)]
+    units += [unit(i, 45, x=3, health=45) for i in range(1, workers + 1)]
+    units += list(army) + list(enemies)
+    return dict(units=units)
+
+
+class WorkerDefenseTests(unittest.TestCase):
+    def test_no_threat_pulls_no_workers(self):
+        from src.bots.terran_primitives import worker_defense_commands
+        self.assertEqual(worker_defense_commands(base_under([]), DEFENSE_TYPES), [])
+
+    def test_ground_rush_at_base_pulls_twice_the_supply_deficit_plus_one(self):
+        from src.bots.terran_primitives import worker_defense_commands
+        lings = [unit(500 + i, 105, x=6 + i, alliance=4) for i in range(6)]
+        commands = worker_defense_commands(base_under(lings), DEFENSE_TYPES)
+        self.assertEqual(len(commands), 7)
+        self.assertTrue(all(c.ability == 23 and c.target_unit == 500 for c in commands))
+
+    def test_sufficient_army_near_base_needs_no_workers(self):
+        from src.bots.terran_primitives import worker_defense_commands
+        lings = [unit(500 + i, 105, x=6, alliance=4) for i in range(6)]
+        marines = [unit(600 + i, 48, x=2) for i in range(3)]
+        self.assertEqual(worker_defense_commands(base_under(lings, army=marines), DEFENSE_TYPES), [])
+
+    def test_builders_and_injured_workers_stay_out(self):
+        from src.bots.terran_primitives import worker_defense_commands
+        lings = [unit(500 + i, 105, x=6, alliance=4) for i in range(20)]
+        state = base_under(lings, workers=4)
+        state['units'][1]['health'] = 10
+        state['units'][3]['orders'] = [dict(ability_id=321, target_world_space_pos=dict(x=9, y=9))]
+        commands = worker_defense_commands(state, DEFENSE_TYPES, protected={2})
+        self.assertEqual(sorted(c.units[0] for c in commands), [4])
+
+    def test_distant_air_and_structure_threats_are_ignored(self):
+        from src.bots.terran_primitives import worker_defense_commands
+        enemies = [unit(500, 105, x=40, alliance=4), unit(501, 108, x=4, alliance=4, is_flying=True),
+                   unit(502, 86, x=5, alliance=4)]
+        self.assertEqual(worker_defense_commands(base_under(enemies), DEFENSE_TYPES), [])
+
+    def test_workers_already_attacking_are_not_reissued(self):
+        from src.bots.terran_primitives import worker_defense_commands
+        state = base_under([unit(500, 105, x=6, alliance=4)], workers=2)
+        for worker in state['units'][1:3]:
+            worker['orders'] = [dict(ability_id=23, target_unit_tag=500)]
+        self.assertEqual(worker_defense_commands(state, DEFENSE_TYPES), [])

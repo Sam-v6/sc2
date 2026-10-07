@@ -15,7 +15,7 @@ from sc2.ids.upgrade_id import UpgradeId as G
 from sc2.position import Point2
 from s2clientprotocol import sc2api_pb2 as pb
 
-from src.bots.terran_primitives import combat_command, mining_commands, scripted_targets, destination_reached, changes_order, scripted_attack
+from src.bots.terran_primitives import combat_command, mining_commands, scripted_targets, destination_reached, changes_order, scripted_attack, worker_defense_commands
 from src.learning.gameplay import Command, PlayerView, protocol_dict
 from src.learning.live import issue
 from src.learning.production_clearance import reservations, resolve_production_placement, site_reservations
@@ -34,7 +34,7 @@ class PrimitiveTerranBot(BotAI):
         self.scouted, self.scout_tag = False, None
         self.search_index = 0
         self.summary = dict(worker_peak=0, army_peak=0, collected_minerals=0,
-                            mining_commands=0, combat_commands=0, resumed_builds=0,
+                            mining_commands=0, combat_commands=0, defense_commands=0, resumed_builds=0,
                             raw_action_errors=0, delayed_action_errors=0)
 
     async def on_start(self):
@@ -217,7 +217,12 @@ class PrimitiveTerranBot(BotAI):
             if macro:
                 self.next_macro = self.state.game_loop+24
                 await self.macro(state, targets)
-                protected = self.unit_tags_received_action | ({self.scout_tag} if self.scout_tag else set())
+            scout = {self.scout_tag} if self.scout_tag else set()
+            defense = worker_defense_commands(state, self.types, self.unit_tags_received_action | scout)
+            self.summary['defense_commands'] += len(defense)
+            commands.extend(defense)
+            if macro:
+                protected = self.unit_tags_received_action | scout | {c.units[0] for c in defense}
                 mining = mining_commands(state, targets['gas_workers'], protected)
                 self.summary['mining_commands'] += len(mining)
                 commands.extend(mining)
