@@ -62,6 +62,9 @@ async def _resolve_production_placement(client, command, catalog, state, unit_ty
                       if 0 <= origin[0]+x < width and 0 <= origin[1]+y < height)
         search = {tuple(math.floor(x - offset + .5) + offset for x in point)
                   for point in search}
+        # An expansion request identifies its resource site, not a generic building seed.
+        if unit_type == 18:
+            search = {origin}
         search = sorted(search, key=lambda p: (sum((a-b)**2 for a,b in zip(p, origin)), p))
         points = [p for p in search
                   if clear_site(p, info.get('footprint_radius', 1), reserved)

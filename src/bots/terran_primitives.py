@@ -70,6 +70,11 @@ def mining_commands(state, gas_workers, protected=()):
         return []
     patches = [u for u in state['units'] if u['alliance'] == 3 and u.get('mineral_contents', 0) > 0
                and any(distance(u, b) < 10 for b in bases)]
+    if not patches:
+        patches = [u for u in state['units']
+                   if u['alliance'] == 3 and u.get('mineral_contents', 0) > 0
+                   and u.get('observed', True) and u.get('display_type', 1) == 1
+                   and not any(distance(u, e) < 10 for e in enemies)]
     gas = [u for u in own if u['unit_type'] == 20 and u.get('build_progress', 1) == 1
            and u.get('vespene_contents', 0) > 0 and any(distance(u, b) < 10 for b in bases)]
     workers = [u for u in own if u['unit_type'] == 45 and u['tag'] not in protected

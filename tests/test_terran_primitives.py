@@ -17,6 +17,22 @@ def economy(workers):
 
 
 class MiningTests(unittest.TestCase):
+    def test_depleted_bases_send_idle_workers_to_visible_safe_remote_patches(self):
+        state = economy([unit(1, 45), unit(2, 45)])
+        state['units'][1]['mineral_contents'] = 0
+        state['units'][2]['mineral_contents'] = 0
+        state['units'] += [unit(400, 341, x=25, alliance=3, mineral_contents=1800),
+                           unit(401, 341, x=15, alliance=3, mineral_contents=1800, observed=False),
+                           unit(402, 341, x=50, alliance=3, mineral_contents=1800),
+                           unit(500, 48, x=50, alliance=4)]
+        commands = mining_commands(state, 0, {2})
+        self.assertEqual([(c.units, c.target_unit) for c in commands], [((1,), 400)])
+
+    def test_remote_resources_do_not_displace_working_local_mining(self):
+        state = economy([unit(1, 45)])
+        state['units'] += [unit(400, 341, x=25, alliance=3, mineral_contents=1800)]
+        self.assertIn(mining_commands(state, 0)[0].target_unit, (200, 201))
+
     def test_idle_workers_get_distinct_saturated_mineral_slots(self):
         commands = mining_commands(economy([unit(i, 45) for i in range(1, 5)]), 0)
         self.assertEqual(len(commands), 4)

@@ -73,6 +73,23 @@ class ProductionClearanceTests(unittest.TestCase):
 
 
 class BuilderPathTests(unittest.IsolatedAsyncioTestCase):
+    async def test_expansion_command_does_not_move_twenty_tiles_off_its_resource_site(self):
+        class Client:
+            async def _execute(self, **kwargs):
+                request = kwargs['query']
+                return pb.Response(query=query.ResponseQuery(
+                    placements=[query.ResponseQueryBuildingPlacement(result=44 if
+                        (p.target_pos.x, p.target_pos.y) == (52.5, 113.5) else 1)
+                        for p in request.placements],
+                    pathing=[query.ResponseQueryPathing(distance=20) for _ in request.pathing]))
+        state = dict(units=[dict(tag=1, alliance=1, unit_type=45, position=[31, 114])], map_size=[176, 184])
+        commands, _ = await resolve_production_placement(Client(),
+            Command(318, (1,), target_point=(52.5, 113.5)),
+            {318: dict(friendly_name='Build CommandCenter', is_building=True, footprint_radius=2.5),
+             319: dict(friendly_name='Build SupplyDepot', is_building=True, footprint_radius=1)},
+            state, 18, [])
+        self.assertEqual(commands, [])
+
     async def test_queries_and_commands_use_the_same_engine_grid_centers(self):
         class Client:
             async def _execute(self, **kwargs):

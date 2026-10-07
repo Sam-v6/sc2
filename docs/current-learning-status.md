@@ -528,3 +528,37 @@ claim: of34accepted SCVs at80+workers, only3 were rawtop choices at submission;
 31 had another rawtop ability. Decoder filtering/retained intent contributes,
 alongside model building priorities and fixed positive-event cadence. This does
 not justify hidden worker caps. Audit:`reserved-choice-competence-04/worker-choice-audit.json`.
+
+### Depleted-base recovery and expansion-site fidelity (2026-10-07)
+
+Mining previously used only nonempty patches within10tiles of completed safe
+owned townhalls. When that set is empty, unprotected idle/harvesting workers may
+now target currently observed nonempty remote patches away from visible enemies.
+Local mining remains preferred; builders, returning cargo and protected workers
+retain their tasks. This is declared long-distance harvesting, not an expansion
+strategy or worker quota. Reachability beyond the tested routes remains open.
+
+CommandCenter placement now retains the exact requested native-grid site rather
+than using the generic +/-20tile relocation search. The experimental native16
+wrapper tries the next unoccupied native expansion site when the first is rejected.
+Other production building search/addon clearance remains unchanged. Three focused
+regressions reproduce depleted mining and off-site expansion relocation.613default
+tests pass (40optional skips), Ruff and diff checks pass.
+
+`depleted-mining-fixture-01/verification.json` verifies real-engine remote mining:
+debug removes home patches and adds one SCV at the nearby expansion for visibility,
+without resource boost or another townhall. After setup takes effect, zero local
+patches remain; real harvest/return orders collect525minerals and appear in3086
+worker-observation pairs. Zero immediate/delayed errors; normal150game-second
+cutoff with native replay.10.499wallseconds,5.3percent measured hostCPUpeak. This
+is an engineering fixture, not learned strength or a victory. Source snapshots,
+raw observations, score income and saved replay header were independently checked.
+
+Native16 matched three-race competence panel06 is running with the frozen model,
+CPU-only and80percent host guard, no training/RL,1200game seconds/300wall pergame.
+Active exec session9273 at this handoff (re-poll handle before assuming live).
+Source-bound files must remain unchanged while live. Log:
+`/tmp/sc2-competence-06.log`; progress/report under
+`logs/roadmap/reserved-choice-competence-06`. It stops after the first error; no
+outcome yet. Next audit real income, actual expansion positions, errors and game
+outcomes; retain macro/timing shortcomings separately from primitive acceptance.
