@@ -2,7 +2,7 @@
 
 import math
 
-from src.learning.production_execution import canonical
+from src.learning.production_execution import canonical, command_point
 
 
 class ProductionRequest:
@@ -51,13 +51,7 @@ class ProductionRequest:
         self.existing = {
             unit["tag"] for unit in state["units"] if unit["alliance"] == 1
         }
-        target = next(
-            (unit for unit in state["units"] if unit["tag"] == command.target_unit),
-            None,
-        )
-        self.point = command.target_point or (
-            tuple(target["position"][:2]) if target else None
-        )
+        self.point = command_point(command, state)
         if self.point is None and self.catalog[command.ability].get(
             "friendly_name", ""
         ).startswith(("Build TechLab", "Build Reactor")):

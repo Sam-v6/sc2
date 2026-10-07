@@ -32,6 +32,27 @@ def canonical(ability, catalog):
     return catalog.get(ability, {}).get('remaps_to_ability_id') or ability
 
 
+def command_point(command, state):
+    """Resolve point and observed unit targets consistently for builder travel."""
+    if command.target_point is not None:
+        return command.target_point
+    target = next((u for u in state['units'] if u['tag'] == command.target_unit), None)
+    return tuple(target['position'][:2]) if target else None
+
+
+def builder_approach_points(command, state):
+    """A unit target blocks its centre; query outside its observed footprint."""
+    if command.target_point is not None:
+        return [command.target_point]
+    target = next((u for u in state['units'] if u['tag'] == command.target_unit), None)
+    if target is None:
+        return []
+    x, y = target['position'][:2]
+    radius = target.get('radius', 1.5) + .5
+    return [(x + dx * radius, y + dy * radius)
+            for dx in (-1, 0, 1) for dy in (-1, 0, 1) if dx or dy]
+
+
 def waiting_for_supply(error, state, catalog):
     if (error['result'] != 13 or not catalog.get(error['ability_id'], {}).get('friendly_name', '').startswith('Train ')):
         return False

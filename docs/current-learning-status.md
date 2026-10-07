@@ -431,3 +431,29 @@ Next wire the verified gas targeting into both fresh policy comparison arms.
 The earlier interrupted pair and failing gates remain unchanged. Continue with
 the frozen model and explicit intent budgets before deciding whether another
 imitation fit is warranted; RL stays paused.
+
+### Reserved intent passes matched production gates; actual wins still unproven
+
+After the verified gas repair, the same-checkpoint matched pair is independently
+verified: fallback produces zero military units/producers; reserved intent
+produces 26 military births and 17 completed producers, with 52 new SCVs and zero
+errors. All original production gates pass for reserved intent. Both games are
+600-second cutoff Ties, and 20 Factory requests show remaining overbuilding.
+See [the detailed canary record](professional-choice-native-canary.md).
+
+The first actual-game three-race panel stops in Terran on a unit-target Refinery
+travel timeout; the timer includes point-target travel but omits gas travel.
+The second attempt queries the blocked geyser centre and withholds a legal
+build. Both failed panels are preserved; other races are unattempted. Shared
+`command_point` and `builder_approach_points` helpers now resolve target geometry
+and offer outside-footprint route candidates. The native refinery fixture 04
+verifies centres return zero, approach paths are positive, all three Refineries
+complete, and expansion gas is harvested without errors. All 606 default tests
+pass (40 optional skips), with Ruff/diff checks passing.
+
+Current live work: `reserved-choice-competence-03`, using the frozen model and
+`run_professional_choice_native_13.py`, three sequential 1,200-second VeryEasy
+games with original panel seeds, 300-second wall limits and 80-percent CPU guard.
+Check its actual process/receipt before restarting or counting outcomes. The
+full learned Hard/higher and broad human-imitation roadmap remains active; RL
+stays paused.

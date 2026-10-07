@@ -320,3 +320,78 @@ wire this verified gas-site helper into both newly frozen arms, rather than
 reuse the old starting-base-only recipe. Keep model weights and all existing
 gates fixed, inspect intent disposition/actual production, and retain separate
 scripted, learned-selection and full-imitation claims. No RL is running.
+
+## Corrected gas matched pair: reserved intent passes production gates
+
+The fresh, frozen pair under
+`logs/roadmap/resource-reserved-intent-comparison-02/verification.json` is terminal
+and independently verified. Native 10 and 11 use the same checkpoint, map,
+Zerg VeryEasy Macro opponent, seed 824101, 600-second cutoff and repaired
+physical gas-site helper. Separate processes overlap in wall time; reported CPU
+peaks include that overlap. Neither arm fits a model or runs RL.
+
+| Replay/native outcome | Cheaper fallback (10) | Reserved intent (11) |
+|---|---:|---:|
+| New SCVs | 47 | 52 |
+| Military births | 0 | 26 |
+| Completed production buildings | 0 | 17 |
+| Immediate/delayed action errors | 0 | 0 |
+| Independently recomputed prediction vectors | 1,195 | 1,051 |
+| Frozen engineering gates | Fail | Pass |
+| Game result | 600-second cutoff Tie | 600-second cutoff Tie |
+| Wall seconds | 58.559 | 65.194 |
+| Sampled host CPU peak | 9.3% | 10.8% |
+
+Reserved intent submits 140 of 141 created intents, with zero invalidations and
+one explicitly unissued Liberator intent at cutoff. The verifier reconstructs
+every budget and selected intent, checks native ability availability, site
+eligibility and queue bounds, validates 690 protected pending observations and
+53 concurrent choices, and counts actual replay births/completions. Military
+births are 18 Marines, five Hellions, one Medivac and two Liberators; MULEs and
+enemy ChangelingMarines are excluded. This supports the decoder starvation
+repair under this one matched seed. It does not establish learned timing, broad
+human imitation, an actual win, or Hard competence. The reserved arm still
+requests 20 Factories and 19 Depots: overbuilding remains an explicit limitation.
+Original source paths with absolute runner names are also copied into normalized
+project-relative snapshot paths, preserving the original hash bindings.
+
+## Longer-game checks expose unit-target builder travel boundaries
+
+`reserved-choice-competence-01` freezes a three-race VeryEasy Macro panel,
+AcropolisLE, seeds 824201–824203, 1,200-second game limits and 300-second
+per-game wall limits, sequential CPU-only games with the host guard. It stops
+after its first Terran game errors; Zerg and Protoss are unattempted. At loop
+10912, SCV 4348706817 at (36.4753,143.7095) accepts Refinery targeting geyser
+4337696769 at (77.5,145.5). At last logged loop 11360 it is still travelling
+with that BuildRefinery order. The point-target route allowance is absent for
+unit targets, so the fixed 448-loop timer produces a false timeout. No victory
+or all-race competence follows. Its receipt/trace/source snapshot remain saved.
+
+A second panel stops earlier on a 60-second unissued Refinery intent. Its new
+route query uses the geyser's blocked centre and returns zero, so it withholds
+a build that has a successful placement query. That failed attempt is preserved
+as `reserved-choice-competence-02`. Do not extend either deadline to hide these
+physical query errors.
+
+`command_point` now shares observed target-point resolution with the request
+tracker. `builder_approach_points` retains the actual point for point-target
+builds, and offers eight candidates outside a unit target's observed radius
+for unit-target construction; native pathing decides which are reachable.
+Unobserved unit targets produce no candidates. Regressions are observed red
+before the helpers are implemented. All 606 default tests pass (40 optional
+skips), with Ruff and diff checks passing.
+
+The native `refinery-expansion-fixture-04` independently verifies the approach
+queries: all three geyser centres return zero, while positive approach routes
+select the shortest reachable worker and point. All three actual Refinery starts
+and completions appear in the replay, and expansion workers extract 188 gas
+with zero errors. Debug setup limitations from fixture 03 still apply. Wall time
+is 10.470 seconds, CPU peak 23.2% including concurrent default tests.
+
+`run_professional_choice_native_13.py` applies those proven approach queries
+to both point and unit targets, preserves the command's actual target, and
+derives the existing conservative movement-speed allowance from the shortest
+positive route. A third frozen actual-game panel, `reserved-choice-competence-03`,
+uses that wrapper, unchanged model and original all-race panel seeds/bounds.
+Its active process handle must be inspected before interpreting its outcome.
+No fitting, RL, new quotas, attack thresholds or strategic priorities are added.

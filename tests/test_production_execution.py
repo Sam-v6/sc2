@@ -3,6 +3,29 @@ from src.learning.production_execution import queued_work, eligible_actors
 
 
 class ProductionExecutionTests(unittest.TestCase):
+    def test_unit_target_builder_routes_approach_outside_the_blocking_geyser(self):
+        from src.learning.production_execution import builder_approach_points
+        from src.learning.gameplay import Command
+        state = dict(units=[dict(tag=7, position=[26.5, 135.5], radius=1.5)])
+        points = builder_approach_points(Command(320, (1,), target_unit=7), state)
+        self.assertEqual(len(points), 8)
+        self.assertNotIn((26.5, 135.5), points)
+        self.assertIn((28.5, 135.5), points)
+        self.assertEqual(builder_approach_points(Command(320, (1,), target_unit=8), state), [])
+        self.assertEqual(builder_approach_points(Command(321, (1,),
+                         target_point=(30.5, 120.5)), state), [(30.5, 120.5)])
+
+    def test_unit_target_construction_has_an_observed_route_destination(self):
+        from src.learning.production_execution import command_point
+        from src.learning.gameplay import Command
+        state = dict(units=[dict(tag=4337696769, position=[77.5, 145.5, 8])])
+        self.assertEqual(command_point(Command(320, (4348706817,),
+                         target_unit=4337696769), state), (77.5, 145.5))
+        self.assertIsNone(command_point(Command(320, (4348706817,),
+                          target_unit=999), state))
+        self.assertEqual(command_point(Command(321, (4348706817,),
+                         target_point=(30.5, 120.5)), state), (30.5, 120.5))
+
     def test_preferred_factory_waits_instead_of_spending_savings_on_bunker(self):
         from src.learning.production_execution import affordable_production_intent
         # Native 07 loop 5344: Factory is preferred but its 150 minerals are short.
