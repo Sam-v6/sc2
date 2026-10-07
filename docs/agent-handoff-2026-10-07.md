@@ -279,3 +279,31 @@ Read next: this document → `docs/learning-roadmap.md` → the tail of
 `docs/human-production-timing-coverage.md` and `docs/professional-choice-native-canary.md`.
 Older chronological status paragraphs can contain superseded live handles and next
 steps; the requested paused state here takes precedence.
+
+## Update 2026-10-07 (Claude): strategy learning on top of the scripted bot
+
+Hardest fair difficulty is API `VeryHard` (UI "Elite"); `Cheat*` levels are excluded.
+
+| Panel (30 games, 3 races x 5 builds x 2 maps) | Seeds | Wins |
+|---|---|---|
+| Scripted, Hard | baseline | 30/30 |
+| Scripted, VeryHard | 830001+ | 19/30 (Rush 0/6) |
+| Scripted + worker defense, VeryHard | 850001+ | 23/30 |
+| Stage A imitation head, Hard | 840001+ | 30/30 |
+| Stage A head + searched offsets, VeryHard | 860001+ | **26/30** (Zerg 10, Protoss 10, Terran 6) |
+
+- Fixed: immediate native rejections (result 41) never advanced `next_loop`, causing a
+  retry loop until wall timeout (`withhold_rejected_request`, native19).
+- Stage A: `src/learning/strategy_policy.py` head imitates `scripted_targets`/`scripted_attack`
+  (`logs/roadmap/strategy-imitation-fit-01`; tanks head 94.8% held-out, just under 95%).
+- Stage B: cross-entropy search over per-race, per-phase offsets on the head's targets
+  (`strategy_cem_01.py`, 7 of 8 iterations; stopped silently in iteration 8, likely CPU guard).
+  Zerg/Protoss converged to 19-20/20 in training. TvT degraded from noisy elites;
+  `strategy_cem_02.py` (TvT, shared games per iteration) stayed flat at about 50%, so the panel
+  uses zero TvT offsets, fixed before the panel ran (`logs/roadmap/strategy-offsets-final-01/DECISION.md`).
+- 26 vs 23 of 30 is a modest margin; a second fresh panel would confirm it.
+- Remaining losses are all TvT: two Marine rushes at about 6:15, one Power, one Tie at 1200 s.
+  Some TvT ties come from never finding the last enemy structures.
+- Human data: 3.16.1 engine plus replay packs at `/home/sam/repos/sc2-repos/game/3.16.1`;
+  labels from the Terran player's fog view (`replay_strategy_extract_3161_01.py`) and
+  `strategy_human_fit_01.py` to fit a head on winners' games; not yet evaluated live.
