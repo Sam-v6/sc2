@@ -73,7 +73,7 @@ def compile_commands(accepted, events, data, own_at_loop, metadata_mappings):
 
 
 def compile_builder_moves(accepted, events, tickets, own_at_loop, neutral_positions):
-    """Label actual SCV movements near the same worker's next building site."""
+    """Preserve builder movement, including leaving unfinished construction."""
     moves = []
     for row in accepted:
         command = row['command']
@@ -90,7 +90,7 @@ def compile_builder_moves(accepted, events, tickets, own_at_loop, neutral_positi
         if next_build is None:
             continue
         target = next_build['command'].get('target_point') or neutral_positions.get(next_build['command'].get('target_unit'))
-        if target is None or math.dist(target, command['target_point']) >= 6:
+        if target is None:
             continue
         event = events[key]
         point = event.get('m_data', {}).get('TargetPoint')
@@ -102,5 +102,6 @@ def compile_builder_moves(accepted, events, tickets, own_at_loop, neutral_positi
                           actor_types=[45], imported_ability=command['ability'],
                           original_flags=event['m_cmdFlags'],
                           source_build=dict(loop=next_build['loop'], sequence=next_build['sequence']),
+                          protect_until_build=math.dist(target, command['target_point']) < 6,
                           evidence_is_label_only=True))
     return moves

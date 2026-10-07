@@ -13,6 +13,7 @@ import mpyq
 
 from src.learning.gameplay import Command, PlayerView
 from src.learning.replay_extract import load_protocol, replay_metadata
+from src.learning.replay_command_events import command_events
 from src.learning.tournament_history import history_rows
 from src.learning.tournament_observation import partial_observation
 from src.learning.tournament_record import decode_record
@@ -127,11 +128,9 @@ def import_game(job):
     events = list(
         protocol.decode_replay_game_events(archive.read_file("replay.game.events"))
     )
-    events = [
-        e
-        for e in events
-        if e["_event"].endswith(".SCmdEvent") and e["_userid"]["m_userId"] == user_id
-    ]
+    events, unresolved_repeats = command_events(events, user_id)
+    events = sorted(events + [r['event'] for r in unresolved_repeats],
+                    key=lambda e: (e['_gameloop'], e['m_sequence']))
     event_by_key = {(e["_gameloop"], e["m_sequence"]): e for e in events}
     accepted = []
     for item in game["accepted"]:
@@ -250,6 +249,11 @@ def import_game(job):
                 translation = translations.get((loop, row['sequence']))
                 if translation is not None:
                     example['label_translation'] = translation
+                if event.get('source_manager'):
+                    example['source_repeat_provenance'] = {
+                        name: event[name] for name in
+                        ('source_command', 'source_manager', 'source_target_update')
+                    }
                 stream.write(json.dumps(example) + "\n")
                 written += 1
     if written != len(accepted):
@@ -268,6 +272,7 @@ def import_game(job):
         source_replay=str(paths["replay"]),
         professional_engine_reconstruction=False,
         issued_command_audit=game["audit"],
+        unresolved_repeat_contexts=len(unresolved_repeats),
         source_resource_mappings=mappings,
         own_type_checks=type_checks,
         unmapped_tracker_upgrades=sorted(tracker.unmapped_upgrades),
@@ -285,6 +290,7 @@ def import_game(job):
                         "tournament_targets",
                         "tournament_history",
                         "tournament_commands",
+                        "replay_command_events",
                         "gameplay",
                     )
                 ],

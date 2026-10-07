@@ -3,6 +3,21 @@ from src.learning.production_execution import queued_work, eligible_actors
 
 
 class ProductionExecutionTests(unittest.TestCase):
+    def test_supply_warning_requires_a_retained_matching_training_order(self):
+        from src.learning.production_execution import waiting_for_supply
+        catalog = {595: dict(friendly_name='Train Hellion')}
+        error = dict(result=13, ability_id=595, unit_tag=1)
+        state = dict(units=[dict(tag=1, alliance=1,
+                                orders=[dict(ability_id=595, progress=0)])])
+        self.assertTrue(waiting_for_supply(error, state, catalog))
+        state['units'][0]['orders'][0]['progress'] = .5
+        self.assertFalse(waiting_for_supply(error, state, catalog))
+        state['units'][0]['orders'] = []
+        self.assertFalse(waiting_for_supply(error, state, catalog))
+        state['units'][0]['orders'] = [dict(ability_id=595, progress=0)]
+        error['result'] = 53
+        self.assertFalse(waiting_for_supply(error, state, catalog))
+
     def test_smart_resume_worker_is_not_available_for_other_construction(self):
         state = dict(units=[dict(tag=1, alliance=1, unit_type=45,
                             orders=[dict(ability_id=1, target_unit_tag=2)]),

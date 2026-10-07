@@ -2,17 +2,21 @@
 
 Updated October 7, 2026. The **initial scripted Hard baseline is verified**;
 the active next phase is reconnecting human imitation to the verified primitives.
-The [fixed-plan native diagnosis](fixed-human-plan-native-result.md) now verifies
-actual Factory attachment through a shared Tech Lab, stable producer/worker
-bindings and nine original builder movements. The latest bounded canary resolves
-127 of212 instructions with zero delayed action errors before stopping on a
-missing source Factory. Its original replay uses a command-target update omitted
-by the importer; inherited ability and worker selection must be recovered next.
+The [command-repeat recovery](human-command-repeat-recovery.md) now independently
+verifies305 newly recovered human labels, preserving all851 previous labels and
+player/unit/map observations. The reimported winning game contains1156 labels.
+Command-manager repetitions and target updates carry original provenance outside
+observations;399 uncertain contexts remain explicit unknown history slots.
+The native fixed plan now has243 instructions. Its latest canary resolves148,
+verifies the recovered Factory's shared Tech Lab attachment, and stops on a Cyclone
+request with only60minerals. Eight supply warnings retain pending training orders;
+there are no other action errors. The fixed-plan queue admission and landing hold
+repairs are verified in native fixtures/games. Native workforce and army size differ
+from the source; audit worker queues, income and combat losses before another fit.
 These are forced diagnostic exits against VeryEasy, not learned victories.
 The [producer topology audit](human-producer-topology.md) and
-[203-command source compilation](fixed-human-production-plan.md) remain useful
-partial evidence. The expanded fixed plan has212 instructions; useful imitation
-and complete source command coverage remain unproven.
+[earlier fixed-plan diagnosis](fixed-human-plan-native-result.md) remain partial
+evidence. Useful imitation and complete source command coverage remain unproven.
 Research queue accounting now preserves specific upgrade levels, and specific
 level-one availability no longer permits level-two requests. These fixes pass
 regression tests using the specific command IDs observed in the native research

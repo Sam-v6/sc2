@@ -15,6 +15,22 @@ def state(units):
 
 
 class ProductionPrimitiveTests(unittest.TestCase):
+    def test_clearance_avoids_structures_and_holds_units_out_until_landing_ends(self):
+        marine = unit(1, 48, x=10, y=10)
+        st = state([marine, unit(2, 21, x=13.25, y=10, radius=1.8125)])
+        held = set()
+        def assist(points):
+            return primitive_assistance(st, set(), DATA, {}, (10, 10), lambda p: True,
+                                        False, points, held)
+        move = next(c for c in assist([(10, 10)]) if c.units == (1,))
+        self.assertGreater(math.dist(move.target_point, (13.25, 10)), 2.5)
+        marine['position'] = list(move.target_point)
+        marine['orders'] = []
+        self.assertFalse(any(c.units == (1,) for c in assist([(10, 10)])))
+        self.assertIn(1, held)
+        self.assertTrue(any(c.units == (1,) for c in assist([])))
+        self.assertFalse(held)
+
     def test_landing_clearance_overrides_gathering_and_holds_existing_move(self):
         marine = unit(1, 48, x=10, y=10)
         st = state([marine, unit(2, 21, x=10, y=10),

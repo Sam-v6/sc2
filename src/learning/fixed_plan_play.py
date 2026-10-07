@@ -20,6 +20,7 @@ from src.learning.production_execution import (
     queued_supply,
     command_cost,
     worker_constructing,
+    waiting_for_supply,
 )
 from src.learning.production_primitives import (
     primitive_assistance,
@@ -42,6 +43,7 @@ class FixedHumanPlanBot(BotAI):
         self.last_blocks = {}
         self.builder_tags = {}
         self.prepositioned = set()
+        self.landing_hold = set()
         self.pending = []
         self.history = []
         self.divergence = None
@@ -263,6 +265,11 @@ class FixedHumanPlanBot(BotAI):
                     None,
                 )
                 if submitted:
+                    if waiting_for_supply(error, state, self.catalog):
+                        self.history.append(dict(event='production_waiting_for_supply',
+                                                 loop=loop, error=error,
+                                                 ticket=submitted['ticket']))
+                        continue
                     self.divergence = dict(
                         loop=loop,
                         reason="delayed_production_error",
@@ -304,6 +311,13 @@ class FixedHumanPlanBot(BotAI):
                 await self.client.leave()
                 return
             heads = self.pending_heads(loop)
+            free_supply = (state['player'].get('food_cap', 0)
+                           - state['player'].get('food_used', 0)
+                           - queued_supply(state, self.data))
+            heads = [i for i in heads
+                     if self.tickets[i]['name'].startswith('Train ')
+                     or self.food.get(self.tickets[i]['command']['ability'], 0) == 0
+                     or self.food.get(self.tickets[i]['command']['ability'], 0) <= free_supply] or heads
             self.index = next(
                 (i for i in heads if i > self.last_attempt),
                 heads[0] if heads else len(self.tickets),
@@ -345,7 +359,7 @@ class FixedHumanPlanBot(BotAI):
                     if actor and self.block is None:
                         packet = (
                             await self.client._execute(
-                                query=ability_query([actor["tag"]])
+                                query=ability_query([actor["tag"]], ignore_resources=ticket['name'].startswith('Train '))
                             )
                         ).query
                         available = {
@@ -376,8 +390,9 @@ class FixedHumanPlanBot(BotAI):
                             ("Lift", "Land", "Build TechLab", "Build Reactor")
                         ) and actor.get("orders"):
                             self.block = "producer_busy"
-                    if actor and self.block is None and self.index not in self.done:
-                        if self.food.get(ability, 0) > state["player"].get(
+                    if (actor and self.block is None and self.index not in self.done
+                            and not ticket['name'].startswith('Train ')):
+                        if self.food.get(ability, 0) > 0 and self.food.get(ability, 0) > state["player"].get(
                             "food_cap", 0
                         ) - state["player"].get("food_used", 0) - queued_supply(
                             state, self.data
@@ -460,6 +475,8 @@ class FixedHumanPlanBot(BotAI):
                                     for i in range(self.index)
                                     if i not in self.done
                                     and self.tickets[i]["loop"] <= loop
+                                    and (self.food.get(self.tickets[i]['command']['ability'], 0) == 0
+                                         or self.food.get(self.tickets[i]['command']['ability'], 0) <= free_supply)
                                 ),
                                 None,
                             )
@@ -568,6 +585,7 @@ class FixedHumanPlanBot(BotAI):
                 and self.in_pathing_grid(Point2(p)),
                 mining,
                 landing_points,
+                self.landing_hold,
             )
             batch = commands + assists
             result = await issue(self.client, batch) if batch else pb.ResponseAction()
@@ -576,8 +594,10 @@ class FixedHumanPlanBot(BotAI):
                 self.history.append(sent)
                 if result.result[0] == 1:
                     self.done.add(self.index)
-                    if ticket["name"] == "Move builder":
+                    if ticket["name"] == "Move builder" and ticket.get('protect_until_build', True):
                         self.prepositioned.add(source["units"][0])
+                    elif ticket["name"] == "Move builder":
+                        self.prepositioned.discard(source["units"][0])
                 else:
                     self.divergence = dict(
                         loop=loop,

@@ -4564,3 +4564,33 @@ imitation fit or RL restarted. Full suite1035 terminal:543 tests/32skips; Ruff
 passes and diff whitespace check passes. See fixed-human-plan-native-result.md
 for all native01–13 failures, repairs and limits, including startup/callback
 failures07/09 and the intentional diagnostic leaves.
+
+### October 7: recover human repeats, correct queue semantics and landing holds
+
+Previous turn progressed with a tested fixed-plan executor and a missing Factory
+source-event audit. Added original command-manager/target-update expansion with
+explicit provenance and conservative context exclusions. Recovery92920 terminal
+adds305 labels to851; independent verifier exit0 preserves all old labels, checks
+source events/flags/targets, selections, full-tag owned actors and unique wire actions.
+Reimport5594 terminal gives1156 labels; corpus verification preserves old physical
+observations and keeps provenance outside inputs, adding399 unknown event slots.
+Plan04 preserves212 old instructions and adds29macro instructions; plan05 restores
+two genuine distant builder moves, total243, independently verified. Native14–17
+terminal: supply/timing stalls; restored Depot and resource-reservation repair
+advance the later Depot submission6528→6520→6488. No deadlines were expanded.
+Two native queue fixtures terminal93153/44121 prove626 admitted and retained while
+supply15/15, then completed after supply freed, despite normal query omission;
+ignore-resource query includes626. Independent seed/queue/progress/birth/hash checks
+pass. Fixture supervisor reports failed due status-vocabulary mismatch despite
+completed native receipts; verifiers retain and explain this harness limitation.
+Native18 terminal82295 reaches88/243, exposing zero-supply building guard failure
+when queued demand makes free supply negative. Native19 terminal85199 corrects it,
+reaches138/243 and creates missing source Factory, then fails second landing.
+Clearance now avoids owned structures and holds moved units until landing ends.
+Native20 terminal87028 reaches148/243; independent verifier confirms actual second
+Factory/Tech Lab attachment at8624, eight supply warnings retaining pending orders,
+no other errors andCPU9.2%. It stops at9224 on Cyclone funding; native41 livingSCVs
+versus source50 at9196 and larger native army require income/queue/attrition audit.
+Full suite6839 terminal548tests/32skips; focused34tests, Ruff and diff check pass.
+No fitted model, RL restart, learned win or completed roadmap claim. See
+human-command-repeat-recovery.md for exact next work and evidence locations.

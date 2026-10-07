@@ -32,6 +32,14 @@ def canonical(ability, catalog):
     return catalog.get(ability, {}).get('remaps_to_ability_id') or ability
 
 
+def waiting_for_supply(error, state, catalog):
+    if (error['result'] != 13 or not catalog.get(error['ability_id'], {}).get('friendly_name', '').startswith('Train ')):
+        return False
+    return any(u['tag'] == error['unit_tag'] and u['alliance'] == 1
+               and any(o['ability_id'] == error['ability_id'] and o.get('progress', 0) == 0
+                       for o in u.get('orders', [])) for u in state['units'])
+
+
 def worker_constructing(unit, state, catalog):
     foundations = {u['tag'] for u in state['units']
                    if u['alliance'] == 1 and u.get('build_progress', 1) < 1}

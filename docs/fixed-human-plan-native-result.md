@@ -1,11 +1,13 @@
 # Fixed human production playback: execution diagnosis
 
+This report covers native01–13. See [command-repeat recovery and later native results](human-command-repeat-recovery.md) for the current state.
+
 October 7, 2026. A native controller now executes the fixed Clem opening with
 persistent producer and worker identities, exact placements, original queue flags,
 and the established mining/construction/combat helpers. This is scripted playback,
 not a fitted policy or RL. Useful human imitation remains unproven.
 
-The newest canary resolves 127 of 212 instructions before stopping on a missing
+Native13 resolves 127 of 212 instructions before stopping on a missing
 source Factory. It has 49 workers, 39 army supply and zero idle workers at the stop.
 The trace independently verifies a Factory landing on its intended shared Tech Lab.
 All diagnostic failures intentionally leave the game; their `Defeat` receipts do

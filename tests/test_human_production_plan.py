@@ -15,6 +15,11 @@ class HumanProductionPlanTests(unittest.TestCase):
         self.assertEqual(len(moves), 1)
         self.assertTrue(moves[0]['command']['queue'])
         self.assertEqual(moves[0]['source_build'], dict(loop=20, sequence=2))
+        self.assertTrue(moves[0]['protect_until_build'])
+        tickets[0]['command']['target_point'] = [160, 80]
+        moves = compile_builder_moves(accepted, events, tickets, own, {})
+        self.assertEqual(len(moves), 1)
+        self.assertFalse(moves[0]['protect_until_build'])
         tickets[0]['command']['units'] = [100]
         self.assertEqual(compile_builder_moves(accepted, events, tickets, own, {}), [])
 

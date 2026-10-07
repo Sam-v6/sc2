@@ -39,10 +39,15 @@ def scripted_army_destination(state, types, start, enemy_start, center, expansio
     return tuple(target), attacking, search_index
 
 
-def primitive_assistance(state, selected, types, catalog, destination, can_walk, mining, landing_points=()):
+def primitive_assistance(state, selected, types, catalog, destination, can_walk, mining, landing_points=(), landing_hold=None):
     own = [u for u in state['units'] if u['alliance'] == 1 and u.get('health', 0) > 0]
     enemies = [u for u in state['units'] if u['alliance'] == 4]
     claimed, commands = set(selected), []
+    if landing_hold is None:
+        landing_hold = set()
+    if not landing_points:
+        landing_hold.clear()
+    landing_hold.intersection_update(u['tag'] for u in own)
     def append(unit, command):
         if unit['tag'] not in claimed and 5 not in unit.get('buff_ids', []) and command and changes_order(unit, command):
             commands.append(command)
@@ -56,17 +61,24 @@ def primitive_assistance(state, selected, types, catalog, destination, can_walk,
         point = unit['position'][:2]
         if not any(abs(point[0]-x) < margin and abs(point[1]-y) < margin
                    for x, y in landing_points):
+            if unit['tag'] in landing_hold:
+                claimed.add(unit['tag'])
             continue
         candidates = [(x+dx, y+dy) for x, y in landing_points
                       for dx, dy in ((margin+.5, 0), (-margin-.5, 0),
                                      (0, margin+.5), (0, -margin-.5))]
         free = [p for p in candidates if can_walk(p) and
                 all(abs(p[0]-x) >= margin or abs(p[1]-y) >= margin
-                    for x, y in landing_points)]
+                    for x, y in landing_points) and
+                all(math.dist(p, building['position'][:2]) >
+                    building.get('radius', 1.8125) + unit.get('radius', .5) + .25
+                    for building in own if not building.get('is_flying')
+                    and 8 in types[building['unit_type']].get('attributes', []))]
         if free:
             target = min(free, key=lambda p: math.dist(point, p))
             append(unit, Command(16, (unit['tag'],), target_point=target))
             claimed.add(unit['tag'])
+            landing_hold.add(unit['tag'])
     army = ground_army(state, types)
     centroid = tuple(sum(u['position'][i] for u in army)/len(army) for i in range(2)) if army else destination
     if mining:
