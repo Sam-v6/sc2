@@ -4306,3 +4306,18 @@ and builder/harvest protection verify. Revised scout gate passes; game Tie,
 CPUpeak5.3%. Fullsuite498tests/32skips and named-fileRuff pass. No training/RL.
 See [scout result](human-scout-transfer-result.md); source snapshots preserve both
 frozen protocols. Next is source-backed inventory-goal retrieval, not another fit.
+
+### October 6: human-goal retrieval offline audit verified
+
+Audit64721 and final independent verifier50911 are terminal exit0. Library uses
+5378teaching rows; 976development selections and 281saved native forecasts verify.
+Teacher-only scales/cross-game thresholds, public selected race and exact held
+source vector verified; nofit/RL/newdownloads. Independent distance arithmetic
+finds symmetric nearest ties; canonical normalized first-index rule independently
+checked alongside distance minima. Native final68worker deficit retrieves7Barracks,
+3Factories,1Starport instead of1each. Greatercapacity92/141late forecasts, all
+supported; stricter every-late diagnosticfalse remains disclosed. Source targets
+are ready for inventory-deficit execution tests, not native promotion yet.
+See [retrieval diagnostic](human-goal-retrieval-result.md). No native process
+remains live. Next implement stock-deficit demand/retirement with queue accounting,
+then freeze identical-assistance native control/intervention per originalplan.

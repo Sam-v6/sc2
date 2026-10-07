@@ -15,8 +15,11 @@ passes; its strict one-Depot cadence gate does not. The [inventory label audit a
 verify: labels are usable, but the regressor fails production-capacity accuracy.
 The [protected scouting transfer](human-scout-transfer-result.md) now passes a
 native canary: enemy vision by139seconds, damage retreat and return to mining.
-Next is a source-backed human-goal retrieval diagnostic through those primitives,
-not another unchanged fit or count-model run.
+The [human-goal retrieval audit](human-goal-retrieval-result.md) independently
+verifies source selection and held targets. The final shortage state retrieves
+seven Barracks and three Factories; this is offline evidence, not a native win.
+Next implement and verify absolute inventory deficits and intent retirement,
+then run the frozen matched comparison. No unchanged fit or count-model run.
 RL remains paused. The full roadmap is incomplete, and scripted victories are
 not learned-controller victories.
 
