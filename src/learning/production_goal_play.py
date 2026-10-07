@@ -24,6 +24,8 @@ from src.learning.production_execution import (canonical, eligible_actors,
                                               goal_catalog, queued_work)
 from src.learning.production_goal_policy import current_features, predict_goals
 from src.learning.production_ledger import ProductionLedger
+from src.learning.production_intents import ProductionIntents, remaining_budget
+from src.learning.production_prior import prior_scores
 from src.runner import validate_map
 from src.learning.production_primitives import primitive_assistance, scripted_army_destination
 
@@ -40,7 +42,11 @@ class ProductionGoalBot(BotAI):
         self.vocabulary = job['vocabulary']
         self.profile = json.loads(Path(job['profile']).read_text())
         self.view = PlayerView()
-        self.ledger = ProductionLedger()
+        self.intent_mode = job.get('intent_execution', False)
+        self.prior = json.loads(Path(job['prior']).read_text()) if job.get('prior') else None
+        if self.prior and self.prior['names'] != self.model['names']:
+            raise ValueError('Human prior and count checkpoint families differ')
+        self.ledger = ProductionIntents() if self.intent_mode else ProductionLedger()
         self.last_sent = {}
         self.next_plan = 0
         self.next_mining = 0
@@ -150,8 +156,13 @@ class ProductionGoalBot(BotAI):
             self.requested.update(predicted)
             queued, active = queued_work(state, self.goals, self.catalog, self.unit_names)
             tags = {u['tag'] for u in state['units'] if u['alliance'] == 1}
+            if self.intent_mode:
+                self.ledger.events.clear()
             changes = self.ledger.reconcile(active, tags, loop)
-            self.ledger.plan(predicted, queued)
+            if self.intent_mode:
+                self.ledger.plan(predicted, queued, loop)
+            else:
+                self.ledger.plan(predicted, queued)
             packets = [(await self.client._execute(query=ability_query(sorted(tags), ignore_resources=ignore))).query
                        for ignore in (False, True)]
             available = [{row.unit_tag: {a.ability_id for a in row.abilities}
@@ -164,7 +175,12 @@ class ProductionGoalBot(BotAI):
             geyser_claims = claimed_geysers(state, self.catalog)
             minerals = state['player'].get('minerals', 0)
             gas = state['player'].get('vespene', 0)
-            requests = sorted(predicted, key=lambda g: (self.last_sent.get(g, -1), self.goals[g]['ability']))
+            requests = self.ledger.requests() if self.intent_mode else list(predicted)
+            priority, unsupported, cycles = prior_scores(self.prior, requests) if self.prior else ({}, 0, 0)
+            requests.sort(key=(lambda g: (-priority[g], g)) if self.prior else
+                          (lambda g: (self.last_sent.get(g, -1), self.goals[g]['ability'])))
+            allocations = []
+            food = state['player'].get('food_cap', 0)-state['player'].get('food_used', 0)
             for goal in requests:
                 if self.ledger.remaining(goal) < 1:
                     continue
@@ -176,7 +192,11 @@ class ProductionGoalBot(BotAI):
                 if not candidates:
                     self.blocks['prerequisite_or_busy:' + goal] += 1
                     continue
-                if minerals < info['minerals'] or gas < info['gas']:
+                needed_food = self.units_by_id.get(info['unit_type'], {}).get('food_required', 0)
+                if self.intent_mode and needed_food > food:
+                    self.blocks['supply:' + goal] += 1
+                    continue
+                if not self.intent_mode and (minerals < info['minerals'] or gas < info['gas']):
                     self.blocks['resource_reservation:' + goal] += 1
                     continue
                 point = None
@@ -200,7 +220,7 @@ class ProductionGoalBot(BotAI):
                 else:
                     candidates.sort(key=lambda u: u['tag'])
                 actor = candidates[0]
-                if canonical(info['ability'], self.catalog) not in actual.get(actor['tag'], set()):
+                if not self.intent_mode and canonical(info['ability'], self.catalog) not in actual.get(actor['tag'], set()):
                     self.blocks['engine_unavailable:' + goal] += 1
                     continue
                 command = Command(info['ability'], (actor['tag'],), target_point=point,
@@ -210,6 +230,20 @@ class ProductionGoalBot(BotAI):
                     self.blocks['placement:' + goal] += 1
                     continue
                 command = resolved[0]
+                if self.intent_mode:
+                    affordable = minerals >= info['minerals'] and gas >= info['gas']
+                    allocation = dict(goal=goal, before=[minerals, gas], cost=[info['minerals'], info['gas']], affordable=affordable)
+                    allocations.append(allocation)
+                    if not affordable:
+                        minerals, gas = remaining_budget((minerals, gas), (info['minerals'], info['gas']))
+                        allocation.update(outcome='reserved', after=[minerals, gas])
+                        self.blocks['resource_reservation:' + goal] += 1
+                        continue
+                    if canonical(info['ability'], self.catalog) not in actual.get(actor['tag'], set()):
+                        allocation.update(outcome='engine_unavailable', after=[minerals, gas])
+                        self.blocks['engine_unavailable:' + goal] += 1
+                        continue
+                    allocation.update(outcome='submitted', after=[minerals-info['minerals'], gas-info['gas']])
                 if target is not None:
                     geyser_claims.add(target['tag'])
                 if command.target_point is not None and info['descriptor'].get('is_building'):
@@ -219,10 +253,11 @@ class ProductionGoalBot(BotAI):
                 ticket = self.ledger.reserve(goal, actor['tag'], loop)
                 commands.append(command)
                 tickets.append((ticket, goal))
-                execution.append(dict(goal=goal, command=command.as_dict(), placement=placement))
+                execution.append(dict(goal=goal, ticket=ticket, command=command.as_dict(), placement=placement))
                 selected.add(actor['tag'])
                 minerals -= info['minerals']
                 gas -= info['gas']
+                food -= needed_food
             assistance = self.assistance(state, set(selected))
             all_commands = commands + assistance
             result = await issue(self.client, all_commands) if all_commands else pb.ResponseAction()
@@ -236,6 +271,9 @@ class ProductionGoalBot(BotAI):
             self.result_counts.update(map(str, result.result))
             self.stream.write(json.dumps(dict(phase='forecast', observation=state, goals=predicted,
                 raw_counts=counts.tolist(), queued=queued, reconciliation=changes,
+                priority=priority, unsupported_prior_pairs=unsupported, prior_cycles=cycles, allocations=allocations,
+                intents=self.ledger.intents if self.intent_mode else {},
+                intent_events=self.ledger.events if self.intent_mode else [],
                 pending=self.ledger.pending, assistance_destination=self.assistance_destination, execution=execution,
                 assistance=[c.as_dict() for c in assistance], results=list(result.result)),
                 separators=(',', ':'))+'\n')
@@ -250,6 +288,7 @@ def play_production_goals(job):
     output = Path(job['output'])
     output.mkdir(parents=True, exist_ok=False)
     checksum = digest(job['model'])
+    prior_checksum = digest(job['prior']) if job.get('prior') else None
     with gzip.open(output/'trace.jsonl.gz', 'xt') as stream:
         bot = ProductionGoalBot(job, stream)
         result = run_game(validate_map(job['map']),
@@ -260,8 +299,10 @@ def play_production_goals(job):
         raise RuntimeError(bot.callback_error or 'No goal-planning frames')
     if digest(job['model']) != checksum:
         raise ValueError('Checkpoint changed during native play')
+    if prior_checksum and digest(job['prior']) != prior_checksum:
+        raise ValueError('Human prior changed during native play')
     report = dict(status='truncated' if result.name == 'Tie' else 'completed', result=result.name,
-                  model_sha256=checksum, training=False, rl=False, job=job,
+                  model_sha256=checksum, prior_sha256=prior_checksum, training=False, rl=False, job=job,
                   frames=bot.frames, requested=dict(bot.requested), acknowledged=dict(bot.acknowledged),
                   blocks=dict(bot.blocks), results=dict(bot.result_counts),
                   production=bot.production, snapshots=bot.snapshots,

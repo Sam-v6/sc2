@@ -8,6 +8,18 @@ Implementation is in `.worktrees/terran-rl`, branch `Sam-v6/terran-rl`.
 The commands below run from that worktree. Run artifacts are ignored under
 `logs/roadmap/`; preserve those directories when handing off or archiving.
 
+## Matched human-prior execution diagnostic
+
+The previous status-only goal turn made no progress; this turn implemented and
+verified persistent intents and resource reservations. Sessions 22269 (native)
+and 52219 (verifier) are terminal. Both A/B gates fail: no Barracks/army. B restores
+an early Depot and reaches 36 living workers, but its Barracks ticket expires just
+before affordability. The current positive-rearm rule must be corrected in a fresh
+frozen diagnostic; do not rerun A/B unchanged or start another model fit.
+See [native result and precise diagnosis](human-prior-native-result.md).
+The original bound sources are preserved under the run's source-snapshot directory.
+Full suite 481 tests/32 skips; named-file Ruff passes. RL remains paused.
+
 ## Latest primitives bridge result
 
 The initial scripted baseline remains verified30/30. The fresh repaired-corpus
