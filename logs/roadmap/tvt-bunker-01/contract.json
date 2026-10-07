@@ -1,0 +1,119 @@
+{
+  "bindings": {
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/offsets_ab.py": "521575eca6b4f1e8d095e3e88aa5e768e1a15b0fcf6a6a62052fcd4145e15f58",
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-imitation-fit-01/policy.npz": "db1a6e7d8aa1de61c712b8fe1741a130cc03cf9647738f8cd2bc89b3d193cfa9",
+    "src/runner.py": "c9046d70c5a471c98d9d8af108a1385655ac2b2d9bd3171f4c6f55cd591ee461",
+    "src/bots/primitive_terran.py": "13f809cd897ee69835263ac3a168668bf0e22b15fdf50d3464eb00df30d80105",
+    "src/bots/terran_primitives.py": "f270d8bf2c74ce7b8332878c94440387026d687caffd5b472b0e9be6fd9f651f",
+    "src/bots/learned_strategy_terran.py": "1d10aadb87c89e53b02e50fade83704a4412d2709ef1956ec7fe46fc1f9761e6",
+    "src/bots/searched_strategy_terran.py": "d6d9bc9c68dc7709ec5ea665c16766e5e3906f388a704573c4254d32544edd09",
+    "src/learning/strategy_offsets.py": "661d3af8cee0cd7f4507ed559dacb81f94439574fcce2b2fb2de3d0572d21461",
+    "src/learning/strategy_policy.py": "1e330d21aaccc9006673648caf3f4222d2f49734034f354913e17526c49c5e2a",
+    "logs/roadmap/strategy-offsets-final-01/zero-terran.json": "e1f5a5698924f5bff50e2e5da1c437533c308787eee6dc98f166755e6b1f57a5"
+  },
+  "variants": {
+    "zero": "logs/roadmap/strategy-offsets-final-01/zero-terran.json"
+  },
+  "games": [
+    [
+      "Rush",
+      "AcropolisLE",
+      920000
+    ],
+    [
+      "Rush",
+      "AbyssalReefLE",
+      920001
+    ],
+    [
+      "Timing",
+      "AcropolisLE",
+      920002
+    ],
+    [
+      "Timing",
+      "AbyssalReefLE",
+      920003
+    ],
+    [
+      "Power",
+      "AcropolisLE",
+      920004
+    ],
+    [
+      "Power",
+      "AbyssalReefLE",
+      920005
+    ],
+    [
+      "Macro",
+      "AcropolisLE",
+      920006
+    ],
+    [
+      "Macro",
+      "AbyssalReefLE",
+      920007
+    ],
+    [
+      "Air",
+      "AcropolisLE",
+      920008
+    ],
+    [
+      "Air",
+      "AbyssalReefLE",
+      920009
+    ],
+    [
+      "Rush",
+      "AcropolisLE",
+      920010
+    ],
+    [
+      "Rush",
+      "AbyssalReefLE",
+      920011
+    ],
+    [
+      "Timing",
+      "AcropolisLE",
+      920012
+    ],
+    [
+      "Timing",
+      "AbyssalReefLE",
+      920013
+    ],
+    [
+      "Power",
+      "AcropolisLE",
+      920014
+    ],
+    [
+      "Power",
+      "AbyssalReefLE",
+      920015
+    ],
+    [
+      "Macro",
+      "AcropolisLE",
+      920016
+    ],
+    [
+      "Macro",
+      "AbyssalReefLE",
+      920017
+    ],
+    [
+      "Air",
+      "AcropolisLE",
+      920018
+    ],
+    [
+      "Air",
+      "AbyssalReefLE",
+      920019
+    ]
+  ]
+}

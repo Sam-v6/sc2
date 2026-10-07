@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from sc2.bot_ai import BotAI
+from sc2.data import Race
 from sc2.ids.ability_id import AbilityId as A
 from sc2.ids.buff_id import BuffId
 from sc2.ids.unit_typeid import UnitTypeId as U
@@ -85,11 +86,13 @@ class PrimitiveTerranBot(BotAI):
                 self.summary['resumed_builds'] += 1
         if self.minerals < 100:
             return
-        for building in self.structures.ready.filter(lambda u: u.health_percentage < .8):
-            if self.enemy_units.filter(lambda e: e.is_visible).closer_than(10, building):
+        for building in self.structures.ready.filter(lambda u: u.health_percentage < (1 if u.type_id == U.BUNKER else .8)):
+            bunker = building.type_id == U.BUNKER
+            # A Bunker is repaired under fire; other buildings wait until the fight moves away.
+            if not bunker and self.enemy_units.filter(lambda e: e.is_visible).closer_than(10, building):
                 continue
             repairing = self.workers.filter(lambda w: w.is_repairing and w.order_target == building.tag)
-            if repairing.amount >= 2:
+            if repairing.amount >= (3 if bunker else 2):
                 continue
             worker = self.free_worker(building.position)
             if worker:
@@ -114,6 +117,13 @@ class PrimitiveTerranBot(BotAI):
         reserved = reservations(state, self.types, self.catalog)
         if targets['supply'] and self.already_pending(U.SUPPLYDEPOT) < depot_limit(state):
             await self.construct(U.SUPPLYDEPOT, state, reserved)
+        if (self.enemy_race == Race.Terran and self.time < 360
+                and not self.structures(U.BUNKER) and not self.already_pending(U.BUNKER)):
+            # Early Marine pressure hits the natural while its Command Center is still building.
+            natural = self.townhalls.filter(lambda t: t.distance_to(self.start_location) > 5)
+            if natural:
+                await self.construct(U.BUNKER, state, reserved,
+                                     natural.first.position.towards(self.enemy_start_locations[0], 6))
         if self.townhalls.amount+self.already_pending(U.COMMANDCENTER) < targets['bases'] and self.can_afford(U.COMMANDCENTER):
             point = await self.get_next_expansion()
             if point:
@@ -188,6 +198,23 @@ class PrimitiveTerranBot(BotAI):
 
     strategy_record = None
 
+    def man_bunkers(self):
+        """Keep ready Bunkers full while holding; empty them when the army attacks."""
+        self.loading = set()
+        for bunker in self.structures(U.BUNKER).ready:
+            if self.attacking:
+                if bunker.cargo_used:
+                    self.do(bunker(A.UNLOADALL_BUNKER))
+                continue
+            marines = self.units(U.MARINE)
+            heading = marines.filter(lambda m: m.order_target == bunker.tag)
+            self.loading |= heading.tags
+            room = bunker.cargo_max - bunker.cargo_used - heading.amount
+            free = marines.filter(lambda m: m.tag not in self.loading and m.tag not in self.unit_tags_received_action)
+            for marine in free.sorted_by_distance_to(bunker)[:max(0, room)]:
+                self.do(marine.smart(bunker))
+                self.loading.add(marine.tag)
+
     def strategy_targets(self, state, macro):
         return scripted_targets(state)
 
@@ -234,6 +261,7 @@ class PrimitiveTerranBot(BotAI):
                 commands.extend(mining)
             enemies = [u for u in state['units'] if u['alliance'] == 4]
             destination = self.army_destination(state)
+            self.man_bunkers()
             ground = self.units.of_type({U.MARINE, U.SIEGETANK, U.SIEGETANKSIEGED})
             bio = self.units(U.MARINE).filter(lambda u: u.health_percentage > .65 and not u.has_buff(BuffId.STIMPACK)
                                              and any(u.distance_to(e) < 8 for e in self.enemy_units if e.is_visible))
@@ -243,7 +271,8 @@ class PrimitiveTerranBot(BotAI):
                     if A.EFFECT_STIM_MARINE in available:
                         self.do(marine(A.EFFECT_STIM_MARINE))
             for unit in state['units']:
-                if unit['alliance'] != 1 or unit['unit_type'] not in (48, 33, 32, 35) or unit['tag'] in self.unit_tags_received_action:
+                if (unit['alliance'] != 1 or unit['unit_type'] not in (48, 33, 32, 35)
+                        or unit['tag'] in self.unit_tags_received_action or unit['tag'] in self.loading):
                     continue
                 target = destination
                 if unit['unit_type'] == 35:

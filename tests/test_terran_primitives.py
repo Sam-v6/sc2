@@ -256,6 +256,7 @@ DEFENSE_TYPES = {
     105: dict(name='Zergling', food_required=.5, attributes=[1, 3], weapons=[dict(type=1, range=.1)]),
     108: dict(name='Mutalisk', food_required=2, attributes=[1, 3], weapons=[dict(type=3, range=3)]),
     18: dict(name='CommandCenter', attributes=[2, 4, 8]),
+    24: dict(name='Bunker', food_required=0, attributes=[2, 4, 8]),
     86: dict(name='Hatchery', attributes=[2, 4, 8]),
 }
 
@@ -284,6 +285,14 @@ class WorkerDefenseTests(unittest.TestCase):
         lings = [unit(500 + i, 105, x=6, alliance=4) for i in range(6)]
         marines = [unit(600 + i, 48, x=2) for i in range(3)]
         self.assertEqual(worker_defense_commands(base_under(lings, army=marines), DEFENSE_TYPES), [])
+
+    def test_loaded_ready_bunker_counts_as_army(self):
+        from src.bots.terran_primitives import worker_defense_commands
+        marines = [unit(500 + i, 48, x=8, alliance=4) for i in range(7)]
+        bunker = unit(700, 24, x=4, build_progress=1, cargo_space_taken=4)
+        self.assertEqual(worker_defense_commands(base_under(marines, army=[bunker]), DEFENSE_TYPES), [])
+        bunker['build_progress'] = .5
+        self.assertEqual(len(worker_defense_commands(base_under(marines, army=[bunker]), DEFENSE_TYPES)), 12)
 
     def test_builders_and_injured_workers_stay_out(self):
         from src.bots.terran_primitives import worker_defense_commands

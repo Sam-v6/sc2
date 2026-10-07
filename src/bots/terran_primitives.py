@@ -131,6 +131,9 @@ def worker_defense_commands(state, types, protected=()):
     enemy = sum(types[e['unit_type']].get('food_required', 1) for e in threats)
     army = sum(types.get(u['unit_type'], {}).get('food_required', 0) for u in own
                if u['unit_type'] != 45 and any(distance(u, b) < 15 for b in bases))
+    # A ready Bunker fights like about four Marines plus its cargo.
+    army += sum(4 + u.get('cargo_space_taken', 0) for u in own
+                if u['unit_type'] == 24 and u.get('build_progress', 1) == 1 and any(distance(u, b) < 15 for b in bases))
     if army >= enemy:
         return []
     workers = sorted((u for u in own if u['unit_type'] == 45 and u['tag'] not in protected
