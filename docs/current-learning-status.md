@@ -88,6 +88,20 @@ Wall69.0seconds, host CPU peak6.4%. No completed replay, victory or RL follows.
 Next repair and test construction follow-through and physical placement before
 a fresh canary; weak army output and excess buildings remain model concerns.
 See [the native canary diagnosis](professional-choice-native-canary.md).
+
+Construction follow-through is now repaired and tested: delayed errors, real
+foundation/addon effects, pending actor protection, physical spacing, grid-center
+alignment, reachable builder selection and route-aware timeout. Native04 reaches
+the600-second cutoff normally, with zero action errors and a saved replay.
+Independent verification reconstructs911 predictions and pending protection;
+replay decoding proves28new SCVs,8completed production buildings and16military
+births. Military remains below the unchanged20-unit gate; result Tie, no victory
+or RL claim. Wall56.6seconds; host CPU peak24.1% including concurrent tests.
+Full suite595tests/40optional skips. A native query audit identifies17building
+choices that replace higher-probability available training solely because our
+actor rule rejects busy producers (9Marines,6SCVs,1Reaper,1Medivac). Next test
+bounded training queues before retraining the model; native resource/supply guards
+and explicit assistance must remain intact.
 See [the additional command recovery](additional-professional-command-recovery.md).
 
 The latest mixed-source timing fit is terminal and failed its frozen gates.
@@ -332,3 +346,18 @@ fresh all-race panel. Established Sharpy and Burny bot code has been inspected
 and pinned as design references; the unchanged Reaper reference lost all six
 local development games. See [the primitives diagnosis](primitives-reset-2026-10-06.md).
 Do not restart imitation or RL to compensate for unreliable execution.
+
+### Bounded native production queues verified
+
+Native 05 fixes the demonstrated idle-only producer restriction without model
+changes: 27 explicit queued training requests each produce a one-to-two native
+order transition. It completes the matched 600-second cutoff with zero errors,
+26 replay SCV births, 17 military births and 15 completed production buildings.
+The frozen military minimum of 20 remains unmet. Verification recomputes 948
+prediction vectors; sampled host CPU peak is 7.2 percent. All 598 default tests
+pass (40 optional skips). See [the native canary record](professional-choice-native-canary.md).
+
+Of 40 building decisions, 32 prefer buildings even when funded native-available
+training remains eligible. This is evidence of a remaining decision problem,
+not proof of another executor failure. Keep imitation and RL training paused
+while inspecting remaining production constraints and offensive/micro effects.

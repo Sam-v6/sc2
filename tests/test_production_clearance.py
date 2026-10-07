@@ -45,6 +45,24 @@ class ProductionClearanceTests(unittest.TestCase):
 
 
 class BuilderPathTests(unittest.IsolatedAsyncioTestCase):
+    async def test_queries_and_commands_use_the_same_engine_grid_centers(self):
+        class Client:
+            async def _execute(self, **kwargs):
+                request = kwargs['query']
+                return pb.Response(query=query.ResponseQuery(
+                    placements=[query.ResponseQueryBuildingPlacement(result=1) for _ in request.placements],
+                    pathing=[query.ResponseQueryPathing(distance=20) for _ in request.pathing]))
+        state = dict(units=[dict(tag=1, alliance=1, unit_type=45, position=[40, 130])], map_size=[176, 184])
+        for ability, kind, radius, requested, actual in (
+            (319, 19, 1, (39, 127.5), (39, 128)),
+            (321, 21, 1.5, (63, 133.5), (63.5, 133.5)),
+        ):
+            catalog = {319: dict(friendly_name='Build SupplyDepot', is_building=True, footprint_radius=1),
+                       ability: dict(friendly_name='Build Barracks' if kind == 21 else 'Build SupplyDepot',
+                                     is_building=True, footprint_radius=radius)}
+            commands, _ = await resolve_production_placement(Client(), Command(ability, (1,), target_point=requested), catalog, state, kind, [])
+            self.assertEqual(commands[0].target_point, actual)
+
     async def test_legal_but_unreachable_site_is_replaced_by_a_reachable_site(self):
         class Client:
             async def _execute(self, **kwargs):

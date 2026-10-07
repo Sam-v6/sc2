@@ -146,7 +146,7 @@ def queued_work(state, goals, catalog, unit_names):
     return dict(queued), active
 
 
-def eligible_actors(state, ability, available, catalog, unit_names):
+def eligible_actors(state, ability, available, catalog, unit_names, *, max_train_orders=1):
     wanted = canonical(ability, catalog)
     friendly = catalog.get(ability, {}).get('friendly_name', '')
     addon_parent = (friendly.rsplit(' ', 1)[-1]
@@ -169,6 +169,10 @@ def eligible_actors(state, ability, available, catalog, unit_names):
             if worker_constructing(unit, state, catalog):
                 continue
         elif unit.get('orders'):
-            continue  # One production order per structure; no queue flooding.
+            orders = unit['orders']
+            if (not friendly.startswith('Train ') or len(orders) >= max_train_orders
+                    or any(not catalog.get(o['ability_id'], {}).get('friendly_name', '')
+                           .startswith('Train ') for o in orders)):
+                continue
         candidates.append(unit)
     return candidates

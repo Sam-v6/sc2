@@ -3,6 +3,29 @@ from src.learning.production_execution import queued_work, eligible_actors
 
 
 class ProductionExecutionTests(unittest.TestCase):
+    def test_bounded_training_queue_requires_native_availability_and_space(self):
+        catalog = {560: dict(friendly_name='Train Marine')}
+        actor = dict(tag=1, alliance=1, unit_type=21,
+                     orders=[dict(ability_id=560, progress=.5)])
+        state = dict(units=[actor])
+        self.assertEqual(eligible_actors(state, 560, {1: [560]}, catalog, {}), [])
+        self.assertEqual(eligible_actors(state, 560, {1: [560]}, catalog, {},
+                                        max_train_orders=2), [actor])
+        self.assertEqual(eligible_actors(state, 560, {1: []}, catalog, {},
+                                        max_train_orders=2), [])
+        actor['orders'].append(dict(ability_id=560, progress=0))
+        self.assertEqual(eligible_actors(state, 560, {1: [560]}, catalog, {},
+                                        max_train_orders=2), [])
+
+    def test_training_queue_does_not_allow_other_busy_commands(self):
+        actor = dict(tag=1, alliance=1, unit_type=21,
+                     orders=[dict(ability_id=560, progress=.5)])
+        for name in ('Build TechLab', 'Research Stimpack', 'Morph OrbitalCommand'):
+            with self.subTest(name=name):
+                self.assertEqual(eligible_actors(dict(units=[actor]), 999,
+                                 {1: [999]}, {999: dict(friendly_name=name)}, {},
+                                 max_train_orders=2), [])
+
     def test_resource_filter_keeps_exact_budget_and_unknown_prices(self):
         from src.learning.production_execution import resource_affordable_choices
         scores = {319: .6, 560: .2, 999: .1}

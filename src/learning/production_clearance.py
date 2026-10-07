@@ -53,12 +53,15 @@ async def _resolve_production_placement(client, command, catalog, state, unit_ty
         points = [(x + 2.5, y - .5)]
         checks = [(depot, points[0], 0)]
     else:
-        origin = tuple(round(x * 2) / 2 for x in command.target_point)
+        offset = info.get('footprint_radius', 1) % 1
+        origin = tuple(math.floor(x - offset + .5) + offset for x in command.target_point)
         width, height = state['map_size']
         search = set(candidates(command.target_point, state))
         search.update((origin[0]+x, origin[1]+y) for x in range(-20, 21, 2)
                       for y in range(-20, 21, 2)
                       if 0 <= origin[0]+x < width and 0 <= origin[1]+y < height)
+        search = {tuple(math.floor(x - offset + .5) + offset for x in point)
+                  for point in search}
         search = sorted(search, key=lambda p: (sum((a-b)**2 for a,b in zip(p, origin)), p))
         points = [p for p in search
                   if clear_site(p, info.get('footprint_radius', 1), reserved)
