@@ -76,6 +76,18 @@ matching observation projection and explicit assistance. Inspect any first
 choice-to-effect failure for expert corrections; do not reopen arbitrary sweeps.
 See [the resource inference audit](professional-resource-filter-experiment.md) and
 [the data comparison](professional-choice-data-expansion-experiment.md).
+
+The subsequent native conditional-choice canary is terminal and failed. Independent
+verification reconstructs788 predictions and72 successful immediate production
+acknowledgements; traces show25new SCVs,8completed production buildings and15new
+observed combat units (MULEs excluded). A Depot at loop10565 later receives
+`CantBuildLocationInvalid` at10684. The prototype misses that delayed failure,
+holds a global pending request and aborts after448loops. It also uses empty placement
+spacing reservations and releases builder protection before a foundation appears.
+Wall69.0seconds, host CPU peak6.4%. No completed replay, victory or RL follows.
+Next repair and test construction follow-through and physical placement before
+a fresh canary; weak army output and excess buildings remain model concerns.
+See [the native canary diagnosis](professional-choice-native-canary.md).
 See [the additional command recovery](additional-professional-command-recovery.md).
 
 The latest mixed-source timing fit is terminal and failed its frozen gates.
