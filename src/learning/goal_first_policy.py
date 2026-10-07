@@ -84,14 +84,8 @@ class GoalFirstPolicy(nn.Module):
             raise ValueError("Human label outside eligible candidates")
         return int(gold), logits
 
-    def _forward(
-        self,
-        inputs,
-        label=None,
-        ability_override=None,
-        actors_override=None,
-        ability_rng=None,
-    ):
+    def encode_context(self, inputs):
+        """Share the existing entity/context encoding without choosing a command."""
         raw, types, orders, scene, history, roles = inputs["encoder"]
         raw = self._tensor(raw)
         entities = torch.tanh(
@@ -126,6 +120,17 @@ class GoalFirstPolicy(nn.Module):
         context = torch.tanh(
             self.scene(self._tensor(scene)) + self.pool(pooled) + temporal + status
         )
+        return entities, context
+
+    def _forward(
+        self,
+        inputs,
+        label=None,
+        ability_override=None,
+        actors_override=None,
+        ability_rng=None,
+    ):
+        entities, context = self.encode_context(inputs)
         point_inputs = inputs.get("point_features", inputs["points"])
         points = torch.tanh(self.point(self._tensor(point_inputs)))
         actors_mask = self._tensor(inputs["actor_mask"], torch.bool)

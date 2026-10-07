@@ -1,9 +1,13 @@
 # Current learning status
 
 Updated October 7, 2026. The **initial scripted Hard baseline is verified**;
-the immediate priority is diagnosing losses and verifying those primitives
-through the learning controller's execution adapter. Further imitation fits and
-RL are paused under the user's renewed primitives-first direction. The scripted
+the basic production/combat adapter gate now also passes across all three races.
+A separately declared scripted request fixture used the broad adapter and won
+three VeryEasy games, with actual worker/Marine births, completed Barracks,
+outward movement, visible-target attacks and zero action errors. CPU peaked 7.1%.
+These are execution fixtures, not learned victories or an additional Hard panel.
+One bounded professional production-choice fit then resumed; it is terminal and
+failed its building-choice gate. RL remains paused. The scripted
 baseline's 30/30 Hard wins do not establish reliable execution in that adapter.
 Mining, combat and protected WorkerScout assistance are connected. The fresh
 200-second native scout fixture verifies selection, protection, damage retreat
@@ -18,6 +22,17 @@ from an SCV without a Barracks; all 1,185 unavailable requests repeat that actio
 This is a model choice/actor error, not evidence that accepted unit training fails.
 Check requested actions against actual income,
 construction, production and combat effects before resuming learning.
+
+The fresh current-state choice fit used 1,267 distinct professional events,
+30 epochs / 38,010 presentations, with no failed timing weights, human history,
+legality masks or native rollout. Independent verification recomputes all 289
+diagnostic predictions: accuracy 43.9% versus 38.8% majority; nonworker recall
+33.3% versus 14.7% old checkpoint; building recall only 6/54 (11.1%, required 40%).
+Optimizer/evaluation wall time 39.4 seconds; sampled CPU peak 9.0%. The model is
+not promoted. It predicts buildings only 26/289 times, versus 54 gold building
+events; SCV/Marine choices dominate. Next diagnose/rebalance that loss contribution
+in a bounded supervised experiment with unchanged gates, not more epochs or RL.
+See [the choice experiment](professional-production-choice-experiment.md).
 
 The latest mixed-source timing fit is terminal and failed its frozen gates.
 Independent verification found no qualifying cutoff on calibration or either
