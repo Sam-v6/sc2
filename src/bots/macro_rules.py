@@ -11,10 +11,19 @@ def depot_limit(state):
 
 
 def spend_float(targets, state):
-    """Raise the Barracks target while unspent minerals pile up on two or more bases."""
+    """Raise production targets while unspent resources pile up on two or more bases.
+
+    Minerals add Barracks; gas adds tanks and Factories.
+    """
     player = state['player']
     bases = sum(u['alliance'] == 1 and u['unit_type'] in (18, 132, 130) and u.get('build_progress', 1) == 1
                 for u in state['units'])
-    if bases < 2 or player['minerals'] < 700 or player['food_used'] >= 190:
+    if bases < 2 or player['food_used'] >= 190:
         return targets
-    return dict(targets, barracks=min(16, targets['barracks'] + min(8, (player['minerals'] - 400) // 300)))
+    targets = dict(targets)
+    if player['minerals'] >= 700:
+        targets['barracks'] = min(16, targets['barracks'] + min(8, (player['minerals'] - 400) // 300))
+    if player['vespene'] >= 500:
+        targets['tanks'] = min(16, targets['tanks'] + (player['vespene'] - 200) // 150)
+        targets['factories'] = min(4, max(targets['factories'], 2) + (player['vespene'] >= 1000))
+    return targets

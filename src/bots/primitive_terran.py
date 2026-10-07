@@ -165,7 +165,11 @@ class PrimitiveTerranBot(BotAI):
                     if worker:
                         self.do(worker.build_gas(geyser), subtract_cost=True)
                         break
-        for upgrade in (G.STIMPACK, G.SHIELDWALL, G.TERRANINFANTRYWEAPONSLEVEL1, G.TERRANINFANTRYARMORSLEVEL1):
+        if (self.vespene >= 300 and self.structures(U.ENGINEERINGBAY).ready
+                and not self.structures(U.ARMORY) and not self.already_pending(U.ARMORY)):
+            await self.construct(U.ARMORY, state, reserved)
+        for upgrade in (G.STIMPACK, G.SHIELDWALL, G.TERRANINFANTRYWEAPONSLEVEL1, G.TERRANINFANTRYARMORSLEVEL1,
+                        G.TERRANINFANTRYWEAPONSLEVEL2, G.TERRANINFANTRYARMORSLEVEL2):
             if not self.already_pending_upgrade(upgrade) and self.can_afford(upgrade):
                 self.research(upgrade)
         if not self.scouted and self.time > 75 and self.structures(U.BARRACKS).ready:
