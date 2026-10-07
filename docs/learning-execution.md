@@ -4716,3 +4716,19 @@ and preservation-check failures remain recorded. Both jobs are terminal. The
 next learning experiment must request current-state actions through the verified
 primitives, with legal current placement, explicit scripted assistance and native
 effect checks. The complete goal remains active and unachieved.
+
+## October 7: bridge broad raw imitation to mining and combat execution
+
+The opt-in broad adapter now runs shared primitives between learned decisions,
+protects accepted model actor groups through their waits, and records assistance
+separately. Native-rejected learned submissions no longer enter history or defer
+the next decision. Regression cases failed before implementation and now pass;
+full suite 555 tests / 32 optional skips, Ruff and whitespace checks pass.
+Two matched 90-second native canaries independently verify integration with an
+unchanged old checkpoint: nine learned submissions and three SCV births each;
+assisted run adds 13 mining submissions. Zero action errors; host CPU peak 7.6%.
+Both reach 15 workers/cap15 without Depot or army: macro remains failed. No fit
+or RL. See [result, scope and missing supply/scout assistance](broad-imitation-primitive-bridge.md).
+Bound sources were frozen during both games and snapshotted after terminal exit.
+Next use repaired source commands for state-conditioned production/timing while
+preserving the full raw action roadmap. Do not rerun this old model unchanged.

@@ -12,6 +12,7 @@ from sc2.bot_ai import BotAI
 from sc2.data import AIBuild, Difficulty, Race
 from sc2.main import run_game
 from sc2.player import Bot, Computer
+from sc2.position import Point2
 from s2clientprotocol import sc2api_pb2 as pb
 
 from src.learning.actor_selection import construction_products
@@ -27,6 +28,7 @@ from src.learning.gameplay import PlayerView, image_dict, protocol_dict
 from src.learning.live import ability_query, issue
 from src.learning.placement import resolve_placements
 from src.learning.sandbox import micro_score
+from src.learning.production_primitives import primitive_assistance, scripted_army_destination
 from src.runner import positive, validate_map
 from src.runtime import supervise
 
@@ -101,6 +103,12 @@ class JointImitationBot(BotAI):
         self.callback_error = None
         self.last_score = None
         self.scheduled_step_counts = {}
+        self.next_mining = 0
+        self.attacking = False
+        self.search_index = 0
+        self.learned_control = set()
+        self.primitive_commands = 0
+        self.primitive_results = {}
 
     async def on_start(self):
         self.client.game_step = 1
@@ -121,6 +129,7 @@ class JointImitationBot(BotAI):
         )
         (Path(self.job["output"]) / "static.json").write_text(json.dumps(static) + "\n")
         self.catalog = {a["ability_id"]: a for a in static["game_data"]["abilities"]}
+        self.units_by_id = {u["unit_id"]: u for u in static["game_data"]["units"]}
         if self.observation_profile is not None:
             validate_order_aliases(self.observation_profile, self.catalog)
         self.agent = JointCommandAgent(
@@ -133,13 +142,38 @@ class JointImitationBot(BotAI):
         )
 
     def schedule_step(self):
-        step = decision_step(
-            self.last_loop, self.agent.next_loop, self.job.get("max_game_step", 1)
-        )
+        maximum = self.job.get("max_game_step", 1)
+        if self.job.get("primitive_assistance"):
+            maximum = min(maximum, 8)
+        step = decision_step(self.last_loop, self.agent.next_loop, maximum)
         self.client.game_step = step
         self.scheduled_step_counts[str(step)] = (
             self.scheduled_step_counts.get(str(step), 0) + 1
         )
+
+    async def run_primitives(self, state, protected):
+        mining = state["game_loop"] >= self.next_mining
+        if mining:
+            self.next_mining = state["game_loop"] + 24
+        destination, self.attacking, self.search_index = scripted_army_destination(
+            state, self.units_by_id, tuple(self.start_location),
+            tuple(self.enemy_start_locations[0]), tuple(self.game_info.map_center),
+            [tuple(p) for p in self.expansion_locations_list],
+            self.attacking, self.search_index,
+        )
+        commands = primitive_assistance(
+            state, protected, self.units_by_id, self.catalog, destination,
+            lambda p: self.in_map_bounds(Point2(p)) and self.in_pathing_grid(Point2(p)),
+            mining,
+        )
+        result = await issue(self.client, commands) if commands else pb.ResponseAction()
+        if len(result.result) != len(commands):
+            raise ValueError("Incomplete primitive acknowledgement batch")
+        self.primitive_commands += len(commands)
+        for code in result.result:
+            key = str(code)
+            self.primitive_results[key] = self.primitive_results.get(key, 0) + 1
+        return commands, result
 
     async def on_step(self, iteration):
         try:
@@ -169,6 +203,16 @@ class JointImitationBot(BotAI):
                 )
             command, delay = self.agent.decide(feature_state, candidates)
             if command is None:
+                if self.job.get("primitive_assistance"):
+                    if self.last_loop >= self.agent.next_loop:
+                        self.learned_control.clear()
+                    assistance, result = await self.run_primitives(state, self.learned_control)
+                    self.stream.write(json.dumps(dict(
+                        phase="primitives", observation=feature_state,
+                        primitive_protected=sorted(self.learned_control),
+                        assistance=[c.as_dict() for c in assistance],
+                        assistance_results=list(result.result), score=self.last_score,
+                    ), separators=(",", ":")) + "\n")
                 self.schedule_step()
                 return
             available = (
@@ -208,11 +252,21 @@ class JointImitationBot(BotAI):
             issued = dispatched is not None
             if issued:
                 result = await issue(self.client, [dispatched])
-                self.agent.record_issued(dispatched, state, delay)
+                if len(result.result) != 1:
+                    raise ValueError("Incomplete learned command acknowledgement")
+                if result.result[0] == 1:
+                    self.agent.record_issued(dispatched, state, delay)
+                    if self.job.get("primitive_assistance"):
+                        self.learned_control = set(dispatched.units)
                 self.commands += 1
             else:
                 # Unissued intentions never enter dispatched command history.
                 result = pb.ResponseAction()
+            assistance, assistance_result = [], pb.ResponseAction()
+            if self.job.get("primitive_assistance"):
+                if self.last_loop >= self.agent.next_loop:
+                    self.learned_control.clear()
+                assistance, assistance_result = await self.run_primitives(state, self.learned_control)
             self.schedule_step()
             for code in result.result:
                 self.action_results[str(code)] = (
@@ -231,6 +285,11 @@ class JointImitationBot(BotAI):
                         issued=issued,
                         available=[protocol_dict(row) for row in available.abilities],
                         results=list(result.result),
+                        accepted=bool(result.result and result.result[0] == 1),
+                        primitive_protected=sorted(self.learned_control)
+                        if self.job.get("primitive_assistance") else [],
+                        assistance=[c.as_dict() for c in assistance],
+                        assistance_results=list(assistance_result.result),
                         score=self.last_score,
                     ),
                     separators=(",", ":"),
@@ -312,6 +371,11 @@ def play_joint_job(job):
         final_player=bot.final_player,
         final_observed_own_units=bot.final_units,
         action_results=bot.action_results,
+        primitive_assistance=bool(job.get("primitive_assistance")),
+        primitive_commands=bot.primitive_commands,
+        primitive_results=bot.primitive_results,
+        assistance="Scripted mining/gas, construction resumption, MULEs, depot lowering, attack destinations and combat micro; no worker/army/building production fallback"
+        if job.get("primitive_assistance") else None,
         game_seconds=bot.last_loop / 22.4,
         score=bot.last_score,
         controller="goal_first_imitation"
@@ -375,6 +439,10 @@ def main():
         type=int,
         help="Sample learned goal-first ability probabilities with this local seed",
     )
+    parser.add_argument(
+        "--primitive-assistance", action="store_true",
+        help="Keep verified mining/combat execution active between learned decisions; production remains learned",
+    )
     parser.add_argument("--seed", type=int, default=120001)
     parser.add_argument("--seconds", type=positive, default=600)
     parser.add_argument("--wall-seconds", type=positive, default=120)
@@ -399,6 +467,7 @@ def main():
         wait_unavailable=args.wait_unavailable,
         condition_available=args.condition_available,
         engine_placement=args.engine_placement,
+        primitive_assistance=args.primitive_assistance,
         ability_seed=args.ability_seed,
         seconds=args.seconds,
     )

@@ -2,6 +2,15 @@
 
 Updated October 7, 2026. The **initial scripted Hard baseline is verified**;
 the active next phase is reconnecting human imitation to the verified primitives.
+The [broad-controller primitive bridge](broad-imitation-primitive-bridge.md) now
+passes regression checks and two native integration canaries. Its opt-in mining
+and combat assistance runs during model waits, protects model-controlled actors,
+and stays separate from learned history. Rejected learned actions no longer start
+waits or enter history. Full suite: 555 tests, 32 optional skips. Native pair:
+13 assisted mining submissions, zero action errors, 7.6% host CPU peak. Both are
+90-second cutoffs with 15 workers and no Depot/army; the old checkpoint still
+fails macro, and no training or strength claim follows. This broad adapter does
+not yet add reactive supply or the production experiment's WorkerScout.
 The [nine-game command cohort recovery](human-command-cohort-recovery.md) is now
 terminal and independently verified: 6,748 command labels, including 1,737
 recovered commands (227 production commands), with preserved owned/player/map
