@@ -34,7 +34,7 @@ class PrimitiveTerranBot(BotAI):
         self.next_macro = 0
         self.attacking = False
         self.scouted, self.scout_tag = False, None
-        self.hunt, self.hunt_points = [], []
+        self.hunt, self.hunt_points, self.last_seen = [], [], {}
         self.saving, self.expand_retry = False, 0
         self.summary = dict(worker_peak=0, army_peak=0, collected_minerals=0,
                             mining_commands=0, combat_commands=0, defense_commands=0, resumed_builds=0,
@@ -239,6 +239,9 @@ class PrimitiveTerranBot(BotAI):
     def army_destination(self, state):
         army = self.units.of_type(ARMY_TYPES)
         self.hunt = []
+        for point in self.hunt_points:
+            if self.is_visible(point):
+                self.last_seen[point] = self.time
         self.attacking = self.strategy_attack(state)
         threats = self.enemy_units.filter(lambda e: e.is_visible and e.can_attack_ground
                                          and any(e.distance_to(b) < 22 for b in self.townhalls))
@@ -250,10 +253,10 @@ class PrimitiveTerranBot(BotAI):
         structures = self.enemy_structures.filter(lambda e: e.type_id != U.KD8CHARGE)
         if structures:
             return structures.closest_to(army.center if army else self.start_location).position
-        # Nothing known: up to six groups sweep the nearest spots not currently in vision.
+        # Nothing known: up to six groups sweep the spots seen longest ago (30 s buckets), nearest first.
         center = army.center if army else self.start_location
         unseen = [p for p in self.hunt_points if not self.is_visible(p)]
-        self.hunt = sorted(unseen, key=lambda p: p.distance_to(center))[:6]
+        self.hunt = sorted(unseen, key=lambda p: (self.last_seen.get(p, -30) // 30, p.distance_to(center)))[:6]
         return self.hunt[0] if self.hunt else self.enemy_start_locations[0]
 
     async def on_step(self, iteration):
