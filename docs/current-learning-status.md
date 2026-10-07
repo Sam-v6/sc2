@@ -2,6 +2,13 @@
 
 Updated October 7, 2026. The **initial scripted Hard baseline is verified**;
 the active next phase is reconnecting human imitation to the verified primitives.
+The [mixed-source production experiment](mixed-source-production-experiment.md)
+now has a verified dense-data pilot: reused diagnostic Rom yields 120 states
+every 44 loops, preserves all 299 native actions, and covers 99.87% of elapsed
+time, at 6.6% CPU peak. This is Masters data, not professional provenance.
+Next audit production-specific human issuance and prepare existing native source
+splits, then test Masters timing plus professional choice under frozen gates.
+No fit, model prediction or RL has occurred; reserved games remain untouched.
 The [production timing coverage audit](human-production-timing-coverage.md) closes
 the proposed two-second act/wait fit without training: source-backed classification
 leaves 619/1,557 teaching intervals unknown, only 122 confirmed waits, and 20–25%

@@ -4746,3 +4746,20 @@ does not support a representative act/wait fit; the experiment is closed without
 training, native games or RL. Resolve quiet-period observations or explicitly
 limit the next experiment to conditional command identity, preserving broad
 controls and verified primitives. See [evidence and limits](human-production-timing-coverage.md).
+
+## October 7: prove dense current observations in compatible human replay
+
+Rechecked installed engines and prior source screening before new acquisition:
+only Base75689 is installed; professional76052 remains unavailable. Existing
+Masters diagnostic Rom was reconstructed at44loop stride without downloads.
+Terminal extraction takes37.21wallseconds, samples6.6%CPU peak, retains120states
+and preserves299native commands. Complete windows cover99.87%elapsed time;
+seven-loop tail remains unsupported. Independent verifier preserves player/owned
+command states and validates current enemy visibility, causal archived history,
+cadence, source hashes and action preservation. Old enemy entries failing the
+current fog guard are counted; historical memory verification is explicitly
+limited. Initial verifier floor-coordinate and empty-history assumptions failed,
+then were corrected from native grid convention and actual archived command
+history before verification passed. No training, predictions, native competition
+or RL. Adviser recommends a bounded mixed-source transfer hypothesis: Masters
+timing, professional choice, native legality. See [frozen direction and gates](mixed-source-production-experiment.md).
