@@ -307,3 +307,25 @@ Hardest fair difficulty is API `VeryHard` (UI "Elite"); `Cheat*` levels are excl
 - Human data: 3.16.1 engine plus replay packs at `/home/sam/repos/sc2-repos/game/3.16.1`;
   labels from the Terran player's fog view (`replay_strategy_extract_3161_01.py`) and
   `strategy_human_fit_01.py` to fit a head on winners' games; not yet evaluated live.
+
+### Update: scripted macro and finishing fixes on top of the strategy stack
+
+All rows: Stage A head + `zero-terran.json` offsets (searched Z/P, zero TvT), VeryHard unless noted.
+The fixes below are scripted rules (`src/bots/macro_rules.py`, `primitive_terran.py`), not learned.
+
+| Panel | Seeds | Maps | Wins |
+|---|---|---|---|
+| Macro fixes + Bunker | 870001+ | Acropolis, Abyssal Reef | 27/30 (Z 10, P 9, T 8) |
+| Same, Hard regression | 880001+ | Acropolis, Abyssal Reef | 30/30 |
+| Same, unseen maps | 890001+ | Odyssey, Interloper, Catalyst | 37/45 (four P ties at 200/200) |
+| + split structure hunting | 891001+ | Odyssey, Interloper, Catalyst | 40/45 (Z 15, P 13, T 12) |
+
+- Supply: only one depot could be pending (`depot_limit`). Float: minerals add Barracks, gas adds
+  tanks/Factories (`spend_float`); Armory and level-2 infantry upgrades.
+- TvT: a Bunker at the natural against Terran (Marine rushes arrive about 3:05); worker defense
+  counts it. Paired 20-game TvT training set (seeds 920000+): 9 -> 12 (gas) -> 13/20 (Bunker).
+- Rejected on the same paired set: one-base safe opener (6/20), holding attacks to 100 army
+  supply (6/20).
+- Finishing: remembered snapshots are targets; with nothing known, up to six groups sweep unseen
+  expansions and grid points.
+- Paired comparison tool: `logs/roadmap/offsets_ab.py`; `panel.py` takes `PANEL_MAPS`.
