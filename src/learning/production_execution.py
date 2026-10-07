@@ -146,6 +146,18 @@ def preferred_production_intent(probabilities, unavailable_until, loop, *, retry
     return max(possible, key=possible.get) if possible else None
 
 
+def withhold_rejected_request(unavailable_until, failed_sites, ability, target_point, loop):
+    """Treat an immediate native rejection like a failed placement search.
+
+    Withholds the ability for 224 loops, avoids the rejected site, and returns
+    the next decision loop so a rejected command is not reissued every loop.
+    """
+    unavailable_until[ability] = loop + 224
+    if target_point:
+        failed_sites.append((*target_point, 2))
+    return loop + 8
+
+
 def affordable_production_intent(probabilities, prices, minerals, gas):
     """Wait for the preferred product instead of purchasing a cheaper fallback."""
     if not probabilities:

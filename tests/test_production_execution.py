@@ -44,6 +44,20 @@ class ProductionExecutionTests(unittest.TestCase):
         self.assertEqual(preferred_production_intent(scores, {328: 224}, 224), 328)
         self.assertIsNone(preferred_production_intent({328: .8}, {328: 224}, 8))
 
+    def test_immediate_rejection_withholds_ability_and_avoids_site(self):
+        from src.learning.production_execution import (
+            preferred_production_intent, withhold_rejected_request)
+        # Protoss competence08: Starport329 at (157.5,118.5) passed the placement
+        # query but returned CantFindPlacementLocation41 on 580 consecutive loops.
+        unavailable, failed = {}, []
+        next_loop = withhold_rejected_request(unavailable, failed, 329, (157.5, 118.5), 24024)
+        self.assertEqual(next_loop, 24032)
+        self.assertEqual(unavailable, {329: 24248})
+        self.assertEqual(failed, [(157.5, 118.5, 2)])
+        self.assertEqual(preferred_production_intent({329: .9, 560: .1}, unavailable, 24032), 560)
+        withhold_rejected_request(unavailable, failed, 560, None, 24032)
+        self.assertEqual(failed, [(157.5, 118.5, 2)])
+
     def test_preference_does_not_filter_expensive_but_physically_available_intent(self):
         from src.learning.production_execution import preferred_production_intent
         scores = {328: .8, 324: .02}
