@@ -361,3 +361,21 @@ Of 40 building decisions, 32 prefer buildings even when funded native-available
 training remains eligible. This is evidence of a remaining decision problem,
 not proof of another executor failure. Keep imitation and RL training paused
 while inspecting remaining production constraints and offensive/micro effects.
+
+### Concurrent execution works; conditional decisions still fail
+
+A further audit finds 177.9 game seconds globally blocked on one pending
+construction request in native 05. The army never reaches the scripted 40-supply
+offense threshold. Native 06's concurrent prototype exposes a queued SCV rollover
+tracking bug; the tested repair and pending-actor protection produce a terminal
+native 07 with zero errors, 45 concurrent selections, 675 protected pending actor
+observations and 1,172 recomputed model predictions. All 599 default tests pass
+(40 optional skips).
+
+Native 07's strategy is worse: 50 SCV births, 12 military births, only one
+completed producer and 37 Bunker requests. The 600-second Tie cutoff saves a
+replay; military and building gates fail. CPU peak is 23.4 percent, wall time
+83.816 seconds. Execution repairs do not establish model competence. Keep the
+full goal active and consult the existing authorized Astra adviser about the
+next human-imitation formulation before another fitting sweep. No RL is running.
+See [the detailed native diagnosis](professional-choice-native-canary.md).

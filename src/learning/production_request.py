@@ -25,6 +25,14 @@ class ProductionRequest:
             .startswith("Train ")
             else {}
         )
+        self.previous_progress = {
+            unit["tag"]: unit["orders"][0].get("progress", 0)
+            for unit in state["units"]
+            if command.queue
+            and unit["tag"] in self.initial_train_orders
+            and len(unit.get("orders", [])) == 1
+            and self.initial_train_orders[unit["tag"]] == 1
+        }
         self.building = (
             self.catalog[command.ability].get("friendly_name", "").startswith("Build ")
         )
@@ -92,6 +100,15 @@ class ProductionRequest:
                 for order in unit.get("orders", [])
             )
             > self.initial_train_orders.get(unit["tag"], 0)
+            or (
+                unit["tag"] in self.command.units
+                and unit["tag"] in self.previous_progress
+                and len(unit.get("orders", [])) == 1
+                and canonical(unit["orders"][0]["ability_id"], self.catalog)
+                == self.wanted
+                and unit["orders"][0].get("progress", 0)
+                < self.previous_progress[unit["tag"]]
+            )
             for unit in own
         ):
             return "started"

@@ -160,3 +160,50 @@ Regression tests were observed failing before implementation. All 598 default
 tests pass with 40 optional skips; focused production tests, Ruff and diff
 whitespace checks pass. Next inspect the remaining unit-production constraints
 and offensive/micro effects before deciding which learning changes are warranted.
+
+## Concurrent execution diagnosis: native 06 and 07
+
+A hash-bound `serial-attack-audit.json` under native 05 records 498 globally
+blocked pending frames, spanning 3,984 loops (177.9 game seconds). After 120
+seconds, 4,700 of 5,765 completed-producer observations have no orders; these
+are sampled observations rather than exact utilization durations. Maximum ground
+combat supply is 20, below the declared scripted offensive start threshold of 40.
+This canary therefore does not demonstrate an offensive campaign or combat micro.
+
+Native 06 tested actor-keyed concurrent pending requests, but stopped with a
+false timeout. At loop 4348, the requested CommandCenter's existing SCV order
+has progress 0.97794116; at loop 4356 the newly queued order has progress
+0.011029422, still one order. The count-only tracker misses this rollover.
+Its failed receipt, trace and source snapshot remain preserved. Code inspection
+also identified inherited `learned_control` clearing on new commands; the
+concurrent wrapper now unions all pending actors before primitive assistance.
+
+The tested tracker repair accepts a progress rollover only for an explicitly
+queued command with exactly one pre-existing matching order. Two existing orders
+cannot acknowledge a third through rollover alone. The regression was observed
+failing before implementation. All 599 default tests pass (40 optional skips);
+Ruff and whitespace checks pass.
+
+Native 07 completes the matched 600-second Tie cutoff with zero action errors,
+a replay and independently recomputed 1,172 prediction vectors. The verifier
+checks 675 protected pending actor observations and 45 selections while another
+request remains pending, excluding pending actors from new commands. The wrapper
+also reserves all pending construction footprints and producer addon space.
+It permits one prepared command per existing 44-loop decision cadence; no
+model fitting, unit quota or RL is added. Wall time is 83.816 seconds; sampled
+whole-host CPU peak is 23.4 percent.
+
+Replay events confirm 50 SCV births, 12 military births (nine Marines and three
+Reapers), and one completed production building. The controller submits 37
+Bunker commands. Both the frozen military and production-building gates fail.
+The final player has 62 workers, 5,200 minerals, 1,406 gas, and 12 military units.
+Concurrent execution works, but the current conditional-choice model makes worse
+strategic decisions in the changed trajectory. Do not describe this as an
+imitation improvement or impose a hidden military quota to pass the gate.
+
+The next decision is the imitation formulation, informed by this loss evidence.
+Keep the known scripted Hard baseline separate. Consult the existing authorized
+Astra adviser rather than repeat closed memory, weighting or epoch sweeps. The
+actor-keyed concurrent wrapper remains an experimental diagnostic runner in
+`logs/roadmap/run_professional_choice_native_07.py`, bound and preserved with its
+source snapshot; it is not a claim of integrated full-game learned control.

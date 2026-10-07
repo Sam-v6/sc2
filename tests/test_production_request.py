@@ -115,6 +115,26 @@ class ProductionRequestTests(unittest.TestCase):
         ]
         self.assertEqual(request.status(later), "started")
 
+    def test_queued_order_can_start_when_previous_unit_finishes_between_frames(self):
+        actor = dict(
+            tag=10,
+            unit_type=18,
+            alliance=1,
+            orders=[dict(ability_id=524, progress=0.99)],
+        )
+        self.state["units"].append(actor)
+        request = self.request(Command(524, (10,), queue=True))
+        later = dict(
+            self.state,
+            game_loop=10573,
+            units=[dict(actor, orders=[dict(ability_id=524, progress=0.02)])],
+        )
+        self.assertEqual(request.status(later), "started")
+        # Two pre-existing orders can roll over without proving a third appeared.
+        actor["orders"].append(dict(ability_id=524, progress=0))
+        request = self.request(Command(524, (10,), queue=True))
+        self.assertEqual(request.status(later), "pending")
+
     def test_targetless_addon_must_belong_to_the_requested_actor(self):
         self.data["abilities"].append(
             dict(ability_id=421, friendly_name="Build TechLab Barracks")
