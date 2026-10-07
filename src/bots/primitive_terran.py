@@ -17,7 +17,7 @@ from sc2.position import Point2
 from s2clientprotocol import sc2api_pb2 as pb
 
 from src.bots.macro_rules import depot_limit, spend_float
-from src.bots.terran_primitives import combat_command, mining_commands, scripted_targets, destination_reached, changes_order, scripted_attack, worker_defense_commands
+from src.bots.terran_primitives import combat_command, mining_commands, scripted_targets, changes_order, scripted_attack, worker_defense_commands
 from src.learning.gameplay import Command, PlayerView, protocol_dict
 from src.learning.live import issue
 from src.learning.production_clearance import reservations, resolve_production_placement, site_reservations
@@ -34,7 +34,7 @@ class PrimitiveTerranBot(BotAI):
         self.next_macro = 0
         self.attacking = False
         self.scouted, self.scout_tag = False, None
-        self.search_index = 0
+        self.hunt, self.hunt_points = [], []
         self.summary = dict(worker_peak=0, army_peak=0, collected_minerals=0,
                             mining_commands=0, combat_commands=0, defense_commands=0, resumed_builds=0,
                             raw_action_errors=0, delayed_action_errors=0)
@@ -48,6 +48,9 @@ class PrimitiveTerranBot(BotAI):
         self.stream = gzip.open(self.trace_path, 'xt')
         path = Path(self.trace_path)
         path.with_name(path.name.removesuffix('.jsonl.gz')+'.data.json').write_text(json.dumps(self.data)+'\n')
+        size = self.game_info.map_size
+        grid = [Point2((x, y)) for x in range(8, size.x - 8, 16) for y in range(8, size.y - 8, 16)]
+        self.hunt_points = list(self.expansion_locations_list) + [p for p in grid if self.in_pathing_grid(p)]
         self.started = True
 
     def free_worker(self, point):
@@ -223,6 +226,7 @@ class PrimitiveTerranBot(BotAI):
 
     def army_destination(self, state):
         army = self.units.of_type(ARMY_TYPES)
+        self.hunt = []
         self.attacking = self.strategy_attack(state)
         threats = self.enemy_units.filter(lambda e: e.is_visible and e.can_attack_ground
                                          and any(e.distance_to(b) < 22 for b in self.townhalls))
@@ -230,15 +234,15 @@ class PrimitiveTerranBot(BotAI):
             return threats.closest_to(self.start_location).position
         if not self.attacking:
             return self.start_location.towards(self.game_info.map_center, 12)
-        structures = self.enemy_structures.filter(lambda e: e.is_visible and e.type_id != U.KD8CHARGE)
+        # Remembered snapshots count: the engine drops them once their spot is seen empty.
+        structures = self.enemy_structures.filter(lambda e: e.type_id != U.KD8CHARGE)
         if structures:
             return structures.closest_to(army.center if army else self.start_location).position
-        search = [self.enemy_start_locations[0]] + sorted(self.expansion_locations_list,
-                                                           key=lambda p: p.distance_to(self.enemy_start_locations[0]))
-        target = search[self.search_index % len(search)]
-        if destination_reached([tuple(u.position) for u in army], tuple(target)):
-            self.search_index += 1
-        return target
+        # Nothing known: up to six groups sweep the nearest spots not currently in vision.
+        center = army.center if army else self.start_location
+        unseen = [p for p in self.hunt_points if not self.is_visible(p)]
+        self.hunt = sorted(unseen, key=lambda p: p.distance_to(center))[:6]
+        return self.hunt[0] if self.hunt else self.enemy_start_locations[0]
 
     async def on_step(self, iteration):
         try:
@@ -274,7 +278,7 @@ class PrimitiveTerranBot(BotAI):
                 if (unit['alliance'] != 1 or unit['unit_type'] not in (48, 33, 32, 35)
                         or unit['tag'] in self.unit_tags_received_action or unit['tag'] in self.loading):
                     continue
-                target = destination
+                target = self.hunt[unit['tag'] % len(self.hunt)] if self.hunt else destination
                 if unit['unit_type'] == 35:
                     air = [e for e in enemies if e.get('is_flying') and e.get('cloak') in (2, 3)
                            and e.get('health', 0) > 0]

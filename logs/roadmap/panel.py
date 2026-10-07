@@ -1,11 +1,13 @@
 """Frozen 30-game Terran panel (3 races x 2 maps x 5 builds), parallel and CPU guarded.
 
 Usage: panel.py OUT_DIR BOT DIFFICULTY SEED_BASE [STRATEGY_POLICY [STRATEGY_OFFSETS_JSON]]
+Maps default to AcropolisLE and AbyssalReefLE; PANEL_MAPS=a,b,c overrides them.
 Same contract as the scripted Hard baseline: 1200 game s, 300 wall s, step 8,
 failures count as non-wins, 80% whole-host CPU guard; WORKERS games run at once.
 """
 import hashlib
 import json
+import os
 import sys
 import threading
 from concurrent.futures import ThreadPoolExecutor
@@ -30,7 +32,8 @@ def main():
     out.mkdir(parents=True, exist_ok=False)
     paths = [Path(__file__), *map(Path, SOURCES), *([policy] if policy else []), *([offsets] if offsets else [])]
     bindings = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
-    matrix = sorted([(r, b, m) for r in ('Terran', 'Zerg', 'Protoss') for m in ('AcropolisLE', 'AbyssalReefLE')
+    maps = os.environ.get('PANEL_MAPS', 'AcropolisLE,AbyssalReefLE').split(',')
+    matrix = sorted([(r, b, m) for r in ('Terran', 'Zerg', 'Protoss') for m in maps
                      for b in ('Rush', 'Timing', 'Power', 'Macro', 'Air')], key=lambda x: (x[2], x[1], x[0]))
     jobs = [dict(bot=bot, race=r, build=b, seed=seed+i, difficulty=difficulty, map=m, game_step=8,
                  game_seconds=1200, dev=False, replay=str((out/f'{r}-{b}-{m}'/'game.SC2Replay').resolve()),
