@@ -80,6 +80,8 @@ class PrimitiveBridgeTests(unittest.IsolatedAsyncioTestCase):
             stream=io.StringIO(),
             next_mining=0,
             attacking=False,
+            production_clearance_points=[],
+            production_clearance_hold=set(),
             search_index=0,
             learned_control=set(),
             primitive_commands=0,
@@ -93,6 +95,21 @@ class PrimitiveBridgeTests(unittest.IsolatedAsyncioTestCase):
         bot.reactive_supply_command = JointImitationBot.reactive_supply_command.__get__(bot)
         bot.schedule_step = JointImitationBot.schedule_step.__get__(bot)
         return bot, state, actions
+
+    async def test_wait_clears_and_holds_a_marine_outside_pending_addon_pad(self):
+        bot, state, actions = self.bot()
+        bot.production_clearance_points = [(20, 20)]
+        await JointImitationBot.on_step(bot, 0)
+        moves = [a.action_raw.unit_command for a in actions
+                 if 3 in a.action_raw.unit_command.unit_tags]
+        self.assertEqual(len(moves), 1)
+        self.assertEqual(moves[0].ability_id, 16)
+        marine = next(u for u in state['units'] if u['tag'] == 3)
+        marine['position'] = [moves[0].target_world_space_pos.x, moves[0].target_world_space_pos.y]
+        state['game_loop'] += 8
+        actions.clear()
+        await JointImitationBot.on_step(bot, 1)
+        self.assertFalse(any(3 in a.action_raw.unit_command.unit_tags for a in actions))
 
     def supply_fixture(self, bot):
         bot.job['reactive_supply'] = True

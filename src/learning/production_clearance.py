@@ -51,6 +51,15 @@ async def _resolve_production_placement(client, command, catalog, state, unit_ty
         actor = next(u for u in state['units'] if u['tag'] == command.units[0])
         x, y = actor['position'][:2]
         points = [(x + 2.5, y - .5)]
+        blockers = [u['tag'] for u in state['units']
+                    if u['alliance'] == 1 and u['tag'] != actor['tag']
+                    and not u.get('is_flying')
+                    and abs(u['position'][0]-points[0][0]) < 1+u.get('radius', .5)
+                    and abs(u['position'][1]-points[0][1]) < 1+u.get('radius', .5)]
+        if blockers:
+            return [], [dict(source='production_clearance', addon=True,
+                            rejected='occupied_addon_pad', blocking_units=blockers,
+                            clearance_points=points)]
         checks = [(depot, points[0], 0)]
     else:
         offset = info.get('footprint_radius', 1) % 1

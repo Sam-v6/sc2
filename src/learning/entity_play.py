@@ -112,6 +112,8 @@ class JointImitationBot(BotAI):
         self.scheduled_step_counts = {}
         self.next_mining = 0
         self.attacking = False
+        self.production_clearance_points = []
+        self.production_clearance_hold = set()
         self.search_index = 0
         self.learned_control = set()
         self.primitive_commands = 0
@@ -237,6 +239,8 @@ class JointImitationBot(BotAI):
             self.units_by_id, self.catalog, destination,
             lambda p: self.in_map_bounds(Point2(p)) and self.in_pathing_grid(Point2(p)),
             mining,
+            landing_points=self.production_clearance_points,
+            landing_hold=self.production_clearance_hold,
         )
         result = await issue(self.client, commands) if commands else pb.ResponseAction()
         if len(result.result) != len(commands):

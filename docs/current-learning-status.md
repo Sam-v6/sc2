@@ -650,3 +650,44 @@ All source-bound workers are terminal. Full-game transfer of the new Liberator
 primitive remains unverified. Keep training/RL paused while resolving the per-
 request retry/addon failure; conditional identity with forced cadence remains
 an incomplete imitation policy requiring valid commitment/wait supervision.
+
+### Request-scoped attempts and crowded addon clearance (2026-10-07)
+
+Captured Protoss07 failures all involve Barracks4357357569 at(130.5,42.5),
+Reactor pad(133,42), while Marines occupy the pad and army rally destination is
+near(133.86,41.83). Native terrain/Depot placement checks returnedSuccess, yet
+actual Reactor422 commands failed44 five times. This establishes a mobility
+occupancy problem beyond static placement legality.
+
+`ProductionRequest` now carries an attempt number through an explicit retry-of
+request link. Native18 wrapper preserves that link through resubmission and
+clears retry only when that same request starts, not when unrelated production
+starts. A fourth failed attempt (initial plus three retries) aborts. Regression
+covers unrelated SCV completion between allthree retry generations.
+
+Shared addon placement withholds commands when owned ground footprints occupy
+its pad and returns blocker IDs/clearance points. The primitive bridge accepts
+explicit production clearance points and uses its existing physical move/hold
+behavior. Native18 retains an occupied addon intent and savings, clears mobile
+blockers, and holds the pad through actual addon foundation acknowledgment;
+other physical placement failures retain their earlier224loop recheck behavior.
+No strategic capacity quota or score changes. Bridge integration regression
+verifies a Marine moves clear and remains held during model waiting.
+
+Native `occupied-addon-fixture-01/verification.json` proves two withheld frames,
+one Marine clearance move, one actual Reactor start/completion and attachment,
+zero immediate/delayed errors, normal90game-second cutoff with replay. Debug setup
+supplies a completed Barracks, pad-blocking Marine and resources; addon build and
+movement use real commands. Replay tracker independently verifies foundation and
+completion.8.945wallseconds,5.6percent measuredCPUpeak. No learning or strength
+claim.620default tests pass (40optional skips), Ruff and diff checks pass.
+
+Single matched Protoss diagnostic08 is running, exec session45863 (re-poll before
+assuming live), CPU-only/80percent hostguard,1200game seconds/300wall limit, same
+frozen fit04 and seed824203. Source-bound files must remain unchanged until its
+terminal receipt. It includes the already separately verified Liberator micro,
+so any game outcome change cannot be attributed solely to addon clearance.
+Log:`/tmp/sc2-competence-08.log`; artifacts:
+`logs/roadmap/reserved-choice-competence-08`. Next audit addon errors, request
+attempt chains, temporary blocker movement/hold and actual outcome before more
+fits. RL/training remain paused; full roadmap incomplete.

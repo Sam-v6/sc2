@@ -73,6 +73,22 @@ class ProductionClearanceTests(unittest.TestCase):
 
 
 class BuilderPathTests(unittest.IsolatedAsyncioTestCase):
+    async def test_addon_pad_occupied_by_marine_is_withheld_despite_terrain_success(self):
+        class Client:
+            async def _execute(self, **kwargs):
+                return pb.Response(query=query.ResponseQuery(placements=[query.ResponseQueryBuildingPlacement(result=1)]))
+        state = dict(units=[dict(tag=1, alliance=1, unit_type=21, position=[130.5, 42.5]),
+                           dict(tag=2, alliance=1, unit_type=48, position=[133, 42], radius=.375)], map_size=[176, 184])
+        catalog = {3683: dict(friendly_name='Build Reactor', is_building=True),
+                   319: dict(friendly_name='Build SupplyDepot', is_building=True)}
+        commands, trace = await resolve_production_placement(Client(), Command(3683, (1,)), catalog, state, 38, [])
+        self.assertEqual(commands, [])
+        self.assertEqual(trace[0]['blocking_units'], [2])
+        self.assertEqual(trace[0]['clearance_points'], [(133, 42)])
+        state['units'][1]['is_flying'] = True
+        commands, _ = await resolve_production_placement(Client(), Command(3683, (1,)), catalog, state, 38, [])
+        self.assertEqual(len(commands), 1)
+
     async def test_expansion_command_does_not_move_twenty_tiles_off_its_resource_site(self):
         class Client:
             async def _execute(self, **kwargs):

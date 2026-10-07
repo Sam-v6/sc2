@@ -4,6 +4,18 @@ from src.learning.gameplay import Command
 
 
 class ProductionRequestTests(unittest.TestCase):
+    def test_retry_attempts_belong_to_the_request_despite_unrelated_completion(self):
+        from src.learning.production_request import ProductionRequest
+        request = self.request()
+        self.assertEqual(request.attempt, 0)
+        for attempt in range(1, 4):
+            request = ProductionRequest(request.command, self.state, self.data, retry_of=request)
+            other = ProductionRequest(Command(524, (self.worker['tag'],)), self.state, self.data)
+            self.assertEqual(other.status(dict(self.state, game_loop=10600,
+                             units=[dict(self.worker, orders=[dict(ability_id=524, progress=.1)])])), 'started')
+            self.assertEqual(request.attempt, attempt)
+            self.assertEqual(other.attempt, 0)
+
     def setUp(self):
         self.data = dict(
             abilities=[

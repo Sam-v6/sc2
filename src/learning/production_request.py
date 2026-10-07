@@ -6,8 +6,9 @@ from src.learning.production_execution import canonical, command_point
 
 
 class ProductionRequest:
-    def __init__(self, command, state, data):
+    def __init__(self, command, state, data, *, retry_of=None):
         self.command = command
+        self.attempt = retry_of.attempt + 1 if retry_of is not None else 0
         self.loop = state["game_loop"]
         self.catalog = {row["ability_id"]: row for row in data["abilities"]}
         self.wanted = canonical(command.ability, self.catalog)
