@@ -8,6 +8,10 @@ producer bindings and landing-site relationships through those transfers.
 Persistent producer bindings now pass tests and an isolated native Reactor swap.
 The swap required waiting for the producer's construction order to clear after
 visible addon completion. Fixed-plan controller integration remains outstanding.
+The [fixed human command plan](fixed-human-production-plan.md) now compiles and
+independently verifies 203 production instructions plus four repeated orders.
+Exact research tiers and actor-specific aliases resolve; native playback remains
+outstanding and does not yet establish useful imitation.
 Research queue accounting now preserves specific upgrade levels, and specific
 level-one availability no longer permits level-two requests. These fixes pass
 regression tests using the specific command IDs observed in the native research

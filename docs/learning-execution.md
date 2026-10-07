@@ -4525,3 +4525,21 @@ corrected without rerunning the game. Final verification exit zero, source snaps
 archived. Full suite 57066 terminal: 527 tests, 32 skips; Ruff passes. Fixture is
 engineering-only with debug setup and fast build. Helper integration into fixed
 human-plan controller remains next; no learned strength, fit or RL claim.
+
+### October 6: compiled fixed winning-human production commands
+
+Previous turn progressed via persistent bindings and verified native Reactor
+transfer. Added a command compiler preserving event identity/source order, actor
+tags, queue flags and original precise points; generic producer/research aliases
+resolve to specific abilities or explicit ambiguity. Combat cancellation excluded
+by actor structure attributes; six actual Cancel Last instructions preserved.
+Three tests cover research-tier ambiguity, combat cancellation and precise-point/
+queue recovery. Compiler01 and corrected precision-preserving02 exit zero:
+203 tickets, four repeated/present orders, zero unresolved specific abilities.
+Independent verifier02 exit zero checks all207 source identities/flags/points,
+canonical ability mappings and specific indexes, repeats/order/uniqueness/hashes.
+Actual source points already exact (zero changed); no precision-repair claim.
+Snapshots in logs/roadmap/fixed-human-production-plan-02. Full suite62052 terminal:
+530 tests/32skips, Ruff passes. No native playback, training or RL. Entity creation
+binding, placement/target translation and cancellations remain integration work.
+See [the plan result](fixed-human-production-plan.md).
