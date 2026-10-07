@@ -61,3 +61,42 @@ class BuilderPathTests(unittest.IsolatedAsyncioTestCase):
             {319: dict(friendly_name='Build SupplyDepot', is_building=True, footprint_radius=1)},
             state, 19, [])
         self.assertEqual(commands[0].target_point, (11, 10))
+
+    async def test_engine_rejection_is_recorded_without_claiming_a_path_failure(self):
+        class Client:
+            async def _execute(self, **kwargs):
+                request = kwargs['query']
+                return pb.Response(query=query.ResponseQuery(placements=[
+                    query.ResponseQueryBuildingPlacement(result=3) for _ in request.placements]))
+        command = Command(319, (1,), target_point=(10, 10))
+        state = dict(units=[dict(tag=1, alliance=1, unit_type=45, position=[0, 0])], map_size=[64, 64])
+        commands, trace = await resolve_production_placement(Client(), command,
+            {319: dict(friendly_name='Build SupplyDepot', is_building=True, footprint_radius=1)}, state, 19, [])
+        self.assertFalse(commands)
+        self.assertEqual(trace[0]['rejected'], 'native_placement')
+        self.assertEqual(trace[0]['placement_results'], {3: trace[0]['checked']})
+        self.assertEqual(trace[0]['pathing_checked'], 0)
+
+    async def test_crowded_original_seed_falls_back_to_owned_base_but_not_expansion_goal(self):
+        class Client:
+            async def _execute(self, **kwargs):
+                request = kwargs['query']
+                return pb.Response(query=query.ResponseQuery(
+                    placements=[query.ResponseQueryBuildingPlacement(result=1 if
+                        (p.target_pos.x, p.target_pos.y) == (49,49) else 44)
+                        for p in request.placements],
+                    pathing=[query.ResponseQueryPathing(distance=20) for _ in request.pathing]))
+        state = dict(units=[dict(tag=1,alliance=1,unit_type=45,position=[0,0]),
+                     dict(tag=2,alliance=1,unit_type=18,position=[48,48],build_progress=1)],map_size=[64,64])
+        catalog = {319:dict(friendly_name='Build SupplyDepot',is_building=True,footprint_radius=1)}
+        command = Command(319,(1,),target_point=(10,10))
+        commands, trace = await resolve_production_placement(Client(),command,catalog,state,19,[])
+        self.assertEqual(commands[0].target_point,(49,49))
+        self.assertEqual(trace[-1]['base'],2)
+        commands, _ = await resolve_production_placement(Client(),command,catalog,state,18,[])
+        self.assertFalse(commands)
+        for change in [dict(alliance=4),dict(build_progress=.5),dict(is_flying=True)]:
+            state['units'][1].update(alliance=1,build_progress=1,is_flying=False)
+            state['units'][1].update(change)
+            commands, _ = await resolve_production_placement(Client(),command,catalog,state,19,[])
+            self.assertFalse(commands)

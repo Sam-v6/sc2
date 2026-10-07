@@ -203,6 +203,7 @@ class ProductionGoalBot(BotAI):
             requests.sort(key=(lambda g: (-priority[g], g)) if self.prior else
                           (lambda g: (self.last_sent.get(g, -1), self.goals[g]['ability'])))
             allocations = []
+            placement_checks = []
             food = state['player'].get('food_cap', 0)-state['player'].get('food_used', 0)
             for goal in requests:
                 if self.ledger.remaining(goal) < 1:
@@ -249,6 +250,8 @@ class ProductionGoalBot(BotAI):
                 command = Command(info['ability'], (actor['tag'],), target_point=point,
                                   target_unit=target['tag'] if target else None)
                 resolved, placement = await resolve_production_placement(self.client, command, self.catalog, state, info['unit_type'], reserved)
+                if info['descriptor'].get('is_building') or not resolved:
+                    placement_checks.append(dict(goal=goal, actor=actor['tag'], command=command.as_dict(), diagnostics=placement, resolved=bool(resolved)))
                 if not resolved:
                     self.blocks['placement:' + goal] += 1
                     continue
@@ -295,6 +298,7 @@ class ProductionGoalBot(BotAI):
             self.stream.write(json.dumps(dict(phase='forecast', observation=state, goals=predicted,
                 raw_counts=counts.tolist(), queued=queued, reconciliation=changes,
                 inventory_stock=stock, source_goal=source_goal, inventory_target=full_target,
+                placement_checks=placement_checks,
                 priority=priority, unsupported_prior_pairs=unsupported, prior_cycles=cycles, allocations=allocations,
                 intents=self.ledger.intents if self.intent_mode else {},
                 intent_events=self.ledger.events if self.intent_mode else [],

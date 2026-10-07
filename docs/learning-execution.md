@@ -4343,3 +4343,43 @@ generic Error3 in replay mode. Replay placement diagnosis is inconclusive;
 use live failed-request tracing instead. Human source523 repeatedly provides slow economic
 targets;20/32blocked forecastframes have noDepotdeficit. Preserve these distinct
 policy/execution findings and acquire targeted recovery examples after diagnosis.
+
+### October6: live layout diagnosis and owned-base fallback verified
+
+Instrumentation507tests/32skips+Ruffpass. Native01/session15395 and verifier57699
+terminalexit0:48Barracks/8Bay/7Depotfailures all nativeplacement. Native02/71846
+readonlyprobes and verifier54418 terminalexit0:63/63have reachable approved
+owned-expansion alternatives, with original outcome/production unchanged.
+Primitive fallback regression red/green;508tests/32skips+Ruffpass. Native03/41032
+terminalexit0; final repaired verifier19603 terminalexit0 (first74377failedonly
+on verifier string replacement, no game restart). Zero placementfails,7capacity,
+41militarybirths52workers2595minerals70.71sblocked,Tie.4acceptedfallbackstarts,
+2Barrackscompleted; declaredprimitivegatepasses. Wall41.299sCPUpeak20.3%.
+No full-policy promotion or RL. All bound source archived. See
+[placement result](owned-base-placement-result.md). Updated shared primitive still
+needs fresh all-race scripted Hard regression before current-baseline claim.
+
+Outcome audit/verifier terminalexit0:8Win/3Loss teaching (TvT1/1,TvZ3/1,TvP4/1),
+development3Win/noTvT. Dominant523BackupI isLoss and slowerworkertrajectory;
+currentclassification uses public result with independently decoded detail result.
+Localized Chinese detailrace851 was handled using canonical public SelectedRace;
+original erroneous English-only assertion preserved in transient log, not evidence.
+See [quality audit](human-demonstration-quality.md). Advisory follow-up dispatched
+to existing Astra adviser /root/astra_imitation_reset, read-only, authorized for
+stalled human-imitation progress. No new training/native job currently live.
+
+### October 6: placement repair retains scripted all-race Hard wins
+
+Fresh regression wrapper18097 terminalexit0. Independent verifier completed
+and wrote panel/verification.json; subsequent metadata-print command failed only
+with KeyError for an incorrect receipt field, after verification completed.
+Three Acropolis Hard Rush games: Terran/Zerg/Protoss all Victory, zero raw/delayed
+action errors. Reconstructed production, replay outcomes and sampled fog-safe
+weapon-compatible combat pass. Exact source archived. This three-game regression
+does not repeat the historical30-game strategy/map panel.
+
+Astra recommends one fixed winning human production execution witness, before
+further fitting. No training or RL. Source870/Clem Win has existing converted
+frames, but raw replay version76052 cannot run on installed75689. Next audit
+order transitions and ambiguity in existing source, without downloading another
+engine or claiming eventual births prove exact accepted/paid command starts.

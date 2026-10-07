@@ -1,5 +1,6 @@
 """Physical production-space reservations, with no strategic goal generation."""
 
+from collections import Counter
 from dataclasses import replace
 import math
 from s2clientprotocol import query_pb2 as query, common_pb2 as common
@@ -40,7 +41,7 @@ def reservations(state, units, catalog):
     return reserved
 
 
-async def resolve_production_placement(client, command, catalog, state, unit_type, reserved):
+async def _resolve_production_placement(client, command, catalog, state, unit_type, reserved):
     info = catalog[command.ability]
     addon = info.get('friendly_name', '').startswith(('Build TechLab', 'Build Reactor'))
     if not info.get('is_building') or command.target_unit is not None:
@@ -94,12 +95,39 @@ async def resolve_production_placement(client, command, catalog, state, unit_typ
             if index is not None:
                 break
     trace = dict(source='production_clearance', addon=addon, checked=len(checks),
+                 placement_results=dict(Counter(codes)), legal_sites=len(legal),
                  pathing_checked=path_checks,
                  selected=points[index] if index is not None else None,
                  rejected=None if index is not None else 'unreachable' if legal else 'native_placement')
     if index is None:
         return [], [trace]
     return [command if addon else replace(command, target_point=points[index])], [trace]
+
+
+async def resolve_production_placement(client, command, catalog, state, unit_type, reserved):
+    commands, trace = await _resolve_production_placement(client, command, catalog, state, unit_type, reserved)
+    info = catalog[command.ability]
+    if (commands or command.target_point is None or unit_type == 18
+            or not info.get('is_building')
+            or info.get('friendly_name', '').startswith(('Build TechLab', 'Build Reactor'))):
+        return commands, trace
+    center = tuple(v/2 for v in state['map_size'])
+    bases = [u for u in state['units'] if u['alliance'] == 1 and u['unit_type'] in (18,132,130)
+             and u.get('build_progress', 1) == 1 and not u.get('is_flying')]
+    bases.sort(key=lambda u: (math.dist(u['position'][:2], command.target_point), u['tag']))
+    for base in bases:
+        position = base['position'][:2]
+        distance = math.dist(position, center)
+        point = tuple(a+10*(b-a)/distance for a,b in zip(position,center)) if distance else tuple(position)
+        if math.dist(point, command.target_point) < 1:
+            continue
+        alternatives, diagnostics = await _resolve_production_placement(client,
+            replace(command, target_point=point), catalog, state, unit_type, reserved)
+        trace.append(dict(source='owned_base_fallback', base=base['tag'], seed=point,
+                          resolved=bool(alternatives), diagnostics=diagnostics))
+        if alternatives:
+            return alternatives, trace
+    return [], trace
 
 
 def claimed_geysers(state, catalog):

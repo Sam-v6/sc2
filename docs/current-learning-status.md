@@ -21,8 +21,18 @@ seven Barracks and three Factories; this is offline evidence, not a native win.
 Absolute inventory deficits and intent retirement now pass tests and native
 reconstruction. The [matched inventory comparison](human-inventory-native-result.md)
 is closed as failed: more capacity and lower mineral bank, but fewer workers,
-insufficient military growth and more supply blocking; both games Tie. Next
-diagnose failed placement requests and human economic/supply recovery coverage.
+insufficient military growth and more supply blocking; both games Tie. The [owned-base placement repair](owned-base-placement-result.md) now verifies:
+zero placement failures, two extra completed Barracks, seven production buildings;
+still Tie with52SCVs and70.71seconds supply blocking. The
+[demonstration quality audit](human-demonstration-quality.md) finds the dominant
+retrieved example is a loss; successful economic coverage and addon execution
+remain concerns. The updated primitives won three fresh Hard Rush games, one
+per race, with independently verified production and zero action errors. The
+adviser recommends testing execution of one fixed winning human production plan
+before fitting another policy. First audit whether the existing converted source
+can distinguish new production orders, repeats, cancellations and addon changes;
+the original replay needs an unavailable engine version. Do not infer exact paid
+production starts from eventual unit births.
 No promotion, unchanged fit or RL restart.
 RL remains paused. The full roadmap is incomplete, and scripted victories are
 not learned-controller victories.

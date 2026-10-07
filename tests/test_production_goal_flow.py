@@ -156,3 +156,14 @@ class GoalFlowTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([len(r['execution']) for r in rows],[0,0,1])
         self.assertEqual(rows[-1]['raw_counts'],[15])
         self.assertEqual(issue.call_args.args[1][0].ability,524)
+
+    async def test_rejected_placement_trace_survives_without_an_action(self):
+        import json
+        async def placement(client, command, *args):
+            return ([], [dict(rejected='native_placement', placement_results={'3':12})]) if command.ability == 1 else ([command], [])
+        bot, _ = await self.run_intent(placement=placement)
+        row = json.loads(bot.stream.getvalue())
+        self.assertEqual(row['placement_checks'][0]['goal'], 'expensive')
+        self.assertFalse(row['placement_checks'][0]['resolved'])
+        self.assertEqual(row['placement_checks'][0]['diagnostics'][0]['placement_results'], {'3':12})
+        self.assertNotIn('expensive', [e['goal'] for e in row['execution']])
