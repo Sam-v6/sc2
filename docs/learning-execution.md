@@ -4700,3 +4700,19 @@ Keep original247-ticket witness incomplete as a regression source. This is not
 permission to substitute scripted wins or a narrower final learned goal.
 All jobs terminal; no fit/RL. Full roadmap stays active/incomplete.
 See docs/resource-reservation-canary-result.md for evidence and bounded next scope.
+
+## October 7: close nine-game command recovery and causal target audit
+
+The existing six/three command cohort is rebuilt and independently verified.
+See [result and limits](human-command-cohort-recovery.md). Added 1,737 commands,
+including 227 production commands; all 5,011 old labels and owned/player/map fields
+preserved. Old enemy memory/current observations change under the current fog
+repair; an independent chronological source-frame reconstruction checks every
+new state, rather than waiving preservation assertions. Target windows are
+censored across unknown events; 2,527 teaching and 645 diagnostic windows remain.
+Source diversity is unchanged; human losses remain labeled; reserved games are
+untouched. Rebuild CPU peak 6.3%; no fit/native game/RL. The initial preparation
+and preservation-check failures remain recorded. Both jobs are terminal. The
+next learning experiment must request current-state actions through the verified
+primitives, with legal current placement, explicit scripted assistance and native
+effect checks. The complete goal remains active and unachieved.

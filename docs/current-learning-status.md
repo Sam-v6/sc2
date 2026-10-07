@@ -2,6 +2,18 @@
 
 Updated October 7, 2026. The **initial scripted Hard baseline is verified**;
 the active next phase is reconnecting human imitation to the verified primitives.
+The [nine-game command cohort recovery](human-command-cohort-recovery.md) is now
+terminal and independently verified: 6,748 command labels, including 1,737
+recovered commands (227 production commands), with preserved owned/player/map
+fields and independently reconstructed enemy visibility/memory. Teaching has
+5,099 labels; reused diagnostics have 1,649. Two teaching games are human losses,
+explicitly retained; reserved games remain untouched. The causal next-production
+label audit verifies 2,527 teaching and 645 diagnostic windows, censoring 3,576 windows
+across unknown events or absent next production. These windows are not independent
+decisions or immediate execution instructions. No model fit, simulation or RL
+ran during this preparation. Next connect current-state command/timing decisions
+to current legal execution, preserving the verified mining/supply/combat assists;
+do not rerun future-count forecasts or tune fixed replay playback indefinitely.
 The [command-repeat recovery](human-command-repeat-recovery.md) now independently
 verifies305 newly recovered human labels, preserving all851 previous labels and
 player/unit/map observations. The reimported winning game contains1156 labels.
