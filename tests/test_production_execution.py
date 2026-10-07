@@ -3,6 +3,30 @@ from src.learning.production_execution import queued_work, eligible_actors
 
 
 class ProductionExecutionTests(unittest.TestCase):
+    def test_preferred_factory_waits_instead_of_spending_savings_on_bunker(self):
+        from src.learning.production_execution import affordable_production_intent
+        # Native 07 loop 5344: Factory is preferred but its 150 minerals are short.
+        scores = {328: .7915937304496765, 324: .02503737434744835}
+        prices = {328: (150, 100), 324: (100, 0)}
+        self.assertIsNone(affordable_production_intent(scores, prices, 100, 654))
+        self.assertEqual(affordable_production_intent(scores, prices, 150, 654), 328)
+        self.assertIsNone(affordable_production_intent(scores, prices, 150, 99))
+
+    def test_unknown_preferred_price_does_not_become_a_cheaper_fallback(self):
+        from src.learning.production_execution import affordable_production_intent
+        self.assertIsNone(affordable_production_intent({999: .8, 524: .2},
+                          {524: (50, 0)}, 500, 500))
+        self.assertIsNone(affordable_production_intent({}, {}, 500, 500))
+
+    def test_pending_builders_keep_their_budget_until_start_is_verified(self):
+        from src.learning.production_execution import unreserved_resources
+        prices = {328: (150, 100), 324: (100, 0)}
+        player = dict(minerals=200, vespene=180)
+        self.assertEqual(unreserved_resources(player, [328], prices), (50, 80))
+        self.assertEqual(unreserved_resources(player, [], prices), (200, 180))
+        self.assertEqual(unreserved_resources(player, [328, 328], prices), (0, 0))
+        self.assertEqual(player, dict(minerals=200, vespene=180))
+
     def test_bounded_training_queue_requires_native_availability_and_space(self):
         catalog = {560: dict(friendly_name='Train Marine')}
         actor = dict(tag=1, alliance=1, unit_type=21,

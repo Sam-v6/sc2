@@ -43,6 +43,19 @@ class ProductionClearanceTests(unittest.TestCase):
                      dict(tag=7, alliance=3, position=[5, 5], vespene_contents=2000)])
         self.assertEqual(claimed_geysers(state, {320: dict(is_building=True)}), {7})
 
+    def test_completed_refinery_claims_its_still_observed_neutral_geyser(self):
+        from src.learning.production_clearance import claimed_geysers
+        # Native 09 retains both neutral geyser and owned Refinery at this position.
+        state = dict(units=[
+            dict(tag=4323278849, alliance=3, unit_type=343,
+                 position=[26.5, 135.5], vespene_contents=1862),
+            dict(tag=4352114690, alliance=1, unit_type=20,
+                 position=[26.5, 135.5], vespene_contents=1862),
+            dict(tag=7, alliance=3, unit_type=343,
+                 position=[40, 120], vespene_contents=2000),
+        ])
+        self.assertEqual(claimed_geysers(state, {}), {4323278849})
+
 
 class BuilderPathTests(unittest.IsolatedAsyncioTestCase):
     async def test_queries_and_commands_use_the_same_engine_grid_centers(self):

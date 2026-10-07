@@ -138,6 +138,10 @@ def claimed_geysers(state, catalog):
     for unit in state['units']:
         if unit['alliance'] != 1:
             continue
+        if unit.get('vespene_contents', 0) > 0:
+            claimed.update(u['tag'] for u in state['units'] if u['alliance'] == 3
+                           and u.get('vespene_contents', 0) > 0
+                           and math.dist(unit['position'][:2], u['position'][:2]) < 1)
         for order in unit.get('orders', []):
             if not catalog.get(order['ability_id'], {}).get('is_building'):
                 continue

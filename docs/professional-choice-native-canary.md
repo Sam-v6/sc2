@@ -153,7 +153,8 @@ at least one funded, native-available training action even with bounded queues;
 eight had no eligible funded training action. The remaining overbuilding cannot
 be attributed solely to the repaired idle-only restriction. Many completed
 producers were idle at cutoff, with 1,160 minerals and 1,050 gas available. This
-is a decision-quality issue to investigate separately from primitive execution.
+requires separating model ranking from affordability and availability fallback;
+it does not by itself prove the raw model prefers these buildings.
 Do not impose an undisclosed unit quota or count this as learned competence.
 
 Regression tests were observed failing before implementation. All 598 default
@@ -197,8 +198,9 @@ Replay events confirm 50 SCV births, 12 military births (nine Marines and three
 Reapers), and one completed production building. The controller submits 37
 Bunker commands. Both the frozen military and production-building gates fail.
 The final player has 62 workers, 5,200 minerals, 1,406 gas, and 12 military units.
-Concurrent execution works, but the current conditional-choice model makes worse
-strategic decisions in the changed trajectory. Do not describe this as an
+Concurrent execution works, but the filtered decoder produces worse
+strategic behavior in the changed trajectory. A subsequent audit below identifies
+why attributing all Bunkers to the raw model was too broad. Do not describe this as an
 imitation improvement or impose a hidden military quota to pass the gate.
 
 The next decision is the imitation formulation, informed by this loss evidence.
@@ -207,3 +209,75 @@ Astra adviser rather than repeat closed memory, weighting or epoch sweeps. The
 actor-keyed concurrent wrapper remains an experimental diagnostic runner in
 `logs/roadmap/run_professional_choice_native_07.py`, bound and preserved with its
 source snapshot; it is not a claim of integrated full-game learned control.
+
+## Corrected attribution: funded fallback starves preferred capacity
+
+Independent parent and Astra audits agree: **none of the 37 accepted Bunkers in
+native 07 was the model's global highest-probability choice**. Its raw preferred
+action was Factory in 27 cases, Starport in nine, and Barracks in one. Each was
+unaffordable and removed by the decoder. The trace-bound
+`funded-fallback-audit.json` preserves every source loop and probability. At loop
+5344, with 100 minerals and 654 gas, Factory probability is 0.7915937304496765
+and Bunker probability 0.02503737434744835. Their native costs are (150,100)
+and (100,0). Buying the Bunker spends the minerals needed to reach the preferred
+Factory's price. This supports a decoder-induced savings-starvation mechanism,
+not a proof that the model's unfiltered strategic choices are competent.
+
+The frozen comparison contract is
+`logs/roadmap/resource-reserved-intent-comparison-01/contract.json`. Native 08
+reproduces the fallback arm with resource-ignoring availability queries recorded;
+native 09 retains a priced, technically available model intent, waits rather than
+substituting cheaper work, and reserves pending costs until start acknowledgment.
+Reactive supply respects the reservation. Mining, scouting and combat continue;
+construction completion does not globally block other actors. An unexplained
+unissued-intent stall beyond 60 game seconds aborts. No fits, RL, quota, cadence
+or temperature sweeps follow this matched pair automatically.
+
+Before native 09, the query prerequisite independently passes: 285 observations
+expose an underfunded but technically available Factory only in the resource-
+ignoring query; 391 observations exclude Factory before Barracks completion;
+1,172 exclude Starport without a completed Factory. The fallback arm again
+records 37 Bunkers, 12 military births, one completed producer, zero errors and
+the normal 600-second Tie cutoff. The gate stays failed.
+
+Regression tests first fail for the captured Factory/Bunker spending case,
+unknown preferred prices, and pending cost reservations. All 602 default tests
+pass with 40 optional skips; Ruff and whitespace checks pass. This is a decoder
+experiment, not learned timing or broad human imitation.
+
+### Pair closed: occupied gas target blocks reserved arm
+
+Native 09 stops at the frozen 60-game-second unissued-intent limit. Independent
+verification recomputes 473 prediction vectors, all reservation budgets and
+intent transitions: 18 intents created, 17 submitted, zero invalidations, zero
+action errors. The eighteenth is BuildRefinery, created at loop 3044, still
+unsubmitted at last logged loop 4388. Its target is neutral geyser 4323278849
+at (26.5,135.5), but owned completed Refinery 4352114690 occupies the same
+position. Native placement queries repeatedly reject it with result 42. No
+accepted action or completed game follows; the error receipt and source snapshots
+are preserved. Wall time is 18.491 seconds, host CPU peak 6.4 percent.
+
+`claimed_geysers` previously accounted only for worker construction orders,
+missing completed gas buildings while their neutral geyser remains observed.
+A regression using the exact captured tags, positions and contents fails before
+the fix. The helper now excludes neutral geysers occupied by an owned gas
+building as well as those claimed by pending orders. All 603 default tests pass
+with 40 optional skips, and Ruff/diff checks pass. This helper is shared with
+`production_goal_play.py`; the failed run itself is unchanged.
+
+The canary also limits gas sites to within 15 tiles of the initial start. At
+stall it has completed town halls at (33.5,138.5) and (31.5,113.5), with observed
+free expansion geysers at (28.5,106.5) and (24.5,110.5). Those sites are omitted
+by the canary's starting-base-only target recipe. The existing production-goal
+controller already excludes owned Refineries and considers broader observed
+geysers. Reuse verified target-selection behavior rather than retain this recipe.
+
+The pair's hash-bound conclusion at
+`logs/roadmap/resource-reserved-intent-comparison-01/verification.json` is
+`closed_interrupted_decoder_comparison`. Affordability fallback starvation is
+supported by the saved evidence, but this pair cannot establish reservation
+efficacy because a separate physical-target defect interrupts the second arm.
+No checkpoint fitting, extra pair, sweep or gate relaxation follows this attempt.
+Next verify occupied-geyser exclusion and expansion-site targeting in a native
+primitive fixture before another policy comparison. Broad imitation, learned
+timing, offensive competence and the full roadmap remain unproven.

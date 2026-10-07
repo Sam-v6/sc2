@@ -358,8 +358,8 @@ prediction vectors; sampled host CPU peak is 7.2 percent. All 598 default tests
 pass (40 optional skips). See [the native canary record](professional-choice-native-canary.md).
 
 Of 40 building decisions, 32 prefer buildings even when funded native-available
-training remains eligible. This is evidence of a remaining decision problem,
-not proof of another executor failure. Keep imitation and RL training paused
+training remains eligible. This locates a remaining decoder/model decision problem; raw probabilities
+must be audited before attributing the selected fallback to the model. Keep imitation and RL training paused
 while inspecting remaining production constraints and offensive/micro effects.
 
 ### Concurrent execution works; conditional decisions still fail
@@ -379,3 +379,35 @@ replay; military and building gates fail. CPU peak is 23.4 percent, wall time
 full goal active and consult the existing authorized Astra adviser about the
 next human-imitation formulation before another fitting sweep. No RL is running.
 See [the detailed native diagnosis](professional-choice-native-canary.md).
+
+### Corrected Bunker diagnosis and frozen decoder comparison
+
+All 37 native 07 Bunkers displaced an unaffordable raw top model prediction:
+27 Factories, nine Starports, one Barracks. The cheaper fallback consumes funds
+needed for the preferred capacity. Earlier attribution of Bunker purchases to
+raw model preferences was too broad. Parent and existing Astra adviser agree.
+
+A frozen same-checkpoint matched pair compares native 08 fallback with native
+09 persistent resource-reserved intent. Native 08 reproduces the 37 Bunkers,
+12 military births and one completed producer. Its recorded native queries
+verify insufficient funds are ignored while missing building prerequisites are
+retained. The second arm is bounded by the unchanged 600-second cutoff, gates,
+80-percent CPU ceiling and a 60-second unissued-intent stall abort. All 602
+default tests pass (40 optional skips). No training or RL.
+
+### Reserved-intent comparison interrupted by gas targeting
+
+The frozen pair is terminal and closed as interrupted. Native 09 recomputes
+473 predictions and verifies 17 submitted intents, then aborts on its eighteenth
+intent: a Refinery targeting a still-observed neutral geyser beneath an owned
+completed Refinery. Placement result 42 blocks submission; no action errors or
+normal completion. CPU peak 6.4 percent, wall time 18.491 seconds. The
+`claimed_geysers` helper now includes owned gas buildings, with a captured-state
+regression observed red before the fix. All 603 default tests pass (40 skips).
+
+The canary's starting-base-only gas search also omits two observed free geysers
+near its completed expansion. The existing production-goal controller's broader
+observed-target handling is a reference to reuse. Next verify occupied exclusion
+and expansion targeting in a native primitive fixture. Do not repeat fitting or
+claim this interrupted pair demonstrates reservation efficacy. See the detailed
+[canary record](professional-choice-native-canary.md); the full goal stays active.

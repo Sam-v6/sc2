@@ -101,6 +101,24 @@ def resource_affordable_choices(probabilities, prices, minerals, gas):
             or (prices[ability][0] <= minerals and prices[ability][1] <= gas)}
 
 
+def affordable_production_intent(probabilities, prices, minerals, gas):
+    """Wait for the preferred product instead of purchasing a cheaper fallback."""
+    if not probabilities:
+        return None
+    ability = max(probabilities, key=probabilities.get)
+    price = prices.get(ability)
+    if price is None or price[0] > minerals or price[1] > gas:
+        return None
+    return ability
+
+
+def unreserved_resources(player, commitments, prices):
+    """Keep accepted but unacknowledged production costs reserved per request."""
+    costs = [prices[ability] for ability in commitments]
+    return (max(0, player['minerals'] - sum(cost[0] for cost in costs)),
+            max(0, player['vespene'] - sum(cost[1] for cost in costs)))
+
+
 def order_goals(unit, goals, catalog, unit_names):
     """Keep specific order identities; resolve generic addons by producer type."""
     parent = unit_names.get(unit['unit_type'], '').removesuffix('Flying')
