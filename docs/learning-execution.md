@@ -4474,3 +4474,23 @@ Full suite46782 terminalexit0:522tests32skips+Ruff/diffcheckpass.
 See [metadata and live result](human-production-metadata-recovery.md). Next
 cancellation/source-mode classification, producer-addon binding and cross-source
 research-level queue accounting beforefixedhumanplan. No learnedwin/RLrestart.
+
+### October 6: preserve research tier identity in production execution
+
+Previous goal turn was a status restatement, with no implementation progress.
+Current source inspection found two execution defects: a specific research order
+was dropped when multiple goals shared its canonical alias, and availability of
+one research tier incorrectly admitted another tier with the same alias. Two
+regressions reproduced both failures before the repair. Queue matching now
+prefers a unique exact ability identity; generic ambiguous tier orders remain
+unassigned. Research eligibility requires the requested specific ability or an
+explicit generic ability, preserving the existing generic API contract.
+
+The existing native fixture verification records available and observed ability
+864, rather than generic 3700, so this fixes an actual supported command path.
+No new native game was run and generic source tiers are not inferred from future
+upgrade completion. Eight focused tests pass; full suite passes 524 tests with
+32 skips (terminal session 28888, /tmp/sc2-research-queue-tests-01.log). Named-file
+Ruff passes. Useful human imitation and learned Hard wins remain unproven; no
+training or RL restart. Next audit source producer/addon binding before the fixed
+winning human-plan execution witness.

@@ -33,7 +33,7 @@ def canonical(ability, catalog):
 
 
 def order_goals(unit, goals, catalog, unit_names):
-    """Resolve generic addon aliases with the producer's actual native type."""
+    """Keep specific order identities; resolve generic addons by producer type."""
     parent = unit_names.get(unit['unit_type'], '').removesuffix('Flying')
     result = []
     for order in unit.get('orders', []):
@@ -41,8 +41,10 @@ def order_goals(unit, goals, catalog, unit_names):
                    if canonical(info['ability'], catalog)
                    == canonical(order['ability_id'], catalog)]
         if len(matches) > 1:
-            matches = [name for name in matches
-                       if goals[name]['descriptor'].get('friendly_name', '').endswith(' ' + parent)]
+            exact = [name for name in matches
+                     if goals[name]['ability'] == order['ability_id']]
+            matches = exact or [name for name in matches
+                               if goals[name]['descriptor'].get('friendly_name', '').endswith(' ' + parent)]
         if len(matches) == 1:
             result.append((matches[0], order))
     return result
@@ -87,7 +89,12 @@ def eligible_actors(state, ability, available, catalog, unit_names):
             continue
         if addon_parent and unit_names.get(unit['unit_type']) != addon_parent:
             continue
-        if wanted not in {canonical(a, catalog) for a in available.get(unit['tag'], ())}:
+        actor_abilities = available.get(unit['tag'], ())
+        if wanted not in {canonical(a, catalog) for a in actor_abilities}:
+            continue
+        # Specific research tiers share a generic alias; tier one does not grant tier two.
+        if (friendly.startswith('Research ') and ability not in actor_abilities
+                and wanted not in actor_abilities):
             continue
         if unit_names.get(unit['unit_type']) == 'SCV':
             if any(catalog.get(o['ability_id'], {}).get('friendly_name', '').startswith('Build ')

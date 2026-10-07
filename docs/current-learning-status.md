@@ -2,6 +2,11 @@
 
 Updated October 6, 2026. The **initial scripted Hard baseline is verified**;
 the active next phase is reconnecting human imitation to the verified primitives.
+Research queue accounting now preserves specific upgrade levels, and specific
+level-one availability no longer permits level-two requests. These fixes pass
+regression tests using the specific command IDs observed in the native research
+fixture. Generic multi-level source orders remain ambiguous; no new game-strength
+claim or training restart follows from this repair.
 The [human ordering experiment](human-production-precedence-result.md) has now
 failed its quality gates; its simple human-derived majority baseline performed
 better. The [native execution comparison](human-prior-native-result.md) found
@@ -49,7 +54,7 @@ eight Viking/research labels and one snapshot-based Refinery label, giving851.
 The Refinery target remains unavailable in current raw-command inputs. A live
 research goal pointer bug is fixed and independently verifies accepted research
 with rising order progress. Next resolve cancellation, producer/addon binding and
-research-level queue accounting before the fixed-plan test. Do not infer exact paid
+ambiguous generic source research orders before the fixed-plan test. Do not infer exact paid
 production starts from eventual unit births.
 No promotion, unchanged fit or RL restart.
 RL remains paused. The full roadmap is incomplete, and scripted victories are

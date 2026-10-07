@@ -3,6 +3,30 @@ from src.learning.production_execution import queued_work, eligible_actors
 
 
 class ProductionExecutionTests(unittest.TestCase):
+    def test_research_tiers_keep_specific_queue_identity(self):
+        catalog = {864: dict(remaps_to_ability_id=3700),
+                   865: dict(remaps_to_ability_id=3700)}
+        goals = {f'upgrade:Armor{tier}': dict(ability=ability, unit_type=None,
+                    descriptor=dict(friendly_name=f'Research ArmorLevel{tier}'))
+                 for tier, ability in [(1, 864), (2, 865)]}
+        state = dict(units=[dict(tag=1, alliance=1, unit_type=29,
+                    orders=[dict(ability_id=864)])])
+        queued, active = queued_work(state, goals, catalog, {29: 'Armory'})
+        self.assertEqual(queued, {'upgrade:Armor1': 1})
+        self.assertEqual(active, {(1, 'upgrade:Armor1')})
+        state['units'][0]['orders'][0]['ability_id'] = 3700
+        self.assertEqual(queued_work(state, goals, catalog, {29: 'Armory'}), ({}, set()))
+
+    def test_specific_research_availability_does_not_unlock_other_tiers(self):
+        catalog = {864: dict(remaps_to_ability_id=3700,
+                            friendly_name='Research ArmorLevel1'),
+                   865: dict(remaps_to_ability_id=3700,
+                            friendly_name='Research ArmorLevel2')}
+        state = dict(units=[dict(tag=1, alliance=1, unit_type=29, orders=[])])
+        self.assertEqual(eligible_actors(state, 865, {1: [864]}, catalog, {}), [])
+        self.assertEqual([u['tag'] for u in eligible_actors(
+            state, 864, {1: [864]}, catalog, {})], [1])
+
     def test_started_building_excluded_but_queued_train_included(self):
         goals = {'unit:Barracks': dict(ability=321, unit_type=21,
                     descriptor=dict(friendly_name='Build Barracks')),
