@@ -58,12 +58,14 @@ addon attachment and truncated queues. Do not infer those values or call this
 fully observed professional data. Four wins and one loss add no new TvT game.
 Previously used games cannot become fresh evaluation simply by reimporting them.
 
-The next bounded decision is to prepare and independently verify a combined
+The subsequent [data-expansion comparison](professional-choice-data-expansion-experiment.md)
+prepared and independently verified a combined
 11-game conditional-choice corpus (2,173 teaching production events, 383 building
 events), retaining the original three reused diagnostics and untouched reserved
-identities. Freeze any data-expansion comparison before fitting: keep the failed
-current-only weighted architecture as the control, introduce the five games as
-the sole deliberate change, and report total target presentations explicitly.
+identities. That fit cleared building recall but failed the frozen false-building
+gate; no native rollout or RL followed. Its frozen comparison kept the failed
+current-only weighted architecture as the control, introduced the five games as
+the sole deliberate change, and reported total target presentations explicitly.
 Do not reopen memory/weight/epoch sweeps or claim this addresses unavailable
 sensory information. Useful native imitation remains necessary before RL.
 In parallel with that data assessment, fully observed compatible human or explicit

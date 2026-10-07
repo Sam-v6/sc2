@@ -57,8 +57,17 @@ were omitted from the current choice corpus. Independent verification preserves
 Their 906 production events include 147 building events. Peak rebuild host CPU
 5.6%; no fitting, downloads, native games or RL. These games were previously used
 in broad imitation, are not fresh evaluation, and retain the same partial sensory
-contract. Next prepare/verify combined teaching coverage and freeze a single
-data-expansion comparison; do not infer missing fields or reopen memory sweeps.
+contract. Combined teaching coverage is now independently verified: 2,173
+production events, including 383 building events, with original examples and
+diagnostics preserved exactly. The single frozen data-expansion fit completes
+65,190 target presentations in 68.7 seconds, at 8.0% sampled host CPU peak.
+Independent verification reports overall 42.6%, nonworker 36.2%, building 22/54
+(40.7%, clearing that gate), but false building choices 41/235 exceed the frozen
+maximum 37/235. Overall status remains failed; no native rollout or RL follows.
+Twenty-two false building choices cannot afford even one native-priced product.
+The next work should investigate native expert corrections and legal execution
+context, rather than another weight/epoch/memory sweep. See
+[the data comparison](professional-choice-data-expansion-experiment.md).
 See [the additional command recovery](additional-professional-command-recovery.md).
 
 The latest mixed-source timing fit is terminal and failed its frozen gates.
