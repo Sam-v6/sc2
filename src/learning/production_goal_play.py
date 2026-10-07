@@ -8,6 +8,8 @@ import pickle
 from collections import Counter
 from pathlib import Path
 
+import numpy as np
+
 from sc2.bot_ai import BotAI
 from sc2.data import Race, Difficulty, AIBuild
 from sc2.main import run_game
@@ -27,6 +29,8 @@ from src.learning.production_ledger import ProductionLedger
 from src.learning.production_intents import ProductionIntents, remaining_budget
 from src.learning.production_prior import prior_scores
 from src.learning.production_scout import WorkerScout
+from src.learning.production_inventory import observation_stock
+from src.learning.production_inventory_goals import HumanGoalLibrary, InventoryIntents, inventory_queued, opponent_selected_race
 from src.runner import validate_map
 from src.learning.production_primitives import primitive_assistance, scripted_army_destination
 
@@ -43,11 +47,14 @@ class ProductionGoalBot(BotAI):
         self.vocabulary = job['vocabulary']
         self.profile = json.loads(Path(job['profile']).read_text())
         self.view = PlayerView()
-        self.intent_mode = job.get('intent_execution', False)
+        self.inventory_library = HumanGoalLibrary.load(job['goal_library']) if job.get('goal_library') else None
+        self.intent_mode = job.get('intent_execution', False) or self.inventory_library is not None
+        if self.inventory_library and self.inventory_library.names != self.model['names']:
+            raise ValueError('Human inventory and execution families differ')
         self.prior = json.loads(Path(job['prior']).read_text()) if job.get('prior') else None
         if self.prior and self.prior['names'] != self.model['names']:
             raise ValueError('Human prior and count checkpoint families differ')
-        self.ledger = ProductionIntents() if self.intent_mode else ProductionLedger()
+        self.ledger = InventoryIntents() if self.inventory_library else (ProductionIntents() if self.intent_mode else ProductionLedger())
         self.last_sent = {}
         self.next_plan = 0
         self.next_mining = 0
@@ -81,6 +88,8 @@ class ProductionGoalBot(BotAI):
         self.unit_names = {k: u['name'] for k, u in self.units_by_id.items()}
         self.goals = goal_catalog(self.data, self.model['names'])
         self.products = construction_products(self.data)
+        if self.inventory_library:
+            self.public_race = opponent_selected_race(self.game_info._proto, self.player_id)
         validate_order_aliases(self.profile, self.catalog)
         (Path(self.job['output'])/'static.json').write_text(json.dumps(self.data)+'\n')
 
@@ -156,10 +165,19 @@ class ProductionGoalBot(BotAI):
             self.record_outcomes(state)
             self.frames += 1
             self.next_plan = loop + 44
-            features = current_features(state, self.vocabulary, self.products, self.profile)
-            predicted, counts = predict_goals(self.model, features)
+            stock, source_goal, full_target = None, None, None
+            if self.inventory_library:
+                stock = dict(observation_stock(state, self.data))
+                target, source_goal = self.inventory_library.select(loop, stock, self.public_race)
+                full_target = self.inventory_library.target
+                counts = np.array([full_target.get(n, 0) for n in self.model['names']])
+                predicted = {n: v-stock.get(n, 0) for n,v in target.items() if v > stock.get(n, 0)}
+                queued, active = inventory_queued(state, self.goals, self.catalog, self.unit_names)
+            else:
+                features = current_features(state, self.vocabulary, self.products, self.profile)
+                predicted, counts = predict_goals(self.model, features)
+                queued, active = queued_work(state, self.goals, self.catalog, self.unit_names)
             self.requested.update(predicted)
-            queued, active = queued_work(state, self.goals, self.catalog, self.unit_names)
             tags = {u['tag'] for u in state['units'] if u['alliance'] == 1}
             if self.intent_mode:
                 self.ledger.events.clear()
@@ -276,6 +294,7 @@ class ProductionGoalBot(BotAI):
             self.result_counts.update(map(str, result.result))
             self.stream.write(json.dumps(dict(phase='forecast', observation=state, goals=predicted,
                 raw_counts=counts.tolist(), queued=queued, reconciliation=changes,
+                inventory_stock=stock, source_goal=source_goal, inventory_target=full_target,
                 priority=priority, unsupported_prior_pairs=unsupported, prior_cycles=cycles, allocations=allocations,
                 intents=self.ledger.intents if self.intent_mode else {},
                 intent_events=self.ledger.events if self.intent_mode else [],
@@ -313,6 +332,7 @@ def play_production_goals(job):
                   frames=bot.frames, requested=dict(bot.requested), acknowledged=dict(bot.acknowledged),
                   blocks=dict(bot.blocks), results=dict(bot.result_counts),
                   production=bot.production, snapshots=bot.snapshots,
+                  goal_library=job.get('goal_library'),
                   assistance='scripted mining/gas assignment, protected worker scouting, construction execution, MULEs, depot lowering, attack timing/destinations, per-unit combat micro; production choices learned')
     (output/'episode.json').write_text(json.dumps(report, indent=2)+'\n')
     return report

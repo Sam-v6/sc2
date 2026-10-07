@@ -18,8 +18,12 @@ native canary: enemy vision by139seconds, damage retreat and return to mining.
 The [human-goal retrieval audit](human-goal-retrieval-result.md) independently
 verifies source selection and held targets. The final shortage state retrieves
 seven Barracks and three Factories; this is offline evidence, not a native win.
-Next implement and verify absolute inventory deficits and intent retirement,
-then run the frozen matched comparison. No unchanged fit or count-model run.
+Absolute inventory deficits and intent retirement now pass tests and native
+reconstruction. The [matched inventory comparison](human-inventory-native-result.md)
+is closed as failed: more capacity and lower mineral bank, but fewer workers,
+insufficient military growth and more supply blocking; both games Tie. Next
+diagnose failed placement requests and human economic/supply recovery coverage.
+No promotion, unchanged fit or RL restart.
 RL remains paused. The full roadmap is incomplete, and scripted victories are
 not learned-controller victories.
 

@@ -4321,3 +4321,25 @@ are ready for inventory-deficit execution tests, not native promotion yet.
 See [retrieval diagnostic](human-goal-retrieval-result.md). No native process
 remains live. Next implement stock-deficit demand/retirement with queue accounting,
 then freeze identical-assistance native control/intervention per originalplan.
+
+### October 6: absolute inventory execution verified; native comparison failed
+
+Implemented source-backed runtime lookup and distinct inventory intents; tests
+cover stock/queue accounting, retirement, accepted work, public Random and holds.
+Runtime parity281saved forecasts; fullsuite505/32skips, Ruffpass. Frozen pair
+2964 terminalexit0; independent verifier66494 terminalexit0 (tracker additions
+verify living workers/completed capacity). ControlC vsinventoryI: capacity3->5,
+militarybirths33->41, minerals6715->3355, livingSCVs74->52, supplyblock14.29->70.36s.
+Originalcapacity/mineralgatespass; military/worker/supplygatesfail; bothTie.
+PeakCPU6.9/5.0%, wall48.357/41.656seconds. No training/RL. Bound source archived.
+See [closed native result](human-inventory-native-result.md).
+
+Read-only replay placement diagnostic44905 terminalexit0, but all queried seeds
+reject on owned bases; replay-mode support remains unproven. Native aggregate
+Barracksplacement48failures needs per-request diagnostics before a repair; do
+not infer crowded terrain merely from the replay queries. Initial support probe92596 failed only while naming the result enum; corrected
+probe47274 is terminalexit0. At loop0, an actual live-successful Depot site gives
+generic Error3 in replay mode. Replay placement diagnosis is inconclusive;
+use live failed-request tracing instead. Human source523 repeatedly provides slow economic
+targets;20/32blocked forecastframes have noDepotdeficit. Preserve these distinct
+policy/execution findings and acquire targeted recovery examples after diagnosis.

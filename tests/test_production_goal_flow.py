@@ -17,6 +17,7 @@ class GoalFlowTests(unittest.IsolatedAsyncioTestCase):
         bot.view = NS(observe=Mock(return_value=st))
         bot.state = NS(response_observation=None)
         bot.game_info = NS(map_size=NS(x=64, y=64), player_start_location=(0,0), start_locations=[(30,30)])
+        bot.inventory_library = None
         bot.scout = WorkerScout()
         bot.scout_commands = []
         bot.next_plan = bot.frames = 0
@@ -128,3 +129,30 @@ class GoalFlowTests(unittest.IsolatedAsyncioTestCase):
             await bot.on_step(0)
         commands = issue.call_args.args[1]
         self.assertEqual([(c.ability,c.units) for c in commands], [(1,(21,)),(16,(20,))])
+
+    async def test_inventory_target_counts_queued_once_and_replaces_lost_stock(self):
+        import json
+        from src.learning.production_inventory_goals import InventoryIntents
+        bot = self.bot()
+        bot.intent_mode = True
+        bot.ledger = InventoryIntents()
+        bot.ledger.plan({'expensive':1},{},0)
+        bot.inventory_library = NS(target={'worker':15},select=Mock(return_value=({'worker':15},{'supported':True})))
+        bot.model = {'names':['worker']}
+        bot.public_race, bot.data = 'Zerg', {}
+        with patch('src.learning.production_goal_play.observation_stock',side_effect=[{'worker':14},{'worker':15},{'worker':14}]), \
+             patch('src.learning.production_goal_play.inventory_queued',side_effect=[({'worker':1},set()),({},set()),({},set())]), \
+             patch('src.learning.production_goal_play.predict_goals') as predict, \
+             patch('src.learning.production_goal_play.eligible_actors',return_value=[unit(10,18)]), \
+             patch('src.learning.production_goal_play.resolve_production_placement',side_effect=self.resolved), \
+             patch('src.learning.production_goal_play.issue',new_callable=AsyncMock,return_value=pb.ResponseAction(result=[1])) as issue:
+            for loop in [24,72,120]:
+                bot.view.observe.return_value['game_loop']=loop
+                await bot.on_step(0)
+            predict.assert_not_called()
+            issue.assert_awaited_once()
+        rows=[json.loads(r) for r in bot.stream.getvalue().splitlines()]
+        self.assertEqual([r['goals'] for r in rows],[{'worker':1},{},{'worker':1}])
+        self.assertEqual([len(r['execution']) for r in rows],[0,0,1])
+        self.assertEqual(rows[-1]['raw_counts'],[15])
+        self.assertEqual(issue.call_args.args[1][0].ability,524)
