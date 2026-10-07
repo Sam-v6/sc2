@@ -51,6 +51,16 @@ memory-length sweeps on these reused games. See
 [the observation memory experiment](professional-observation-memory-experiment.md).
 See [the choice experiment](professional-production-choice-experiment.md).
 
+The latest data preparation recovers five already cached professional games that
+were omitted from the current choice corpus. Independent verification preserves
+2,543 old commands and adds 944; all 3,487 states pass causal fog reconstruction.
+Their 906 production events include 147 building events. Peak rebuild host CPU
+5.6%; no fitting, downloads, native games or RL. These games were previously used
+in broad imitation, are not fresh evaluation, and retain the same partial sensory
+contract. Next prepare/verify combined teaching coverage and freeze a single
+data-expansion comparison; do not infer missing fields or reopen memory sweeps.
+See [the additional command recovery](additional-professional-command-recovery.md).
+
 The latest mixed-source timing fit is terminal and failed its frozen gates.
 Independent verification found no qualifying cutoff on calibration or either
 evaluation game. Its diagnostic cutoff is unqualified; no production-choice
