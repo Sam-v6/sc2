@@ -60,3 +60,24 @@ class ProductionExecutionTests(unittest.TestCase):
         actors = eligible_actors(state, 454, {1: {3682}, 2: {3682}, 3: {3682}},
                                   catalog, {28: 'Starport', 27: 'Factory', 21: 'Barracks'})
         self.assertEqual([u['tag'] for u in actors], [2])
+
+    def test_inactive_upgrade_pointer_resolves_to_unique_active_research(self):
+        from src.learning.production_execution import goal_catalog
+        data=dict(units=[],upgrades=[dict(name='TerranVehicleAndShipArmorsLevel1',
+                                        upgrade_id=116,ability_id=2297)],abilities=[
+            dict(ability_id=2297,available=False,
+                 friendly_name='Research TerranVehicleAndShipPlatingLevel1'),
+            dict(ability_id=864,available=True,remaps_to_ability_id=3700,
+                 friendly_name='Research TerranVehicleAndShipPlatingLevel1'),
+            dict(ability_id=3700,available=True,
+                 friendly_name='Research TerranVehicleAndShipPlating')])
+        name='upgrade:TerranVehicleAndShipArmorsLevel1'
+        goals=goal_catalog(data,[name])
+        self.assertEqual(goals[name]['ability'],864)
+        catalog={a['ability_id']:a for a in data['abilities']}
+        state=dict(units=[dict(tag=10,alliance=1,unit_type=29,orders=[])])
+        self.assertEqual([u['tag'] for u in eligible_actors(state,goals[name]['ability'],
+                         {10:[3700]},catalog,{29:'Armory'})],[10])
+        data['abilities'].append(dict(data['abilities'][1],ability_id=999))
+        with self.assertRaises(ValueError):
+            goal_catalog(data,[name])

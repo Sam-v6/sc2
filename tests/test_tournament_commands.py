@@ -194,3 +194,17 @@ class TournamentCommandsTests(unittest.TestCase):
                          target=[10, 20] if target_type == 2 else None)])],
                 {(12, 1): [17]}, catalog, {(7, 0): 'BuildBarracksTechLab'})
             self.assertEqual(accepted, [])
+
+    def test_generic_research_uses_specific_level_index_and_observed_armory(self):
+        event=self.event(flags=256)
+        event['m_abil']['m_abilCmdIndex']=14
+        event['m_data']={'None':None}
+        catalog={3700:dict(friendly_name='Research TerranVehicleAndShipPlating',link_index=0),
+                 2297:dict(friendly_name='Research TerranVehicleAndShipPlatingLevel1',
+                           link_index=14,remaps_to_ability_id=3700)}
+        for types,expected in [({17:'Armory'},1),({17:'EngineeringBay'},0),({},0)]:
+            accepted,_=tournament_commands.reconcile_commands(
+                [event],[dict(loop=12,unit_types=types,actions=[dict(
+                    ability=3700,tags=[17],target_type=0,target=None)])],
+                {(12,1):[17]},catalog,{(7,14):'Research TerranVehicleAndShipPlatingLevel1'})
+            self.assertEqual(len(accepted),expected)

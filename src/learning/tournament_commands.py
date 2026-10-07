@@ -34,6 +34,16 @@ def ability_matches(action, event, catalog, replay_names, unit_types=None):
     # Replay commands name the producer; converted actions can use generic aliases.
     # Require every converted actor's pre-effect type, rather than infer it from
     # the human selection or accept unrelated catalogue aliases.
+    if action["ability"] in (3700, 3701) and name and unit_types:
+        return bool(action["tags"]) and all(
+            unit_types.get(tag) == "Armory" for tag in action["tags"]
+        ) and any(
+            specific.get("remaps_to_ability_id") == action["ability"]
+            and specific.get("friendly_name", "").replace(" ", "").lower()
+            == name.replace(" ", "").lower()
+            and specific.get("link_index") == original["m_abilCmdIndex"]
+            for specific in catalog.values()
+        )
     if action["ability"] not in (3678, 3679, 3682, 3683) or not name or not unit_types:
         return False
     for specific in catalog.values():

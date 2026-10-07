@@ -43,8 +43,13 @@ relocation behavior. The
 [early in-place addon conversion](human-in-place-addon-recovery.md) now verifies
 three more canonical execution labels with original provenance and no effect
 leakage, giving842labels. Two later grouped/flagged commands remain excluded.
-The600-second prefix still has unresolved Viking/Refinery/research/cancel
-candidates to resolve before a fixed-plan trial. Do not infer exact paid
+The
+[production metadata repair](human-production-metadata-recovery.md) now verifies
+eight Viking/research labels and one snapshot-based Refinery label, giving851.
+The Refinery target remains unavailable in current raw-command inputs. A live
+research goal pointer bug is fixed and independently verifies accepted research
+with rising order progress. Next resolve cancellation, producer/addon binding and
+research-level queue accounting before the fixed-plan test. Do not infer exact paid
 production starts from eventual unit births.
 No promotion, unchanged fit or RL restart.
 RL remains paused. The full roadmap is incomplete, and scripted victories are

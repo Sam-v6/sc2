@@ -4448,3 +4448,29 @@ nativemacrocandidateevents. Includes Viking1/Refinery1, research andcancel plus
 combat/Depottransformations. Candidate screen is descriptive, not independent
 identity proof. Next resolve specific source name/index/target mismatches before
 fixedhumanplan executor. See [in-place result](human-in-place-addon-recovery.md).
+
+### October6: production name/catalogue repairs and live research execution
+
+Viking/research regressions red/green. Initial reimport50617 terminalexit0:847
+labels, five additions. Inactive upgrade pointer explains missing armorlevels;
+new pointer regression red/green. Corrected02/58614 terminalexit0:850labels,
+8additions. Verifier3249 terminalexit0 independently reconstructs reader metadata,
+specificindexes, active/inactive catalogue aliases, wireactions/actors/selection.
+All842existinglabels/own/map/memory preserved. Exact source archived.
+
+Refinery snapshot initialscript rejected actualSnapshot under visibleonlyguard.
+Staticmap/snapshot equivalence explicitly marks target unobserved; it is not added
+to inputs. Reimport7866 terminalexit0:851labels; verifier60636 terminalexit0
+checks original zero-tag snapshot point, unique native geyser and original starting
+map geyser, unavailable inputtarget and850existinglabels unchanged. No fit/RL.
+
+Live goal_catalog also chose inactive2297; regression red/green now resolves864
+uniquely. Native01/43447 seed mismatch is diagnostic only, archived. Corrected
+02/42304 terminalexit0; final verifier terminalexit0 after correcting expected
+specific order ID and replay userInitialData seed field (no02game restart). Seed
+818001 matches replay;864 accepted,21researchorder frames with increasing progress,
+zeroerrors, CPUpeak2.7%. Debug8seconds, no completion/strengthclaim. Source archived.
+Full suite46782 terminalexit0:522tests32skips+Ruff/diffcheckpass.
+See [metadata and live result](human-production-metadata-recovery.md). Next
+cancellation/source-mode classification, producer-addon binding and cross-source
+research-level queue accounting beforefixedhumanplan. No learnedwin/RLrestart.

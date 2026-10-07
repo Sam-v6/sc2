@@ -13,6 +13,12 @@ def goal_catalog(data, names):
         category, product = name.split(':', 1)
         row = (units if category == 'unit' else upgrades)[product]
         ability = row['ability_id']
+        if category == 'upgrade' and abilities[ability].get('available') is False:
+            active = [a for a in abilities.values() if a.get('available') is True
+                      and a.get('friendly_name') == abilities[ability].get('friendly_name')]
+            if len(active) != 1:
+                raise ValueError('No unique active research ability for ' + product)
+            ability = active[0]['ability_id']
         minerals = row.get('mineral_cost', 0)
         if product in ('OrbitalCommand', 'PlanetaryFortress'):
             minerals -= units['CommandCenter']['mineral_cost']
