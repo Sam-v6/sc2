@@ -1,0 +1,25 @@
+{
+  "status": "verified_native_occupied_addon_pad_clearance_and_completion",
+  "withheld_frames": 2,
+  "clearance_moves": 1,
+  "reactors_started_and_completed": 1,
+  "attached": true,
+  "action_errors": 0,
+  "normal_cutoff": true,
+  "replay_saved": true,
+  "wall_seconds": 8.945,
+  "peak_cpu": 5.6,
+  "training": false,
+  "rl": false,
+  "limits": [
+    "Debug completed Barracks and Marine on pad plus resources; native addon construction and unit movement.",
+    "Not learned macro strength or full-game transfer."
+  ],
+  "bindings": {
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/verify_occupied_addon_fixture_01.py": "a312c2a4702740dd5db8a515a78886f88dbb97471e08f72ea6aa55007154f3a0",
+    "logs/roadmap/occupied-addon-fixture-01/report.json": "13fe1ff25e14cf2d20d7a7c0cdce6ef98519390d69b9f2686ba15fae8f74b99f",
+    "logs/roadmap/occupied-addon-fixture-01/trace.jsonl": "54e3a0076d36f48b84a456f383e44d66a03ea6d8c61b0b16aaab0036f3733ae7",
+    "logs/roadmap/occupied-addon-fixture-01/static.json": "68fbb4f4be76cde9d51924de5a8f868a2cb5f38d1df633b81cd3cda3dc9461bc",
+    "logs/roadmap/occupied-addon-fixture-01/game.SC2Replay": "caed43de95c34f77a6060965bf284503f438dd913a96c488a6f6ab92bf0bdd58"
+  }
+}

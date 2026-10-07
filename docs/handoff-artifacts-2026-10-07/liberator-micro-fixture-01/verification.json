@@ -1,0 +1,29 @@
+{
+  "status": "verified_native_liberator_ground_zone_kills_and_undeploy",
+  "modes": [
+    689,
+    734,
+    689
+  ],
+  "deployment_commands": 1,
+  "undeployment_commands": 1,
+  "enemy_tank_kills_attributed_to_liberator": 2,
+  "action_errors": 0,
+  "normal_cutoff": true,
+  "replay_saved": true,
+  "wall_seconds": 8.983,
+  "peak_cpu": 4.6,
+  "training": false,
+  "rl": false,
+  "limits": [
+    "One debug-created Liberator against three debug-created initially sieged ground tanks with no anti-air; opponent AI unsieges tanks, and one leaves the zone; not a learned micro model or full-game strength test.",
+    "Other geometries, moving targets, danger and ability upgrades need separate transfer evidence."
+  ],
+  "bindings": {
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/verify_liberator_micro_fixture_01.py": "62c463a43570d92559ec82c66c5ec40dd5f53efd2a6535d1e8bafc1a579df2ee",
+    "logs/roadmap/liberator-micro-fixture-01/report.json": "5c6bee00f44ab23c8b1bf6bd5bc8ef4a4ba415aefe5785868c910db73204eccd",
+    "logs/roadmap/liberator-micro-fixture-01/trace.jsonl": "eabb6844b353afdecdb1fd21ae060bdd824696b2d307a43537bdbccbe59f3ed5",
+    "logs/roadmap/liberator-micro-fixture-01/static.json": "3c39f92cf492fe823cd2bf72772dfd45c34b2996bef1baf227fd9ad7b46a9ee4",
+    "logs/roadmap/liberator-micro-fixture-01/game.SC2Replay": "c8467190b8124646ad61cd47c6eafcf397a21646f052a347605db26da925089e"
+  }
+}

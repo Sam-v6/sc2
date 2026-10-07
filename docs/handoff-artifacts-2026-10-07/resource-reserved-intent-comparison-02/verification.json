@@ -1,0 +1,57 @@
+{
+  "status": "verified_reserved_intent_native_canary_improvement",
+  "arms": {
+    "10": {
+      "gate_pass": false,
+      "replay_scv_births": 47,
+      "replay_military_births": 0,
+      "replay_completed_production_buildings": 0,
+      "accepted_by_ability": {
+        "Train SCV": 49,
+        "Build Refinery": 2,
+        "Build SupplyDepot": 57
+      },
+      "delayed_action_errors": 0,
+      "predictions_recomputed": 1195,
+      "peak_cpu": 9.3
+    },
+    "11": {
+      "gate_pass": true,
+      "replay_scv_births": 52,
+      "replay_military_births": 26,
+      "replay_completed_production_buildings": 17,
+      "accepted_by_ability": {
+        "Train SCV": 52,
+        "Build SupplyDepot": 19,
+        "Build Refinery": 6,
+        "Build Barracks": 8,
+        "Build CommandCenter": 2,
+        "Train Marine": 18,
+        "Build Factory": 20,
+        "Morph OrbitalCommand": 3,
+        "Build Bunker": 1,
+        "Build Starport": 1,
+        "Train Medivac": 1,
+        "Train Hellion": 5,
+        "Train Liberator": 4
+      },
+      "delayed_action_errors": 0,
+      "predictions_recomputed": 1051,
+      "peak_cpu": 10.8
+    }
+  },
+  "training": false,
+  "rl": false,
+  "unchanged_checkpoint": true,
+  "limits": [
+    "One matched seed onZergVeryEasy,normal600sTiecutoffs; no victory orHardcompetence.",
+    "Native ability selection is learned, timing/actors/placement/economicassistance/micro are scripted.",
+    "Reserved arm still issues20Factory requests and19Depot requests; passing engineering gates is not strategic acceptance.",
+    "Arms executed in separate processes with some wall-time overlap; CPUpeaks include overlapping work."
+  ],
+  "bindings": {
+    "logs/roadmap/resource-reserved-intent-comparison-02/contract.json": "75c7c3133d0208e326fa9b29eacb70ca1e6abb32a94da4f7a979ad6e98e1b257",
+    "logs/roadmap/professional-choice-native-10/verification.json": "a97889217783d76c566341ebc06a54b61d8e548a89927bf0d43a8d237cdd984f",
+    "logs/roadmap/professional-choice-native-11/verification.json": "cb7498911bcaadc4f7b31fc16de426eb3832a6c4f968317486771afdfe25c604"
+  }
+}

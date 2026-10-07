@@ -1,7 +1,9 @@
 # Terran learning roadmap: reliable primitives, human examples, then reinforcement learning
 
-Agreed direction recorded October 5, 2026. **Execution is active:** the user
-subsequently instructed the agent to complete this roadmap. Current implementation
+Agreed direction recorded October 5, 2026. **Execution paused October 7, 2026:**
+the user requested stopping and preserving everything. Read the comprehensive
+[agent handoff](agent-handoff-2026-10-07.md) before an explicitly authorized resume.
+The roadmap remains incomplete. Current implementation
 and experiment evidence are recorded in [the execution ledger](learning-execution.md).
 A concise [current status and resumption guide](current-learning-status.md) identifies
 the active phase, verified data and remaining requirements.

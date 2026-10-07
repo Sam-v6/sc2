@@ -1,0 +1,23 @@
+{
+  "status": "verified_native_depleted_home_remote_mining",
+  "remote_order_observations": 3086,
+  "collected_minerals": 525.0,
+  "action_errors": 0,
+  "normal_cutoff": true,
+  "replay_saved": true,
+  "wall_seconds": 10.499,
+  "peak_cpu": 5.3,
+  "training": false,
+  "rl": false,
+  "limitations": [
+    "Debug killed home mineral patches and created one extra remote SCV for visibility. No resource boost or remote base.",
+    "Engineering recovery only; no learned macro strength or win established."
+  ],
+  "bindings": {
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/verify_depleted_mining_fixture_01.py": "6cbb704885d95bdca30ed323808f2fc0764b61b409e8c6eafa1d8ac969a5ad80",
+    "logs/roadmap/depleted-mining-fixture-01/report.json": "c1ba7a4df0b40a02d5008ef2ecd3632b96f0271d35d38bacbc1cdd96a03a711f",
+    "logs/roadmap/depleted-mining-fixture-01/trace.jsonl": "a77895f909362b03f11d8c2789b8f05c1937ea9f247a07f335a0939f13169781",
+    "logs/roadmap/depleted-mining-fixture-01/static.json": "58467b8025231a1b03c3896694392738f4c882b6f1e23f9dad82f77500b0e167",
+    "logs/roadmap/depleted-mining-fixture-01/game.SC2Replay": "029bb6d4ae9920fe9995301671aab1d7b7889c059bb6e9d8b9b2965ba7f5b6bb"
+  }
+}

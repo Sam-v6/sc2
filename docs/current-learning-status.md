@@ -1,5 +1,13 @@
 # Current learning status
 
+**Paused at the user's explicit request, October 7, 2026.** No further training
+or simulations are authorized until resume. See the comprehensive
+[agent handoff](agent-handoff-2026-10-07.md) for the saved state and evidence.
+The latest Protoss diagnostic08 ended in a300.017wall-second timeout, result null,
+CPUpeak12.2%; it did not produce a completed replay. Its behavioral trace is
+preserved but not independently audited. Older live-handle instructions below
+are historical and superseded by this pause. Full roadmap remains incomplete.
+
 Updated October 7, 2026. The **initial scripted Hard baseline is verified**;
 the basic production/combat adapter gate now also passes across all three races.
 A separately declared scripted request fixture used the broad adapter and won

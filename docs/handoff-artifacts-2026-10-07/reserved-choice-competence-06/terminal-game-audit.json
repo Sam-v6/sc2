@@ -1,0 +1,224 @@
+{
+  "status": "audited_terminal_games",
+  "games": [
+    {
+      "race": "Terran",
+      "receipt_status": "truncated",
+      "result": "Tie",
+      "wall_seconds": 207.914,
+      "normal_native_cutoff": true,
+      "actual_victory": false,
+      "observed_action_errors": [],
+      "frames": 3532,
+      "zero_idle_worker_frames": 2851,
+      "remote_mineral_order_observations": 0,
+      "peak_workers": 144,
+      "last_player": {
+        "player_id": 1,
+        "minerals": 515,
+        "vespene": 410,
+        "food_cap": 200,
+        "food_used": 194,
+        "food_army": 56,
+        "food_workers": 138,
+        "idle_worker_count": 0,
+        "army_count": 27,
+        "warp_gate_count": 0
+      },
+      "completed_base_locations": [
+        {
+          "position": [
+            33.5,
+            138.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            31.5,
+            113.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            73.5,
+            138.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            107.5,
+            129.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            29.5,
+            53.5
+          ],
+          "max_ideal": 16
+        }
+      ],
+      "accepted_abilities": {
+        "524": 134,
+        "319": 50,
+        "320": 10,
+        "321": 1,
+        "318": 4,
+        "328": 34,
+        "561": 2,
+        "1516": 5,
+        "329": 25,
+        "560": 12,
+        "595": 36,
+        "324": 3,
+        "626": 11,
+        "3683": 14,
+        "331": 2
+      },
+      "saved_replay": true
+    },
+    {
+      "race": "Zerg",
+      "receipt_status": "completed",
+      "result": "Victory",
+      "wall_seconds": 159.046,
+      "normal_native_cutoff": false,
+      "actual_victory": true,
+      "observed_action_errors": [],
+      "frames": 2962,
+      "zero_idle_worker_frames": 2410,
+      "remote_mineral_order_observations": 0,
+      "peak_workers": 93,
+      "last_player": {
+        "player_id": 1,
+        "minerals": 5365,
+        "vespene": 122,
+        "food_cap": 200,
+        "food_used": 200,
+        "food_army": 107,
+        "food_workers": 93,
+        "idle_worker_count": 0,
+        "army_count": 52,
+        "warp_gate_count": 0
+      },
+      "completed_base_locations": [
+        {
+          "position": [
+            33.5,
+            138.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            31.5,
+            113.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            58.5,
+            111.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            73.5,
+            138.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            107.5,
+            129.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            29.5,
+            53.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            128.5,
+            143.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            68.5,
+            42.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            47.5,
+            28.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            146.5,
+            118.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            143.5,
+            86.5
+          ],
+          "max_ideal": 16
+        },
+        {
+          "position": [
+            102.5,
+            33.5
+          ],
+          "max_ideal": 16
+        }
+      ],
+      "accepted_abilities": {
+        "524": 82,
+        "319": 32,
+        "320": 8,
+        "321": 4,
+        "318": 12,
+        "560": 25,
+        "328": 55,
+        "1516": 6,
+        "324": 1,
+        "329": 4,
+        "595": 14,
+        "626": 24,
+        "322": 1,
+        "3683": 8,
+        "326": 16,
+        "331": 1
+      },
+      "saved_replay": true
+    }
+  ],
+  "all_race_victory_gate_pass": false,
+  "training": false,
+  "rl": false,
+  "live_panel": false,
+  "limitations": [
+    "Frozen conditional-production checkpoint with scripted timing, actor/placement and primitives; bootstrap policy filename does not identify actual choice model.",
+    "Cutoffs are not victories. No Hard or broad imitation success inferred."
+  ],
+  "choice_checkpoint": "logs/roadmap/professional-choice-fit-04/choice.npz"
+}

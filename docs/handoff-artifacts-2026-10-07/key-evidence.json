@@ -1,0 +1,74 @@
+[
+  {
+    "path": "logs/roadmap/reserved-choice-competence-08/contract.json",
+    "committed_copy": "docs/handoff-artifacts-2026-10-07/reserved-choice-competence-08/contract.json",
+    "bytes": 11809,
+    "sha256": "4137526ed0a058d3ea9df3ddfcefaee1b96c13b5a89f2543f2d43c1b10018bb8"
+  },
+  {
+    "path": "logs/roadmap/reserved-choice-competence-08/report.json",
+    "committed_copy": "docs/handoff-artifacts-2026-10-07/reserved-choice-competence-08/report.json",
+    "bytes": 10920,
+    "sha256": "fffc772aff5dbe262fcefae3d7bd7c456cb42b69b4ceb4c469b0cf5e129ea50c"
+  },
+  {
+    "path": "logs/roadmap/reserved-choice-competence-08/progress.json",
+    "committed_copy": "docs/handoff-artifacts-2026-10-07/reserved-choice-competence-08/progress.json",
+    "bytes": 1547,
+    "sha256": "d87168223193bef25e5d4598e76cc3109992b59342a1d3929224fe9e06963855"
+  },
+  {
+    "path": "logs/roadmap/professional-choice-fit-04/choice.npz",
+    "committed_copy": "docs/handoff-artifacts-2026-10-07/professional-choice-fit-04/choice.npz",
+    "bytes": 2877542,
+    "sha256": "208c27c0936607c613f23ffb6bcb6116fe40584a6f07591e246359359b90c471"
+  },
+  {
+    "path": "logs/roadmap/occupied-addon-fixture-01/verification.json",
+    "committed_copy": "docs/handoff-artifacts-2026-10-07/occupied-addon-fixture-01/verification.json",
+    "bytes": 1233,
+    "sha256": "dcd0a0e7115492cd834306efc279fe3b421bf05245d26ecc0d563c06795944f2"
+  },
+  {
+    "path": "logs/roadmap/occupied-addon-fixture-01/report.json",
+    "committed_copy": "docs/handoff-artifacts-2026-10-07/occupied-addon-fixture-01/report.json",
+    "bytes": 2018,
+    "sha256": "13fe1ff25e14cf2d20d7a7c0cdce6ef98519390d69b9f2686ba15fae8f74b99f"
+  },
+  {
+    "path": "logs/roadmap/liberator-micro-fixture-01/verification.json",
+    "committed_copy": "docs/handoff-artifacts-2026-10-07/liberator-micro-fixture-01/verification.json",
+    "bytes": 1431,
+    "sha256": "30c27db434d1769ffb1cb7d200275f7ff232c38ae81de129657e85a9efc030ab"
+  },
+  {
+    "path": "logs/roadmap/depleted-mining-fixture-01/verification.json",
+    "committed_copy": "docs/handoff-artifacts-2026-10-07/depleted-mining-fixture-01/verification.json",
+    "bytes": 1225,
+    "sha256": "1a94c3e31d0b37fc532d1baee666f6ab87598d1d865f92c49fd61cda6b6d1b46"
+  },
+  {
+    "path": "logs/roadmap/reserved-choice-competence-07/terminal-game-audit.json",
+    "committed_copy": "docs/handoff-artifacts-2026-10-07/reserved-choice-competence-07/terminal-game-audit.json",
+    "bytes": 3736,
+    "sha256": "07b353971e712bb581bb8b2b8fa8956a74f770a6ed42bbec36cb09b4b8c65e55"
+  },
+  {
+    "path": "logs/roadmap/reserved-choice-competence-06/terminal-game-audit.json",
+    "committed_copy": "docs/handoff-artifacts-2026-10-07/reserved-choice-competence-06/terminal-game-audit.json",
+    "bytes": 4666,
+    "sha256": "41c34743c1e8cf695bf735f91d5432208c3cce5d41ba290402f1d4fb19d4ca7e"
+  },
+  {
+    "path": "logs/roadmap/resource-reserved-intent-comparison-02/verification.json",
+    "committed_copy": "docs/handoff-artifacts-2026-10-07/resource-reserved-intent-comparison-02/verification.json",
+    "bytes": 2096,
+    "sha256": "c31b5f49eb791919ce338c0c7188d33ecc88c69febeef909fadc50526148cae4"
+  },
+  {
+    "path": "logs/roadmap/primitives-hard-baseline-01/panel/verification.json",
+    "committed_copy": "docs/handoff-artifacts-2026-10-07/primitives-hard-baseline-01/panel/verification.json",
+    "bytes": 60868,
+    "sha256": "357a56a62bae3a3480cf7f4a0b92557dd138b0e2f5dcb8280a8a7a64562c43f0"
+  }
+]

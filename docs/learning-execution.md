@@ -1,4 +1,9 @@
-# Active roadmap execution
+# Roadmap execution ledger
+
+**Paused October 7, 2026 at the user's request.** Historical live handles and
+next-step instructions below do not authorize new work. The comprehensive
+[agent handoff](agent-handoff-2026-10-07.md) records the terminal state, preservation
+commit contents, limitations, and options for a future explicit resume.
 
 The user resumed the roadmap on October 5, 2026. The earlier
 [requested-pause status](project-status-2026-10-05.md) is a historical snapshot.

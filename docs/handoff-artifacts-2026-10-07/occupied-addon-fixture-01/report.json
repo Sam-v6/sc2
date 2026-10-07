@@ -1,0 +1,36 @@
+{
+  "results": [
+    {
+      "status": "completed",
+      "result": "Tie",
+      "withheld": 2,
+      "clearance_moves": 1,
+      "reactor_started": true,
+      "reactor_completed_and_attached": true,
+      "wall_seconds": 8.945,
+      "job": {
+        "seed": 825101,
+        "trace": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/occupied-addon-fixture-01/trace.jsonl",
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/occupied-addon-fixture-01/game.SC2Replay",
+        "static": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/occupied-addon-fixture-01/static.json"
+      }
+    }
+  ],
+  "bindings": {
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/run_occupied_addon_fixture_01.py": "bb4d9e71cd7b639975c28239984563c736b2a9f025c2bc11f7e1df226c6588a2",
+    "logs/roadmap/occupied_addon_fixture_worker_01.py": "8d67664aac41fad64c1deecfc0fc4e77f7e8dfba283fb72b713a8445d617450e",
+    "src/learning/production_clearance.py": "0f779c5683b53c845a7a61b7ea10179cd8adfd7fd8d86b1b9373f2ac67214d97",
+    "src/learning/production_request.py": "0e94c22e6a449e17a37a7b57a9f74c168daf39c2d01d9ab72d076012fdc9e96e",
+    "src/learning/production_execution.py": "082ba02bdc892b595725f6156368d7fbf23f85a17188db860f2abe0a7e22b397",
+    "src/learning/gameplay.py": "ea2595c84270471f944759b994d6b2ffdacb34a2ba63497370b64903ab0b53c4",
+    "src/learning/live.py": "5d2921c05fed6f69f398151259a4e8080174bd6e65252285301b913a785ad8da",
+    "src/bots/terran_primitives.py": "5155e1960988dd861b89de98390ad051fb40d93d8a4ee3389320e45cb8573cfd",
+    "src/learning/production_primitives.py": "260ee59d548f3bdc2d80da65ac7b6a135416fd95c608ad1123c104e0490431d7",
+    "src/runtime.py": "4bebb9a3be88fada85437496752fbae0a740dc2b099b570011e7b085519011e3",
+    "src/runner.py": "32e71b096d3a7e79a9c1bf1ec2ce8e43a0c92aad9f7541e9d3c231a5b8a72596"
+  },
+  "peak_cpu": 5.6,
+  "status": "completed",
+  "training": false,
+  "rl": false
+}
