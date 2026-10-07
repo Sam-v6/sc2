@@ -4763,3 +4763,20 @@ then were corrected from native grid convention and actual archived command
 history before verification passed. No training, predictions, native competition
 or RL. Adviser recommends a bounded mixed-source transfer hypothesis: Masters
 timing, professional choice, native legality. See [frozen direction and gates](mixed-source-production-experiment.md).
+
+## October 7: prepare dense timing and distinct professional choice data
+
+All seven new compatible native reconstructions are terminal, with Rom's verified
+diagnostic pilot reused. Eight games provide 2,338 actual 44-loop states and 99.85%
+elapsed coverage. Roles frozen before extraction: five Mez teaching games, Lyra
+calibration, Huski/Rom evaluation; reused diagnostics and human losses explicit,
+reserved games untouched. New extraction wall1,068.45seconds, CPU peak 23.2%.
+Native reader pack 70154 misnames some 75689 commands. Strict native button/basic
+family/index matching repairs nonproduction aliases without guessing unresolved
+effects. Teaching labels: 467 positive, 1,002 wait, 205 unknown; all unknowns retained
+outside training. Independent original/native proof, state and interval verifier
+passes after adding its initially missing source-backed upgrade identity path.
+Professional choice separately verifies 1,267 teaching + 289 diagnostic event examples
+at their own issue states, each once, with no future-window duplication. Ten new
+helper regression tests; full 570 tests / 32 optional skips, Ruff/diff pass. No fit,
+prediction, bot competition or RL. See [data, uncertainty and source-definition limits](mixed-source-production-data.md).

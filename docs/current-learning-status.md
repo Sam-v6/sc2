@@ -2,6 +2,16 @@
 
 Updated October 7, 2026. The **initial scripted Hard baseline is verified**;
 the active next phase is reconnecting human imitation to the verified primitives.
+The [mixed-source data preparation](mixed-source-production-data.md) is terminal
+and independently verified: native teaching supplies 467 production / 1,002 wait / 205
+unknown intervals; all eight games cover 99.85% elapsed time at actual 44-loop cadence.
+Professional choice has 1,267 distinct teaching and 289 diagnostic events, no future
+windows. Native teaching is five Mez games; Lyra calibrates, Huski/Rom evaluate,
+all reused diagnostics clearly labeled. Reserved games unchanged. Source naming
+repairs require native catalogue proof; uncertain commands stay censored.
+Full suite 570 tests / 32 optional skips, CPU peak 23.2%, no fit/predictions/bot games/RL.
+Next implement the frozen mixed-source timing/choice experiment and retain its
+offline gates; this is data readiness, not useful native imitation yet.
 The [mixed-source production experiment](mixed-source-production-experiment.md)
 now has a verified dense-data pilot: reused diagnostic Rom yields 120 states
 every 44 loops, preserves all 299 native actions, and covers 99.87% of elapsed
