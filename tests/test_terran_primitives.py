@@ -109,6 +109,29 @@ TYPES = {48: dict(weapons=[dict(type=3, range=5)]),
 
 
 class CombatTests(unittest.TestCase):
+    def test_liberator_deploys_a_reachable_zone_against_visible_ground_units(self):
+        types = {**TYPES, 689: dict(name='Liberator', weapons=[dict(type=2, range=5)]),
+                 734: dict(name='LiberatorAG', weapons=[dict(type=1, range=10)])}
+        liberator = unit(1, 689, is_flying=True)
+        enemy = unit(2, 48, x=8, alliance=4)
+        command = combat_command(liberator, [enemy], types, (20, 20), lambda p: True)
+        self.assertEqual(command.ability, 2558)
+        self.assertEqual(command.target_point, (5, 0))
+
+    def test_deployed_liberator_holds_its_zone_and_undeploys_without_ground_targets(self):
+        types = {**TYPES, 734: dict(name='LiberatorAG', weapons=[dict(type=1, range=10)])}
+        liberator = unit(1, 734, is_flying=True)
+        self.assertIsNone(combat_command(liberator, [unit(2, 48, x=8, alliance=4)],
+                                        types, (20, 20), lambda p: True))
+        self.assertEqual(combat_command(liberator, [], types, (20, 20), lambda p: True).ability, 2560)
+
+    def test_liberator_transform_is_not_reissued_while_pending(self):
+        types = {**TYPES, 689: dict(name='Liberator', weapons=[dict(type=2, range=5)])}
+        liberator = unit(1, 689, is_flying=True)
+        liberator['orders'] = [dict(ability_id=2558, target_world_space_pos=dict(x=5, y=0))]
+        self.assertIsNone(combat_command(liberator, [unit(2, 48, x=8, alliance=4)],
+                                        types, (20, 20), lambda p: True))
+
     def test_support_units_do_not_keep_a_destroyed_ground_attack_running(self):
         state = dict(units=[unit(i, 54) for i in range(4)] + [unit(10+i, 35) for i in range(8)]
                      + [unit(30+i, 48) for i in range(10)] + [unit(50+i, 33) for i in range(2)])

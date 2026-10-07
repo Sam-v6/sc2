@@ -197,3 +197,21 @@ source is preserved; subsequent Graviton Beam guard verification is separate.
 Full suite455tests/32optional skips and native smoke pass after that guard.
 No human fit or RL ran in this phase. Reconnect verified primitives to human
 choices next; the broad-action learned-policy roadmap remains unfinished.
+
+### Liberator ground-mode execution (2026-10-07)
+
+The shared combat helper now deploys/holds/undeploys Liberator ground zones.
+Design reference: [Sharpy's Liberator controller](https://github.com/DrInfy/sharpy-sc2/blob/d9577a00ee47634b56ff7ee0740c6ed3043659a2/sharpy/combat/terran/micro_liberators.py),
+MIT source archived with hash under `logs/roadmap/primitives-reference-01`.
+Only observed detectable ground units outside the structure class trigger
+sieging; target zone centers stay within native5tile range, and active transforms
+are not interrupted. Deployed units use engine automatic fire; leave ground mode
+when relevant targets disappear from10tile neighborhood.
+
+Native fixture verifies two tank kills credited to the Liberator, a surviving
+tank leaving the zone, one deployment/undeployment and zero errors. Debug setup
+supplies the units but no resource/upgrades boost; this checks command execution,
+not full-game or learned micro strength. Evidence:
+`logs/roadmap/liberator-micro-fixture-01/verification.json`. Three regression tests
+and the617test default suite pass (40optional skips). Full-game transfer remains
+open; prior scripted Hard results precede this addition.

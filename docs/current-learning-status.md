@@ -611,3 +611,42 @@ labels must be called expert corrections, not pro demonstrations. Qualified
 human labels are currently unavailable, so this is a proposed option, not an
 implemented or authorized substitute for professional replay supervision.
 Continue feasible primitives/data-interface work; no threshold/epoch/quota sweep.
+
+### Native retry transfer and Liberator micro (2026-10-07)
+
+Native17 single matched Protoss diagnostic07 is terminal: normal1200game-second
+cutoff Tie,197.037wallseconds. The conflicting Depot/Reactor intent deadlock is
+removed; final69workers/82military,131army supply,200/200supply and zeroidle.
+However five unique delayed Reactor422 placement44 failures remain atloops14040,
+14124,14212,14300,14388. The wrapper's retry counter is reset by unrelated pending
+requests starting, so its advertised three-retry bound is not enforced per failed
+request. Do not call this zero-error or fully reliable execution. Next scope
+retry state/counts to the failed request and investigate its actual addon site.
+`reserved-choice-competence-07/terminal-game-audit.json` verifies saved source
+snapshots and completed game; native replay exists. No fit/RL ran.
+
+Shared combat primitive now deploys a Liberator ground zone against observed,
+detectable nonstructure ground units within10, clamps the zone center to its
+native5tile cast range, avoids interrupting transforms, holds deployed mode for
+native automatic fire, and returns to flight when relevant ground targets leave.
+This adapts the behavior in pinned Sharpy `micro_liberators.py` (MIT), archived
+under `primitives-reference-01/sources` with separate source manifest. No macro
+quotas, model scores, attack timing or army composition changes were made.
+
+Three regressions fail before the change and pass afterward.617default tests
+pass (40optional skips), Ruff passes. Native `liberator-micro-fixture-01` has one
+debug-created Liberator and three enemy sieged tanks. The enemy AI unsieges/moves
+its tanks: two are damaged and killed by the Liberator, the third leaves the zone.
+Replay tracker attributes both kills to that Liberator. Verified mode sequence
+689→734→689, one deployment/one undeployment, zero immediate/delayed errors,
+normal90game-second cutoff and saved replay.8.983wallseconds,4.6percent CPUpeak.
+`liberator-micro-fixture-01/verification.json` binds source snapshots, raw orders,
+health changes and replay evidence. A failed initial verifier assumed tanks stayed
+in siege mode and allthree would die; the audit now reports actual two-kill
+behavior and escape limitation, rather than claiming that stronger scenario.
+This is scripted micro evidence, not learned micro or full-game strength.
+
+All source-bound workers are terminal. Full-game transfer of the new Liberator
+primitive remains unverified. Keep training/RL paused while resolving the per-
+request retry/addon failure; conditional identity with forced cadence remains
+an incomplete imitation policy requiring valid commitment/wait supervision.
