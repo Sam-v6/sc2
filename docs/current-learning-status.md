@@ -19,6 +19,9 @@ unsupported-target exclusions. The native executor now uses the mining/combat pr
 fit passes independently verified offline checks, but its first native canary
 failed to build an army. See [the bridge result](human-primitives-bridge-result.md).
 Do not rerun the unchanged full-command fit or credit scripted assistance as learning.
+The [opening-order diagnosis](human-production-order-diagnosis.md) records the
+additional command and input-sensitivity audits; unchanged outcome timing also
+failed its quality gates.
 
 Start here, then read [the roadmap](learning-roadmap.md). Use
 [the execution ledger](learning-execution.md) for detailed evidence. Historical

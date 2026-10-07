@@ -27,6 +27,31 @@ All watcher handles for this batch are terminal: fit49563, label/model verifier
 21814, feature parity71757, native canary21767, canary verifier57962. Original
 receipts/source hashes remain in ignored `logs/roadmap/`; keep them on handoff.
 
+## Human command precedence experiment
+
+The previous goal turn made progress: the bridge was committed as `c6fe8f0`,
+its native failure was verified, and the unchanged six-game panel was withheld.
+Additional input-sensitivity and original-command audits are documented in
+[the opening diagnosis](human-production-order-diagnosis.md). Astra supplied
+advisory recommendations under the user's explicit authorization; it made no edits.
+
+The bounded [precedence plan](superpowers/plans/2026-10-06-human-production-precedence.md)
+is now frozen. Fit watcher handle **6736** is live and was polled successfully.
+Its script is `logs/roadmap/watch_fit_human_production_precedence_01.py`; outputs
+are `human-production-precedence-01/` and the adjacent fit telemetry/output files.
+It prepared49,662teaching base pairs (mirrored for fitting) and19,179development
+pairs, withzero censored anchors. Two CPU threads, GPU disabled, whole-host80percent
+guard; observed peak10.9percent. Preserve its bound sources while running.
+Do not restart from a stale running JSON or an observation timeout; poll6736.
+
+New label/feature helpers have3meaningful tests; full suite465tests,32optional skips,
+10.251seconds. Source remains an offline helper: no live intent scheduler exists yet.
+After the fit terminates, run the independently written guarded verifier
+`verify_human_production_precedence_01.py`. Verify labels, source-event weights,
+reloaded probabilities, primary/grouped metrics and gates. Only a passing verified
+candidate may proceed to tested intent persistence/resource reservation and a frozen
+same-job native comparison. Do not use offline fit completion as native competence.
+
 ## Current evidence
 
 | Gate | Implemented and checked | Remaining |
