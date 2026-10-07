@@ -30,8 +30,18 @@ diagnostic predictions: accuracy 43.9% versus 38.8% majority; nonworker recall
 33.3% versus 14.7% old checkpoint; building recall only 6/54 (11.1%, required 40%).
 Optimizer/evaluation wall time 39.4 seconds; sampled CPU peak 9.0%. The model is
 not promoted. It predicts buildings only 26/289 times, versus 54 gold building
-events; SCV/Marine choices dominate. Next diagnose/rebalance that loss contribution
-in a bounded supervised experiment with unchanged gates, not more epochs or RL.
+events; SCV/Marine choices dominate. The paired weighting experiment subsequently
+failed too: building recall rose to 13/54 (24.1%, required 40%), overall accuracy
+was 39.8%, and false building choices were 37/235 (15.7%). Independent verification
+reconstructs all predictions; 38,010 presentations took 39.7 seconds with 8.1%
+sampled host CPU peak. No native rollout or RL followed. Resource/queue and
+reflection audits do not establish a dominant resource-corruption or orientation
+cause. The next single experiment tests earlier observations, without human
+command history, rather than another weight/epoch sweep. Its causal snapshot
+pointers are independently verified: 4,632 available frames from 2,382 distinct
+past observations, with explicit ages and missing slots. No memory model has been
+implemented or trained yet. See
+[the observation memory experiment](professional-observation-memory-experiment.md).
 See [the choice experiment](professional-production-choice-experiment.md).
 
 The latest mixed-source timing fit is terminal and failed its frozen gates.

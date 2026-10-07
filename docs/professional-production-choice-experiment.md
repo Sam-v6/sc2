@@ -66,16 +66,39 @@ and old-checkpoint choices, and reconstructs metrics and frozen gate outcomes.
 Training/evaluation takes 39.4 seconds; sampled CPU peaks at 9.0%. No native
 rollout or RL follows. The model is not promoted.
 
+## Paired weighting result
+
+`logs/roadmap/professional-choice-fit-02/verification.json` independently verifies
+a failed paired experiment. The seed, sample order, fresh initialization,
+optimizer, 30 epochs and 38,010 presentations match fit01. Only the family loss
+weights changed: inverse square root of equal-game teaching prevalence, normalized
+to mean one (building 1.7067, other .8320). Diagnostic labels did not set weights.
+Overall accuracy is 115/289 (39.8%), nonworker recall 51/177 (28.8%), and building
+recall 13/54 (24.1%, below the unchanged 40% gate). Each diagnostic game has correct
+buildings, but false building choices are 37/235 (15.7%). Wall time 39.7 seconds,
+sampled CPU peak 8.1%. No native rollout or RL; the model is not promoted.
+
+The input audit under `logs/roadmap/professional-choice-input-audit-01` finds
+recorded resources sufficient for one priced product on every building label.
+This does not establish full actor-group affordability or command legality.
+Producer order truncation occurs in seven teaching and one diagnostic building
+observations. Player food used, idle-worker count and army count remain unknown.
+Reflection of all coordinates changes only 9–16 of 289 top choices, with building
+correctness 13–14/54. This is representation sensitivity, not a native mirrored
+map test; orientation is unlikely to explain most errors. The choice context
+does not consume map-grid features, so do not claim complete sensory coverage.
+
 ## What to change next
 
 Building labels represent 236/1,267 teaching events and 54/289 diagnostic events.
 The model predicts a building only 26/289 times. Most Depot labels are replaced
 by SCV or Marine predictions; Barracks labels also get confused with Refineries.
-Thus the next candidate is a declared loss-weighting or separate family-choice
-experiment that gives building decisions enough training attention. Preserve the
-same evaluation gates and report false building choices as well as building
-recall. Do not choose a threshold or class weight by repeatedly optimizing these
-reused diagnostic games, add epochs indefinitely, or deploy a failed model.
+The declared weighting experiment above improved building recall but failed.
+The next candidate is a single [causal observation memory experiment](professional-observation-memory-experiment.md),
+using earlier observations to expose recent economy and production changes.
+Preserve the evaluation gates and cap false building choices at fit02's 37/235.
+Do not choose thresholds or weights by repeatedly optimizing these reused games,
+add epochs indefinitely, or deploy a failed model.
 
 If a model passes, connect it to an explicitly fixed scheduler: at most one
 outstanding request, native actor/prerequisite checks, resource saving for the
