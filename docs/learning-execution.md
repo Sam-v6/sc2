@@ -36,7 +36,8 @@ Additional input-sensitivity and original-command audits are documented in
 advisory recommendations under the user's explicit authorization; it made no edits.
 
 The bounded [precedence plan](superpowers/plans/2026-10-06-human-production-precedence.md)
-is now frozen. Fit watcher handle **6736** is live and was polled successfully.
+is now frozen. Fit watcher handle **6736** was live during initial preparation; it is now
+terminal-15 (see runtime correction below).
 Its script is `logs/roadmap/watch_fit_human_production_precedence_01.py`; outputs
 are `human-production-precedence-01/` and the adjacent fit telemetry/output files.
 It prepared49,662teaching base pairs (mirrored for fitting) and19,179development
@@ -58,6 +59,27 @@ After the fit terminates, run the independently written guarded verifier
 reloaded probabilities, primary/grouped metrics and gates. Only a passing verified
 candidate may proceed to tested intent persistence/resource reservation and a frozen
 same-job native comparison. Do not use offline fit completion as native competence.
+
+## Precedence runtime correction
+
+Watcher6736 is terminal-15. The two-thread fit exceeded the intended optimizer
+bound and was stopped after verifying the exact host child/script/parent relation.
+No checkpoint or quality report exists; `external-stop.json` preserves the reason.
+The original watcher enforced900total seconds but checked600optimizer seconds
+only after fit return. Do not call this compliant optimizer enforcement or retry
+it unchanged. Its verified labels and weights remain valid.
+
+The [parallel fit correction](superpowers/plans/2026-10-06-human-precedence-parallel-fit.md)
+changes only runtime:16CPU threads and an explicit optimizer-start marker with a
+hard600second optimizer cutoff,900total cutoff and80percent whole-host CPU guard.
+Count weights,128trees, seed, teaching data, weights and quality gates stay frozen.
+Both regenerated pair files already match first-run SHA256 exactly. Outputs:
+`human-production-precedence-02/`; watcher handle **50190** is live. Poll that exact
+handle; do not restart from JSON alone. Bound plan/helper/fit source must remain
+unchanged while live. After terminal success, run guarded verifier
+`watch_verify_human_production_precedence_02.py`; on budget/CPU failure, preserve
+it and change the approach rather than expanding the bound. Native scheduler and
+RL remain unchanged.
 
 ## Current evidence
 
