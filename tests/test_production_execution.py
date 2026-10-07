@@ -3,6 +3,23 @@ from src.learning.production_execution import queued_work, eligible_actors
 
 
 class ProductionExecutionTests(unittest.TestCase):
+    def test_resource_filter_keeps_exact_budget_and_unknown_prices(self):
+        from src.learning.production_execution import resource_affordable_choices
+        scores = {319: .6, 560: .2, 999: .1}
+        prices = {319: (100, 0), 560: (50, 0)}
+        self.assertEqual(resource_affordable_choices(scores, prices, 100, 0), scores)
+        self.assertEqual(resource_affordable_choices(scores, prices, 99, 0),
+                         {560: .2, 999: .1})
+        self.assertEqual(scores, {319: .6, 560: .2, 999: .1})
+
+    def test_resource_filter_checks_gas_and_does_not_invent_an_action(self):
+        from src.learning.production_execution import resource_affordable_choices
+        scores = {328: .9}
+        prices = {328: (150, 100)}
+        self.assertEqual(resource_affordable_choices(scores, prices, 150, 99), {})
+        self.assertEqual(resource_affordable_choices(scores, prices, 149, 100), {})
+        self.assertEqual(resource_affordable_choices(scores, prices, 150, 100), scores)
+
     def test_supply_warning_requires_a_retained_matching_training_order(self):
         from src.learning.production_execution import waiting_for_supply
         catalog = {595: dict(friendly_name='Train Hellion')}

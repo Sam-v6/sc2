@@ -94,6 +94,13 @@ def command_cost(ability, data):
     return minerals, gas
 
 
+def resource_affordable_choices(probabilities, prices, minerals, gas):
+    """Filter immediate single-product costs; unknown prices are not guessed."""
+    return {ability: probability for ability, probability in probabilities.items()
+            if ability not in prices
+            or (prices[ability][0] <= minerals and prices[ability][1] <= gas)}
+
+
 def order_goals(unit, goals, catalog, unit_names):
     """Keep specific order identities; resolve generic addons by producer type."""
     parent = unit_names.get(unit['unit_type'], '').removesuffix('Flying')

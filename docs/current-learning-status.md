@@ -65,8 +65,16 @@ Independent verification reports overall 42.6%, nonworker 36.2%, building 22/54
 (40.7%, clearing that gate), but false building choices 41/235 exceed the frozen
 maximum 37/235. Overall status remains failed; no native rollout or RL follows.
 Twenty-two false building choices cannot afford even one native-priced product.
-The next work should investigate native expert corrections and legal execution
-context, rather than another weight/epoch/memory sweep. See
+The separate resource-only inference audit now passes its frozen offline checks:
+144/289 correct (49.8%), nonworker 70/177 (39.5%), buildings unchanged at 22/54,
+and false buildings 21/235 (8.9%). Independent verification reconstructs every
+probability vector and filtered choice. No weights or gates change. A small tested
+helper is available, but native play is not wired yet; native availability,
+pending requests, supply, actors and placement still need verification. Next run
+a bounded native conditional-choice canary through verified primitives, retaining
+matching observation projection and explicit assistance. Inspect any first
+choice-to-effect failure for expert corrections; do not reopen arbitrary sweeps.
+See [the resource inference audit](professional-resource-filter-experiment.md) and
 [the data comparison](professional-choice-data-expansion-experiment.md).
 See [the additional command recovery](additional-professional-command-recovery.md).
 
