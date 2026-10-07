@@ -35,6 +35,7 @@ class PrimitiveTerranBot(BotAI):
         self.attacking = False
         self.scouted, self.scout_tag = False, None
         self.hunt, self.hunt_points = [], []
+        self.saving, self.expand_retry = False, 0
         self.summary = dict(worker_peak=0, army_peak=0, collected_minerals=0,
                             mining_commands=0, combat_commands=0, defense_commands=0, resumed_builds=0,
                             raw_action_errors=0, delayed_action_errors=0)
@@ -127,10 +128,17 @@ class PrimitiveTerranBot(BotAI):
             if natural:
                 await self.construct(U.BUNKER, state, reserved,
                                      natural.first.position.towards(self.enemy_start_locations[0], 6))
-        if self.townhalls.amount+self.already_pending(U.COMMANDCENTER) < targets['bases'] and self.can_afford(U.COMMANDCENTER):
+        # Production otherwise spends every mineral, so hold 400 back for a wanted expansion
+        # unless a base is under attack or the last attempt could not be placed.
+        want_base = self.townhalls.amount+self.already_pending(U.COMMANDCENTER) < targets['bases']
+        threatened = self.enemy_units.filter(lambda e: e.is_visible and e.can_attack_ground
+                                             and any(e.distance_to(b) < 25 for b in self.townhalls))
+        self.saving = want_base and not threatened and self.time >= self.expand_retry
+        if want_base and self.can_afford(U.COMMANDCENTER):
             point = await self.get_next_expansion()
-            if point:
-                await self.construct(U.COMMANDCENTER, state, reserved, point)
+            if not (point and await self.construct(U.COMMANDCENTER, state, reserved, point)):
+                self.expand_retry = self.time + 30
+            self.saving = False
         barracks_lab_needed = not self.structures(U.BARRACKSTECHLAB) and not self.already_pending(U.BARRACKSTECHLAB)
         planned_tanks = self.units.of_type({U.SIEGETANK, U.SIEGETANKSIEGED}).amount+self.already_pending(U.SIEGETANK)
         enemy_air = self.enemy_units.filter(lambda e: e.is_visible and e.is_flying and e.can_attack)
@@ -142,7 +150,7 @@ class PrimitiveTerranBot(BotAI):
                 if building.tag in self.unit_tags_received_action:
                     continue
                 need_lab = kind == U.FACTORY or (kind == U.BARRACKS and barracks_lab_needed)
-                if need_lab and not building.has_add_on and self.can_afford(addon):
+                if need_lab and not building.has_add_on and self.can_afford(addon) and not self.saving_for_base(addon):
                     ability = self.game_data.units[addon.value].creation_ability.id.value
                     resolved, _ = await resolve_production_placement(self.client,
                         Command(ability, (building.tag,)), self.catalog, state, addon.value, reserved)
@@ -161,15 +169,16 @@ class PrimitiveTerranBot(BotAI):
                         product = U.VIKINGFIGHTER
                     elif self.units(U.MEDIVAC).amount+self.already_pending(U.MEDIVAC) >= 4:
                         continue
-                if self.can_afford(product):
+                if self.can_afford(product) and not self.saving_for_base(product):
                     self.do(building.train(product), subtract_cost=True, subtract_supply=True)
                     if product == U.SIEGETANK:
                         planned_tanks += 1
         for kind, key in ((U.BARRACKS, 'barracks'), (U.FACTORY, 'factories'),
                           (U.STARPORT, 'starports'), (U.ENGINEERINGBAY, 'engineering_bays')):
-            if self.structures(kind).amount+self.already_pending(kind) < targets[key]:
+            if self.structures(kind).amount+self.already_pending(kind) < targets[key] and not self.saving_for_base(kind):
                 await self.construct(kind, state, reserved)
-        if self.gas_buildings.amount+self.already_pending(U.REFINERY) < targets['refineries'] and self.can_afford(U.REFINERY):
+        if (self.gas_buildings.amount+self.already_pending(U.REFINERY) < targets['refineries'] and self.can_afford(U.REFINERY)
+                and not self.saving_for_base(U.REFINERY)):
             geysers = self.vespene_geyser.filter(lambda g: any(g.distance_to(b) < 10 for b in self.townhalls.ready)
                                                and not self.gas_buildings.closer_than(1, g))
             for geyser in geysers:
@@ -179,11 +188,11 @@ class PrimitiveTerranBot(BotAI):
                         self.do(worker.build_gas(geyser), subtract_cost=True)
                         break
         if (self.vespene >= 300 and self.structures(U.ENGINEERINGBAY).ready
-                and not self.structures(U.ARMORY) and not self.already_pending(U.ARMORY)):
+                and not self.structures(U.ARMORY) and not self.already_pending(U.ARMORY) and not self.saving_for_base(U.ARMORY)):
             await self.construct(U.ARMORY, state, reserved)
         for upgrade in (G.STIMPACK, G.SHIELDWALL, G.TERRANINFANTRYWEAPONSLEVEL1, G.TERRANINFANTRYARMORSLEVEL1,
                         G.TERRANINFANTRYWEAPONSLEVEL2, G.TERRANINFANTRYARMORSLEVEL2):
-            if not self.already_pending_upgrade(upgrade) and self.can_afford(upgrade):
+            if not self.already_pending_upgrade(upgrade) and self.can_afford(upgrade) and not self.saving_for_base(upgrade):
                 self.research(upgrade)
         if not self.scouted and self.time > 75 and self.structures(U.BARRACKS).ready:
             worker = self.free_worker(self.start_location)
@@ -200,6 +209,9 @@ class PrimitiveTerranBot(BotAI):
             self.scout_tag = None
 
     strategy_record = None
+
+    def saving_for_base(self, item):
+        return self.saving and self.minerals - self.calculate_cost(item).minerals < 400
 
     def man_bunkers(self):
         """Keep ready Bunkers full while holding; empty them when the army attacks."""
