@@ -3,6 +3,32 @@ from src.learning.production_execution import queued_work, eligible_actors
 
 
 class ProductionExecutionTests(unittest.TestCase):
+    def test_supply_full_excludes_training_but_preserves_build_and_research(self):
+        from src.learning.production_execution import supply_feasible_choices
+        data = dict(abilities=[dict(ability_id=595, friendly_name='Train Hellion'),
+                               dict(ability_id=524, friendly_name='Train SCV'),
+                               dict(ability_id=328, friendly_name='Build Factory')],
+                    units=[dict(ability_id=595, food_required=2),
+                           dict(ability_id=524, food_required=1)])
+        scores = {595: .8, 524: .1, 328: .05}
+        state = dict(player=dict(food_used=200, food_cap=200), units=[])
+        self.assertEqual(supply_feasible_choices(scores, state, data), {328: .05})
+        state['player']['food_used'] = 199
+        self.assertEqual(supply_feasible_choices(scores, state, data), {524: .1, 328: .05})
+        state['player']['food_used'] = 198
+        self.assertEqual(supply_feasible_choices(scores, state, data), scores)
+
+    def test_waiting_and_unacknowledged_train_commands_reserve_supply(self):
+        from src.learning.production_execution import supply_feasible_choices
+        data = dict(abilities=[dict(ability_id=595, friendly_name='Train Hellion'),
+                               dict(ability_id=596, friendly_name='Train Hellion', remaps_to_ability_id=595)],
+                    units=[dict(ability_id=595, food_required=2)])
+        state = dict(player=dict(food_used=194, food_cap=200), units=[
+            dict(alliance=1, orders=[dict(ability_id=595, progress=.5),
+                                    dict(ability_id=596, progress=0)])])
+        self.assertEqual(supply_feasible_choices({595: 1}, state, data, [596]), {595: 1})
+        self.assertEqual(supply_feasible_choices({595: 1}, state, data, [596, 595]), {})
+
     def test_physically_rejected_factory_yields_until_its_recheck(self):
         from src.learning.production_execution import preferred_production_intent
         scores = {328: .8, 560: .1, 324: .02}

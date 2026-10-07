@@ -501,3 +501,30 @@ queued supply, and audit why the model continues producing workers at fixed
 cadence. Do not hide that macro defect with an unexplained worker cap or count
 these partial production gains as human imitation success. Training/RL remains
 paused and no source-bound process is live.
+
+### Supply reservations and resource-income failure (2026-10-07)
+
+Native15/`reserved-choice-competence-05` is terminal after its matched Terran
+attempt. Training choices are now masked by current supply minus observed waiting
+Train orders and accepted unacknowledged requests, with aliases mapped through
+native catalogue. Supply-blocked retained intents/retries are released. Active
+progress is not charged twice. No worker or building quota was added.610default
+tests pass (40optional skips); Ruff passes.
+
+The source-bound native run has zero observed action errors and passes the prior
+200supply failure boundary. It instead aborts141.796wall seconds later after a
+Hellion request cannot be funded for60game seconds. Lastloop21400 has25minerals,
+1000gas,171/200supply,116workers allidle with no orders,24military units, and no
+pending requests. Four owned bases each report ideal/assigned harvesters0, while
+many observed neutral patches retain900/1800minerals. Bases include(68.5,103.5)
+and(72.5,113.5), distant from the observed resource cluster around(52,113.5).
+Investigate resource fallback and CommandCenter site fidelity before more model
+fits. This is a mining/placement execution boundary, not a busy-producer stall.
+No normal finish/replay; Zerg/Protoss unattempted. CPUpeak22.9percent; no live
+source-bound process. Evidence:`reserved-choice-competence-05/failure-audit.json`.
+
+The earlier competence04 worker-choice audit also qualifies the overproduction
+claim: of34accepted SCVs at80+workers, only3 were rawtop choices at submission;
+31 had another rawtop ability. Decoder filtering/retained intent contributes,
+alongside model building priorities and fixed positive-event cadence. This does
+not justify hidden worker caps. Audit:`reserved-choice-competence-04/worker-choice-audit.json`.

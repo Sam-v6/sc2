@@ -92,6 +92,21 @@ def queued_supply(state, data):
                and catalog.get(order['ability_id'], {}).get('friendly_name', '').startswith('Train '))
 
 
+def supply_feasible_choices(probabilities, state, data, pending=()):
+    """Training queues need future supply even when native ability queries allow them."""
+    catalog = {a['ability_id']: a for a in data['abilities']}
+    food = {}
+    for unit in data['units']:
+        ability = canonical(unit.get('ability_id'), catalog)
+        food[ability] = max(food.get(ability, 0), unit.get('food_required', 0))
+    free = (state['player']['food_cap'] - state['player']['food_used']
+            - queued_supply(state, data)
+            - sum(food.get(canonical(a, catalog), 0) for a in pending))
+    return {a: p for a, p in probabilities.items()
+            if not catalog.get(a, {}).get('friendly_name', '').startswith('Train ')
+            or (canonical(a, catalog) in food and food[canonical(a, catalog)] <= free)}
+
+
 def command_cost(ability, data):
     """Price actual production; flying transitions do not repurchase the building."""
     catalog = {a['ability_id']: a for a in data['abilities']}

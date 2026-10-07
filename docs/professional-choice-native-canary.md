@@ -444,3 +444,17 @@ availability must be separated from supply feasibility, and fixed positive-event
 choice cadence produces too many workers. Supply masking must account for queued
 orders; learned timing and worker allocation remain macro work rather than
 permission for hidden strategic quotas.608tests pass with40optional skips.
+
+### Supply masking exposes depleted-base mining failure: competence05
+
+Native15 retains the same frozen model and matched Terranseed824201. Supply
+feasibility now subtracts waiting Train orders and unacknowledged request costs;
+invalidates supply-blocked intent/retry without imposing worker quotas.610tests
+pass (40optional skips). The run records zero action errors, then aborts on an
+unfunded Hellion atloop21408(lastlogged21400):25minerals,1000gas,171/200supply,
+116idleworkers,24military units, no pending requests. Allfourbases report zero
+ideal harvesters, but observed mineral patches remain nonempty elsewhere. Native
+mining fallback and expansionplacement require investigation.141.796wallseconds,
+22.9percent CPUpeak; no fitting/RL, normal finish, replay or actual win.
+`reserved-choice-competence-05/failure-audit.json` verifies source snapshots and
+records the terminal observation. All games/processes are terminal.
