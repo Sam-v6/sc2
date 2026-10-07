@@ -46,6 +46,13 @@ Do not restart from a stale running JSON or an observation timeout; poll6736.
 
 New label/feature helpers have3meaningful tests; full suite465tests,32optional skips,
 10.251seconds. Source remains an offline helper: no live intent scheduler exists yet.
+Independent label/weight audit handle40735 is terminal0: all68,841pairs
+reconstruct from original commands, including repeated source-event weighting.
+Receipt `human-production-precedence-01/label-verification.json`; peak10.3percent
+CPU while the fit continued. Native operational checks are frozen in
+[the intent execution plan](superpowers/plans/2026-10-06-production-intents-native.md).
+No live scheduler changes have been made.
+
 After the fit terminates, run the independently written guarded verifier
 `verify_human_production_precedence_01.py`. Verify labels, source-event weights,
 reloaded probabilities, primary/grouped metrics and gates. Only a passing verified
