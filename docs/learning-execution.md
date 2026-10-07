@@ -8,6 +8,25 @@ Implementation is in `.worktrees/terran-rl`, branch `Sam-v6/terran-rl`.
 The commands below run from that worktree. Run artifacts are ignored under
 `logs/roadmap/`; preserve those directories when handing off or archiving.
 
+## Fresh-positive rearm correction and live development panel
+
+C native session 25984 and verifier 86134 are terminal. The unchanged native
+engineering gate passes: replay Barracks start 50.89 seconds, six Marine births,
+34 living workers at 240 seconds; CPU peak 8.9%. Expired tickets now require a
+strictly later positive forecast, not a zero-to-positive transition, for a new ID.
+Original deadlines/retry IDs stay immutable. Full suite 482 tests/32 skips; Ruff
+passes. Original A/B failed and are preserved with source snapshots.
+
+Six all-race Rush/Macro VeryEasy development games are frozen at 600 game seconds,
+240 wall seconds each. Native session **36478** is live at launch; poll the same
+handle and verify `logs/roadmap/human-prior-native-panel-01` after terminal status.
+Prepared verifier: `logs/roadmap/verify_human_prior_development_panel_01.py` using
+the borrowed sklearn runtime/SDK PYTHONPATH. Require original forecasts/prior,
+intent provenance, actor ownership and replay production; distinguish actual wins
+from opening and sustained-production gates. No source mutation or RL during play.
+See [native evidence](human-prior-native-result.md) and the frozen
+[panel contract](superpowers/plans/2026-10-06-human-prior-development-panel.md).
+
 ## Matched human-prior execution diagnostic
 
 The previous status-only goal turn made no progress; this turn implemented and

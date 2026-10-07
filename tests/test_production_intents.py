@@ -38,18 +38,25 @@ class IntentTests(unittest.TestCase):
         self.assertEqual(ledger.requests(), ['worker'])
         self.assertNotEqual(ledger.reserve('worker', 10, 336), ticket)
 
-    def test_expiry_requires_a_later_zero_to_positive_transition(self):
+    def test_expiry_requires_later_observation_but_accepts_fresh_positive_forecast(self):
+        ledger = ProductionIntents()
+        ledger.plan({'tank': 1}, {}, 0)
+        first = next(iter(ledger.intents))
+        ledger.reconcile(set(), set(), 1008)
+        ledger.plan({'tank': 1}, {}, 1008)
+        self.assertFalse(ledger.requests())
+        ledger.plan({'tank': 1}, {}, 1056)
+        second = next(iter(ledger.intents))
+        self.assertNotEqual(first, second)
+        self.assertEqual(ledger.intents[second]['expires'], 2064)
+        self.assertEqual(ledger.remaining('barracks'), 0)
+
+    def test_expired_disappeared_forecast_does_not_rearm_itself(self):
         ledger = ProductionIntents()
         ledger.plan({'tank': 1}, {}, 0)
         ledger.reconcile(set(), set(), 1008)
-        ledger.plan({'tank': 1}, {}, 1008)
-        ledger.plan({'tank': 1}, {}, 1056)
+        ledger.plan({}, {}, 1056)
         self.assertFalse(ledger.requests())
-        ledger.plan({}, {}, 1104)
-        ledger.plan({'tank': 1}, {}, 1152)
-        self.assertEqual(ledger.requests(), ['tank'])
-        self.assertEqual(next(iter(ledger.intents.values()))['expires'], 2160)
-        self.assertEqual(ledger.remaining('barracks'), 0)
 
     def test_one_actor_is_never_assigned_twice(self):
         ledger = ProductionIntents()

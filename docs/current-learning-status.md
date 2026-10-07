@@ -4,10 +4,10 @@ Updated October 6, 2026. The **initial scripted Hard baseline is verified**;
 the active next phase is reconnecting human imitation to the verified primitives.
 The [human ordering experiment](human-production-precedence-result.md) has now
 failed its quality gates; its simple human-derived majority baseline performed
-better. Native request persistence is implemented and the matched comparison
-[verifies its remaining expiry failure](human-prior-native-result.md): mining and
-Depot timing improve, but no army appears. Fresh positive requests after expiry
-must be handled before the all-race imitation panel.
+better. The [native execution comparison](human-prior-native-result.md) found
+and corrected an expiry stall. A fresh positive-rearm canary passes its engineering
+gate: Barracks by 51 seconds, six Marines and 34 workers at four minutes. The
+six-game all-race sustained-production development panel is running, unverified.
 RL remains paused. The full roadmap is incomplete, and scripted victories are
 not learned-controller victories.
 

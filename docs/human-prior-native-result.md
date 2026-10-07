@@ -40,3 +40,22 @@ Freeze its protocol and reuse the same engineering gate before any all-race pane
 RL stays paused. Broad contextual imitation, learned micro and reliable learned
 Hard/higher wins remain incomplete. All original A/B artifacts and source snapshots
 are preserved. The full suite passed 481 tests with 32 skips; named-file Ruff passed.
+
+## Fresh positive rearm correction
+
+The separate C experiment under `logs/roadmap/human-prior-native-02` changed only
+the expired-request rearm rule. A new positive surplus on a strictly later
+observation can create a new ticket; the expired ID and deadline never revive.
+Zero forecasts cannot create replacements. Rejection/loss/timeout still reuse
+the original unexpired ID. Historical B source is archived separately.
+
+Independent trace/replay verification passes the unchanged native gate:
+Barracks start 50.89 seconds, six Marine births and 34 living workers at four
+minutes. The horizon result is Tie, not Victory. CPU peaked at 8.9%; wall time
+21.388 seconds. The full suite passes 482 tests with 32 skips, and Ruff passes.
+
+The six-game all-race Rush/Macro panel is now frozen and running under
+`logs/roadmap/human-prior-native-panel-01`, native session 36478. It extends to
+600 game seconds, records real outcomes and requires sustained production in
+both middle/late windows. It is not yet verified; keep source fixed and poll
+that session rather than restarting. The native canary alone does not justify RL.

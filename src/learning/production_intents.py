@@ -7,7 +7,7 @@ def remaining_budget(budget, cost):
 
 class ProductionIntents:
     def __init__(self):
-        self.intents, self.pending, self.expired, self.positive = {}, {}, {}, {}
+        self.intents, self.pending, self.expired = {}, {}, {}
         self.sequence = 0
         self.events = []
 
@@ -16,14 +16,13 @@ class ProductionIntents:
             if count <= queued.get(goal, 0) or any(i['goal'] == goal for i in self.intents.values()):
                 continue
             if goal in self.expired:
-                if self.positive.get(goal, False) or loop <= self.expired[goal]:
+                if loop <= self.expired[goal]:
                     continue
                 del self.expired[goal]
             self.sequence += 1
             item = dict(goal=goal, admitted=loop, expires=loop+1008, origin_count=count)
             self.intents[self.sequence] = item
             self.events.append(dict(event='admitted', ticket=self.sequence, **item))
-        self.positive = {g: c > 0 for g, c in goals.items()}
 
     def requests(self):
         return [i['goal'] for ticket, i in self.intents.items() if ticket not in self.pending]
