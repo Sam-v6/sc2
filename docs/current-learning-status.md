@@ -15,8 +15,9 @@ See [the baseline result](scripted-hard-baseline.md) for exact scope and limits.
 The [repaired human corpus](human-visibility-repair.md) is independently verified:
 all 7,202 original command labels and own-unit observations are preserved.
 6,083 teaching and 1,112 development commands are representable, with explicit
-unsupported-target exclusions. The native executor still needs the verified
-mining/combat primitives before a new human fit and controlled native comparison.
+unsupported-target exclusions. The native executor now uses the mining/combat primitives. A fresh supervised
+fit passes independently verified offline checks, but its first native canary
+failed to build an army. See [the bridge result](human-primitives-bridge-result.md).
 Do not rerun the unchanged full-command fit or credit scripted assistance as learning.
 
 Start here, then read [the roadmap](learning-roadmap.md). Use
@@ -28,7 +29,7 @@ experiments are references, not an instruction to rerun every failed variant.
 | Reliable execution primitives and scripted baseline | Verified 30/30 fresh scripted wins; initial all-race gate passes | Reconnect the verified primitives to human decisions; retain baseline and audit rare action failures |
 | Broad gameplay controls and player-visible information | Raw command schema, native catalogue, missing-field masks, fog filtering and argument execution exist | Prove the learned controller uses the necessary controls reliably, including simultaneous unit control |
 | Strong human examples | Eleven professional teaching games: 6,089 verified decisions, 6,083 representable after visibility repair; whole-game development split and untouched reserved games | More varied verified data, including Terran opponents; resolve unavailable observations where actual source evidence permits |
-| Learn to copy human decisions | Full command imitation failed; prior production-outcome model passed offline gates on the older corpus | Useful generalization and actual game competence |
+| Learn to copy human decisions | Full command imitation failed; fresh production-outcome fit passes offline, but native production timing fails | Useful generalization and actual game competence |
 | Learn better micro in a sandbox | Sandbox/training infrastructure and earlier experiments exist | Reliable held-out improvement and transfer to the full controller |
 | Learn beyond humans through RL | Earlier constrained experiments exist | Resume only after a useful imitation starting point; prove improvement on fresh games |
 | Beat Hard reliably, then harder opponents | Scripted baseline 30/30; earlier constrained macro policy had partial learned success | Full-roadmap learned controller must pass its own all-race Hard panel and harder evaluations |

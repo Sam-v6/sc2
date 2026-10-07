@@ -1,4 +1,4 @@
-"""Bounded native assisted human-outcome imitation. No RL or strategic script."""
+"""Bounded learned production with scripted execution and combat assistance. No RL."""
 
 import gzip
 import hashlib
@@ -12,12 +12,12 @@ from sc2.bot_ai import BotAI
 from sc2.data import Race, Difficulty, AIBuild
 from sc2.main import run_game
 from sc2.player import Bot, Computer
+from sc2.position import Point2
 from s2clientprotocol import sc2api_pb2 as pb
 
 from src.learning.actor_selection import construction_products
 from src.learning.entity_execution import validate_order_aliases
 from src.learning.gameplay import Command, PlayerView, protocol_dict
-from src.learning.imitation_play import idle_worker_harvest
 from src.learning.live import ability_query, issue
 from src.learning.production_clearance import reservations, resolve_production_placement, claimed_geysers, site_reservations
 from src.learning.production_execution import (canonical, eligible_actors,
@@ -25,6 +25,7 @@ from src.learning.production_execution import (canonical, eligible_actors,
 from src.learning.production_goal_policy import current_features, predict_goals
 from src.learning.production_ledger import ProductionLedger
 from src.runner import validate_map
+from src.learning.production_primitives import primitive_assistance, scripted_army_destination
 
 
 def digest(path):
@@ -42,6 +43,9 @@ class ProductionGoalBot(BotAI):
         self.ledger = ProductionLedger()
         self.last_sent = {}
         self.next_plan = 0
+        self.next_mining = 0
+        self.attacking = False
+        self.search_index = 0
         self.frames = 0
         self.callback_error = None
         self.observed_types = {}
@@ -110,31 +114,16 @@ class ProductionGoalBot(BotAI):
         return point.x, point.y
 
     def assistance(self, state, selected):
-        own = [u for u in state['units'] if u['alliance'] == 1]
-        workers = [u for u in own if u['unit_type'] == 45 and u['tag'] not in selected
-                   and not any(self.catalog.get(o['ability_id'], {}).get('friendly_name', '').startswith('Build ')
-                               for o in u.get('orders', []))]
-        commands = []
-        for refinery in [u for u in own if self.unit_names[u['unit_type']] == 'Refinery'
-                         and u.get('build_progress', 1) == 1]:
-            shortage = max(0, 3 - refinery.get('assigned_harvesters', 0))
-            gas_tags = {u['tag'] for u in workers if any(o.get('target_unit_tag') == refinery['tag']
-                                                      for o in u.get('orders', []))}
-            candidates = [u for u in workers if u['tag'] not in gas_tags and u['tag'] not in selected]
-            candidates.sort(key=lambda u: math.dist(u['position'][:2], refinery['position'][:2]))
-            for worker in candidates[:shortage]:
-                commands.append(Command(295, (worker['tag'],), target_unit=refinery['tag']))
-                selected.add(worker['tag'])
-        commands.extend(idle_worker_harvest(state, selected))
-        enemies = [u for u in state['units'] if u['alliance'] == 4]
-        if enemies:
-            for unit in own:
-                descriptor = self.units_by_id[unit['unit_type']]
-                if unit['tag'] in selected or 8 in descriptor.get('attributes', []) or unit['unit_type'] == 45 or not descriptor.get('weapons'):
-                    continue
-                enemy = min(enemies, key=lambda e: math.dist(unit['position'][:2], e['position'][:2]))
-                commands.append(Command(23, (unit['tag'],), target_unit=enemy['tag']))
-        return commands
+        mining = state['game_loop'] >= self.next_mining
+        if mining:
+            self.next_mining = state['game_loop']+24
+        destination, self.attacking, self.search_index = scripted_army_destination(
+            state, self.units_by_id, tuple(self.start_location), tuple(self.enemy_start_locations[0]),
+            tuple(self.game_info.map_center), [tuple(p) for p in self.expansion_locations_list],
+            self.attacking, self.search_index)
+        self.assistance_destination = destination
+        return primitive_assistance(state, selected, self.units_by_id, self.catalog,
+            destination, lambda p: self.in_map_bounds(Point2(p)) and self.in_pathing_grid(Point2(p)), mining)
 
     async def on_step(self, iteration):
         try:
@@ -142,6 +131,16 @@ class ProductionGoalBot(BotAI):
             state['map_size'] = [self.game_info.map_size.x, self.game_info.map_size.y]
             loop = state['game_loop']
             if loop < self.next_plan:
+                selected = {item['actor'] for item in self.ledger.pending.values()}
+                assistance = self.assistance(state, selected)
+                result = await issue(self.client, assistance) if assistance else pb.ResponseAction()
+                if len(result.result) != len(assistance):
+                    raise ValueError('Incomplete primitive acknowledgement batch')
+                self.result_counts.update(map(str, result.result))
+                self.stream.write(json.dumps(dict(phase='micro', observation=state, goals=None,
+                    pending=self.ledger.pending, assistance_destination=self.assistance_destination, execution=[],
+                    assistance=[c.as_dict() for c in assistance], results=list(result.result)),
+                    separators=(',', ':'))+'\n')
                 return
             self.record_outcomes(state)
             self.frames += 1
@@ -179,7 +178,7 @@ class ProductionGoalBot(BotAI):
                     continue
                 if minerals < info['minerals'] or gas < info['gas']:
                     self.blocks['resource_reservation:' + goal] += 1
-                    break
+                    continue
                 point = None
                 target = None
                 mode = info['descriptor'].get('target', 1)
@@ -235,9 +234,9 @@ class ProductionGoalBot(BotAI):
                     self.acknowledged[goal] += 1
                     self.last_sent[goal] = loop
             self.result_counts.update(map(str, result.result))
-            self.stream.write(json.dumps(dict(observation=state, goals=predicted,
+            self.stream.write(json.dumps(dict(phase='forecast', observation=state, goals=predicted,
                 raw_counts=counts.tolist(), queued=queued, reconciliation=changes,
-                pending=self.ledger.pending, execution=execution,
+                pending=self.ledger.pending, assistance_destination=self.assistance_destination, execution=execution,
                 assistance=[c.as_dict() for c in assistance], results=list(result.result)),
                 separators=(',', ':'))+'\n')
         except Exception as error:
@@ -266,6 +265,6 @@ def play_production_goals(job):
                   frames=bot.frames, requested=dict(bot.requested), acknowledged=dict(bot.acknowledged),
                   blocks=dict(bot.blocks), results=dict(bot.result_counts),
                   production=bot.production, snapshots=bot.snapshots,
-                  assistance='placement, resource-worker execution, visible-contact combat')
+                  assistance='scripted mining/gas assignment, construction execution, MULEs, depot lowering, attack timing/destinations, per-unit combat micro; production choices learned')
     (output/'episode.json').write_text(json.dumps(report, indent=2)+'\n')
     return report

@@ -8,6 +8,25 @@ Implementation is in `.worktrees/terran-rl`, branch `Sam-v6/terran-rl`.
 The commands below run from that worktree. Run artifacts are ignored under
 `logs/roadmap/`; preserve those directories when handing off or archiving.
 
+## Latest primitives bridge result
+
+The initial scripted baseline remains verified30/30. The fresh repaired-corpus
+production fit `human-production-goals-02` independently verifies6,354labels and
+checkpoint predictions; all976development live features equal saved features.
+Native canary `human-goal-native-03` completed its240game-second horizon in16.983
+wall seconds, peak6.2percent whole-host CPU. It is an intentional cutoff, not a
+victory. Trace verification checks112forecasts,560micro frames, per-actor command
+ownership, predicted production dispatch, acknowledgement counts and observed
+production. No Barracks or army appeared. First Depot started atloop3408 after
+its initial forecast disappeared atloop240; Barracks forecasts ended atloop912.
+Do not launch the six-game panel unchanged or resume RL. Investigate learned
+ordering/timing and forecast persistence; do not substitute scripted production
+choices for learned competence. See [bridge evidence](human-primitives-bridge-result.md).
+
+All watcher handles for this batch are terminal: fit49563, label/model verifier
+21814, feature parity71757, native canary21767, canary verifier57962. Original
+receipts/source hashes remain in ignored `logs/roadmap/`; keep them on handoff.
+
 ## Current evidence
 
 | Gate | Implemented and checked | Remaining |
