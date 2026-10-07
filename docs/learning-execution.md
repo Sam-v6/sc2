@@ -4383,3 +4383,17 @@ further fitting. No training or RL. Source870/Clem Win has existing converted
 frames, but raw replay version76052 cannot run on installed75689. Next audit
 order transitions and ambiguity in existing source, without downloading another
 engine or claiming eventual births prove exact accepted/paid command starts.
+
+### October6: winning human queue audit exposes omitted production topology
+
+Audit2175 and expanded unresolved-actor screening68284 terminalexit0; independent
+verifier3890 terminalexit0. Source870 has1900frames, median7/max259loop gaps.
+224matched production actor/commands:220observed queue-count increases,4already
+present/noincrease (3SCV/1Hellion). Original tracker proves9ownaddonstarts while
+importedmatchedaddoncommands=0. Generic Lift/Land aliases and point-bearing raw
+addon commands versus target-free converted commands explain concrete rejected
+identities to investigate; flags0x1000000 remain unsupported. No new fit/native/RL.
+Exact source archived. See [queue audit](human-production-queue-audit.md). Next
+repair narrowly verified alias identity/actor/target conformance, retain unknown
+flags and attachment limitations, then reimport rather than replay an incomplete
+plan. No paid-start or complete fixed-plan claim.
