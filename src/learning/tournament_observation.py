@@ -101,7 +101,7 @@ def partial_observation(record, index, map_size, view, upgrade_ids=None, own_dea
         image.data = (
             grid.tobytes() if name == "visibility" else np.packbits(grid).tobytes()
         )
-    state = view.observe(packet)
+    state = view.observe(packet, visibility_world_size=map_size)
     for unit in state["units"]:
         if unit["tag"] in cargo:
             unit["in_cargo"] = cargo[unit["tag"]]

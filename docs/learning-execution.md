@@ -4009,3 +4009,22 @@ Panel06 all-race six-game development recheck is active, session88883, under
 `logs/roadmap/primitives-native-06/panel`. Poll that handle, keep its source fixed,
 then run its verifier and archive bound sources. Fresh30-game baseline acceptance
 and broader map/strategy coverage remain pending; no learned strength claim.
+
+### October 6: six development wins and fresh scripted baseline
+
+Panel06 finishes six victories and independently verifies originals; peakCPU13.
+ProtossRush371raw attacks all target invulnerable Adept shades; TerranMacro has
+one raw error. Shade exclusion now passes a formerly failing regression.
+No imitation/RL. Full suite454tests/32skips, separate native smoke14.65seconds.
+
+Fresh30-game contract frozen: ten perrace, two maps, five named builds, newseeds
+819001–819030. Initial gate21/30overall and7/10each race; all jobs/nonwins reported.
+`primitives-hard-baseline-01/panel` is active, session96434. Poll the live handle;
+do not modify bound source, then verify and archive originals before diagnosing.
+
+Independent human-source visibility audit finishes7,202states/73,724enemycurrent
+observations. Native-coordinate assumption rejects68,861; properfeature mapping
+puts67,358on visiblecells and6,366elsewhere,1,429without visibleimmediate neighbor.
+This is coarse diagnostic evidence, not native proof. PlayerView/tournament
+importer now support correctfeature mapping, regression passes. Existingcorpora
+are unchanged; new re-import/intake verification is required before anyfit.

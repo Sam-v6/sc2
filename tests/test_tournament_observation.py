@@ -13,6 +13,21 @@ class TournamentObservationTests(unittest.TestCase):
 
         return partial_observation(data, index, (176, 184), view, upgrades)
 
+    def test_enemy_visibility_uses_scaled_flipped_source_coordinates(self):
+        data = decode_record(record())
+        data['units']['fields']['observation'] = np.ones_like(data['units']['fields']['observation'])
+        data['images']['visibility'] = np.zeros_like(data['images']['visibility'])
+        # World (11.5,20.25) maps to feature cell (8,113), not (12,20).
+        data['images']['visibility'][0][113, 8] = 2
+        view = PlayerView()
+        state = self.adapt(data, 0, view)
+        self.assertEqual(len(state['units']), 1)
+        data['images']['visibility'][0][113, 8] = 0
+        hidden = self.adapt(data, 0, view)
+        self.assertEqual(hidden['units'], [])
+        self.assertEqual(len(hidden['memory']), 1)
+        self.assertNotIn('health', hidden['memory'][0])
+
     def test_snapshot_and_hidden_enemy_dynamic_fields_do_not_leak(self):
         data = decode_record(record())
         fields = data["units"]["fields"]

@@ -309,7 +309,9 @@ Use matched development games when comparing policies, then a fresh final panel.
 Do not tune repeatedly against the final panel.
 
 The prior working Hard milestone was at least 21/30 wins, with ten games per
-opponent race. Retain that as an initial gate, report each race separately and
+opponent race. The scripted baseline additionally requires at least7/10perrace,
+so overall strength cannot hide one failing race. Retain the overall initial gate,
+report each race separately and
 acknowledge uncertainty. It does not establish dominance across all strategies.
 Confirm across additional maps, seeds and opponent builds before claiming broad
 reliability. Progress to Harder, VeryHard and Elite with the same discipline;

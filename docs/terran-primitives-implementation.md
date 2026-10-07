@@ -142,3 +142,40 @@ with the same CPU guard and bounds. After its terminal receipt run
 `logs/roadmap/verify_primitives_native_panel_06.py`, preserve the bound sources,
 and inspect any failure before a fresh all-race acceptance panel. Imitation/RL
 remain paused.
+
+## All-race recheck and fresh baseline contract
+
+Panel06 and its verifier are terminal: six victories, peakCPU13percent. All raw
+failures are reconstructed: one in Terran Macro and371in Protoss Rush. Protoss
+failures all attempted to attack an invulnerable AdeptPhaseShift. That temporary
+unit is now excluded alongside KD8Charge from direct targets, with a meaningful
+failing-then-passing regression. Neither exclusion restricts meaningful human
+control. Full suite454tests/32skips; separate native smoke passes.
+
+`logs/roadmap/primitives-hard-baseline-01/panel` is the fresh frozen30-game panel.
+It has ten games perrace; Rush,Timing,Power,Macro,Air on bothAcropolisLE and
+AbyssalReefLE; seeds819001–819030; step8;1,200game seconds/300wall pergame;
+sequential CPU-only execution and the existing80percent guard. All jobs and
+thresholds were frozen before results. Initial scripted acceptance requires
+at least21/30overall and7/10perrace. Report each build/map as well; this panel
+does not prove universal strength, and higher difficulty/micro transfer/human
+imitation/RL remain unfinished. No source bound by this panel may change while
+it runs. Save its original artifacts, run its verifier, then inspect failures.
+
+## Human visibility compatibility prerequisite
+
+The offline audit covers7,202existing teaching/development states and73,724current
+enemy observations; reserved games were not read. Treating their128×128feature
+minimaps as native coordinates would reject68,861enemies. Correct scaled/flipped
+coordinates place67,358on visible cells,6,366on nonvisible cells, with1,429having
+no visible immediate neighbor. Coarse boundary cells cannot prove actual enemy
+invisibility. See `logs/roadmap/human-visibility-audit-01/report.json`.
+
+PlayerView now accepts explicit feature-world dimensions, and the tournament
+importer supplies them to use the documented flipped/scaled geometry. Native
+callers retain native grid handling. An integrated converter regression verifies
+a visible enemy, then hiding its cell without leaking health through memory.
+This guards future imports; it does not retroactively repair saved datasets.
+Re-import into new directories, verify original label/phase/source bindings and
+fog/memory accounting, and handle unsupported targets explicitly before fitting.
+Do not overwrite historical corpus evidence or claim it is repaired already.

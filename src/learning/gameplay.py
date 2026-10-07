@@ -141,7 +141,7 @@ class PlayerView:
         )
         self.recent_commands = self.recent_commands[-32:]
 
-    def observe(self, packet):
+    def observe(self, packet, visibility_world_size=None):
         observation = packet.observation
         loop = observation.game_loop
         visibility = observation.raw_data.map_state.visibility
@@ -163,7 +163,14 @@ class PlayerView:
             if unit.alliance == raw.Enemy and visibility.data:
                 # Linux 4.10 can label fog snapshots Visible; match the SDK's
                 # visibility-grid guard before exposing current enemy fields.
-                x, y = round(unit.pos.x), round(unit.pos.y)
+                if visibility_world_size is None:
+                    x, y = round(unit.pos.x), round(unit.pos.y)
+                else:
+                    # Tournament feature minimaps use a uniformly scaled,
+                    # flipped world y coordinate, unlike native raw grids.
+                    scale = visibility.size.x / max(visibility_world_size)
+                    x = math.floor(unit.pos.x * scale)
+                    y = math.floor((visibility_world_size[1] - unit.pos.y) * scale)
                 visible = (visible and 0 <= x < visibility.size.x and 0 <= y < visibility.size.y
                            and visibility.data[y*visibility.size.x+x] == 2)
             if unit.alliance == raw.Enemy:

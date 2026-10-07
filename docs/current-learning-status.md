@@ -7,14 +7,15 @@ established bots to build reliable resource, production, attacking and combat
 micro behavior before returning to professional imitation, then RL.
 
 The [Terran primitives controller](terran-primitives-implementation.md) passes its
-native economy/production smoke and 452-test suite. Engine replay queries found
-Tanks trapped near home: Marines could reach an external defensive point while
-Tanks could not. Wider construction spacing repaired that path. Both targeted
-Terran rechecks now win (Rush 683.2 seconds, Macro 836.8), independently verified
-from original replays. The same controller is running the six-game all-race
-development recheck in `logs/roadmap/primitives-native-06/panel`. This is scripted
-execution, not learned competence; fresh baseline acceptance is still pending.
-Imitation and RL remain paused. Historical source observations need a fog audit.
+native smoke and 454-test suite. Wider construction spacing repaired trapped
+Tanks, and the six-game all-race development panel now wins all six games,
+independently verified. The Adept-shade attack exclusion is also repaired.
+A fresh 30-game scripted Hard baseline panel is running in
+`logs/roadmap/primitives-hard-baseline-01/panel`: ten games per race, five named
+strategies, two maps, fresh seeds, with gates of21/30overall and7/10perrace.
+This is scripted execution, not learned competence. Imitation and RL stay paused.
+The human visibility audit identified a feature/native coordinate mismatch; the
+importer is repaired, but existing corpora still require re-import and verification.
 
 Start here, then read [the roadmap](learning-roadmap.md). Use
 [the execution ledger](learning-execution.md) for detailed evidence. Historical
@@ -22,7 +23,7 @@ experiments are references, not an instruction to rerun every failed variant.
 
 | Requirement | Current evidence | Still needed |
 |---|---|---|
-| Reliable execution primitives and scripted baseline | Tank exit blockage repaired; targeted Terran Rush/Macro both win; all-race recheck active | Complete all-race recheck, broaden strategies/maps, and pass the fresh scripted Hard panel |
+| Reliable execution primitives and scripted baseline | Tank exit blockage repaired; all six development games win; fresh baseline panel active | Finish and verify fresh baseline panel; inspect strategy/map/race failures |
 | Broad gameplay controls and player-visible information | Raw command schema, native catalogue, missing-field masks, fog filtering and argument execution exist | Prove the learned controller uses the necessary controls reliably, including simultaneous unit control |
 | Strong human examples | Eleven professional teaching games: 6,089 verified decisions, 6,086 representable; whole-game development split and untouched reserved games | More varied verified data, including Terran opponents; resolve unavailable observations where actual source evidence permits |
 | Learn to copy human decisions | Full command imitation failed; simultaneous production-outcome imitation passes offline gates | Useful generalization and actual game competence |

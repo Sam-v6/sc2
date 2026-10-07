@@ -100,6 +100,13 @@ class CombatTests(unittest.TestCase):
         state['units'] += [unit(100+i, 48) for i in range(30)]
         self.assertTrue(scripted_attack(state, False))
 
+    def test_invulnerable_adept_shade_does_not_replace_a_real_target(self):
+        shade = unit(10, 801, x=1, alliance=4)
+        enemy = unit(11, 105, x=4, alliance=4)
+        types = {**TYPES, 801: dict(name='AdeptPhaseShift', weapons=[])}
+        command = combat_command(unit(1, 48), [shade, enemy], types, (20, 20), lambda p: True)
+        self.assertEqual(command.target_unit, 11)
+
     def test_dead_actor_does_not_issue_an_order(self):
         self.assertIsNone(combat_command(unit(1, 48, health=0), [], TYPES, (20, 20), lambda p: True))
 

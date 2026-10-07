@@ -113,7 +113,7 @@ def combat_command(unit, enemies, types, destination, can_walk):
     if unit['unit_type'] in (32, 33) and any(o['ability_id'] in (388, 390) for o in unit.get('orders', [])):
         return None
     visible = [e for e in enemies if e.get('display_type', 1) == 1 and e['alliance'] == 4
-               and types[e['unit_type']].get('name') != 'KD8Charge' and e.get('health', 0) > 0]
+               and types[e['unit_type']].get('name') not in ('KD8Charge', 'AdeptPhaseShift') and e.get('health', 0) > 0]
     ground = [e for e in visible if not e.get('is_flying')]
     nearest = min((distance(unit, e) for e in ground), default=100)
     if unit['unit_type'] == 33 and 5 < nearest < 13:
