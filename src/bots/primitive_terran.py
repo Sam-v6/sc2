@@ -180,9 +180,17 @@ class PrimitiveTerranBot(BotAI):
                     self.do(scout.gather(minerals.closest_to(scout)))
             self.scout_tag = None
 
+    strategy_record = None
+
+    def strategy_targets(self, state, macro):
+        return scripted_targets(state)
+
+    def strategy_attack(self, state):
+        return scripted_attack(state, self.attacking)
+
     def army_destination(self, state):
         army = self.units.of_type(ARMY_TYPES)
-        self.attacking = scripted_attack(state, self.attacking)
+        self.attacking = self.strategy_attack(state)
         threats = self.enemy_units.filter(lambda e: e.is_visible and e.can_attack_ground
                                          and any(e.distance_to(b) < 22 for b in self.townhalls))
         if threats:
@@ -203,8 +211,8 @@ class PrimitiveTerranBot(BotAI):
         try:
             state = self.view.observe(self.state.response_observation)
             state['map_size'] = [self.game_info.map_size.x, self.game_info.map_size.y]
-            targets = scripted_targets(state)
             macro = self.state.game_loop >= self.next_macro
+            targets = self.strategy_targets(state, macro)
             commands = []
             if macro:
                 self.next_macro = self.state.game_loop+24
@@ -259,6 +267,7 @@ class PrimitiveTerranBot(BotAI):
             self.summary['collected_minerals'] = self.state.score.collected_minerals
             self.stream.write(json.dumps(dict(loop=self.state.game_loop,
                 observation=state if macro else None, targets=targets if macro else None,
+                strategy=self.strategy_record if macro else None,
                 destination=list(destination), commands=[c.as_dict() for c in commands], results=list(response.result),
                 delayed_errors=errors,
                 sdk_actions=[dict(ability=a.ability.value, tag=a.unit.tag,
