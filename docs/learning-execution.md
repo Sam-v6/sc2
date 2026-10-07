@@ -3988,3 +3988,24 @@ errors, three delayed Macro errors. This candidate did not improve strength.
 Original sources and artifacts are frozen. Tank traces show near-home positions
 despite distant attack orders; next check actual unit paths/production exits.
 Scripted wins remain separate from learning; imitation/RL stay paused.
+
+### October 6: native Tank path failure and two targeted wins
+
+Direct engine replay queries show all sampled Tanks unable to reach the external
+defensive point while Marines can; Tanks can still reach the local rally. The
+occupied enemy-base center is an invalid control early and is not used to infer
+trapping. Wider physical construction/addon spacing now leaves a two-tile lane,
+using actual catalogue footprints and reserving pending/same-batch structures.
+Lowered depots/flying structures are excluded. Shared human-goal placement uses
+the same calculation; no human imitation or RL runs.
+
+Regression observed failing then passing; full suite452tests/32skips and native
+smoke pass. Panel05 independently verifies two Terran wins: Rush683.2seconds,
+Macro836.8seconds, zero raw/delayed errors, peakCPU8.9percent. Fixed replay queries
+show positive Tank paths to the external defensive point and actual advancement.
+Frozen sources/replays/query diagnostics preserved in primitives-native-04/05.
+
+Panel06 all-race six-game development recheck is active, session88883, under
+`logs/roadmap/primitives-native-06/panel`. Poll that handle, keep its source fixed,
+then run its verifier and archive bound sources. Fresh30-game baseline acceptance
+and broader map/strategy coverage remain pending; no learned strength claim.

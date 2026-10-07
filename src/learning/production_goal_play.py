@@ -19,7 +19,7 @@ from src.learning.entity_execution import validate_order_aliases
 from src.learning.gameplay import Command, PlayerView, protocol_dict
 from src.learning.imitation_play import idle_worker_harvest
 from src.learning.live import ability_query, issue
-from src.learning.production_clearance import reservations, resolve_production_placement, PRODUCERS, claimed_geysers
+from src.learning.production_clearance import reservations, resolve_production_placement, claimed_geysers, site_reservations
 from src.learning.production_execution import (canonical, eligible_actors,
                                               goal_catalog, queued_work)
 from src.learning.production_goal_policy import current_features, predict_goals
@@ -215,10 +215,8 @@ class ProductionGoalBot(BotAI):
                     geyser_claims.add(target['tag'])
                 if command.target_point is not None and info['descriptor'].get('is_building'):
                     x, y = command.target_point
-                    radius = 2.5 if info['unit_type'] in PRODUCERS else info['descriptor'].get('footprint_radius', 1)
-                    reserved.append((x, y, radius))
-                    if info['unit_type'] in PRODUCERS:
-                        reserved.append((x + 2.5, y - .5, 1))
+                    reserved.extend(site_reservations(info['unit_type'], (x, y),
+                        info['descriptor'].get('footprint_radius', 1)))
                 ticket = self.ledger.reserve(goal, actor['tag'], loop)
                 commands.append(command)
                 tickets.append((ticket, goal))

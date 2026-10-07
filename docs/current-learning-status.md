@@ -6,15 +6,15 @@ The full roadmap remains incomplete. The user explicitly authorized using
 established bots to build reliable resource, production, attacking and combat
 micro behavior before returning to professional imitation, then RL.
 
-The [new Terran primitives controller](terran-primitives-implementation.md) passes
-its native economy/production smoke test. Two independently verified six-game
-Hard development panels each won four games. The latest won both Zerg and both
-Protoss games, but both Terran games reached the 1,200-second cutoff. Illegal
-raw attacks fell to zero. This is promising scripted execution, not a reliable
-all-race baseline or learned competence. The targeted regrouping/Viking recheck failed: one Terran defeat and one
-timeout. Tanks remaining near home despite enemy-base attack orders make
-movement and production exits the next diagnostic priority. Imitation and RL
-remain paused; historical source observations still need a fog audit.
+The [Terran primitives controller](terran-primitives-implementation.md) passes its
+native economy/production smoke and 452-test suite. Engine replay queries found
+Tanks trapped near home: Marines could reach an external defensive point while
+Tanks could not. Wider construction spacing repaired that path. Both targeted
+Terran rechecks now win (Rush 683.2 seconds, Macro 836.8), independently verified
+from original replays. The same controller is running the six-game all-race
+development recheck in `logs/roadmap/primitives-native-06/panel`. This is scripted
+execution, not learned competence; fresh baseline acceptance is still pending.
+Imitation and RL remain paused. Historical source observations need a fog audit.
 
 Start here, then read [the roadmap](learning-roadmap.md). Use
 [the execution ledger](learning-execution.md) for detailed evidence. Historical
@@ -22,7 +22,7 @@ experiments are references, not an instruction to rerun every failed variant.
 
 | Requirement | Current evidence | Still needed |
 |---|---|---|
-| Reliable execution primitives and scripted baseline | Scripted controller has 4/6 wins in each of two verified development panels; latest Terran games time out | Verify regrouping/support behavior, broaden strategies/maps, and pass the fresh all-race scripted Hard panel |
+| Reliable execution primitives and scripted baseline | Tank exit blockage repaired; targeted Terran Rush/Macro both win; all-race recheck active | Complete all-race recheck, broaden strategies/maps, and pass the fresh scripted Hard panel |
 | Broad gameplay controls and player-visible information | Raw command schema, native catalogue, missing-field masks, fog filtering and argument execution exist | Prove the learned controller uses the necessary controls reliably, including simultaneous unit control |
 | Strong human examples | Eleven professional teaching games: 6,089 verified decisions, 6,086 representable; whole-game development split and untouched reserved games | More varied verified data, including Terran opponents; resolve unavailable observations where actual source evidence permits |
 | Learn to copy human decisions | Full command imitation failed; simultaneous production-outcome imitation passes offline gates | Useful generalization and actual game competence |

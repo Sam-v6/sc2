@@ -18,7 +18,7 @@ from s2clientprotocol import sc2api_pb2 as pb
 from src.bots.terran_primitives import combat_command, mining_commands, scripted_targets, destination_reached, changes_order, scripted_attack
 from src.learning.gameplay import Command, PlayerView, protocol_dict
 from src.learning.live import issue
-from src.learning.production_clearance import PRODUCERS, reservations, resolve_production_placement
+from src.learning.production_clearance import reservations, resolve_production_placement, site_reservations
 
 ARMY_TYPES = {U.MARINE, U.SIEGETANK, U.SIEGETANKSIEGED, U.VIKINGFIGHTER}
 
@@ -68,10 +68,7 @@ class PrimitiveTerranBot(BotAI):
             return False
         location = Point2(resolved[0].target_point)
         self.do(worker.build(kind, location), subtract_cost=True)
-        radius = 2.5 if kind.value in PRODUCERS else self.catalog[ability].get('footprint_radius', 1)
-        reserved.append((location.x, location.y, radius))
-        if kind.value in PRODUCERS:
-            reserved.append((location.x+2.5, location.y-.5, 1))
+        reserved.extend(site_reservations(kind.value, tuple(location), self.catalog[ability].get('footprint_radius', 1)))
         return True
 
     def continue_and_repair(self):

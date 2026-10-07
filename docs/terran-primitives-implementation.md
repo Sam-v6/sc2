@@ -111,3 +111,34 @@ strategies and fresh seeds/maps remain necessary. Only after reliable scripted
 execution and the baseline gate should professional imitation resume; RL follows
 useful native imitation. Historical observations require the Linux fog audit
 before reuse in fitting.
+
+## Tank exit diagnosis and spacing repair
+
+Native replay path queries at 420/540/660/780 seconds compared living Tanks and
+Marines at the same external defensive coordinate. Every sampled Marine had a
+positive path; every sampled Tank returned zero. All Tanks could reach the local
+rally point. The enemy base center returned zero for both unit types early in the
+game, so that coordinate alone is not evidence of trapping. The external-point
+control and persistent home positions establish the size-dependent blockage.
+Artifacts: `primitives-native-04/tank-marine-path-diagnosis.json` and its saved
+query harness/output. No privileged enemy information enters the controller.
+
+Construction now reserves a two-tile lane around physical structures and addon
+pads, including pending and same-batch builds. Lowered depots and flying buildings
+are traversable and excluded from existing physical reservations. The previously
+unused unit catalogue identifies structures and actual creation footprints.
+Both scripted and human-goal execution use the same spacing calculation. This is
+physical execution assistance; it does not choose a human macro strategy.
+
+Panel 05 is terminal and independently verified: Terran Rush Victory683.2seconds,
+Terran Macro Victory836.8seconds, zero raw/delayed action errors in both games,
+peak hostCPU8.9percent. The fixed Rush replay has positive external-point Tank
+paths at420/540/660seconds and Tanks at the enemy side by the end. This supports
+the specific movement repair; it does not prove every possible production layout.
+The full suite ran452tests with32optional skips; native smoke passed separately.
+
+Panel 06 runs the unchanged candidate against all six previous race/build jobs,
+with the same CPU guard and bounds. After its terminal receipt run
+`logs/roadmap/verify_primitives_native_panel_06.py`, preserve the bound sources,
+and inspect any failure before a fresh all-race acceptance panel. Imitation/RL
+remain paused.

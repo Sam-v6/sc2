@@ -13,19 +13,30 @@ def clear_site(point, radius, reserved):
                for x, y, r in reserved)
 
 
+def site_reservations(unit_type, point, footprint):
+    x, y = point
+    # A Tank is 1.75 tiles wide; keep two tiles between structures.
+    reserved = [(x, y, footprint+2)]
+    if unit_type in PRODUCERS:
+        reserved.append((x+2.5, y-.5, 3))
+    return reserved
+
+
 def reservations(state, units, catalog):
     reserved = []
     for unit in state['units']:
         if unit['alliance'] != 1:
             continue
         x, y = unit['position'][:2]
-        if unit['unit_type'] in PRODUCERS:
-            reserved.extend([(x, y, 2.5), (x + 2.5, y - .5, 1)])
+        descriptor = units.get(unit['unit_type'], {})
+        if (unit['unit_type'] in PRODUCERS or 8 in descriptor.get('attributes', [])) and unit['unit_type'] != 47 and not unit.get('is_flying'):
+            footprint = catalog.get(descriptor.get('ability_id'), {}).get('footprint_radius', unit.get('radius', 1.5))
+            reserved.extend(site_reservations(unit['unit_type'], (x, y), footprint))
         for order in unit.get('orders', []):
             info = catalog.get(order['ability_id'], {})
             point = order.get('target_world_space_pos')
             if info.get('is_building') and point:
-                reserved.append((point['x'], point['y'], info.get('footprint_radius', 1)))
+                reserved.extend(site_reservations(0, (point['x'], point['y']), info.get('footprint_radius', 1)))
     return reserved
 
 
