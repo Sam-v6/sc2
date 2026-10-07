@@ -4651,3 +4651,52 @@ Full suite551 tests/32 optional skips, Ruff/diff checks pass. No trained model/R
 or victory claim. Carry verified supply assist into next imitation execution and
 inspect remaining mineral allocation. Full roadmap stays active/incomplete.
 See docs/reactive-supply-assistance-result.md and native23–25 verification.json.
+
+### October7: gas-switching hypothesis rejected
+
+Previous turn made progress: supply assist committed18387a4,53 versus45 SCV births
+before9224 and10 versus159.29 stalled producer-seconds. Native25 still fails
+Cyclone9874 deadline10552. Resource trace audit finds four late gas quota toggles,
+69 resource-type switches,18 rapid switches across14 workers. This is a measured
+hypothesis, not proof of low income caused by switching.
+
+Bounded native26 terminal29910 tests a separate paused/resumed gas threshold.
+Same plan/opponent/seed817501 and unchanged deadlines. Independent verifier and
+gas audit both exit0; sources archived before reverting. Late switches43, rapid9,
+but SCV births51 versus53 before9224; supply stalls25 versus10 producer-seconds;
+188/247 versus187/247 at the same Cyclone funding stop10552. Mineral collection
+rate10400 lower2743 versus2883/min. Zero SCV deaths; native26 last birth10552 is
+excluded from the65-birth comparison. Seven retained supply warnings, no other
+errors, peakCPU8.3%. Candidate suite552/32 optional skips, Ruff passes.
+
+Removed the failed stable_gas option and its test; tracked executor/test files
+are identical to commit18387a4. Retain frozen native26 snapshots and receipts.
+No gas-threshold sweep or unchanged fit. Consult existing Astra adviser under
+user's explicit permission for stalled investigations, read-only recommendation
+on remaining scheduling/timing mismatch and return to state-conditioned imitation.
+See docs/gas-assignment-ablation-result.md. Full goal active/incomplete.
+
+### October7: reservation inconsistency isolated; canary closed as failed
+
+Astra read-only follow-up identifies concrete native25 evidence:181 Cyclone
+ability present10488,135minerals; later188research spends175 at10504, bank15 at10512.
+Training may queue at full supply, while old reservation excludes it. Candidate
+queries native availability and bound actors before protecting older Train;
+keeps explicit reactive Depot priority, logs budgets, distinguishes own funds.
+Saved-state/missing/native-unavailable/Depot regressions pass. Full553/32 skips,
+Ruff pass. Single native27 terminal33201, all source hashes archived before reverting.
+
+Native gate fails earlier7848 on sourceFactory7171 placement44,109/247. ExtraDepot
+issued7144, foundation7216, complete7696 at136,37 overlaps Factory134.5,37.5.
+No command errors,3 retained supply warnings, CPU8.4%.6000 workerbirths33/no stalls
+match control. Cyclone181 never submitted; verification explicitly repair_success
+false. Do not claim native repair succeeded, compare unobserved9224 totals, or tune
+another priority/deadline. Removed candidate; original18387a4 tracked execution
+and tests restored, focused17 tests pass. Preserve native27 code/regression snapshots.
+
+Next return to state-conditioned human imitation with broad observations/raw
+commands, supply25 explicit assist and legal current construction placement.
+Keep original247-ticket witness incomplete as a regression source. This is not
+permission to substitute scripted wins or a narrower final learned goal.
+All jobs terminal; no fit/RL. Full roadmap stays active/incomplete.
+See docs/resource-reservation-canary-result.md for evidence and bounded next scope.

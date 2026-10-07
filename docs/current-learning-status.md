@@ -17,8 +17,14 @@ funding deadline10552 as native22. Two extra Depots complete; a third is under
 construction. All seven supply warnings retain matching queued orders, with no
 other action errors; CPU peaks8.1%. This is explicit scripted supply priority
 through a fixed human plan, not learned supply behavior or a victory. Use the
-verified assist in the next imitation-execution experiment; audit remaining
-resource allocation before another fit. Training and RL remain paused.
+verified assist in the next state-conditioned imitation-execution experiment.
+The [reservation canary](resource-reservation-canary-result.md) passes saved-state
+checks but fails earlier on a Depot/Factory geometry collision, so it is not
+promoted. Keep exact playback as a regression corpus and its gate incomplete;
+stop priority sweeps and return to learned current-state decisions. Training and RL remain paused.
+The [gas-assignment ablation](gas-assignment-ablation-result.md) reduces worker
+switching but does not improve funding or execution timing. The experimental
+option was removed; the verified supply-assisted behavior remains unchanged.
 The [producer topology audit](human-producer-topology.md) and
 [earlier fixed-plan diagnosis](fixed-human-plan-native-result.md) remain partial
 evidence. Useful imitation and complete source command coverage remain unproven.
