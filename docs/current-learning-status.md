@@ -34,8 +34,11 @@ can distinguish new production orders, repeats, cancellations and addon changes;
 the original replay needs an unavailable engine version. The
 [winning-game queue audit](human-production-queue-audit.md) now verifies220queue
 increases and four repeated/present orders, but zero imported addon commands
-despite nine original own addon starts. Repair source-backed generic ability and
-addon target reconciliation before a fixed-plan trial. Do not infer exact paid
+despite nine original own addon starts. The
+[source-backed Lift/Land repair](human-lift-land-recovery.md) recovers32commands
+and preserves all804oldlabels in a fresh teaching-game rebuild. Addon targets,
+flags and attachment reconstruction still need verification before a fixed-plan
+trial. Do not infer exact paid
 production starts from eventual unit births.
 No promotion, unchanged fit or RL restart.
 RL remains paused. The full roadmap is incomplete, and scripted victories are

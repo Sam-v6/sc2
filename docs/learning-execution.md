@@ -4397,3 +4397,20 @@ Exact source archived. See [queue audit](human-production-queue-audit.md). Next
 repair narrowly verified alias identity/actor/target conformance, retain unknown
 flags and attachment limitations, then reimport rather than replay an incomplete
 plan. No paid-start or complete fixed-plan claim.
+
+### October6: actor-verified Lift/Land repair and teaching reimport
+
+Two targeted regressions red before fix, green after. Reconciliation only admits
+generic3678/3679aliases with catalogue-specific name/index/remap and all actors'
+observed own producer types. Wrong/missing types reject; unsupported duplicate
+continues reserving ambiguous identity. Full suite78382 terminalexit0:510tests,
+32skips; Ruff/diffcheckpass.
+
+Initial diagnostic93096 used historical723-label source, recovered32to755 and
+completed; retained as01, not promoted. Corrected source02/81066 terminalexit0
+uses current804-label identity source;836commands,16Lift+16Land. All804 old raw
+command labels unchanged. Verifier80471 terminalexit0 reconstructs raw events,
+selections, genericwireactions, observedtypes, flags, precise landpoints and139
+new-row visibleenemies. Prior own/player/map/memory/unknownfields unchanged.
+Source snapshots archived. No fit/native/RL. Addon target/flag/attachment semantics
+remain next. See [recovery](human-lift-land-recovery.md).

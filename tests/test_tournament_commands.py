@@ -111,3 +111,45 @@ class TournamentCommandsTests(unittest.TestCase):
         )
         self.assertEqual(accepted, [])
         self.assertEqual(len(audit["unresolved_events"]), 2)
+
+    def test_generic_lift_land_alias_requires_observed_matching_producer(self):
+        catalog = {
+            3679: dict(friendly_name='Lift', link_index=0),
+            485: dict(friendly_name='Lift Factory', link_index=0,
+                      remaps_to_ability_id=3679),
+            3678: dict(friendly_name='Land', link_index=0),
+            520: dict(friendly_name='Land Factory', link_index=0,
+                      remaps_to_ability_id=3678),
+        }
+        for ability, name, flying in [(3679, 'LiftFactory', False),
+                                     (3678, 'LandFactory', True)]:
+            event = self.event(flags=256)
+            event['m_data'] = ({'None': None} if ability == 3679
+                               else event['m_data'])
+            action = dict(ability=ability, tags=[17],
+                          target_type=0 if ability == 3679 else 2,
+                          target=None if ability == 3679 else [10, 20])
+            for types, expected in [({17: 'FactoryFlying' if flying else 'Factory'}, 1),
+                                    ({17: 'Barracks'}, 0), ({}, 0)]:
+                accepted, _ = tournament_commands.reconcile_commands(
+                    [event], [dict(loop=12, actions=[action], unit_types=types)],
+                    {(12, 1): [17]}, catalog, {(7, 0): name})
+                self.assertEqual(len(accepted), expected)
+                if accepted and ability == 3678:
+                    self.assertEqual(accepted[0]['command'].target_point,
+                                     (40961 / 4096, 81923 / 4096))
+
+    def test_generic_alias_still_reserves_unsupported_duplicate(self):
+        event = self.event(flags=256)
+        event['m_data'] = {'None': None}
+        duplicate = dict(event, m_sequence=2, m_cmdFlags=256 | 0x1000000)
+        accepted, audit = tournament_commands.reconcile_commands(
+            [event, duplicate],
+            [dict(loop=12, unit_types={17: 'Factory'},
+                  actions=[dict(ability=3679, tags=[17], target_type=0, target=None)])],
+            {(12, 1): [17], (12, 2): [17]},
+            {3679: dict(friendly_name='Lift', link_index=0),
+             485: dict(friendly_name='Lift Factory', link_index=0,
+                       remaps_to_ability_id=3679)}, {(7, 0): 'LiftFactory'})
+        self.assertEqual(accepted, [])
+        self.assertEqual([e['candidate_count'] for e in audit['unresolved_events']], [1, 1])
