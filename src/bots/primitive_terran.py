@@ -15,6 +15,7 @@ from sc2.ids.upgrade_id import UpgradeId as G
 from sc2.position import Point2
 from s2clientprotocol import sc2api_pb2 as pb
 
+from src.bots.macro_rules import depot_limit, spend_float
 from src.bots.terran_primitives import combat_command, mining_commands, scripted_targets, destination_reached, changes_order, scripted_attack, worker_defense_commands
 from src.learning.gameplay import Command, PlayerView, protocol_dict
 from src.learning.live import issue
@@ -95,6 +96,7 @@ class PrimitiveTerranBot(BotAI):
                 self.do(worker.repair(building))
 
     async def macro(self, state, targets):
+        targets = spend_float(targets, state)
         self.continue_and_repair()
         for depot in self.structures(U.SUPPLYDEPOT).ready:
             self.do(depot(A.MORPH_SUPPLYDEPOT_LOWER))
@@ -110,7 +112,7 @@ class PrimitiveTerranBot(BotAI):
             if minerals and orbital.tag not in self.unit_tags_received_action:
                 self.do(orbital(A.CALLDOWNMULE_CALLDOWNMULE, max(minerals, key=lambda m: m.mineral_contents)))
         reserved = reservations(state, self.types, self.catalog)
-        if targets['supply'] and self.already_pending(U.SUPPLYDEPOT) < 1:
+        if targets['supply'] and self.already_pending(U.SUPPLYDEPOT) < depot_limit(state):
             await self.construct(U.SUPPLYDEPOT, state, reserved)
         if self.townhalls.amount+self.already_pending(U.COMMANDCENTER) < targets['bases'] and self.can_afford(U.COMMANDCENTER):
             point = await self.get_next_expansion()
