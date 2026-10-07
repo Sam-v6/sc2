@@ -36,11 +36,18 @@ was 39.8%, and false building choices were 37/235 (15.7%). Independent verificat
 reconstructs all predictions; 38,010 presentations took 39.7 seconds with 8.1%
 sampled host CPU peak. No native rollout or RL followed. Resource/queue and
 reflection audits do not establish a dominant resource-corruption or orientation
-cause. The next single experiment tests earlier observations, without human
+cause. The subsequent single experiment tested earlier observations, without human
 command history, rather than another weight/epoch sweep. Its causal snapshot
 pointers are independently verified: 4,632 available frames from 2,382 distinct
-past observations, with explicit ages and missing slots. No memory model has been
-implemented or trained yet. See
+past observations, with explicit ages and missing slots. The optional memory
+component is now implemented and tested. Its single frozen fit independently
+failed: building recall stayed 13/54 (24.1%), overall accuracy was 114/289 (39.4%),
+and false building choices were 32/235 (13.6%). The extra 113,310 past-frame
+encodings did not improve aggregate building recall. Wall time 148.6 seconds;
+sampled host CPU peak 8.9%. No native rollout or RL followed. Close this planned
+current-observation/memory comparison; seek more compatible fully observed human
+demonstrations or explicit expert corrections, rather than weight, epoch or
+memory-length sweeps on these reused games. See
 [the observation memory experiment](professional-observation-memory-experiment.md).
 See [the choice experiment](professional-production-choice-experiment.md).
 

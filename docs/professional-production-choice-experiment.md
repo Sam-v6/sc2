@@ -94,8 +94,11 @@ Building labels represent 236/1,267 teaching events and 54/289 diagnostic events
 The model predicts a building only 26/289 times. Most Depot labels are replaced
 by SCV or Marine predictions; Barracks labels also get confused with Refineries.
 The declared weighting experiment above improved building recall but failed.
-The next candidate is a single [causal observation memory experiment](professional-observation-memory-experiment.md),
-using earlier observations to expose recent economy and production changes.
+The subsequent single [causal observation memory experiment](professional-observation-memory-experiment.md)
+also failed, with building recall unchanged at 13/54. Close this comparison and
+seek more compatible fully observed demonstrations or explicit expert corrections.
+The completed experiment used earlier observations to expose recent economy and
+production changes; it did not establish an aggregate benefit.
 Preserve the evaluation gates and cap false building choices at fit02's 37/235.
 Do not choose thresholds or weights by repeatedly optimizing these reused games,
 add epochs indefinitely, or deploy a failed model.

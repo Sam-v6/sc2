@@ -88,3 +88,95 @@ class ProductionComponentTests(unittest.TestCase):
         optimizer.step()
         self.assertEqual(before, timing.predict(self.inputs))
         self.assertTrue(all(p.grad is None for p in timing.parameters()))
+
+    def memory_policy(self):
+        from src.learning.production_component import ProductionComponent
+
+        return ProductionComponent(
+            (6, 2, 2, 8, 12, 2),
+            "choice",
+            (2, 4),
+            hidden=8,
+            observation_memory=True,
+        )
+
+    def test_memory_initialization_and_missing_prefix_preserve_current_prediction(self):
+        from src.learning.production_component import ProductionComponent
+        import torch
+
+        current = ProductionComponent((6, 2, 2, 8, 12, 2), "choice", (2, 4), hidden=8)
+        memory = self.memory_policy()
+        enriched = dict(
+            self.inputs,
+            observation_prefix=[(self.inputs, 45), None, (self.inputs, 336)],
+        )
+        np.testing.assert_array_equal(
+            current.predict(self.inputs), memory.predict(enriched)
+        )
+        with torch.no_grad():
+            memory.memory_projection.weight.fill_(0.5)
+        self.assertEqual(
+            memory.predict(self.inputs),
+            memory.predict(dict(self.inputs, observation_prefix=[None] * 3)),
+        )
+        self.assertEqual(current.predict(self.inputs), memory.predict(self.inputs))
+
+    def test_memory_gradients_and_checkpoint_include_past_state_contribution(self):
+        import torch
+        from src.learning.production_component import ProductionComponent
+
+        memory = self.memory_policy()
+        enriched = dict(
+            self.inputs,
+            observation_prefix=[
+                (self.inputs, 45),
+                (self.inputs, 112),
+                (self.inputs, 336),
+            ],
+        )
+        optimizer = torch.optim.Adam(memory.parameters(), lr=0.01)
+        memory.loss(enriched, 4).backward()
+        self.assertGreater(float(memory.memory_projection.weight.grad.abs().sum()), 0)
+        optimizer.step()
+        optimizer.zero_grad()
+        memory.loss(enriched, 4).backward()
+        self.assertGreater(
+            float(memory.observation_gru.weight_ih_l0.grad.abs().sum()), 0
+        )
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "memory.npz"
+            memory.save(path, {"memory": True})
+            restored, _ = ProductionComponent.load(path)
+            self.assertEqual(memory.predict(enriched), restored.predict(enriched))
+        self.assertNotEqual(memory.predict(enriched), memory.predict(self.inputs))
+
+    def test_memory_rejects_command_history_and_invalid_ages(self):
+        memory = self.memory_policy()
+        for prefix in (
+            [(self.fixture.inputs, 45), None, None],
+            [(self.inputs, 0), None, None],
+            [(self.inputs, 45), (self.inputs, 400), (self.inputs, 336)],
+            [(self.inputs, float("nan")), None, None],
+            [(self.inputs, 45)],
+        ):
+            with self.assertRaises(ValueError):
+                memory.predict(dict(self.inputs, observation_prefix=prefix))
+
+    def test_memory_uses_actual_age_and_missing_slot_mask(self):
+        import torch
+
+        memory = self.memory_policy()
+        with torch.no_grad():
+            memory.memory_projection.weight.copy_(torch.eye(8))
+        young = dict(self.inputs, observation_prefix=[(self.inputs, 45), None, None])
+        stale = dict(self.inputs, observation_prefix=[(self.inputs, 385), None, None])
+        full = dict(
+            self.inputs,
+            observation_prefix=[
+                (self.inputs, 45),
+                (self.inputs, 112),
+                (self.inputs, 336),
+            ],
+        )
+        self.assertNotEqual(memory.predict(young), memory.predict(stale))
+        self.assertNotEqual(memory.predict(young), memory.predict(full))

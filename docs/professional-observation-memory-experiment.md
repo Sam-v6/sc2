@@ -3,8 +3,8 @@
 The current-state choice model still fails building decisions after one declared
 family-weighting experiment. Test whether recent observed economy and production
 changes help; this is a hypothesis, not a diagnosed cause. Keep imitation and RL
-distinct: this experiment trains on human examples only. No RL or native games
-have occurred in this preparation.
+distinct: this experiment trains on human examples only. The fit below is terminal
+and failed; no RL or native games followed.
 
 ## Verified data preparation
 
@@ -50,8 +50,7 @@ Test initialization equivalence, gradients, save/load, missing-slot behavior,
 actual ages and rejection of human history before implementation. Process past
 states in chronological order, retaining their requested-slot masks and ages.
 
-Before fitting, independently verify model inputs against the receipt. No model
-implementation or fit is complete yet. Native inference must later maintain the
+Before fitting, independently verify model inputs against the receipt. Native inference must maintain the
 same causal bounded observation buffer, including observations between decisions;
 do not validate offline history then substitute different history during play.
 
@@ -67,3 +66,49 @@ game competence remains necessary. If it fails, close this current representatio
 experiment and seek more compatible fully observed demonstrations or expert
 corrections; do not keep sweeping memory length, epochs or weights. Do not infer
 that professional intent is fundamentally impossible to learn from these failures.
+
+## Implementation and terminal result
+
+`ProductionComponent(observation_memory=True)` shares the existing encoder across
+frames. It processes three slots oldest to newest with a GRU, includes actual
+age divided by 336 and an availability indicator, and adds a zero-initialized
+linear projection to current context. All-missing or absent prefixes bypass it
+exactly. Existing checkpoints load with memory disabled. Past inputs reject human
+command history just like current inputs; invalid lag ages and age order fail.
+
+Four new tests were observed failing on the missing option before implementation.
+They verify initial current-only equivalence, all-missing bypass even with nonzero
+projection weights, gradients into memory after the first update, safe checkpoint
+round-trip, history/age rejection and sensitivity to actual age and availability.
+The targeted Torch suite passes 12 tests. The default suite passes 585 tests with
+40 optional skips; Ruff and diff checks pass.
+
+`logs/roadmap/professional-choice-fit-03/verification.json` independently
+reconstructs all 289 saved predictions from original source observations and
+exhaustively selected causal prefixes. Its status is
+`verified_failed_professional_choice_fit`. The prefit record checks current-only
+and missing-prefix equivalence on all 1,556 targets. Weights, labels, seed, order,
+optimizer and original gates remain paired with fit02; the additional false
+building gate is fixed at 37/235. Target presentations are 38,010; past-frame
+presentations are separately reported as 113,310. CPU-only wall time is 148.6
+seconds, sampled whole-host CPU peak 8.9%, with no guard stop.
+
+| Diagnostic game | Overall correct | Nonworker correct | Building correct | False building choices |
+|---|---|---|---|---|
+| 887 | 13/51 | 3/27 | 3/13 | 11/38 |
+| 920 | 68/176 | 33/116 | 7/26 | 20/150 |
+| 851 | 33/62 | 10/34 | 3/15 | 1/47 |
+
+Aggregate accuracy 114/289 (39.4%) exceeds majority 38.8%; nonworker recall
+46/177 (26.0%) exceeds old checkpoint 14.7% by ten points. Building recall remains
+13/54 (24.1%, required 40%), identical to fit02. False building choices decline
+from 37/235 to 32/235 (13.6%). Per-game building gains on 920 are offset by losses
+on 887, so this does not establish a general benefit from memory. The model is
+not promoted. Native buffer/scheduler integration is not implemented because the
+offline gate failed; no learned strength claim follows.
+
+Close this declared comparison rather than sweeping memory length, weights or
+epochs. The next data work must seek additional compatible fully observed human
+demonstrations or explicit expert corrections. Scripted teacher examples must
+retain their provenance and cannot be described as professional human decisions.
+Human imitation competence, learned micro and RL improvements remain open.
