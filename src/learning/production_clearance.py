@@ -1,6 +1,7 @@
 """Physical production-space reservations, with no strategic goal generation."""
 
 from dataclasses import replace
+import math
 from s2clientprotocol import query_pb2 as query, common_pb2 as common
 from src.learning.placement import candidates, resolve_placements
 
@@ -62,11 +63,29 @@ async def resolve_production_placement(client, command, catalog, state, unit_typ
     codes = [p.result for p in response.placements]
     if len(codes) != len(checks):
         raise ValueError('Incomplete production placement response')
-    index = next((i for i in range(len(points)) if codes[i] == 1 and
-                  (addon or unit_type not in PRODUCERS or codes[i+len(points)] == 1)), None)
+    legal = [i for i in range(len(points)) if codes[i] == 1 and
+             (addon or unit_type not in PRODUCERS or codes[i+len(points)] == 1)]
+    index = legal[0] if legal else None
+    actor = next((u for u in state['units'] if u['tag'] == command.units[0]), None)
+    path_checks = 0
+    if not addon and actor is not None and actor['unit_type'] == 45:
+        index = None
+        for start in range(0, len(legal), 8):
+            batch = legal[start:start+8]
+            response = (await client._execute(query=query.RequestQuery(pathing=[
+                query.RequestQueryPathing(unit_tag=actor['tag'], end_pos=common.Point2D(x=points[i][0], y=points[i][1]))
+                for i in batch]))).query
+            if len(response.pathing) != len(batch):
+                raise ValueError('Incomplete builder pathing response')
+            path_checks += len(batch)
+            index = next((i for i, result in zip(batch, response.pathing) if result.distance > 0
+                          or math.dist(actor['position'][:2], points[i]) < .5), None)
+            if index is not None:
+                break
     trace = dict(source='production_clearance', addon=addon, checked=len(checks),
+                 pathing_checked=path_checks,
                  selected=points[index] if index is not None else None,
-                 rejected=None if index is not None else 'native_placement')
+                 rejected=None if index is not None else 'unreachable' if legal else 'native_placement')
     if index is None:
         return [], [trace]
     return [command if addon else replace(command, target_point=points[index])], [trace]

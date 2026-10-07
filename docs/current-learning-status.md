@@ -6,12 +6,15 @@ The full roadmap remains incomplete. The user explicitly authorized using
 established bots to build reliable resource, production, attacking and combat
 micro behavior before returning to professional imitation, then RL.
 
-The [new Terran primitives controller](terran-primitives-implementation.md) is
-implemented and passes its native economy/production smoke test. Its first Hard
-panel was stopped after exposing an older Linux engine visibility defect and
-attack-search stalling. Both are repaired; a fixed six-game development recheck
-is running under `logs/roadmap/primitives-native-02/panel`. Do not claim reliable
-Hard wins or resume fitting yet. Earlier source observations need a fog audit.
+The [new Terran primitives controller](terran-primitives-implementation.md) passes
+its native economy/production smoke test. Two independently verified six-game
+Hard development panels each won four games. The latest won both Zerg and both
+Protoss games, but both Terran games reached the 1,200-second cutoff. Illegal
+raw attacks fell to zero. This is promising scripted execution, not a reliable
+all-race baseline or learned competence. The targeted regrouping/Viking recheck failed: one Terran defeat and one
+timeout. Tanks remaining near home despite enemy-base attack orders make
+movement and production exits the next diagnostic priority. Imitation and RL
+remain paused; historical source observations still need a fog audit.
 
 Start here, then read [the roadmap](learning-roadmap.md). Use
 [the execution ledger](learning-execution.md) for detailed evidence. Historical
@@ -19,7 +22,7 @@ experiments are references, not an instruction to rerun every failed variant.
 
 | Requirement | Current evidence | Still needed |
 |---|---|---|
-| Reliable execution primitives and scripted baseline | Construction/addon repairs work, but the latest native panel still has zero wins | Diagnose losses, inspect established Terran bot code, verify economy/production/scouting/attacking/micro, and prove the scripted all-race Hard baseline |
+| Reliable execution primitives and scripted baseline | Scripted controller has 4/6 wins in each of two verified development panels; latest Terran games time out | Verify regrouping/support behavior, broaden strategies/maps, and pass the fresh all-race scripted Hard panel |
 | Broad gameplay controls and player-visible information | Raw command schema, native catalogue, missing-field masks, fog filtering and argument execution exist | Prove the learned controller uses the necessary controls reliably, including simultaneous unit control |
 | Strong human examples | Eleven professional teaching games: 6,089 verified decisions, 6,086 representable; whole-game development split and untouched reserved games | More varied verified data, including Terran opponents; resolve unavailable observations where actual source evidence permits |
 | Learn to copy human decisions | Full command imitation failed; simultaneous production-outcome imitation passes offline gates | Useful generalization and actual game competence |
@@ -95,23 +98,8 @@ single cause. A saved timing-model experiment failed its baseline and family
 error gates on reevaluation and was not deployed. Preserve that unfinished
 experiment as historical work; do not resume fitting it by default.
 
-Next inspect the saved losses and established open-source Terran bots, then
-implement and verify reliable primitives and a scripted Hard baseline. The
-current controller only attacks visible enemies and lacks offensive army
-destinations. Check resource scheduling and production starvation as well.
-Scripted strategy and combat micro are authorized for this baseline phase.
-Attribute its results explicitly to the scripted controller. Human imitation
-resumes after primitives are verified; RL follows useful imitation. Broad learned
-controls, learned micro and reliable learned all-race Hard wins remain goals.
-
-The [primitives loss audit and reference review](primitives-reset-2026-10-06.md)
-are complete. The existing Reaper reference loses all six Hard Rush/Macro games
-across the three races, peaking at 21 workers and 7–11 Reapers, with zero killed
-structure value. Sampled host CPU peaks at64.2percent. Next implement the more
-complete economy/production/army baseline described there; no model fitting.
-
-The validated intake manifest is
-`logs/roadmap/pro-source-expansion-02/final-verification.json`. Future fits must
-check its source, report and reader-table hashes. Energy and other unavailable
-fields remain explicitly unknown. Never supply future commands as observations,
-fill missing fields with guesses, or train on reserved games.
+Next resolve the scripted Terran cutoffs with native trace evidence, then test a
+fresh all-race panel. Established Sharpy and Burny bot code has been inspected
+and pinned as design references; the unchanged Reaper reference lost all six
+local development games. See [the primitives diagnosis](primitives-reset-2026-10-06.md).
+Do not restart imitation or RL to compensate for unreliable execution.

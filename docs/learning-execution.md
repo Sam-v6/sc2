@@ -3960,9 +3960,31 @@ uses the visibility grid to guard bogus Visible flags on Linux 4.10, matching th
 installed SDK. Historical source observations require auditing before fitting.
 Attack-search arrival and redundant command handling are also repaired.
 
-Latest suite:440tests pass,32optional skips; native smoke ran separately.
-The fixed six-game Hard development panel is active at
-`logs/roadmap/primitives-native-02/panel`, unified exec session59542. Poll that
-handle; do not restart from file state alone. Run the saved verifier after its
-terminal receipt. Construction errors and remaining primitive behavior still
-need investigation; no imitation/RL or final strength claim.
+The formerly active panel 02 and its verifier are terminal. Four wins in six:
+Terran Rush, Zerg Rush, Protoss Rush/Macro. Terran/Zerg Macro cut off. Original
+replay/tracker and sampled fog checks pass; CPU peak19.9percent. Reference bot
+selection is complete: pinned Sharpy/Burny MIT source informed the controller;
+the local unchanged Reaper reference lost all six diagnostic games.
+
+### October 6: action legality, reachable construction and army coordination
+
+Panel 03 completes and independently verifies four wins in six: both Zerg and
+both Protoss games; both Terran games cut off. CPU peak7.7percent. Removing
+untargetable KD8 charges, restricting detected/ranged targets, respecting Tank
+transforms and requiring reachable builder placement eliminated raw action
+errors in all six games. Eight delayed errors remain, all in Zerg Rush. Relative
+Tank caps, Viking production and returning the scout to mining also apply.
+Source snapshots and original artifacts are frozen separately for panels02/03.
+
+The next candidate repairs a trace-supported coordination hypothesis: support
+units kept the supply-based attacking flag latched after ground-force losses.
+Marine/Tank strength now controls attack/regroup decisions; Vikings follow the
+ground force unless engaging visible aircraft. Dead actors are excluded.
+Meaningful regressions failed before fixes and now pass. Full suite450tests,
+32optional skips; separate native smoke passes in15.2seconds. The targeted Terran
+Rush/Macro recheck in `primitives-native-04/panel` and verifier are terminal.
+RushDefeat1029.6seconds; Macrocutoff1200seconds; peakCPU5.5percent. Zero raw
+errors, three delayed Macro errors. This candidate did not improve strength.
+Original sources and artifacts are frozen. Tank traces show near-home positions
+despite distant attack orders; next check actual unit paths/production exits.
+Scripted wins remain separate from learning; imitation/RL stay paused.

@@ -6,6 +6,14 @@ from collections import Counter
 from src.learning.gameplay import Command
 
 
+def scripted_attack(state, attacking):
+    power = sum({48: 1, 32: 3, 33: 3}.get(u['unit_type'], 0)
+                for u in state['units'] if u['alliance'] == 1 and u.get('health', 0) > 0)
+    if power >= 40:
+        return True
+    return attacking and power >= 20
+
+
 def destination_reached(positions, destination):
     return bool(positions) and sum(math.dist(p, destination) < 8 for p in positions) > len(positions)/2
 
@@ -45,7 +53,8 @@ def scripted_targets(state):
                 starports=int(workers >= 30 and ready[27] > 0),
                 engineering_bays=int(workers >= 32),
                 refineries=4 if workers >= 40 and ready[27] else 2 if ready[27] else int(counts[21] > 0),
-                gas_workers=gas_workers, supply=supply)
+                gas_workers=gas_workers, supply=supply,
+                tanks=min(8, max(2, counts[48]//6)))
 
 
 def distance(a, b):
@@ -99,7 +108,12 @@ def mining_commands(state, gas_workers, protected=()):
 
 
 def combat_command(unit, enemies, types, destination, can_walk):
-    visible = [e for e in enemies if e.get('display_type', 1) == 1 and e['alliance'] == 4]
+    if unit.get('health', 0) <= 0:
+        return None
+    if unit['unit_type'] in (32, 33) and any(o['ability_id'] in (388, 390) for o in unit.get('orders', [])):
+        return None
+    visible = [e for e in enemies if e.get('display_type', 1) == 1 and e['alliance'] == 4
+               and types[e['unit_type']].get('name') != 'KD8Charge' and e.get('health', 0) > 0]
     ground = [e for e in visible if not e.get('is_flying')]
     nearest = min((distance(unit, e) for e in ground), default=100)
     if unit['unit_type'] == 33 and 5 < nearest < 13:
@@ -109,11 +123,14 @@ def combat_command(unit, enemies, types, destination, can_walk):
     weapons = types[unit['unit_type']].get('weapons', [])
     compatible = []
     for enemy in visible:
+        if enemy.get('cloak', 0) not in (2, 3):
+            continue
         ranges = [w['range'] for w in weapons if w['type'] in (3, 2 if enemy.get('is_flying') else 1)]
         if ranges:
             compatible.append((enemy, max(ranges)))
     in_range = [(e, r) for e, r in compatible
-                if distance(unit, e) <= r + unit.get('radius', .5) + e.get('radius', .5)]
+                if distance(unit, e) <= r + unit.get('radius', .5) + e.get('radius', .5)
+                and (unit['unit_type'] != 32 or 3 <= distance(unit, e) <= r)]
     if in_range:
         enemy, attack_range = min(in_range, key=lambda pair: (distance(unit, pair[0]), pair[0].get('health', 1)))
         threat_range = max((w['range'] for w in types[enemy['unit_type']].get('weapons', [])

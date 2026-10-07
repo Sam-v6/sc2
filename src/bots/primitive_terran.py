@@ -15,10 +15,12 @@ from sc2.ids.upgrade_id import UpgradeId as G
 from sc2.position import Point2
 from s2clientprotocol import sc2api_pb2 as pb
 
-from src.bots.terran_primitives import combat_command, mining_commands, scripted_targets, destination_reached, changes_order
+from src.bots.terran_primitives import combat_command, mining_commands, scripted_targets, destination_reached, changes_order, scripted_attack
 from src.learning.gameplay import Command, PlayerView, protocol_dict
 from src.learning.live import issue
 from src.learning.production_clearance import PRODUCERS, reservations, resolve_production_placement
+
+ARMY_TYPES = {U.MARINE, U.SIEGETANK, U.SIEGETANKSIEGED, U.VIKINGFIGHTER}
 
 
 class PrimitiveTerranBot(BotAI):
@@ -99,11 +101,13 @@ class PrimitiveTerranBot(BotAI):
         self.continue_and_repair()
         for depot in self.structures(U.SUPPLYDEPOT).ready:
             self.do(depot(A.MORPH_SUPPLYDEPOT_LOWER))
+        planned_workers = self.workers.amount + self.already_pending(U.SCV)
         for base in self.townhalls.ready.idle:
             if base.type_id == U.COMMANDCENTER and self.structures(U.BARRACKS).ready and self.can_afford(U.ORBITALCOMMAND):
                 self.do(base(A.UPGRADETOORBITAL_ORBITALCOMMAND), subtract_cost=True)
-            elif self.workers.amount < targets['workers'] and self.can_afford(U.SCV):
+            elif planned_workers < targets['workers'] and self.can_afford(U.SCV):
                 self.do(base.train(U.SCV), subtract_cost=True, subtract_supply=True)
+                planned_workers += 1
         for orbital in self.townhalls(U.ORBITALCOMMAND).filter(lambda b: b.energy >= 50):
             minerals = self.mineral_field.closer_than(10, orbital)
             if minerals and orbital.tag not in self.unit_tags_received_action:
@@ -116,6 +120,9 @@ class PrimitiveTerranBot(BotAI):
             if point:
                 await self.construct(U.COMMANDCENTER, state, reserved, point)
         barracks_lab_needed = not self.structures(U.BARRACKSTECHLAB) and not self.already_pending(U.BARRACKSTECHLAB)
+        planned_tanks = self.units.of_type({U.SIEGETANK, U.SIEGETANKSIEGED}).amount+self.already_pending(U.SIEGETANK)
+        enemy_air = self.enemy_units.filter(lambda e: e.is_visible and e.is_flying and e.can_attack)
+        viking_target = min(8, max(2, 2*enemy_air.amount))
         for kind in (U.BARRACKS, U.FACTORY, U.STARPORT):
             addon = {U.BARRACKS: U.BARRACKSTECHLAB, U.FACTORY: U.FACTORYTECHLAB,
                      U.STARPORT: U.STARPORTTECHLAB}[kind]
@@ -135,10 +142,17 @@ class PrimitiveTerranBot(BotAI):
                 product = {U.BARRACKS: U.MARINE, U.FACTORY: U.SIEGETANK, U.STARPORT: U.MEDIVAC}[kind]
                 if kind == U.FACTORY and building.add_on_tag not in self.techlab_tags:
                     continue
-                if kind == U.STARPORT and self.units(U.MEDIVAC).amount+self.already_pending(U.MEDIVAC) >= 4:
+                if kind == U.FACTORY and planned_tanks >= targets['tanks']:
                     continue
+                if kind == U.STARPORT:
+                    if (enemy_air or self.units(U.MEDIVAC).amount >= 2) and self.units(U.VIKINGFIGHTER).amount+self.already_pending(U.VIKINGFIGHTER) < viking_target:
+                        product = U.VIKINGFIGHTER
+                    elif self.units(U.MEDIVAC).amount+self.already_pending(U.MEDIVAC) >= 4:
+                        continue
                 if self.can_afford(product):
                     self.do(building.train(product), subtract_cost=True, subtract_supply=True)
+                    if product == U.SIEGETANK:
+                        planned_tanks += 1
         for kind, key in ((U.BARRACKS, 'barracks'), (U.FACTORY, 'factories'),
                           (U.STARPORT, 'starports'), (U.ENGINEERINGBAY, 'engineering_bays')):
             if self.structures(kind).amount+self.already_pending(kind) < targets[key]:
@@ -163,21 +177,22 @@ class PrimitiveTerranBot(BotAI):
         if scout and scout.health_percentage > .6 and self.time < 135:
             self.do(scout.move(self.enemy_start_locations[0]))
         else:
+            if scout and self.townhalls.ready:
+                minerals = self.mineral_field.closer_than(10, self.townhalls.ready.closest_to(scout))
+                if minerals:
+                    self.do(scout.gather(minerals.closest_to(scout)))
             self.scout_tag = None
 
-    def army_destination(self):
-        army = self.units.of_type({U.MARINE, U.SIEGETANK, U.SIEGETANKSIEGED})
+    def army_destination(self, state):
+        army = self.units.of_type(ARMY_TYPES)
+        self.attacking = scripted_attack(state, self.attacking)
         threats = self.enemy_units.filter(lambda e: e.is_visible and e.can_attack_ground
                                          and any(e.distance_to(b) < 22 for b in self.townhalls))
         if threats:
             return threats.closest_to(self.start_location).position
-        if self.supply_army >= 40:
-            self.attacking = True
-        if self.supply_army < 12:
-            self.attacking = False
         if not self.attacking:
             return self.start_location.towards(self.game_info.map_center, 12)
-        structures = self.enemy_structures.filter(lambda e: e.is_visible)
+        structures = self.enemy_structures.filter(lambda e: e.is_visible and e.type_id != U.KD8CHARGE)
         if structures:
             return structures.closest_to(army.center if army else self.start_location).position
         search = [self.enemy_start_locations[0]] + sorted(self.expansion_locations_list,
@@ -202,7 +217,8 @@ class PrimitiveTerranBot(BotAI):
                 self.summary['mining_commands'] += len(mining)
                 commands.extend(mining)
             enemies = [u for u in state['units'] if u['alliance'] == 4]
-            destination = self.army_destination()
+            destination = self.army_destination(state)
+            ground = self.units.of_type({U.MARINE, U.SIEGETANK, U.SIEGETANKSIEGED})
             bio = self.units(U.MARINE).filter(lambda u: u.health_percentage > .65 and not u.has_buff(BuffId.STIMPACK)
                                              and any(u.distance_to(e) < 8 for e in self.enemy_units if e.is_visible))
             if G.STIMPACK in self.state.upgrades and bio:
@@ -211,14 +227,23 @@ class PrimitiveTerranBot(BotAI):
                     if A.EFFECT_STIM_MARINE in available:
                         self.do(marine(A.EFFECT_STIM_MARINE))
             for unit in state['units']:
-                if unit['alliance'] != 1 or unit['unit_type'] not in (48, 33, 32) or unit['tag'] in self.unit_tags_received_action:
+                if unit['alliance'] != 1 or unit['unit_type'] not in (48, 33, 32, 35) or unit['tag'] in self.unit_tags_received_action:
                     continue
-                command = combat_command(unit, enemies, self.types, tuple(destination),
+                target = destination
+                if unit['unit_type'] == 35:
+                    air = [e for e in enemies if e.get('is_flying') and e.get('cloak') in (2, 3)
+                           and e.get('health', 0) > 0]
+                    if air:
+                        enemy = min(air, key=lambda e: Point2(e['position'][:2]).distance_to(Point2(unit['position'][:2])))
+                        target = Point2(enemy['position'][:2])
+                    elif ground:
+                        target = ground.center
+                command = combat_command(unit, enemies, self.types, tuple(target),
                                           lambda p: self.in_map_bounds(Point2(p)) and self.in_pathing_grid(Point2(p)))
                 if command and changes_order(unit, command):
                     commands.append(command)
                     self.summary['combat_commands'] += 1
-            army = self.units.of_type({U.MARINE, U.SIEGETANK, U.SIEGETANKSIEGED})
+            army = self.units.of_type(ARMY_TYPES)
             injured = self.units(U.MARINE).filter(lambda u: u.health_percentage < 1)
             for medivac in self.units(U.MEDIVAC):
                 if injured and medivac.energy > 0:

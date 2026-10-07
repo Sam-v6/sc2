@@ -1,12 +1,12 @@
 import unittest
 
-from src.bots.terran_primitives import mining_commands, combat_command, scripted_targets, destination_reached, changes_order
+from src.bots.terran_primitives import mining_commands, combat_command, scripted_targets, destination_reached, changes_order, scripted_attack
 from src.learning.gameplay import Command
 
 
 def unit(tag, kind, x=0, y=0, alliance=1, **fields):
     return dict(tag=tag, unit_type=kind, position=[x, y], alliance=alliance,
-                display_type=1, orders=[], **fields)
+                display_type=1, orders=[], **({'cloak': 3, 'health': 45} | fields))
 
 
 def economy(workers):
@@ -52,6 +52,15 @@ class MiningTests(unittest.TestCase):
 
 
 class ScriptedEconomyTests(unittest.TestCase):
+    def test_losing_infantry_does_not_turn_remaining_army_into_unlimited_tanks(self):
+        state = economy([unit(i, 45) for i in range(1, 35)])
+        state['units'] += [unit(500+i, 48) for i in range(12)] + [unit(600+i, 33) for i in range(26)]
+        state['player'] = dict(minerals=2000, vespene=500, food_cap=200, food_used=160)
+        targets = scripted_targets(state)
+        self.assertLess(targets.get('tanks', 100), 26)
+        state['units'] = [u for u in state['units'] if u['unit_type'] != 33]
+        self.assertGreater(scripted_targets(state).get('tanks', 0), 0)
+
     def test_starting_economy_keeps_growing_workers_and_builds_needed_supply(self):
         state = economy([unit(i, 45) for i in range(1, 15)])
         state['player'] = dict(minerals=100, vespene=0, food_cap=15, food_used=14)
@@ -84,6 +93,54 @@ TYPES = {48: dict(weapons=[dict(type=3, range=5)]),
 
 
 class CombatTests(unittest.TestCase):
+    def test_support_units_do_not_keep_a_destroyed_ground_attack_running(self):
+        state = dict(units=[unit(i, 54) for i in range(4)] + [unit(10+i, 35) for i in range(8)]
+                     + [unit(30+i, 48) for i in range(10)] + [unit(50+i, 33) for i in range(2)])
+        self.assertFalse(scripted_attack(state, True))
+        state['units'] += [unit(100+i, 48) for i in range(30)]
+        self.assertTrue(scripted_attack(state, False))
+
+    def test_dead_actor_does_not_issue_an_order(self):
+        self.assertIsNone(combat_command(unit(1, 48, health=0), [], TYPES, (20, 20), lambda p: True))
+
+    def test_sieged_tank_does_not_request_a_shot_beyond_stationary_attack_range(self):
+        enemy = unit(10, 105, x=13.5, alliance=4, radius=1)
+        command = combat_command(unit(1, 32, radius=1), [enemy], TYPES, (20, 20), lambda p: True)
+        self.assertIsNone(command)
+
+    def test_transforming_tank_keeps_its_order_until_the_transformation_finishes(self):
+        tank = unit(1, 33)
+        tank['orders'] = [dict(ability_id=390)]
+        self.assertIsNone(combat_command(tank, [], TYPES, (20, 20), lambda p: True))
+
+    def test_dead_target_is_not_selected_over_a_living_enemy(self):
+        dead = unit(10, 105, x=1, alliance=4, health=0)
+        alive = unit(11, 105, x=4, alliance=4)
+        command = combat_command(unit(1, 48), [dead, alive], TYPES, (20, 20), lambda p: True)
+        self.assertEqual(command.target_unit, 11)
+
+    def test_reaper_grenade_does_not_distract_attacks_from_real_units(self):
+        types = {**TYPES, 830: dict(name='KD8Charge', weapons=[])}
+        grenade = unit(10, 830, x=1, alliance=4, health=1)
+        enemy = unit(11, 105, x=4, alliance=4, health=35)
+        command = combat_command(unit(1, 48), [grenade, enemy], types, (20, 20), lambda p: True)
+        self.assertEqual(command.target_unit, 11)
+
+    def test_undetected_cloak_is_not_a_direct_attack_target(self):
+        enemy = unit(10, 108, x=3, alliance=4, is_flying=True, cloak=1)
+        command = combat_command(unit(1, 48), [enemy], TYPES, (20, 20), lambda p: True)
+        self.assertIsNone(command.target_unit)
+        enemy['cloak'] = 2
+        self.assertEqual(combat_command(unit(1, 48), [enemy], TYPES, (20, 20), lambda p: True).target_unit, 10)
+        del enemy['cloak']
+        self.assertIsNone(combat_command(unit(1, 48), [enemy], TYPES, (20, 20), lambda p: True).target_unit)
+
+    def test_sieged_tank_shoots_a_reachable_enemy_beyond_minimum_range(self):
+        close = unit(10, 105, x=1, alliance=4)
+        distant = unit(11, 105, x=8, alliance=4)
+        command = combat_command(unit(1, 32), [close, distant], TYPES, (20, 20), lambda p: True)
+        self.assertEqual(command.target_unit, 11)
+
     def test_existing_attack_orders_continue_without_duplicate_commands(self):
         marine = unit(1, 48)
         marine['orders'] = [dict(ability_id=23, target_unit_tag=10)]

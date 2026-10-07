@@ -1,5 +1,8 @@
 import unittest
 from src.learning.production_clearance import reservations, clear_site
+from src.learning.production_clearance import resolve_production_placement
+from src.learning.gameplay import Command
+from s2clientprotocol import sc2api_pb2 as pb, query_pb2 as query
 
 
 class ProductionClearanceTests(unittest.TestCase):
@@ -23,3 +26,22 @@ class ProductionClearanceTests(unittest.TestCase):
                      orders=[dict(ability_id=320, target_world_space_pos=dict(x=5, y=5))]),
                      dict(tag=7, alliance=3, position=[5, 5], vespene_contents=2000)])
         self.assertEqual(claimed_geysers(state, {320: dict(is_building=True)}), {7})
+
+
+class BuilderPathTests(unittest.IsolatedAsyncioTestCase):
+    async def test_legal_but_unreachable_site_is_replaced_by_a_reachable_site(self):
+        class Client:
+            async def _execute(self, **kwargs):
+                request = kwargs['query']
+                return pb.Response(query=query.ResponseQuery(
+                    placements=[query.ResponseQueryBuildingPlacement(result=1 if
+                        (p.target_pos.x, p.target_pos.y) in ((10, 10), (11, 10)) else 41)
+                        for p in request.placements],
+                    pathing=[query.ResponseQueryPathing(distance=20 if p.end_pos.x == 11 else 0)
+                             for p in request.pathing]))
+        command = Command(319, (1,), target_point=(10, 10))
+        state = dict(units=[dict(tag=1, alliance=1, unit_type=45, position=[0, 0])], map_size=[64, 64])
+        commands, _ = await resolve_production_placement(Client(), command,
+            {319: dict(friendly_name='Build SupplyDepot', is_building=True, footprint_radius=1)},
+            state, 19, [])
+        self.assertEqual(commands[0].target_point, (11, 10))
