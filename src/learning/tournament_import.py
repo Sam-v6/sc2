@@ -150,6 +150,10 @@ def import_game(job):
                 ),
             )
         )
+    translations = {
+        (t['loop'], t['sequence']): t['proof']
+        for t in game.get('label_translations', [])
+    }
     rows = defaultdict(list)
     for row in history_rows(events, accepted):
         rows[row["loop"]].append(row)
@@ -243,6 +247,9 @@ def import_game(job):
                     original_command=command.as_dict(),
                     next_action_delay=row["next_action_delay"],
                 )
+                translation = translations.get((loop, row['sequence']))
+                if translation is not None:
+                    example['label_translation'] = translation
                 stream.write(json.dumps(example) + "\n")
                 written += 1
     if written != len(accepted):
@@ -287,6 +294,8 @@ def import_game(job):
             name: digest(output / name) for name in ("static.json", "examples.jsonl.gz")
         },
     )
+    if translations:
+        receipt['label_translations'] = game['label_translations']
     (output / "dataset.json").write_text(json.dumps(receipt, indent=2) + "\n")
     return receipt
 

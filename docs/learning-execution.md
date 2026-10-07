@@ -4431,3 +4431,20 @@ Five flagged commands remain; firstthree rawpoints equal grounded actor position
 withsame-loopstarts, nativeownpoint/no-target equivalence is next source-canonical
 label hypothesis. Later remote/grouped effects must not inherit that exception.
 No fit/RL or complete-production-plan claim.
+
+### October6: three early source-effect addon labels verified without input leakage
+
+Label-only helper rejects unknown contexts, preserving raw flags as uninterpreted.
+No global flag exception. Two new regressions red/green;514tests/32skips+Ruffpass.
+Reimport84593 terminalexit0:842labels (839old+3canonicalequivalence). Independent
+verifier33336 terminalexit0 reconstructs original events, converted actions,
+selected observed producer, exact own-position targets and same-loop own tracker
+starts. New addon tags absent from pre-effect inputs; provenance outsideobservation.
+Source/current labels/own/map/memory preserved. Later14686/14692 still excluded.
+Source snapshots archived. No fit/native/RL.
+
+Preliminary prefix screen terminalexit0:201matchedmacrocommands,41unresolved
+nativemacrocandidateevents. Includes Viking1/Refinery1, research andcancel plus
+combat/Depottransformations. Candidate screen is descriptive, not independent
+identity proof. Next resolve specific source name/index/target mismatches before
+fixedhumanplan executor. See [in-place result](human-in-place-addon-recovery.md).

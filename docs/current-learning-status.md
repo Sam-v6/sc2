@@ -39,8 +39,12 @@ despite nine original own addon starts. The
 and preserves all804oldlabels in a fresh teaching-game rebuild. The
 [addon relocation repair](human-addon-recovery.md) adds three verified point
 commands, giving839labels, and four native fixtures prove build-in-place versus
-relocation behavior. Five flagged commands, grouped effects and attachment
-reconstruction still need verification before a fixed-plan trial. Do not infer exact paid
+relocation behavior. The
+[early in-place addon conversion](human-in-place-addon-recovery.md) now verifies
+three more canonical execution labels with original provenance and no effect
+leakage, giving842labels. Two later grouped/flagged commands remain excluded.
+The600-second prefix still has unresolved Viking/Refinery/research/cancel
+candidates to resolve before a fixed-plan trial. Do not infer exact paid
 production starts from eventual unit births.
 No promotion, unchanged fit or RL restart.
 RL remains paused. The full roadmap is incomplete, and scripted victories are
