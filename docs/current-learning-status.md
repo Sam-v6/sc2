@@ -2,6 +2,9 @@
 
 Updated October 6, 2026. The **initial scripted Hard baseline is verified**;
 the active next phase is reconnecting human imitation to the verified primitives.
+The [human ordering experiment](human-production-precedence-result.md) has now
+failed its quality gates; its simple human-derived majority baseline performed
+better. Native request persistence still needs implementation and verification.
 RL remains paused. The full roadmap is incomplete, and scripted victories are
 not learned-controller victories.
 

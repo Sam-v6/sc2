@@ -74,12 +74,49 @@ changes only runtime:16CPU threads and an explicit optimizer-start marker with a
 hard600second optimizer cutoff,900total cutoff and80percent whole-host CPU guard.
 Count weights,128trees, seed, teaching data, weights and quality gates stay frozen.
 Both regenerated pair files already match first-run SHA256 exactly. Outputs:
-`human-production-precedence-02/`; watcher handle **50190** is live. Poll that exact
-handle; do not restart from JSON alone. Bound plan/helper/fit source must remain
+`human-production-precedence-02/`; watcher handle **50190** was live and is now terminal-15.
+Do not restart this configuration. Bound plan/helper/fit source must remain
 unchanged while live. After terminal success, run guarded verifier
 `watch_verify_human_production_precedence_02.py`; on budget/CPU failure, preserve
 it and change the approach rather than expanding the bound. Native scheduler and
 RL remain unchanged.
+
+## Terminal precedence results and next native diagnostic
+
+All tree fits are terminal without checkpoints. Watcher50190 stopped with
+`optimizer_wall`, approximately602.77seconds after its optimizer marker; peak87.9
+percent whole-host CPU. No budget extension or unchanged retry follows.
+
+Sparse utility fit62268 is terminal1 after saving a finite `iteration_bound`
+checkpoint; an evaluator variable collision caused the exit. Corrected saved-model
+evaluation36097 is terminal0, no refit. Checkpoint writing occurred6.23seconds after
+optimizer start; exact fit/iteration/call counts were not persisted. Full suite
+7056 is terminal0:469tests,32optional skips,10.096seconds. Four utility tests include
+finite-difference gradients and equivalence to expanded/mirrored pair objectives.
+
+Independent verifier11455 is terminal1 because the copied tree verifier cast state
+to float32 while the utility fit used original float64 observations. Preserve that
+failure. Corrected verifier77346 is terminal0: all68,841labels/weights, reloaded
+probabilities, primary/grouped metrics and gates verify. `verification.json` is
+`verified_labels_predictions_metrics_gates`, `offline_pass=false`. Utility proposal
+accuracy79.25percent versus learned pair-majority80.24percent; macro-family gain
+also fails. Do not promote the utility model or add iterations/regularization sweeps.
+See [the complete result](human-production-precedence-result.md).
+
+The independently reconstructed human prior's initial development candidate rank
+is SCV,Depot,Refinery,Barracks; Depot-before-Refinery probability.6703. Artifact:
+`human-prior-openings-01.json`. First raw command may be nonproduction; its
+`first_human_ability` field is not a next-production target. This opening check
+establishes coverage/prior behavior, not native competence.
+
+Astra recommended a separate [matched native diagnostic](superpowers/plans/2026-10-06-human-prior-native-comparison.md)
+using the stronger human-derived prior in both arms, comparing existing accounting
+against persistence/resource reservation. This does not rescue the failed utility
+fit or change its gates. Next actual work: implement and test unique intent lifecycle
+and prior dispatch, then freeze/run both240second canaries and verify observed
+production. Follow with six all-race games only if B's engineering gate passes.
+No live native/training jobs remain from this batch. RL remains paused; the full
+broad-control goal is active and incomplete.
 
 ## Current evidence
 
