@@ -3,6 +3,19 @@ from src.learning.production_execution import queued_work, eligible_actors
 
 
 class ProductionExecutionTests(unittest.TestCase):
+    def test_physically_rejected_factory_yields_until_its_recheck(self):
+        from src.learning.production_execution import preferred_production_intent
+        scores = {328: .8, 560: .1, 324: .02}
+        self.assertEqual(preferred_production_intent(scores, {328: 224}, 8), 560)
+        self.assertEqual(preferred_production_intent(scores, {328: 224}, 224), 328)
+        self.assertIsNone(preferred_production_intent({328: .8}, {328: 224}, 8))
+
+    def test_preference_does_not_filter_expensive_but_physically_available_intent(self):
+        from src.learning.production_execution import preferred_production_intent
+        scores = {328: .8, 324: .02}
+        self.assertEqual(preferred_production_intent(scores, {}, 8), 328)
+        self.assertIsNone(preferred_production_intent({}, {}, 8))
+
     def test_unit_target_builder_routes_approach_outside_the_blocking_geyser(self):
         from src.learning.production_execution import builder_approach_points
         from src.learning.gameplay import Command

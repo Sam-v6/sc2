@@ -424,3 +424,23 @@ from funding waits and model overbuilding. Do not silently change spacing,
 add unit/structure quotas, or resume RL on the basis of the single passed
 production canary. The full goal remains active; no simulation handle remains
 live from this panel.
+
+### Explicit placement feedback: competence04 (2026-10-07)
+
+The frozen model's native14 execution wrapper releases a physically rejected
+intent and excludes its ability for224loops before recheck. Expensive but feasible
+choices still retain their savings. No building quotas or score changes were
+added. Competence04 records20 placement/path rejections and69 subsequent accepted
+commands, then aborts on a Hellion intent at full200supply. Last trace shows116
+workers and44military units (84army supply), zeroidleworkers and no pending
+requests; observed code14 supply errors affect Liberator, SCV and Hellion requests.
+The game remains a failed diagnostic, not a win: no normal callback finish,
+replay or attempted Zerg/Protoss games.106.441wall seconds,22.1percent CPU peak,
+CPU-only/no training. Saved source hashes and terminal raw trace were audited in
+`logs/roadmap/reserved-choice-competence-04/failure-audit.json`.
+
+The placement feedback fix exposes the next defect: resource-ignoring technical
+availability must be separated from supply feasibility, and fixed positive-event
+choice cadence produces too many workers. Supply masking must account for queued
+orders; learned timing and worker allocation remain macro work rather than
+permission for hidden strategic quotas.608tests pass with40optional skips.

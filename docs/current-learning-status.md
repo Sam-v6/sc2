@@ -474,3 +474,30 @@ physical placement rejection explicit in intent handling, separate from funding
 waits and model overbuilding. No source-bound process is live now. All 606
 default tests pass (40 optional skips); full roadmap and learned Hard competence
 remain incomplete, and RL stays paused.
+
+### Placement feedback and the next loss mechanism (2026-10-07)
+
+`reserved-choice-competence-04` is terminal. Frozen checkpoint and matched Terran
+seed824201; no fitting or RL. The new native14 wrapper invalidates a physically
+rejected placement/path intent, releases its reservation, and withholds that
+ability for224loops (10game seconds) before rechecking. Funding waits retain
+intent. This changes execution feedback only; placement clearance, strategy
+scores and quotas remain unchanged. Shared preference selection has two focused
+regressions; all608 default tests pass (40 optional skips), and Ruff passes.
+
+Saved source hashes were rechecked against the normalized snapshot. The trace
+records20 physical rejections and69 accepted commands after the first rejection,
+so the previous placement rejection no longer holds the controller for60seconds.
+The game instead aborts106.441wall seconds later on a Hellion intent atloop18136
+(last savedloop18128), after60game seconds waiting. Last player has1890minerals,
+2528gas,200/200supply,116workers,84army supply,44military units,zero idleworkers,
+and no pending requests. Three supply-cap action errors (code14) appear twice
+each in trace phases. Peak measured whole-host CPU22.1percent. There is no normal
+finish or replay; Zerg/Protoss were not attempted. No win is established.
+
+`logs/roadmap/reserved-choice-competence-04/failure-audit.json` records the evidence.
+Next distinguish supply blocking from technical/resource availability, including
+queued supply, and audit why the model continues producing workers at fixed
+cadence. Do not hide that macro defect with an unexplained worker cap or count
+these partial production gains as human imitation success. Training/RL remains
+paused and no source-bound process is live.
