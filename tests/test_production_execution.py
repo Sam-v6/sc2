@@ -3,6 +3,14 @@ from src.learning.production_execution import queued_work, eligible_actors
 
 
 class ProductionExecutionTests(unittest.TestCase):
+    def test_rejected_request_retry_does_not_deadlock_on_an_unrelated_new_intent(self):
+        from src.learning.production_execution import preferred_production_intent
+        # Protoss competence06: retry Reactor3683, retained Depot319, no commands.
+        scores = {319: .8, 3683: .05}
+        self.assertEqual(preferred_production_intent(scores, {}, 14788, retry=3683), 3683)
+        self.assertIsNone(preferred_production_intent(scores, {3683: 15000}, 14788, retry=3683))
+        self.assertIsNone(preferred_production_intent({319: .8}, {}, 14788, retry=3683))
+
     def test_supply_full_excludes_training_but_preserves_build_and_research(self):
         from src.learning.production_execution import supply_feasible_choices
         data = dict(abilities=[dict(ability_id=595, friendly_name='Train Hellion'),

@@ -137,10 +137,12 @@ def resource_affordable_choices(probabilities, prices, minerals, gas):
             or (prices[ability][0] <= minerals and prices[ability][1] <= gas)}
 
 
-def preferred_production_intent(probabilities, unavailable_until, loop):
+def preferred_production_intent(probabilities, unavailable_until, loop, *, retry=None):
     """Reconsider physically rejected choices only after their explicit recheck."""
     possible = {a: p for a, p in probabilities.items()
                 if loop >= unavailable_until.get(a, 0)}
+    if retry is not None:
+        return retry if retry in possible else None
     return max(possible, key=possible.get) if possible else None
 
 

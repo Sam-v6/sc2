@@ -562,3 +562,52 @@ Source-bound files must remain unchanged while live. Log:
 `logs/roadmap/reserved-choice-competence-06`. It stops after the first error; no
 outcome yet. Next audit real income, actual expansion positions, errors and game
 outcomes; retain macro/timing shortcomings separately from primitive acceptance.
+
+### Panel06 terminal results and retry deadlock (2026-10-07)
+
+All panel06 processes are terminal; session9273 completed. CPUpeak21.7percent,
+no fitting/RL. Terran reaches normal1200game-second cutoff Tie (207.914wallsec),
+zero observed errors; final138workers/27military,515minerals/410gas and zeroidle.
+Allfive completed base sites achieved16ideal mineral workers. This ordinary run
+used local mineral orders at correctly placed expansions; it does not independently
+exercise the remote fallback proven in the earlier fixture. Accepted134SCVs and
+34Factory requests show that macro allocation remains poor.
+
+Zerg finishes Victory (159.046wallsec), zero observed errors; final93workers,
+52military/107army supply. This one VeryEasy result with scripted timing/targets/
+micro is not reliable learned Hard strength or broad professional imitation.
+Protoss aborts (85.999wallsec) atloop16140, lastsaved16132:5105minerals/3798gas,
+104/200supply,70workers/24military,zeroidle. Two unique delayed Reactor422
+placement44 failures appear twice each in trace phases. Retry ability3683
+remains demanded by one candidate filter, while a newly retained Depot319
+intent requires another: no command can satisfy both. This is an execution
+retry/intent deadlock, not resource or supply starvation.
+
+`reserved-choice-competence-06/terminal-game-audit.json` checks completed games;
+`failure-audit.json` records Protoss. All source hashes were rechecked against
+normalized saved snapshots after the panel ended. The three-race victory/error
+gate fails. Actual native replays exist for Terran/Zerg; Protoss abort has none.
+
+Shared preferred intent selection now prioritizes an explicit retry or waits if
+that retry is unavailable. Native17 wrapper displaces unrelated retained intent
+when a pending request fails and uses this preference; the contradictory
+candidate filter is removed. A captured-ability regression fails before the fix
+and passes afterward.614default tests pass (40optional skips); Ruff passes.
+This change is not yet verified in a new native game. Next run one matched
+Protoss retry diagnostic, then inspect physical Reactor placement separately;
+do not start another fit or silently extend retry bounds.
+
+Astra was consulted through the existing authorized adviser. Its recommendation:
+close conditional identity plus forced44loop cadence as a complete imitation
+policy, retaining fit04 as an identity component. It has no WAIT output and
+current source coverage cannot safely label absent commands as waiting. One
+proposed bounded remedy is144explicit human corrections on uniformly sampled
+student states (48pergame; two teaching, one evaluation), with fog-safe short
+past clips, queues/reservations/failure facts, no future/model scores/results.
+Labels authorize a new commitment, wait/continue existing intent, or remain
+uncertain. Require90percent labelability, both classes in each split and85percent
+agreement on a double-labeled fixed quarter before fitting. Nonprofessional
+labels must be called expert corrections, not pro demonstrations. Qualified
+human labels are currently unavailable, so this is a proposed option, not an
+implemented or authorized substitute for professional replay supervision.
+Continue feasible primitives/data-interface work; no threshold/epoch/quota sweep.
