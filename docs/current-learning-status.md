@@ -7,13 +7,17 @@ verifies305 newly recovered human labels, preserving all851 previous labels and
 player/unit/map observations. The reimported winning game contains1156 labels.
 Command-manager repetitions and target updates carry original provenance outside
 observations;399 uncertain contexts remain explicit unknown history slots.
-The native fixed plan now has243 instructions. Its latest canary resolves148,
-verifies the recovered Factory's shared Tech Lab attachment, and stops on a Cyclone
-request with only60minerals. Eight supply warnings retain pending training orders;
-there are no other action errors. The fixed-plan queue admission and landing hold
-repairs are verified in native fixtures/games. Native workforce and army size differ
-from the source; audit worker queues, income and combat losses before another fit.
-These are forced diagnostic exits against VeryEasy, not learned victories.
+The [worker-queue diagnosis](human-worker-queue-diagnosis.md) restores four issued
+requests previously misclassified by unchanged queue counts. Plan06 has247
+instructions; native22 resolves186 and verifies a corrected Factory landing.
+It stops on a Cyclone request with85minerals. All21 supply warnings retain queued
+orders, with no other action errors. At the same cutoff9224, source/native tracker
+SCV births remain55/45; restoring requests did not close this worker gap.
+Native22 records159.29 combined Command Center seconds stalled at full supply.
+Source and native match33 workers at6000, then army retention changes supply needs.
+Next test reactive supply assistance based on current state, using the scripted
+Hard baseline as reference, before another fit. These are forced diagnostic exits
+against VeryEasy, not learned victories.
 The [producer topology audit](human-producer-topology.md) and
 [earlier fixed-plan diagnosis](fixed-human-plan-native-result.md) remain partial
 evidence. Useful imitation and complete source command coverage remain unproven.
@@ -52,8 +56,9 @@ adviser recommends testing execution of one fixed winning human production plan
 before fitting another policy. First audit whether the existing converted source
 can distinguish new production orders, repeats, cancellations and addon changes;
 the original replay needs an unavailable engine version. The
-[winning-game queue audit](human-production-queue-audit.md) now verifies220queue
-increases and four repeated/present orders, but zero imported addon commands
+[winning-game queue audit](human-production-queue-audit.md) historically classified220queue
+increases and four repeated/present orders; the four classifications are now
+superseded by completion-window and queue-truncation counterexamples, but zero imported addon commands
 despite nine original own addon starts. The
 [source-backed Lift/Land repair](human-lift-land-recovery.md) recovers32commands
 and preserves all804oldlabels in a fresh teaching-game rebuild. The

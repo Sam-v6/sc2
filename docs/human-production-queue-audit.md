@@ -8,11 +8,14 @@ No fitting or RL ran.
 The existing converted record contains1,900 pre-effect observations, from loop12
 to19382. Median gap is7loops,95th-percentile29, maximum259. Among224 matched
 production command/actor pairs,220 have an increased count of that production
-order in the next observation. Four already had that order and show no increase
-(three SCV and one Hellion commands). They must not become four automatic extra
-production tickets. No matched or unresolved command to the same recovered actor
-occurs in these before/after intervals. This is observed queue evidence, not an
-exact resource-payment or completed-unit attribution claim.
+order in the next observation. Four show unchanged counts (three SCV and one
+Hellion). The original interpretation excluded them as repeated/present orders.
+That interpretation is **superseded**: two SCV windows contain completions, and
+the remaining two queues hit the record's four-order truncation. All four actual
+issued requests are restored in plan06. See [the worker-queue diagnosis](human-worker-queue-diagnosis.md)
+for independently verified counterexamples. Original audit receipts remain intact;
+unchanged net queue count does not establish that no new request was issued.
+
 
 There are **zero matched addon-building commands** in the imported game. The
 original replay tracker independently contains **nine own addon starts**:

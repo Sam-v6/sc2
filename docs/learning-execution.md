@@ -4594,3 +4594,32 @@ versus source50 at9196 and larger native army require income/queue/attrition aud
 Full suite6839 terminal548tests/32skips; focused34tests, Ruff and diff check pass.
 No fitted model, RL restart, learned win or completed roadmap claim. See
 human-command-repeat-recovery.md for exact next work and evidence locations.
+
+### October 7: worker-queue diagnosis and corrected landing
+
+The previous goal turn only confirmed the existing roadmap: no progress.
+Fresh tracker/queue evidence now changes the next action. Same-cutoff source
+SCV births55 versus native20/21/22 births45; zero source/native20 SCV deaths.
+At6000 source/native22 match33 workers and21 army supply. By8800 native army
+supply40 versus source25 consumes the same85 capacity. Native22 has159.29
+combined producer-seconds of consecutive confirmed zero-progress SCV/full-supply
+stalls. Static source timing cannot adapt to the surviving native army.
+
+Plan06 restores four actual issued requests: two completions inside unchanged
+count windows, two queues censored at four orders. Independent verification
+preserves all243 prior tickets, binds inputs and confirms247 total. Original
+selection reconstruction finds no qualifying missing SCV manager request.
+Native21 resolves179 and fails a nine-loop landing correction. The executor
+now retires superseded unsubmitted Land targets and permits moving flying
+buildings to retarget. Native22 physically lands the Factory at148.5,40.5 at9744,
+resolves186/247 and stops on Cyclone funding with85minerals.21 retained supply
+warnings, zero other errors, CPU5.3%. Both are forced diagnostic exits, not wins.
+
+Restored requests do not improve worker births at9224; later54-worker stops are
+not a same-time improvement. Next run an explicit reactive-supply assistance
+ablation using current native state and existing scripted Hard behavior. No more
+unchanged fixed-timing retries or imitation fits. Preserve raw controls and make
+scripted versus learned responsibility explicit. Full roadmap remains active.
+Evidence: plan06/verification.json and worker-queue-stalls-22/audit.json under
+logs/roadmap, plus docs/human-worker-queue-diagnosis.md. Full suite549 tests/32
+optional skips; focused landing regressions pass. No training or RL resumed.

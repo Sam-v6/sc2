@@ -15,9 +15,10 @@ trained policy, and it has not yet been played natively.
 | Morph Command Centers | 3 |
 | Total retained instructions | 203 |
 
-Four additional commands already had the same order before and after issue,
-without a queue-count increase: three SCVs and one Hellion. They remain in the
-artifact as source evidence and are not counted as four new work instructions.
+The original artifact excluded four issued commands with unchanged queue counts:
+three SCVs and one Hellion. This historical classification is **superseded** by
+two completion-window counterexamples and two queues truncated at four orders.
+Plan06 restores all four; see [the worker-queue diagnosis](human-worker-queue-diagnosis.md).
 Six actual structure Cancel Last commands remain in the plan; combat cancellation
 on a Cyclone is outside the production compiler.
 

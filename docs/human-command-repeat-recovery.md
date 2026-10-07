@@ -92,8 +92,8 @@ stops at9224 on a Cyclone request with only60minerals available. All eight recor
 supply warnings retain matching queued orders; there are no other action errors.
 CPU peaks9.2%. The stop is a forced diagnostic leave, not a natural loss.
 
-At9224 the native observation contains41 living SCVs,3 MULEs and reported army
-supply45. The nearest source frame9196 contains50 living SCVs,5 MULEs and reported
+At9224 the native observation contains41 snapshot-visible SCVs,3 MULEs and reported army
+supply45. The nearest source frame9196 contains50 snapshot-visible SCVs,5 MULEs and reported
 army supply29. These differences mean income, production queues and combat losses
 must be compared before blaming another execution primitive or fitting a policy.
 The source fights a professional opponent while this diagnostic uses VeryEasy and
@@ -108,3 +108,10 @@ and move to useful observation-conditioned imitation through these primitives.
 The updated module regressions, whole suite548tests/32skips, Ruff and whitespace
 checks pass. Further verification is in native14–20 `verification.json` files and
 `supply-queue-fixture-01/02/verification.json`. No model was fitted or RL resumed.
+
+October7 follow-up: tracker events correct the partial-snapshot worker comparison:
+55 source SCV births versus45 native births before9224, with zero SCV deaths in
+source/native20. Restored issued requests and landing correction raise execution
+to186/247, but native21/22 still have45 births at that cutoff. The next experiment
+is reactive supply assistance, not another unchanged fixed-timing run or fit.
+See [the queue diagnosis](human-worker-queue-diagnosis.md).

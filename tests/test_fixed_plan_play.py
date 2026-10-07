@@ -12,6 +12,23 @@ except ModuleNotFoundError:
 
 @unittest.skipIf(FixedHumanPlanBot is None, 'SC2 SDK unavailable')
 class FixedPlanFoundationTests(unittest.TestCase):
+    def test_due_landing_correction_replaces_only_unsubmitted_unqueued_destination(self):
+        tickets = [dict(loop=10, name='Land Factory', command=dict(units=[1], target_point=[10, 10])),
+                   dict(loop=20, name='Land Factory', command=dict(units=[1], target_point=[10, 11], queue=False))]
+        context = SimpleNamespace(tickets=tickets, done=set(), history=[])
+        FixedHumanPlanBot.retire_superseded_landings(context, 19)
+        self.assertFalse(context.done)
+        FixedHumanPlanBot.retire_superseded_landings(context, 20)
+        self.assertEqual(context.done, {0})
+        context.done.clear()
+        tickets[1]['command']['queue'] = True
+        FixedHumanPlanBot.retire_superseded_landings(context, 20)
+        self.assertFalse(context.done)
+        tickets[1]['command']['queue'] = False
+        tickets[1]['name'] = 'Train Hellion'
+        FixedHumanPlanBot.retire_superseded_landings(context, 20)
+        self.assertFalse(context.done)
+
     def test_unsubmitted_build_can_be_replaced_only_without_a_source_foundation(self):
         tickets = [dict(loop=10, name='Build SupplyDepot', actor_types=[45],
                         command=dict(units=[1], target_point=[10, 10])),

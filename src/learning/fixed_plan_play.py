@@ -219,6 +219,21 @@ class FixedHumanPlanBot(BotAI):
                                          ticket=index, replacement_ticket=replacement,
                                          source_loop=ticket['loop']))
 
+    def retire_superseded_landings(self, loop):
+        for index, ticket in enumerate(self.tickets):
+            if index in self.done or ticket['loop'] > loop or not ticket['name'].startswith('Land'):
+                continue
+            replacement = next((i for i in range(index+1, len(self.tickets))
+                                if self.tickets[i]['command']['units'] == ticket['command']['units']), None)
+            if replacement is None:
+                continue
+            later = self.tickets[replacement]
+            if (later['loop'] <= loop and later['name'].startswith('Land')
+                    and not later['command']['queue']):
+                self.done.add(index)
+                self.history.append(dict(event='superseded_unsubmitted_landing', loop=loop,
+                                         ticket=index, replacement_ticket=replacement))
+
     async def on_step(self, iteration):
         try:
             state = self.view.observe(self.state.response_observation)
@@ -278,6 +293,7 @@ class FixedHumanPlanBot(BotAI):
                     )
             self.retire_unsubmitted_cancellations(loop)
             self.retire_superseded_worker_builds(loop)
+            self.retire_superseded_landings(loop)
             expired = next(
                 (
                     i
@@ -388,7 +404,11 @@ class FixedHumanPlanBot(BotAI):
                             ability = resolved
                         if self.catalog[ability].get("friendly_name", "").startswith(
                             ("Lift", "Land", "Build TechLab", "Build Reactor")
-                        ) and actor.get("orders"):
+                        ) and actor.get("orders") and not (
+                            ticket['name'].startswith('Land') and actor.get('is_flying')
+                            and all(self.catalog.get(o['ability_id'], {}).get('friendly_name', '').startswith(('Move', 'Land'))
+                                    for o in actor['orders'])
+                        ):
                             self.block = "producer_busy"
                     if (actor and self.block is None and self.index not in self.done
                             and not ticket['name'].startswith('Train ')):
