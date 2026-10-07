@@ -457,3 +457,20 @@ games with original panel seeds, 300-second wall limits and 80-percent CPU guard
 Check its actual process/receipt before restarting or counting outcomes. The
 full learned Hard/higher and broad human-imitation roadmap remains active; RL
 stays paused.
+
+### Competence panel 03 has stopped; inspect layout feedback next
+
+The formerly live panel is now terminal after its first Terran game: a Factory
+intent stalls for 60 game seconds because the normal placement seed and both
+owned-base fallbacks find no complete Factory/addon-pad site. Last logged loop
+13948 has 2,930 minerals/2,044 gas, no pending requests, 86 workers and 19
+military units. Four accepted Refineries carry positive approach-route queries
+and travel allowances, with zero observed action errors. The earlier travel
+limit is repaired, but no actual win or all-race result is established.
+
+`reserved-choice-competence-03/failure-audit.json` binds the diagnosis. Zerg and
+Protoss are unattempted; the callback abort saves no final replay. Next make
+physical placement rejection explicit in intent handling, separate from funding
+waits and model overbuilding. No source-bound process is live now. All 606
+default tests pass (40 optional skips); full roadmap and learned Hard competence
+remain incomplete, and RL stays paused.

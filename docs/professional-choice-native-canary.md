@@ -395,3 +395,32 @@ positive route. A third frozen actual-game panel, `reserved-choice-competence-03
 uses that wrapper, unchanged model and original all-race panel seeds/bounds.
 Its active process handle must be inspected before interpreting its outcome.
 No fitting, RL, new quotas, attack thresholds or strategic priorities are added.
+
+### Panel 03 terminal: Factory layout feedback is the next boundary
+
+The third panel is now terminal, with only Terran attempted. It stops at the
+frozen 60-game-second unissued-intent limit rather than a builder travel timeout.
+Its trace-bound `failure-audit.json` identifies Factory intent 328 created at
+loop 12604 and still unresolved at last logged loop 13948. All pending requests
+have cleared. There are 2,930 minerals and 2,044 gas; affordability is not the
+blocker. Native placement/clearance queries find no complete Factory/addon-pad
+site at the normal seed or either owned-base fallback. Five Factory-body queries
+succeed at some seeds but their addon-pad checks fail, so no complete site is
+accepted. This is the current assistance footprint contract, not proof that
+every possible Factory location on the entire map is blocked.
+
+Four actual accepted gas requests in this saved trace now have positive approach
+route diagnostics and nonzero derived travel allowances. The centre-query
+blockage is repaired; observed immediate/delayed action errors remain zero.
+The model nevertheless keeps the Factory intent despite placement rejection.
+Saved state has 86 workers and 19 military units. There is no callback-completed
+game or replay after abort, and Zerg/Protoss remain unattempted. Wall time is
+74.235 seconds. Preserve this as a failed actual-game diagnostic, not a passed
+all-race panel.
+
+Next address explicit feedback for an intent that cannot be placed under the
+current verified footprint/exit rules; distinguish physical-site invalidation
+from funding waits and model overbuilding. Do not silently change spacing,
+add unit/structure quotas, or resume RL on the basis of the single passed
+production canary. The full goal remains active; no simulation handle remains
+live from this panel.
