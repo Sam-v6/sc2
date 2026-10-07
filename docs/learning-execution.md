@@ -4510,3 +4510,18 @@ No training or native simulation ran. Geometry alone is not proof of native
 attachment. Fixed-plan playback must retain source/native producer and addon
 bindings and verify each actual landing/attachment before dependent production.
 See [the topology result](human-producer-topology.md).
+
+### October 6: persistent bindings and native Reactor transfer
+
+Previous turn yielded verified source topology evidence. Added ProducerBindings
+and three focused identity/loss/duplicate tests. Native debug fixture 01 terminal
+16494 and 02 terminal 62940 both failed premature Lift while the Barracks still
+had a construction order, despite visible Reactor completion. Neither failure
+proves alias support. Corrected fixture 03 waits for the order to clear and uses
+specific Lift/Factory Land; terminal 56105 completes, three accepted commands,
+actual full Reactor tag transferred, zero errors, seed 819001 verified, CPU 3.5%.
+Independent verifier initially failed on pre-creation empty observations; filters
+corrected without rerunning the game. Final verification exit zero, source snapshot
+archived. Full suite 57066 terminal: 527 tests, 32 skips; Ruff passes. Fixture is
+engineering-only with debug setup and fast build. Helper integration into fixed
+human-plan controller remains next; no learned strength, fit or RL claim.

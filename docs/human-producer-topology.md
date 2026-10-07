@@ -45,3 +45,29 @@ another imitation fit, not a learned-policy result.
 Audit, verifier, archived scripts and input hashes are in
 `logs/roadmap/human-producer-topology-01`. Both scripts terminated successfully.
 No simulation, model fitting or RL ran for this audit.
+
+## Native binding and swap check
+
+`ProducerBindings` now retains full source/native actor identities across lift
+and landing, rejects duplicate or changed bindings, and reports missing actors
+without selecting replacements. Three unit tests cover these requirements.
+
+A separate 20-second debug-assisted native fixture builds a Barracks Reactor,
+lifts that same Barracks, and lands a bound Factory on the same addon. Initial
+runs 01 and 02 failed: addon completion was visible while the Barracks still had
+its construction order, so premature Lift failed. Run 01 used generic Lift; run
+02 used specific Lift. This does not isolate alias support as the cause.
+
+Run 03 waits until the construction order clears, uses specific Lift 452 and
+Factory Land 520, and passes. The independent verifier checks all three accepted
+commands, zero immediate/delayed errors, persistent producer bindings, the
+Barracks flying, and the Factory's actual full `add_on_tag` matching the original
+Reactor. Attachment verifies at loop 224; 57 frames were recorded. Replay seed
+819001 independently matches the requested seed. Peak whole-host CPU was 3.5%.
+Full suite: 527 tests pass with 32 skips; named-file Ruff passes.
+
+Frozen sources, trace, replay, contract and verifier are in
+`logs/roadmap/producer-binding-fixture-03`. Failed runs remain separate. Debug
+resources, fast construction and created producers isolate physical execution;
+this is not a strength result or full human-plan playback. The binding helper is
+used by this fixture; integration into a fixed-plan controller remains next.
