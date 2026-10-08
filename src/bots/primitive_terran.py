@@ -35,6 +35,7 @@ class PrimitiveTerranBot(BotAI):
         self.attacking = False
         self.scouted, self.scout_tag = False, None
         self.hunt, self.hunt_points, self.last_seen = [], [], {}
+        self.enemy_air_peak = 0
         self.summary = dict(worker_peak=0, army_peak=0, collected_minerals=0,
                             mining_commands=0, combat_commands=0, defense_commands=0, resumed_builds=0,
                             raw_action_errors=0, delayed_action_errors=0)
@@ -135,6 +136,12 @@ class PrimitiveTerranBot(BotAI):
         planned_tanks = self.units.of_type({U.SIEGETANK, U.SIEGETANKSIEGED}).amount+self.already_pending(U.SIEGETANK)
         enemy_air = self.enemy_units.filter(lambda e: e.is_visible and e.is_flying and e.can_attack)
         viking_target = min(8, max(2, 2*enemy_air.amount))
+        if self.enemy_race == Race.Terran:
+            # Liberators and Ravens leave vision between fights; answer the most air ever seen at once.
+            self.enemy_air_peak = max(self.enemy_air_peak, enemy_air.amount)
+            viking_target = min(10, max(viking_target, 2*self.enemy_air_peak))
+            if self.enemy_air_peak >= 3:
+                targets = dict(targets, starports=max(targets['starports'], 2))
         for kind in (U.BARRACKS, U.FACTORY, U.STARPORT):
             addon = {U.BARRACKS: U.BARRACKSTECHLAB, U.FACTORY: U.FACTORYTECHLAB,
                      U.STARPORT: U.STARPORTTECHLAB}[kind]
