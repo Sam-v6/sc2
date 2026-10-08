@@ -383,3 +383,9 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
   - The Abyssal Rush still loses on a fresh seed (345 s). The army chased the first 3 enemy Marines out of
     the unfinished Bunker, and the Bunker finished empty.
   - Macro and Power builds lose at 15–19 min to mech compositions.
+- Rejected: hold at the Bunker when threats come within 12 of it (commit 429f7af, reverted).
+  - TvT training seeds 920000: 17/20 vs 18/20.
+  - Paired Abyssal Rush probe on seeds 930000–930011 (`logs/roadmap/rush_probe_01.py`, `rush-probe-01/`):
+    11/12 with and 11/12 without. Bunker rally alone already holds most Abyssal rushes.
+- Replay extraction finished: 5,318 receipts, 2,876 winning Terran games. The human head was not refit on the full set;
+  its failure is attack timing, which more of the same labels will not fix.
