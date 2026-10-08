@@ -101,7 +101,7 @@ class ScriptedEconomyTests(unittest.TestCase):
         self.assertEqual(targets.get('factories'), 1)
 
 
-TYPES = {48: dict(weapons=[dict(type=3, range=5)]),
+TYPES = {48: dict(weapons=[dict(type=3, range=5)], movement_speed=2.25),
          33: dict(weapons=[dict(type=1, range=7)]),
          32: dict(weapons=[dict(type=1, range=13)]),
          105: dict(weapons=[dict(type=1, range=.1)]),
@@ -222,15 +222,33 @@ class CombatTests(unittest.TestCase):
         self.assertEqual(marine.target_unit, 10)
         self.assertIsNone(tank.target_unit)
 
-    def test_reloading_marine_kites_melee_on_walkable_ground(self):
+    def test_reloading_marine_stutters_back_from_melee_and_queues_its_next_attack(self):
         enemy = unit(10, 105, x=2, alliance=4)
         marine = unit(1, 48, weapon_cooldown=8)
-        command = combat_command(marine, [enemy], TYPES, (20, 20), lambda p: True)
-        self.assertIsNotNone(command)
-        self.assertEqual(command.ability, 16)
-        self.assertLess(command.target_point[0], 0)
+        move, attack = combat_command(marine, [enemy], TYPES, (20, 20), lambda p: True)
+        self.assertEqual((move.ability, attack.ability, attack.target_unit, attack.queue), (16, 23, 10, True))
+        self.assertAlmostEqual(move.target_point[0], -2.25/16*6)
+        stimmed = combat_command(unit(1, 48, weapon_cooldown=8, buff_ids=[27]), [enemy], TYPES, (20, 20), lambda p: True)
+        self.assertAlmostEqual(stimmed[0].target_point[0], -2.25/16*6*1.5)
         blocked = combat_command(marine, [enemy], TYPES, (20, 20), lambda p: False)
         self.assertEqual(blocked.ability, 23)
+
+    def test_marine_stutters_toward_a_sieged_tank_and_not_from_unarmed_targets(self):
+        types = {**TYPES, 19: dict(weapons=[])}
+        tank = unit(10, 32, x=5, alliance=4)
+        move, _ = combat_command(unit(1, 48, weapon_cooldown=8), [tank], types, (20, 20), lambda p: True)
+        self.assertGreater(move.target_point[0], 0)
+        depot = unit(11, 19, x=2, alliance=4)
+        self.assertEqual(combat_command(unit(1, 48, weapon_cooldown=8), [depot], types, (20, 20),
+                                        lambda p: True).target_unit, 11)
+
+    def test_marine_does_not_stutter_at_the_end_of_its_reload_or_restart_a_step(self):
+        enemy = unit(10, 105, x=2, alliance=4)
+        self.assertEqual(combat_command(unit(1, 48, weapon_cooldown=3), [enemy], TYPES, (20, 20),
+                                        lambda p: True).ability, 23)
+        stepping = unit(1, 48, weapon_cooldown=6)
+        stepping['orders'] = [dict(ability_id=16), dict(ability_id=23)]
+        self.assertIsNone(combat_command(stepping, [enemy], TYPES, (20, 20), lambda p: True))
 
     def test_tank_sieges_for_visible_ground_and_unsieges_without_it(self):
         enemy = unit(10, 105, x=10, alliance=4)

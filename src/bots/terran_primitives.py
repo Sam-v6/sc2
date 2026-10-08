@@ -192,14 +192,24 @@ def combat_command(unit, enemies, types, destination, can_walk):
         enemy, attack_range = min(in_range, key=lambda pair: (distance(unit, pair[0]), pair[0].get('health', 1)))
         threat_range = max((w['range'] for w in types[enemy['unit_type']].get('weapons', [])
                             if w['type'] in (3, 2 if unit.get('is_flying') else 1)), default=0)
-        if unit['unit_type'] != 32 and unit.get('weapon_cooldown', 0) > 0 and attack_range > threat_range + 1:
-            dx = unit['position'][0] - enemy['position'][0]
-            dy = unit['position'][1] - enemy['position'][1]
-            length = math.hypot(dx, dy)
-            if length:
-                retreat = (unit['position'][0] + 2*dx/length, unit['position'][1] + 2*dy/length)
-                if unit.get('is_flying') or can_walk(retreat):
-                    return Command(16, (unit['tag'],), target_point=retreat)
+        cooldown, orders = unit.get('weapon_cooldown', 0), unit.get('orders', [])
+        if cooldown > 0 and orders and orders[0]['ability_id'] == 16:
+            return None  # a stutter step is under way; its queued attack follows
+        # Stutter step: walk while reloading, then attack from the queue the moment the weapon is ready.
+        # Back off from what we match or outrange (it must walk into our fire); close on what outranges
+        # us and on sieged tanks (inside their minimum range they cannot shoot). Two loops cover latency.
+        step = (types[unit['unit_type']].get('movement_speed', 0) / 16 * (cooldown - 2)
+                * (1.5 if 27 in unit.get('buff_ids', []) else 1))
+        dx = enemy['position'][0] - unit['position'][0]
+        dy = enemy['position'][1] - unit['position'][1]
+        length = math.hypot(dx, dy)
+        if unit['unit_type'] != 32 and threat_range > 0 and step >= .5 and length:
+            toward = threat_range > attack_range or enemy['unit_type'] == 32
+            step = min(step, length - 1) if toward else -step
+            point = (unit['position'][0] + step*dx/length, unit['position'][1] + step*dy/length)
+            if abs(step) >= .5 and (unit.get('is_flying') or can_walk(point)):
+                return (Command(16, (unit['tag'],), target_point=point),
+                        Command(23, (unit['tag'],), target_unit=enemy['tag'], queue=True))
         return Command(23, (unit['tag'],), target_unit=enemy['tag'])
     if unit['unit_type'] == 32:
         return None

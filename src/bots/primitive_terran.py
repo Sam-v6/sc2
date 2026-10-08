@@ -38,7 +38,7 @@ class PrimitiveTerranBot(BotAI):
         self.enemy_air_peak = 0
         self.enemy_army = {}
         self.summary = dict(worker_peak=0, army_peak=0, collected_minerals=0,
-                            mining_commands=0, combat_commands=0, defense_commands=0, resumed_builds=0,
+                            mining_commands=0, combat_commands=0, stutter_steps=0, defense_commands=0, resumed_builds=0,
                             raw_action_errors=0, delayed_action_errors=0)
 
     async def on_start(self):
@@ -321,7 +321,10 @@ class PrimitiveTerranBot(BotAI):
                         target = ground.center
                 command = combat_command(unit, enemies, self.types, tuple(target),
                                           lambda p: self.in_map_bounds(Point2(p)) and self.in_pathing_grid(Point2(p)))
-                if command and changes_order(unit, command):
+                if isinstance(command, tuple):
+                    commands.extend(command)
+                    self.summary['stutter_steps'] += 1
+                elif command and changes_order(unit, command):
                     commands.append(command)
                     self.summary['combat_commands'] += 1
             army = self.units.of_type(ARMY_TYPES)
