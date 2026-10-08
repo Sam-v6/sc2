@@ -366,3 +366,20 @@ It targets late TvT losses that had 66 SCVs on two bases and 1,300–2,000 banke
   - It never fires on Abyssal Reef: the scout sees no Marines before they arrive at about 183 s.
   - On Acropolis it turned a 652 s win into a 1139 s loss.
   - TvT training seeds 920000: 15/20 vs 16/20 (`logs/roadmap/tvt-rush-response-01`).
+
+## Update: rally the holding army at the Bunker (commit 9f140fe, scripted)
+
+The Abyssal Reef rush loss happened because Marines waited in the main, about 29 units from the natural Bunker.
+They only walked over once it finished, which was when the enemy's 8 Marines arrived.
+
+| Check | Before (saturation) | With Bunker rally |
+|---|---|---|
+| TvT training seeds 920000 (paired) | 16/20 | **18/20** (3 games better, 0 worse; Rush 4/4) |
+| Fresh familiar panel-05, seeds 878001 | 28/30 on 876001 | **27/30** (Z10 P10 T7) |
+| Fresh unseen maps newmaps-07, seeds 884001 | 38/45 on 896001 | **40/45** (Z15 P15 T10) |
+
+- Fresh totals: 67/75. The previous version scored 66/75 and the one before it 65/75. Z and P are 50/50 across these two panels.
+- Remaining losses are all TvT:
+  - The Abyssal Rush still loses on a fresh seed (345 s). The army chased the first 3 enemy Marines out of
+    the unfinished Bunker, and the Bunker finished empty.
+  - Macro and Power builds lose at 15–19 min to mech compositions.
