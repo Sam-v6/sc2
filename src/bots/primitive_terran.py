@@ -233,16 +233,11 @@ class PrimitiveTerranBot(BotAI):
         self.attacking = self.strategy_attack(state)
         threats = self.enemy_units.filter(lambda e: e.is_visible and e.can_attack_ground
                                          and any(e.distance_to(b) < 22 for b in self.townhalls))
-        bunkers = self.structures(U.BUNKER)
-        if threats and bunkers and not self.attacking:
-            # Fight from the Bunker rather than chasing the first arrivals into the open.
-            bunker = bunkers.closest_to(self.start_location)
-            if threats.closest_to(bunker).distance_to(bunker) < 12:
-                return bunker.position
         if threats:
             return threats.closest_to(self.start_location).position
         if not self.attacking:
             # Wait beside a Bunker, even one still building, so Marines can load the moment it finishes.
+            bunkers = self.structures(U.BUNKER)
             if bunkers:
                 return bunkers.closest_to(self.start_location).position
             return self.start_location.towards(self.game_info.map_center, 12)
