@@ -1,6 +1,6 @@
 import unittest
 
-from src.bots.macro_rules import depot_limit, spend_float
+from src.bots.macro_rules import depot_limit, saturation, spend_float
 
 
 def unit(kind, alliance=1, **fields):
@@ -34,6 +34,21 @@ class SpendFloatTests(unittest.TestCase):
         self.assertIs(spend_float(self.targets, one_base), self.targets)
         self.assertEqual(spend_float(self.targets, state([unit(18), unit(18)], minerals=600, vespene=400)), self.targets)
         self.assertIs(spend_float(self.targets, state([unit(18), unit(18)], minerals=3000, food_used=195)), self.targets)
+
+
+class SaturationTests(unittest.TestCase):
+    targets = dict(workers=64, gas_workers=12)
+
+    def test_caps_workers_by_ready_bases(self):
+        self.assertEqual(saturation(self.targets, state([unit(132), unit(18, build_progress=.5)]))['workers'], 28)
+        self.assertEqual(saturation(self.targets, state([unit(132), unit(18)]))['workers'], 50)
+        self.assertEqual(saturation(self.targets, state([unit(132)] * 3))['workers'], 64)
+
+    def test_caps_gas_workers_only_when_gas_floats_and_minerals_do_not(self):
+        bases = [unit(132)] * 3
+        self.assertEqual(saturation(self.targets, state(bases, minerals=100, vespene=900))['gas_workers'], 6)
+        self.assertEqual(saturation(self.targets, state(bases, minerals=500, vespene=900))['gas_workers'], 12)
+        self.assertEqual(saturation(self.targets, state(bases, minerals=100, vespene=700))['gas_workers'], 12)
 
 
 if __name__ == '__main__':

@@ -16,7 +16,7 @@ from sc2.ids.upgrade_id import UpgradeId as G
 from sc2.position import Point2
 from s2clientprotocol import sc2api_pb2 as pb
 
-from src.bots.macro_rules import depot_limit, spend_float
+from src.bots.macro_rules import depot_limit, saturation, spend_float
 from src.bots.terran_primitives import combat_command, mining_commands, scripted_targets, changes_order, scripted_attack, worker_defense_commands
 from src.learning.gameplay import Command, PlayerView, protocol_dict
 from src.learning.live import issue
@@ -252,7 +252,7 @@ class PrimitiveTerranBot(BotAI):
             state = self.view.observe(self.state.response_observation)
             state['map_size'] = [self.game_info.map_size.x, self.game_info.map_size.y]
             macro = self.state.game_loop >= self.next_macro
-            targets = self.strategy_targets(state, macro)
+            targets = saturation(self.strategy_targets(state, macro), state)
             commands = []
             if macro:
                 self.next_macro = self.state.game_loop+24

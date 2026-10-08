@@ -27,3 +27,15 @@ def spend_float(targets, state):
         targets['tanks'] = min(16, targets['tanks'] + (player['vespene'] - 200) // 150)
         targets['factories'] = min(4, max(targets['factories'], 2) + (player['vespene'] >= 1000))
     return targets
+
+
+def saturation(targets, state):
+    """Cap SCVs at what ready bases can mine (22 each, plus 6 to transfer) and,
+    while gas piles up and minerals do not, cap gas mining at 6 SCVs."""
+    player = state['player']
+    bases = sum(u['alliance'] == 1 and u['unit_type'] in (18, 132, 130) and u.get('build_progress', 1) == 1
+                for u in state['units'])
+    targets = dict(targets, workers=min(targets['workers'], 22 * bases + 6))
+    if player['vespene'] >= 800 and player['minerals'] < 400:
+        targets['gas_workers'] = min(targets['gas_workers'], 6)
+    return targets
