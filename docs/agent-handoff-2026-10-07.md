@@ -458,4 +458,9 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
 - Rejected (Sam-v6/terran-stutter 990af40): stutter v2 steps back only from enemies walking in (position change since
   the last step) and steps forward otherwise. **40/50**, killed/lost 1.06 vs the gate's 1.31.
   - Forward steps against a holding army are the worst case.
-- Testing: v3 (back only from enemies walking in, forward only onto sieged tanks) and siege at <15 alone.
+- Rejected (Sam-v6/terran-stutter 4eb1d79): stutter v3 steps back only from enemies walking in and forward only onto
+  sieged tanks. **41/50**, killed/lost 1.18 (about 10k steps).
+- Rejected (Sam-v6/terran-siege ba41e86): siege at <15 alone. **44/50**, killed/lost 1.26.
+- Every stutter variant lowers trades, even the narrowest. Suspect the mechanics: the plain move drops the unit's
+  attack-move toward the destination, and late steps cost shots. Next: a debug-spawned micro sandbox, which measures
+  micro far faster and with less noise than whole TvT games.
