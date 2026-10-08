@@ -361,3 +361,8 @@ It targets late TvT losses that had 66 SCVs on two bases and 1,300–2,000 banke
   - Marine rush on Abyssal Reef at about 5:40, in 2 of 3 Abyssal panels.
   - Army lost to widow mines, sieged tanks and Ravens at 13–15 min.
   - Banked minerals on two bases without taking a third (Power build).
+- Rejected: early-rush one-base response (commit fa7049c, reverted). Trigger: 4+ enemy Marines seen before 150 s,
+  or 3+ Barracks before 180 s.
+  - It never fires on Abyssal Reef: the scout sees no Marines before they arrive at about 183 s.
+  - On Acropolis it turned a 652 s win into a 1139 s loss.
+  - TvT training seeds 920000: 15/20 vs 16/20 (`logs/roadmap/tvt-rush-response-01`).
