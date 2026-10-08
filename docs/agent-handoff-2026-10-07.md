@@ -488,3 +488,17 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
   defending Marines).
 - Attacking a defended mixed or sieged army loses badly with any micro tried. Keeping the gate matters more than any
   micro tweak.
+
+## Stutter v1 in production (4cfa813): fresh-seed confirmation
+
+| Panel | Seeds | Result | Gate-only production |
+|---|---|---|---|
+| Familiar maps panel-08 | 910001 | **30/30** (Z10 P10 T10) | 29/30 |
+| Unseen maps newmaps-10 | 912001 | **45/45** (Z15 P15 T15) | 41/45 |
+
+- 75/75 VeryHard games, all completed Victories. Peak whole-host CPU 60%.
+  - Terran 25/25, vs 20/25 for the gate-only version and 19/25 before the gate.
+  - TvT wins took 549–1107 s.
+- Attribution: strategy (build targets, attack timing) comes from the learned imitation head with searched offsets
+  (zero for Terran). Combat micro, the engagement gate and macro rules are scripted.
+- Next: a second fresh 75-game confirmation (seeds 914001/916001) to rule out a lucky seed draw.
