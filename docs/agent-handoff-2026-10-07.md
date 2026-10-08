@@ -432,3 +432,7 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
   - By build: Power 8 vs 6, Macro 7 vs 6, Timing 10 vs 9.
   - Flipped to wins: 940014, 940016, 940017, 940031, 940039. Newly lost: 940042.
 - Needs fresh all-race panels before it counts.
+- Rejected (branch Sam-v6/terran-micro, commit 6298f12, not merged): on top of the gate, focus fire on the weakest
+  armed enemy in range plus sieging at <15 instead of <13. Same seeds: **37/50** vs the gate's 45/50.
+  - The first fight on 940010 killed 1,600 vs 2,475 with closest-first targeting.
+  - Lowest-HP focus spreads Marines away from the nearest threats.
