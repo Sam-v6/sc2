@@ -39,3 +39,17 @@ def saturation(targets, state):
     if player['vespene'] >= 800 and player['minerals'] < 400:
         targets['gas_workers'] = min(targets['gas_workers'], 6)
     return targets
+
+
+def rush_seen(state):
+    """An early Marine rush: 4+ enemy Marines seen before 150 s or 3+ Barracks before 180 s."""
+    seconds = state['game_loop'] / 22.4
+    enemy = [u['unit_type'] for u in state['units'] if u['alliance'] == 4]
+    return (seconds < 150 and enemy.count(48) >= 4) or (seconds < 180 and enemy.count(21) >= 3)
+
+
+def rush_response(targets, state, rush):
+    """After a seen rush, stay on one base with at least three Barracks until 300 s."""
+    if not rush or state['game_loop'] / 22.4 >= 300:
+        return targets
+    return dict(targets, bases=1, barracks=max(targets['barracks'], 3))
