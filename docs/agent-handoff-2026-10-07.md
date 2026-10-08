@@ -420,3 +420,15 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
 - TvT losses are Power and Macro builds at 14–19 min, plus an occasional Abyssal Reef Marine rush.
 - Next lever is combat decisions: engagement timing, tank siege before contact, Liberator answers. Small rule tweaks no
   longer move the paired 50-game TvT probe beyond ±2.
+
+## Update: TvT engagement gate (commit ab65a60, scripted, TvT only)
+
+- Fight logs of the TvT losses: at ~7 min the army attacks the enemy base with ~38 Marines and 0–1 tanks.
+  - Into 2–4 sieged tanks it loses 1,100–2,400 army value per fight while killing only 50–975.
+  - Fights at home are even or better.
+- Gate: attack only with ≥1.2× the army value of every enemy unit seen and not yet killed (tanks, mines, Liberators
+  count 1.5×). Once attacking, continue down to 0.8×. Always attack at 190 supply.
+- Same 50 TvT seeds (940000): **45/50** vs 41/50.
+  - By build: Power 8 vs 6, Macro 7 vs 6, Timing 10 vs 9.
+  - Flipped to wins: 940014, 940016, 940017, 940031, 940039. Newly lost: 940042.
+- Needs fresh all-race panels before it counts.
