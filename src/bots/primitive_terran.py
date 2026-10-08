@@ -236,6 +236,10 @@ class PrimitiveTerranBot(BotAI):
         if threats:
             return threats.closest_to(self.start_location).position
         if not self.attacking:
+            # Wait beside a Bunker, even one still building, so Marines can load the moment it finishes.
+            bunkers = self.structures(U.BUNKER)
+            if bunkers:
+                return bunkers.closest_to(self.start_location).position
             return self.start_location.towards(self.game_info.map_center, 12)
         # Remembered snapshots count: the engine drops them once their spot is seen empty.
         structures = self.enemy_structures.filter(lambda e: e.type_id != U.KD8CHARGE)
