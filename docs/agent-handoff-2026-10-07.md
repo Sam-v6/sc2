@@ -510,3 +510,20 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
 
 - Both confirmations: **148/150 (98.7%) vs VeryHard**: Zerg 50/50, Protoss 50/50, Terran 48/50.
 - The remaining weakness is the TvT Power build on the unseen maps.
+
+## Hard check with the same production code (4cfa813)
+
+| Panel | Seeds | Result |
+|---|---|---|
+| Familiar maps, Hard | 918001 | **30/30** |
+| Unseen maps, Hard | 918501 | **45/45** |
+
+## Status against the long goal
+
+- Fresh-seed results, every race and AI build on 5 maps:
+  - Hard: 75/75.
+  - VeryHard (the hardest non-cheating level): 148/150. Zerg 50/50, Protoss 50/50, Terran 48/50.
+- Attribution:
+  - Learned: build targets and attack timing (imitation head plus searched per-race offsets; zero for Terran).
+  - Scripted: macro rules, Bunker rally, TvT air answer, TvT engagement gate, stutter-step micro.
+- Remaining weakness: the Terran AI's Power build on unseen maps (2 losses in 150).
