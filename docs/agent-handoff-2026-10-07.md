@@ -436,3 +436,9 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
   armed enemy in range plus sieging at <15 instead of <13. Same seeds: **37/50** vs the gate's 45/50.
   - The first fight on 940010 killed 1,600 vs 2,475 with closest-first targeting.
   - Lowest-HP focus spreads Marines away from the nearest threats.
+- Gate on fresh familiar-maps panel-07 (seeds 906001): **29/30**; the loss is Terran Macro on Abyssal Reef.
+- Rejected (branch Sam-v6/terran-stutter, commit 3a895fb): stutter-step v1 always steps back during reload from
+  enemies with equal or shorter range (forward onto sieged tanks and enemies that outrange us), with the attack queued.
+  - Same seeds: 44/50 vs the gate's 45/50.
+  - Whole-game killed/lost 1.19 vs 1.31; net first-fight trade −5,375 vs −3,150.
+  - Stepping back only helps when the enemy is walking in. When we attack a defending army it just leaves range.
