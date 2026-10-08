@@ -1,0 +1,1552 @@
+{
+  "summary": {
+    "trials": 192,
+    "own_hp": 205.3046875,
+    "enemy_hp": 361.1652437845866,
+    "won": 1
+  },
+  "results": [
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520000
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 281.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 333.5,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 366.0,
+          "own_alive": 5,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 28.64285714285714
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 264.5,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 260.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 246.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 320.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 190.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 120.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 255.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 234.0,
+          "own_alive": 2,
+          "enemy_hp": 402.5,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 714.0,
+          "own_alive": 13,
+          "enemy_hp": 298.0,
+          "enemy_alive": 5,
+          "seconds": 30.071428571428612
+        }
+      ],
+      "wall_seconds": 33.738
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520001
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 25.0,
+          "own_alive": 1,
+          "enemy_hp": 212.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 105.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 52.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 225.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 215.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 162.0,
+          "own_alive": 2,
+          "enemy_hp": 333.5,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 210.0,
+          "own_alive": 2,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 193.0,
+          "own_alive": 2,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 318.145263671875,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 215.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 32.588
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520002
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 281.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 281.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 270.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 154.0,
+          "own_alive": 2,
+          "enemy_hp": 247.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 326.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 330.0,
+          "own_alive": 2,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 112.0,
+          "own_alive": 2,
+          "enemy_hp": 595.0,
+          "enemy_alive": 7,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 45.0,
+          "own_alive": 1,
+          "enemy_hp": 480.5,
+          "enemy_alive": 6,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 273.0,
+          "own_alive": 2,
+          "enemy_hp": 457.5,
+          "enemy_alive": 5,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 33.577
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520003
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 125.5,
+          "own_alive": 1,
+          "enemy_hp": 177.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 140.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 480.0,
+          "enemy_alive": 6,
+          "seconds": 21.5
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 596.0,
+          "enemy_alive": 10,
+          "seconds": 22.92857142857143
+        },
+        {
+          "own_hp": 230.0,
+          "own_alive": 2,
+          "enemy_hp": 281.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 340.0,
+          "own_alive": 2,
+          "enemy_hp": 440.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 320.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 185.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 142.0,
+          "own_alive": 1,
+          "enemy_hp": 53.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 150.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 5.0,
+          "own_alive": 1,
+          "enemy_hp": 600.0,
+          "enemy_alive": 6,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 240.0,
+          "own_alive": 2,
+          "enemy_hp": 520.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428612
+        }
+      ],
+      "wall_seconds": 31.876
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520004
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 165.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 629.0,
+          "own_alive": 10,
+          "enemy_hp": 120.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 330.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 165.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 74.0,
+          "own_alive": 2,
+          "enemy_hp": 220.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 255.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 425.0,
+          "enemy_alive": 5,
+          "seconds": 28.64285714285714
+        },
+        {
+          "own_hp": 85.0,
+          "own_alive": 1,
+          "enemy_hp": 440.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 285.0,
+          "own_alive": 2,
+          "enemy_hp": 485.0,
+          "enemy_alive": 5,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 345.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 560.0,
+          "enemy_alive": 8,
+          "seconds": 26.85714285714289
+        }
+      ],
+      "wall_seconds": 31.899
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520005
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 212.0,
+          "enemy_alive": 2,
+          "seconds": 26.500000000000004
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 93.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 225.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 200.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 97.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 270.0,
+          "own_alive": 2,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 164.5,
+          "own_alive": 2,
+          "enemy_hp": 220.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 408.0,
+          "enemy_alive": 4,
+          "seconds": 29.357142857142833
+        },
+        {
+          "own_hp": 25.0,
+          "own_alive": 1,
+          "enemy_hp": 587.0,
+          "enemy_alive": 9,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 269.0,
+          "own_alive": 2,
+          "enemy_hp": 530.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 350.56494140625,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 31.321
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520006
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 312.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 340.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 120.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 117.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 260.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 240.0,
+          "own_alive": 2,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 335.0,
+          "own_alive": 2,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 320.0,
+          "own_alive": 2,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 89.5,
+          "own_alive": 1,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 287.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 137.0,
+          "own_alive": 1,
+          "enemy_hp": 545.0,
+          "enemy_alive": 7,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 414.5,
+          "enemy_alive": 5,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 31.696
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520007
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 340.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 333.5,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 240.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 220.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 325.0,
+          "own_alive": 2,
+          "enemy_hp": 212.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 445.0,
+          "enemy_alive": 5,
+          "seconds": 29.35714285714286
+        },
+        {
+          "own_hp": 197.0,
+          "own_alive": 2,
+          "enemy_hp": 265.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 315.0,
+          "own_alive": 2,
+          "enemy_hp": 565.0,
+          "enemy_alive": 5,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 717.0,
+          "enemy_alive": 7,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 538.0,
+          "enemy_alive": 6,
+          "seconds": 27.928571428571445
+        }
+      ],
+      "wall_seconds": 34.068
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520008
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 325.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 212.0,
+          "enemy_alive": 2,
+          "seconds": 26.5
+        },
+        {
+          "own_hp": 170.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 290.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 420.0,
+          "enemy_alive": 4,
+          "seconds": 27.928571428571445
+        },
+        {
+          "own_hp": 250.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 20.5,
+          "own_alive": 1,
+          "enemy_hp": 440.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 265.0,
+          "own_alive": 2,
+          "enemy_hp": 220.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 600.0,
+          "enemy_alive": 6,
+          "seconds": 27.928571428571445
+        },
+        {
+          "own_hp": 151.0,
+          "own_alive": 1,
+          "enemy_hp": 374.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 229.0,
+          "own_alive": 2,
+          "enemy_hp": 499.0,
+          "enemy_alive": 5,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 32.0
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520009
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 264.5,
+          "own_alive": 2,
+          "enemy_hp": 175.0,
+          "enemy_alive": 1,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 752.0,
+          "own_alive": 12,
+          "enemy_hp": 160.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 212.0,
+          "own_alive": 2,
+          "enemy_hp": 315.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 179.0,
+          "own_alive": 2,
+          "enemy_hp": 175.0,
+          "enemy_alive": 1,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 240.0,
+          "own_alive": 2,
+          "enemy_hp": 247.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 325.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 325.0,
+          "own_alive": 2,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 187.0,
+          "own_alive": 2,
+          "enemy_hp": 39.41943359375,
+          "enemy_alive": 1,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 140.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 230.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 475.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 142.0,
+          "own_alive": 2,
+          "enemy_hp": 565.0,
+          "enemy_alive": 5,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 32.353
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520010
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 158.5,
+          "own_alive": 1,
+          "enemy_hp": 281.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 345.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 220.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 186.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 230.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 85.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 315.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 133.5,
+          "own_alive": 1,
+          "enemy_hp": 252.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 50.5,
+          "own_alive": 1,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 287.0,
+          "own_alive": 2,
+          "enemy_hp": 432.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 546.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 32.833
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520011
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 281.0,
+          "own_alive": 2,
+          "enemy_hp": 71.0,
+          "enemy_alive": 1,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 345.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 264.5,
+          "own_alive": 2,
+          "enemy_hp": 150.0,
+          "enemy_alive": 1,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 241.0,
+          "own_alive": 2,
+          "enemy_hp": 56.5,
+          "enemy_alive": 1,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 770.0,
+          "own_alive": 12,
+          "enemy_hp": 5.0,
+          "enemy_alive": 1,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 315.0,
+          "own_alive": 2,
+          "enemy_hp": 419.0,
+          "enemy_alive": 5,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 450.0,
+          "enemy_alive": 6,
+          "seconds": 28.285714285714306
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 468.0,
+          "enemy_alive": 8,
+          "seconds": 27.571428571428555
+        },
+        {
+          "own_hp": 330.0,
+          "own_alive": 2,
+          "enemy_hp": 179.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 549.0,
+          "own_alive": 9,
+          "enemy_hp": 304.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 212.0,
+          "own_alive": 2,
+          "enemy_hp": 170.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 31.104
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520012
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 380.0,
+          "enemy_alive": 6,
+          "seconds": 22.214285714285715
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 132.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 245.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 411.0,
+          "enemy_alive": 6,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 221.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 245.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 161.0,
+          "own_alive": 2,
+          "enemy_hp": 440.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 110.0,
+          "own_alive": 1,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 255.0,
+          "own_alive": 2,
+          "enemy_hp": 355.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 106.0,
+          "own_alive": 1,
+          "enemy_hp": 389.5,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 30.661
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520013
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 333.5,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 141.0,
+          "enemy_alive": 1,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 202.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 280.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 281.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 1.5,
+          "own_alive": 1,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 75.0,
+          "own_alive": 1,
+          "enemy_hp": 355.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 61.0,
+          "own_alive": 1,
+          "enemy_hp": 286.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 40.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 230.0,
+          "own_alive": 2,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 1081.0,
+          "enemy_alive": 15,
+          "seconds": 24.714285714285666
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 268.5,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 32.06
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520014
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 85.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 220.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 100.0,
+          "own_alive": 1,
+          "enemy_hp": 410.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 132.0,
+          "own_alive": 2,
+          "enemy_hp": 395.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 340.0,
+          "own_alive": 2,
+          "enemy_hp": 440.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 158.5,
+          "own_alive": 1,
+          "enemy_hp": 248.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 4.0,
+          "own_alive": 1,
+          "enemy_hp": 440.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428612
+        },
+        {
+          "own_hp": 250.0,
+          "own_alive": 2,
+          "enemy_hp": 440.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 295.0,
+          "own_alive": 2,
+          "enemy_hp": 485.0,
+          "enemy_alive": 5,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 183.0,
+          "own_alive": 2,
+          "enemy_hp": 440.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 34.035
+    },
+    {
+      "job": {
+        "variant": "combat",
+        "scenario": "mixed",
+        "seed": 520015
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 150.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 281.0,
+          "enemy_alive": 2,
+          "seconds": 21.5
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 320.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 350.0,
+          "own_alive": 2,
+          "enemy_hp": 350.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 175.0,
+          "own_alive": 1,
+          "enemy_hp": 338.09716796875,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 345.0,
+          "own_alive": 2,
+          "enemy_hp": 440.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 440.0,
+          "enemy_alive": 4,
+          "seconds": 28.642857142857167
+        },
+        {
+          "own_hp": 95.0,
+          "own_alive": 1,
+          "enemy_hp": 475.0,
+          "enemy_alive": 5,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 38.0,
+          "own_alive": 1,
+          "enemy_hp": 685.5,
+          "enemy_alive": 7,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 118.0,
+          "own_alive": 1,
+          "enemy_hp": 655.0,
+          "enemy_alive": 9,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 30.578
+    }
+  ],
+  "bindings": {
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/micro_sandbox_02.py": "aa54a3dea831d5752ac8536efc13a8d2bca8cd306f47057449ca29676c57ff0b",
+    "src/bots/terran_primitives.py": "f270d8bf2c74ce7b8332878c94440387026d687caffd5b472b0e9be6fd9f651f",
+    "src/learning/gameplay.py": "ea2595c84270471f944759b994d6b2ffdacb34a2ba63497370b64903ab0b53c4",
+    "src/learning/live.py": "5d2921c05fed6f69f398151259a4e8080174bd6e65252285301b913a785ad8da"
+  }
+}

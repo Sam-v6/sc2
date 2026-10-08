@@ -464,3 +464,27 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
 - Every stutter variant lowers trades, even the narrowest. Suspect the mechanics: the plain move drops the unit's
   attack-move toward the destination, and late steps cost shots. Next: a debug-spawned micro sandbox, which measures
   micro far faster and with less noise than whole TvT games.
+
+## Micro sandbox (logs/roadmap/micro_sandbox_0{1,2}.py)
+
+- Debug-spawned fights against the VeryHard Terran AI. The AI controls its own side and pulls units home from the open
+  map, so its side spawns 16 outside its base and ours 14 further out attacks in.
+- v2 removes every enemy army unit before each spawn: 16 games × 12 fights per variant on identical seeds, net HP =
+  our HP left − enemy HP left.
+- v1 (8 games × 8 fights, the AI's army leaking in) was too noisy to separate variants.
+
+| Variant | Marines 20 v 20 | Mixed 16+2 tanks each | 24 Marines into 10 + 2 sieged |
+|---|---|---|---|
+| Production (gate ab65a60) | −71 ± 24 | −156 | −417 |
+| Plain attack-move | −106 | | |
+| Engine targeting (Sam-v6/terran-engine-target 5432fdb) | −113 | | |
+| Engine targeting + stutter (Sam-v6/terran-engine-stutter 76961c5) | −23 | | |
+| **Stutter v1 (3a895fb)** | **+8** (paired +79 ± 30) | −135 | −368 |
+| Stutter v1 + Marine tank dive (Sam-v6/terran-dive ee70d61) | | −326 | −662 |
+
+- Stutter v1 is the best micro in every scenario. Its whole-game TvT probe (44/50 vs 45/50) was within noise.
+  It goes to production for fresh-panel confirmation.
+- Rejected: explicit targets replaced by engine targeting; Marine dives onto sieged tanks (Marines die running past the
+  defending Marines).
+- Attacking a defended mixed or sieged army loses badly with any micro tried. Keeping the gate matters more than any
+  micro tweak.
