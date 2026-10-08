@@ -455,3 +455,7 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
   The Air tie was winning on trades.
 - Peak whole-host CPU 62%.
 - The gate stays in production.
+- Rejected (Sam-v6/terran-stutter 990af40): stutter v2 steps back only from enemies walking in (position change since
+  the last step) and steps forward otherwise. **40/50**, killed/lost 1.06 vs the gate's 1.31.
+  - Forward steps against a holding army are the worst case.
+- Testing: v3 (back only from enemies walking in, forward only onto sieged tanks) and siege at <15 alone.
