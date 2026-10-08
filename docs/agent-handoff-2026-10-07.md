@@ -442,3 +442,16 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
   - Same seeds: 44/50 vs the gate's 45/50.
   - Whole-game killed/lost 1.19 vs 1.31; net first-fight trade −5,375 vs −3,150.
   - Stepping back only helps when the enemy is walking in. When we attack a defending army it just leaves range.
+
+## Gate confirmation on fresh seeds (production = ab65a60: saturation + Bunker rally + air answer + engagement gate)
+
+| Panel | Seeds | Result | vs previous production |
+|---|---|---|---|
+| Familiar maps panel-07 | 906001 | **29/30** (Z10 P10 T9) | 29/30 (panel-06) |
+| Unseen maps newmaps-09 | 908001 | **41/45** (Z15 P15 T11) | 39/45 (newmaps-08) |
+
+- All 75 games: Zerg 25/25, Protoss 25/25, Terran 20/25 (80%, vs 19/25 for the previous production).
+- TvT non-wins: Macro on Abyssal Reef; Timing on Catalyst; Air on Odyssey. Air and Power on Catalyst tied at 20 min.
+  The Air tie was winning on trades.
+- Peak whole-host CPU 62%.
+- The gate stays in production.
