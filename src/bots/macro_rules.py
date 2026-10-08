@@ -21,8 +21,8 @@ def spend_float(targets, state):
     if bases < 2 or player['food_used'] >= 190:
         return targets
     targets = dict(targets)
-    if player['minerals'] >= 500:
-        targets['barracks'] = min(16, targets['barracks'] + min(8, (player['minerals'] - 300) // 200))
+    if player['minerals'] >= 700:
+        targets['barracks'] = min(16, targets['barracks'] + min(8, (player['minerals'] - 400) // 300))
     if player['vespene'] >= 500:
         targets['tanks'] = min(16, targets['tanks'] + (player['vespene'] - 200) // 150)
         targets['factories'] = min(4, max(targets['factories'], 2) + (player['vespene'] >= 1000))
