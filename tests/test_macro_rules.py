@@ -1,6 +1,6 @@
 import unittest
 
-from src.bots.macro_rules import depot_limit, saturation, spend_float
+from src.bots.macro_rules import depot_limit, regroup, saturation, spend_float
 
 
 def unit(kind, alliance=1, **fields):
@@ -49,6 +49,29 @@ class SaturationTests(unittest.TestCase):
         self.assertEqual(saturation(self.targets, state(bases, minerals=100, vespene=900))['gas_workers'], 6)
         self.assertEqual(saturation(self.targets, state(bases, minerals=500, vespene=900))['gas_workers'], 12)
         self.assertEqual(saturation(self.targets, state(bases, minerals=100, vespene=700))['gas_workers'], 12)
+
+
+class RegroupTests(unittest.TestCase):
+    def test_attack_continues_until_it_loses_forty_percent_of_its_peak(self):
+        memory = {}
+        self.assertTrue(regroup(True, 50, memory))
+        self.assertTrue(regroup(True, 80, memory))
+        self.assertTrue(regroup(True, 49, memory))
+        self.assertFalse(regroup(True, 48, memory))
+
+    def test_after_call_off_holds_until_army_exceeds_the_old_peak(self):
+        memory = {}
+        regroup(True, 80, memory)
+        regroup(True, 40, memory)
+        self.assertFalse(regroup(True, 80, memory))
+        self.assertTrue(regroup(True, 81, memory))
+        self.assertEqual(memory, dict(peak=81))
+
+    def test_no_attack_resets_the_peak(self):
+        memory = {}
+        regroup(True, 80, memory)
+        self.assertFalse(regroup(False, 70, memory))
+        self.assertTrue(regroup(True, 45, memory))
 
 
 if __name__ == '__main__':
