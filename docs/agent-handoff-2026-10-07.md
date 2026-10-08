@@ -501,4 +501,12 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
   - TvT wins took 549–1107 s.
 - Attribution: strategy (build targets, attack timing) comes from the learned imitation head with searched offsets
   (zero for Terran). Combat micro, the engagement gate and macro rules are scripted.
-- Next: a second fresh 75-game confirmation (seeds 914001/916001) to rule out a lucky seed draw.
+- Second fresh confirmation, to rule out a lucky seed draw:
+
+| Panel | Seeds | Result |
+|---|---|---|
+| Familiar maps panel-09 | 914001 | **30/30** |
+| Unseen maps newmaps-11 | 916001 | **43/45**; both losses are Terran Power (Catalyst, Odyssey) |
+
+- Both confirmations: **148/150 (98.7%) vs VeryHard**: Zerg 50/50, Protoss 50/50, Terran 48/50.
+- The remaining weakness is the TvT Power build on the unseen maps.
