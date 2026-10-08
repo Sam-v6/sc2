@@ -1,0 +1,108 @@
+import math
+import unittest
+from src.learning.production_primitives import primitive_assistance, scripted_army_destination, supply_assistance_needed
+from tests.test_terran_primitives import unit, TYPES
+
+DATA = {**TYPES, 45: dict(name='SCV'), 48: dict(weapons=[dict(type=3, range=5)], attributes=[3], food_required=1),
+        51: dict(weapons=[dict(type=1, range=6)], attributes=[3], food_required=2),
+        35: dict(weapons=[dict(type=2, range=9)], food_required=2),
+        54: dict(weapons=[], food_required=2), 19: dict(attributes=[8]),
+        132: dict(attributes=[8]), 21: dict(name='Barracks', attributes=[8])}
+
+
+def state(units):
+    return dict(units=units, player=dict(minerals=200, vespene=0), upgrades=[], game_loop=24)
+
+
+class ProductionPrimitiveTests(unittest.TestCase):
+    def test_reactive_supply_counts_paid_queues_and_respects_pending_depots_and_cap(self):
+        st = state([unit(1, 18), unit(2, 132)])
+        st['player'].update(food_cap=23, food_used=16)
+        data = dict(abilities=[dict(ability_id=524, friendly_name='Train SCV')],
+                    units=[dict(unit_id=45, ability_id=524, food_required=1)])
+        self.assertFalse(supply_assistance_needed(st, data))
+        st['units'][0]['orders'] = [dict(ability_id=524, progress=0)] * 2
+        self.assertTrue(supply_assistance_needed(st, data))
+        self.assertEqual(st['player']['food_used'], 16)
+        st['units'].append(unit(3, 19, build_progress=.5))
+        self.assertFalse(supply_assistance_needed(st, data))
+        st['units'].pop()
+        st['units'].append(dict(unit(3, 45), orders=[dict(ability_id=319)]))
+        self.assertFalse(supply_assistance_needed(st, data))
+        st['units'].pop()
+        st['player'].update(food_cap=200, food_used=200)
+        self.assertFalse(supply_assistance_needed(st, data))
+
+    def test_clearance_avoids_structures_and_holds_units_out_until_landing_ends(self):
+        marine = unit(1, 48, x=10, y=10)
+        st = state([marine, unit(2, 21, x=13.25, y=10, radius=1.8125)])
+        held = set()
+        def assist(points):
+            return primitive_assistance(st, set(), DATA, {}, (10, 10), lambda p: True,
+                                        False, points, held)
+        move = next(c for c in assist([(10, 10)]) if c.units == (1,))
+        self.assertGreater(math.dist(move.target_point, (13.25, 10)), 2.5)
+        marine['position'] = list(move.target_point)
+        marine['orders'] = []
+        self.assertFalse(any(c.units == (1,) for c in assist([(10, 10)])))
+        self.assertIn(1, held)
+        self.assertTrue(any(c.units == (1,) for c in assist([])))
+        self.assertFalse(held)
+
+    def test_landing_clearance_overrides_gathering_and_holds_existing_move(self):
+        marine = unit(1, 48, x=10, y=10)
+        st = state([marine, unit(2, 21, x=10, y=10),
+                    unit(3, 35, x=10, y=10, is_flying=True),
+                    unit(4, 48, alliance=4, x=10, y=10)])
+        def assist():
+            return primitive_assistance(st, set(), DATA, {}, (10, 10), lambda p: True,
+                                        False, [(10, 10)])
+        move = next(c for c in assist() if c.units == (1,))
+        self.assertEqual(move.ability, 16)
+        self.assertGreater(math.dist(move.target_point, (10, 10)), 2.5)
+        marine['orders'] = [dict(ability_id=16, target_world_space_pos=dict(
+            x=move.target_point[0], y=move.target_point[1]))]
+        self.assertFalse(any(c.units == (1,) for c in assist()))
+        self.assertFalse(any(c.units in ((2,), (4,)) for c in assist()))
+
+    def commands(self, st, selected=(), mining=True):
+        return primitive_assistance(st, set(selected), DATA, {}, (30, 30), lambda p: True, mining)
+
+    def test_selected_casters_and_returning_workers_are_not_overridden(self):
+        returning = unit(1, 45)
+        returning['orders'] = [dict(ability_id=296)]
+        selected = unit(2, 45)
+        patch = unit(10, 999, alliance=3, mineral_contents=1000)
+        st = state([returning, selected, patch, unit(20, 132)])
+        self.assertEqual(self.commands(st, [2]), [])
+
+    def test_no_production_is_invented_and_support_claims_one_order_per_actor(self):
+        st = state([unit(1, 132, energy=50), unit(2, 19),
+                    unit(3, 54, energy=50, x=10), unit(4, 48, health=20, health_max=55, x=12),
+                    unit(5, 999, alliance=3, mineral_contents=1000)])
+        commands = self.commands(st, [4])
+        self.assertEqual({c.ability for c in commands}, {171, 556, 386})
+        actors = [c.units[0] for c in commands]
+        self.assertEqual(len(actors), len(set(actors)))
+        self.assertNotIn(4, actors)
+
+    def test_fighter_follows_the_ground_force_without_an_air_target(self):
+        commands = self.commands(state([unit(1, 35), unit(2, 51, x=5, y=5)]), mining=False)
+        fighter = next(c for c in commands if c.units == (1,))
+        self.assertEqual(fighter.target_point, (5, 5))
+
+    def test_interrupted_building_gets_a_worker_without_mining_overwriting_it(self):
+        st = state([unit(1, 45), unit(2, 21, x=4, build_progress=.5), unit(3, 132),
+                    unit(4, 999, alliance=3, mineral_contents=1000)])
+        commands = self.commands(st)
+        worker = [c for c in commands if c.units == (1,)]
+        self.assertEqual(len(worker), 1)
+        self.assertEqual((worker[0].ability, worker[0].target_unit), (1, 2))
+
+    def test_marauders_count_toward_attack_strength_but_air_support_does_not(self):
+        st = state([unit(i, 51) for i in range(20)] + [unit(100+i, 35) for i in range(8)])
+        _, attacking, _ = scripted_army_destination(st, DATA, (0, 0), (100, 100), (50, 50), [], False, 0)
+        self.assertTrue(attacking)
+        st['units'] = [unit(100+i, 35) for i in range(8)]
+        _, attacking, _ = scripted_army_destination(st, DATA, (0, 0), (100, 100), (50, 50), [], True, 0)
+        self.assertFalse(attacking)

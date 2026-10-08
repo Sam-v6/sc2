@@ -1,0 +1,411 @@
+{
+  "wins": 44,
+  "games": 50,
+  "rows": [
+    {
+      "seed": 940000,
+      "build": "Rush",
+      "map": "AcropolisLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 630.7142857142858
+    },
+    {
+      "seed": 940001,
+      "build": "Rush",
+      "map": "AbyssalReefLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 564.6428571428572
+    },
+    {
+      "seed": 940002,
+      "build": "Rush",
+      "map": "OdysseyLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 533.2142857142858
+    },
+    {
+      "seed": 940003,
+      "build": "Rush",
+      "map": "InterloperLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 580.3571428571429
+    },
+    {
+      "seed": 940004,
+      "build": "Rush",
+      "map": "CatalystLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 760.3571428571429
+    },
+    {
+      "seed": 940005,
+      "build": "Timing",
+      "map": "AcropolisLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 692.5
+    },
+    {
+      "seed": 940006,
+      "build": "Timing",
+      "map": "AbyssalReefLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 874.6428571428572
+    },
+    {
+      "seed": 940007,
+      "build": "Timing",
+      "map": "OdysseyLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 598.2142857142858
+    },
+    {
+      "seed": 940008,
+      "build": "Timing",
+      "map": "InterloperLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 578.2142857142858
+    },
+    {
+      "seed": 940009,
+      "build": "Timing",
+      "map": "CatalystLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 635.3571428571429
+    },
+    {
+      "seed": 940010,
+      "build": "Power",
+      "map": "AcropolisLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 958.5714285714287
+    },
+    {
+      "seed": 940011,
+      "build": "Power",
+      "map": "AbyssalReefLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 756.0714285714287
+    },
+    {
+      "seed": 940012,
+      "build": "Power",
+      "map": "OdysseyLE",
+      "status": "completed",
+      "result": "Defeat",
+      "seconds": 968.9285714285714
+    },
+    {
+      "seed": 940013,
+      "build": "Power",
+      "map": "InterloperLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 660.7142857142858
+    },
+    {
+      "seed": 940014,
+      "build": "Power",
+      "map": "CatalystLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 727.1428571428572
+    },
+    {
+      "seed": 940015,
+      "build": "Macro",
+      "map": "AcropolisLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 1113.9285714285716
+    },
+    {
+      "seed": 940016,
+      "build": "Macro",
+      "map": "AbyssalReefLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 792.5
+    },
+    {
+      "seed": 940017,
+      "build": "Macro",
+      "map": "OdysseyLE",
+      "status": "completed",
+      "result": "Defeat",
+      "seconds": 880.0
+    },
+    {
+      "seed": 940018,
+      "build": "Macro",
+      "map": "InterloperLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 825.3571428571429
+    },
+    {
+      "seed": 940019,
+      "build": "Macro",
+      "map": "CatalystLE",
+      "status": "completed",
+      "result": "Defeat",
+      "seconds": 909.2857142857143
+    },
+    {
+      "seed": 940020,
+      "build": "Air",
+      "map": "AcropolisLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 568.2142857142858
+    },
+    {
+      "seed": 940021,
+      "build": "Air",
+      "map": "AbyssalReefLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 647.8571428571429
+    },
+    {
+      "seed": 940022,
+      "build": "Air",
+      "map": "OdysseyLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 590.0
+    },
+    {
+      "seed": 940023,
+      "build": "Air",
+      "map": "InterloperLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 657.1428571428572
+    },
+    {
+      "seed": 940024,
+      "build": "Air",
+      "map": "CatalystLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 640.3571428571429
+    },
+    {
+      "seed": 940025,
+      "build": "Rush",
+      "map": "AcropolisLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 736.7857142857143
+    },
+    {
+      "seed": 940026,
+      "build": "Rush",
+      "map": "AbyssalReefLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 926.4285714285714
+    },
+    {
+      "seed": 940027,
+      "build": "Rush",
+      "map": "OdysseyLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 632.8571428571429
+    },
+    {
+      "seed": 940028,
+      "build": "Rush",
+      "map": "InterloperLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 527.5
+    },
+    {
+      "seed": 940029,
+      "build": "Rush",
+      "map": "CatalystLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 648.5714285714287
+    },
+    {
+      "seed": 940030,
+      "build": "Timing",
+      "map": "AcropolisLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 689.2857142857143
+    },
+    {
+      "seed": 940031,
+      "build": "Timing",
+      "map": "AbyssalReefLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 702.8571428571429
+    },
+    {
+      "seed": 940032,
+      "build": "Timing",
+      "map": "OdysseyLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 568.5714285714286
+    },
+    {
+      "seed": 940033,
+      "build": "Timing",
+      "map": "InterloperLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 754.2857142857143
+    },
+    {
+      "seed": 940034,
+      "build": "Timing",
+      "map": "CatalystLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 594.6428571428572
+    },
+    {
+      "seed": 940035,
+      "build": "Power",
+      "map": "AcropolisLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 658.9285714285714
+    },
+    {
+      "seed": 940036,
+      "build": "Power",
+      "map": "AbyssalReefLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 878.9285714285714
+    },
+    {
+      "seed": 940037,
+      "build": "Power",
+      "map": "OdysseyLE",
+      "status": "completed",
+      "result": "Defeat",
+      "seconds": 801.0714285714287
+    },
+    {
+      "seed": 940038,
+      "build": "Power",
+      "map": "InterloperLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 791.7857142857143
+    },
+    {
+      "seed": 940039,
+      "build": "Power",
+      "map": "CatalystLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 1003.2142857142858
+    },
+    {
+      "seed": 940040,
+      "build": "Macro",
+      "map": "AcropolisLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 860.0
+    },
+    {
+      "seed": 940041,
+      "build": "Macro",
+      "map": "AbyssalReefLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 752.5
+    },
+    {
+      "seed": 940042,
+      "build": "Macro",
+      "map": "OdysseyLE",
+      "status": "completed",
+      "result": "Defeat",
+      "seconds": 1085.357142857143
+    },
+    {
+      "seed": 940043,
+      "build": "Macro",
+      "map": "InterloperLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 822.1428571428572
+    },
+    {
+      "seed": 940044,
+      "build": "Macro",
+      "map": "CatalystLE",
+      "status": "completed",
+      "result": "Defeat",
+      "seconds": 1161.7857142857144
+    },
+    {
+      "seed": 940045,
+      "build": "Air",
+      "map": "AcropolisLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 653.5714285714287
+    },
+    {
+      "seed": 940046,
+      "build": "Air",
+      "map": "AbyssalReefLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 631.7857142857143
+    },
+    {
+      "seed": 940047,
+      "build": "Air",
+      "map": "OdysseyLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 617.5
+    },
+    {
+      "seed": 940048,
+      "build": "Air",
+      "map": "InterloperLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 590.3571428571429
+    },
+    {
+      "seed": 940049,
+      "build": "Air",
+      "map": "CatalystLE",
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 817.1428571428572
+    }
+  ],
+  "bindings": {
+    "src/bots/primitive_terran.py": "7742aaceaa588e2aa4b471a867a1196288531ded393b2464ee7d5f6c5d2be8df",
+    "src/bots/terran_primitives.py": "a921e4713717aaf7fa7ebadc8d39292b6d7a9c0d8594336d79e4d00e31ca515d",
+    "src/bots/macro_rules.py": "a82078710ad24a46ee194ac49696dac550b17bdec5634f8f1140cab09fcaf62a"
+  }
+}

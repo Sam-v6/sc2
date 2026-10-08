@@ -2,13 +2,13 @@
 from sc2.bot_ai import BotAI
 
 # Base imports
-from loguru import logger
 from datetime import datetime
 import os
-import json
+from uuid import uuid4
 
 # Additional imports
 import pandas as pd
+from src.path import SC2_VOID_BOT_HOME
 
 class VoidBotBase(BotAI):
 
@@ -19,12 +19,15 @@ class VoidBotBase(BotAI):
     # Default on start, sets up logging
     async def on_start(self):
 
+        self.started = False
+        self.callback_error = None
+
         if os.getenv("DEV"):
             # Setup log paths
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             map_name = self.game_info.map_name.replace(" ", "_")
-            base_filename = f"{self.__class__.__name__}_{map_name}_{timestamp}"
-            log_dir = os.path.join(os.getenv("VOID_BOT_HOME"), "logs")
+            base_filename = f"{self.__class__.__name__}_{map_name}_{self.enemy_race}_{timestamp}_{uuid4().hex[:8]}"
+            log_dir = os.path.join(SC2_VOID_BOT_HOME, "logs")
             os.makedirs(log_dir, exist_ok=True)
             self.pandas_csv_path = os.path.join(log_dir, base_filename + ".csv")
 
@@ -32,10 +35,17 @@ class VoidBotBase(BotAI):
             self.stat_keys = [stat[0] for stat in self.state.score.summary]
 
             # Create empty DataFrame with 'game_time' + stat keys
-            self.df = pd.DataFrame(columns=["game_time"] + self.stat_keys)
+            self.rows = []
 
         # Call the custom method
-        await self.custom_on_start()
+        try:
+            await self.custom_on_start()
+            if hasattr(self, 'requested_game_step'):
+                self.client.game_step = self.requested_game_step
+            self.started = True
+        except Exception as error:
+            self.callback_error = repr(error)
+            raise
 
     # Default on step, calls custom on step
     async def on_step(self, iteration):
@@ -47,10 +57,14 @@ class VoidBotBase(BotAI):
             row.update(stats)
 
             # Append row
-            self.df.loc[len(self.df)] = row
+            self.rows.append(row)
 
         # Call custom on step
-        await self.custom_on_step(iteration)
+        try:
+            await self.custom_on_step(iteration)
+        except Exception as error:
+            self.callback_error = repr(error)
+            raise
 
     # Custom on step, can be overridden by each bot
     async def custom_on_step(self, iteration):
@@ -61,7 +75,9 @@ class VoidBotBase(BotAI):
 
         if os.getenv("DEV"):
             # Save to CSV
-            self.df.to_parquet(self.pandas_csv_path.replace(".csv", ".parquet"), index=False)
+            pd.DataFrame.from_records(self.rows, columns=["game_time"] + self.stat_keys).to_parquet(
+                self.pandas_csv_path.replace(".csv", ".parquet"), index=False
+            )
 
         # Get and specific bot logic
         await self.custom_on_end(game_result)

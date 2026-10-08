@@ -1,0 +1,65 @@
+{
+  "train": {
+    "exact": {
+      "workers": 0.27527719736099243,
+      "bases": 0.8420994877815247,
+      "barracks": 0.7960187196731567,
+      "factories": 0.9305306673049927,
+      "starports": 0.9471264481544495,
+      "engineering_bays": 0.9127300381660461,
+      "refineries": 0.7973531484603882,
+      "gas_workers": 0.6071996092796326,
+      "tanks": 0.7692351937294006,
+      "attack": 0.9875977635383606
+    },
+    "within_one": {
+      "workers": 0.5279421806335449,
+      "bases": 0.9966849684715271,
+      "barracks": 0.9069023132324219,
+      "factories": 0.9919444918632507,
+      "starports": 0.9926372766494751,
+      "engineering_bays": 0.9829527735710144,
+      "refineries": 0.9247947335243225,
+      "gas_workers": 0.6855962872505188,
+      "tanks": 0.9131777882575989
+    },
+    "frames": 1351129
+  },
+  "held_out": {
+    "exact": {
+      "workers": 0.2200121283531189,
+      "bases": 0.8327422738075256,
+      "barracks": 0.7357800006866455,
+      "factories": 0.9164202809333801,
+      "starports": 0.932868480682373,
+      "engineering_bays": 0.9080759882926941,
+      "refineries": 0.7986764907836914,
+      "gas_workers": 0.5943693518638611,
+      "tanks": 0.7394412159919739,
+      "attack": 0.9882895350456238
+    },
+    "within_one": {
+      "workers": 0.480805903673172,
+      "bases": 0.995540976524353,
+      "barracks": 0.886431097984314,
+      "factories": 0.9925245642662048,
+      "starports": 0.9914371371269226,
+      "engineering_bays": 0.9838632941246033,
+      "refineries": 0.9162344932556152,
+      "gas_workers": 0.6685118675231934,
+      "tanks": 0.897534966468811
+    },
+    "frames": 182999
+  },
+  "final_batch_loss": 6.298778057098389,
+  "games": 2219,
+  "held_out_games": 274,
+  "hidden": 128,
+  "epochs": 40,
+  "policy_sha256": "3d9403a65ab151a6ade82d5cc625748e456c0cf7b9fcbc3585c0d78b6afc6404",
+  "bindings": {
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy_human_fit_01.py": "0457065a247bb82e9bbff65f84e989d2af38a24cc2c9d2291d6a6dbf25f06ad5",
+    "src/learning/strategy_policy.py": "1e330d21aaccc9006673648caf3f4222d2f49734034f354913e17526c49c5e2a",
+    "logs/roadmap/replay-strategy-3161-01/receipts.jsonl": "4c95a172eaf8e7fe86323ebe9d09efd72cc67558b773ee3cdeaea1fa20958d85"
+  }
+}

@@ -1,0 +1,169 @@
+import io
+import unittest
+from collections import Counter
+from types import SimpleNamespace as NS
+from unittest.mock import AsyncMock, Mock, patch
+from s2clientprotocol import sc2api_pb2 as pb, query_pb2 as q
+from src.learning.production_goal_play import ProductionGoalBot
+from src.learning.production_ledger import ProductionLedger
+from src.learning.production_scout import WorkerScout
+from tests.test_terran_primitives import unit
+
+
+class GoalFlowTests(unittest.IsolatedAsyncioTestCase):
+    def bot(self):
+        bot = ProductionGoalBot.__new__(ProductionGoalBot)
+        st = dict(units=[unit(10, 18)], game_loop=24, upgrades=[], player=dict(minerals=50, vespene=0))
+        bot.view = NS(observe=Mock(return_value=st))
+        bot.state = NS(response_observation=None)
+        bot.game_info = NS(map_size=NS(x=64, y=64), player_start_location=(0,0), start_locations=[(30,30)])
+        bot.inventory_library = None
+        bot.scout = WorkerScout()
+        bot.scout_commands = []
+        bot.next_plan = bot.frames = 0
+        bot.prior = None
+        bot.intent_mode = False
+        bot.record_outcomes = Mock()
+        bot.vocabulary, bot.products, bot.profile, bot.model = [], {}, {}, {}
+        bot.requested, bot.acknowledged, bot.blocks, bot.result_counts = Counter(), Counter(), Counter(), Counter()
+        bot.last_sent, bot.ledger = {}, ProductionLedger()
+        bot.catalog, bot.unit_names, bot.units_by_id = {1: {}, 524: {}}, {}, {}
+        bot.goals = {name: dict(ability=ability, minerals=cost, gas=0, upgrade=None,
+                               descriptor=dict(target=1), unit_type=45)
+                     for name, ability, cost in [('expensive', 1, 100), ('worker', 524, 50)]}
+        available = q.ResponseQuery(abilities=[q.ResponseQueryAvailableAbilities(unit_tag=10,
+            abilities=[dict(ability_id=a) for a in (1, 524)])])
+        bot.client = NS(_execute=AsyncMock(return_value=pb.Response(query=available)))
+        bot.assistance_destination = (30, 30)
+        bot.assistance = Mock(return_value=[])
+        bot.stream = io.StringIO()
+        return bot
+
+    async def test_unaffordable_forecast_does_not_block_an_affordable_learned_request(self):
+        bot = self.bot()
+        with patch('src.learning.production_goal_play.current_features', return_value=None), \
+             patch('src.learning.production_goal_play.predict_goals', return_value=({'expensive': 1, 'worker': 1}, NS(tolist=lambda: [1, 1]))), \
+             patch('src.learning.production_goal_play.eligible_actors', return_value=[unit(10, 18)]), \
+             patch('src.learning.production_goal_play.resolve_production_placement', side_effect=self.resolved), \
+             patch('src.learning.production_goal_play.issue', new_callable=AsyncMock, return_value=pb.ResponseAction(result=[1])) as issue:
+            await bot.on_step(0)
+            issue.assert_awaited_once()
+            self.assertEqual([c.ability for c in issue.call_args.args[1]], [524])
+            self.assertEqual(bot.acknowledged['worker'], 1)
+
+    async def resolved(self, client, command, *args):
+        return [command], []
+
+    async def test_micro_runs_between_forecasts_and_keeps_pending_casters_protected(self):
+        from src.learning.gameplay import Command
+        bot = self.bot()
+        bot.next_plan = 100
+        bot.ledger.pending[1] = dict(actor=12)
+        bot.assistance.return_value = [Command(23, (20,), target_point=(30, 30))]
+        with patch('src.learning.production_goal_play.issue', new_callable=AsyncMock, return_value=pb.ResponseAction(result=[1])) as issue:
+            await bot.on_step(1)
+            bot.assistance.assert_called_once()
+            self.assertIn(12, bot.assistance.call_args.args[1])
+            issue.assert_awaited_once()
+            self.assertEqual(bot.frames, 0)
+
+    async def run_intent(self, *, predicted=None, candidates=None, placement=None, supply=False):
+        from src.learning.production_intents import ProductionIntents
+        bot = self.bot()
+        bot.intent_mode = True
+        bot.ledger = ProductionIntents()
+        bot.prior = dict(names=['expensive', 'worker'], teacher_prior={'0,1': [0, 1]})
+        state = bot.view.observe.return_value
+        state['player'].update(minerals=85, food_cap=15, food_used=12)
+        bot.goals['worker']['minerals'] = 75
+        if supply:
+            bot.goals['expensive']['unit_type'] = 99
+            bot.units_by_id[99] = dict(food_required=4)
+        bot.ledger.plan({'expensive': 1, 'worker': 1}, {}, 0)
+        with patch('src.learning.production_goal_play.current_features', return_value=None), \
+             patch('src.learning.production_goal_play.predict_goals', return_value=(predicted or {}, NS(tolist=lambda: []))), \
+             patch('src.learning.production_goal_play.eligible_actors', side_effect=candidates or (lambda *args: [unit(10, 18)])), \
+             patch('src.learning.production_goal_play.resolve_production_placement', side_effect=placement or self.resolved), \
+             patch('src.learning.production_goal_play.issue', new_callable=AsyncMock, return_value=pb.ResponseAction(result=[1])) as issue:
+            await bot.on_step(0)
+        return bot, issue
+
+    async def test_intent_reserves_resources_even_after_forecast_disappears(self):
+        import json
+        bot, issue = await self.run_intent()
+        issue.assert_not_awaited()
+        row = json.loads(bot.stream.getvalue())
+        self.assertEqual([a['after'][0] for a in row['allocations']], [0, 0])
+        self.assertEqual(row['goals'], {})
+        self.assertEqual(len(row['intents']), 2)
+
+    async def test_missing_prerequisite_releases_budget_for_other_intent(self):
+        bot, issue = await self.run_intent(candidates=lambda state, ability, *args: [] if ability == 1 else [unit(10, 18)])
+        self.assertEqual([c.ability for c in issue.call_args.args[1]], [524])
+        self.assertEqual(bot.acknowledged['worker'], 1)
+
+    async def test_invalid_placement_releases_budget_for_other_intent(self):
+        async def placement(client, command, *args):
+            return ([], []) if command.ability == 1 else ([command], [])
+        bot, issue = await self.run_intent(placement=placement)
+        self.assertEqual([c.ability for c in issue.call_args.args[1]], [524])
+        self.assertEqual(bot.blocks['placement:expensive'], 1)
+
+    async def test_supply_blocked_intent_does_not_reserve_resources(self):
+        bot, issue = await self.run_intent(supply=True)
+        self.assertEqual([c.ability for c in issue.call_args.args[1]], [524])
+        self.assertEqual(bot.blocks['supply:expensive'], 1)
+
+    async def test_scout_is_excluded_from_production_and_gets_one_assistance_command(self):
+        bot = self.bot()
+        state = bot.view.observe.return_value
+        state.update(game_loop=1800, units=[unit(10,18), unit(20,45), unit(21,45), unit(100,21)])
+        state['player']['minerals'] = 200
+        bot.assistance = lambda state, selected: bot.scout_commands
+        bot.client._execute.return_value = pb.Response(query=q.ResponseQuery(abilities=[q.ResponseQueryAvailableAbilities(unit_tag=21, abilities=[dict(ability_id=1)])]))
+        with patch('src.learning.production_goal_play.current_features', return_value=None), \
+             patch('src.learning.production_goal_play.predict_goals', return_value=({'expensive': 1}, NS(tolist=lambda: [1]))), \
+             patch('src.learning.production_goal_play.eligible_actors', return_value=[unit(20,45), unit(21,45)]), \
+             patch('src.learning.production_goal_play.resolve_production_placement', side_effect=self.resolved), \
+             patch('src.learning.production_goal_play.issue', new_callable=AsyncMock, return_value=pb.ResponseAction(result=[1,1])) as issue:
+            await bot.on_step(0)
+        commands = issue.call_args.args[1]
+        self.assertEqual([(c.ability,c.units) for c in commands], [(1,(21,)),(16,(20,))])
+
+    async def test_inventory_target_counts_queued_once_and_replaces_lost_stock(self):
+        import json
+        from src.learning.production_inventory_goals import InventoryIntents
+        bot = self.bot()
+        bot.intent_mode = True
+        bot.ledger = InventoryIntents()
+        bot.ledger.plan({'expensive':1},{},0)
+        bot.inventory_library = NS(target={'worker':15},select=Mock(return_value=({'worker':15},{'supported':True})))
+        bot.model = {'names':['worker']}
+        bot.public_race, bot.data = 'Zerg', {}
+        with patch('src.learning.production_goal_play.observation_stock',side_effect=[{'worker':14},{'worker':15},{'worker':14}]), \
+             patch('src.learning.production_goal_play.inventory_queued',side_effect=[({'worker':1},set()),({},set()),({},set())]), \
+             patch('src.learning.production_goal_play.predict_goals') as predict, \
+             patch('src.learning.production_goal_play.eligible_actors',return_value=[unit(10,18)]), \
+             patch('src.learning.production_goal_play.resolve_production_placement',side_effect=self.resolved), \
+             patch('src.learning.production_goal_play.issue',new_callable=AsyncMock,return_value=pb.ResponseAction(result=[1])) as issue:
+            for loop in [24,72,120]:
+                bot.view.observe.return_value['game_loop']=loop
+                await bot.on_step(0)
+            predict.assert_not_called()
+            issue.assert_awaited_once()
+        rows=[json.loads(r) for r in bot.stream.getvalue().splitlines()]
+        self.assertEqual([r['goals'] for r in rows],[{'worker':1},{},{'worker':1}])
+        self.assertEqual([len(r['execution']) for r in rows],[0,0,1])
+        self.assertEqual(rows[-1]['raw_counts'],[15])
+        self.assertEqual(issue.call_args.args[1][0].ability,524)
+
+    async def test_rejected_placement_trace_survives_without_an_action(self):
+        import json
+        async def placement(client, command, *args):
+            return ([], [dict(rejected='native_placement', placement_results={'3':12})]) if command.ability == 1 else ([command], [])
+        bot, _ = await self.run_intent(placement=placement)
+        row = json.loads(bot.stream.getvalue())
+        self.assertEqual(row['placement_checks'][0]['goal'], 'expensive')
+        self.assertFalse(row['placement_checks'][0]['resolved'])
+        self.assertEqual(row['placement_checks'][0]['diagnostics'][0]['placement_results'], {'3':12})
+        self.assertNotIn('expensive', [e['goal'] for e in row['execution']])

@@ -1,0 +1,7 @@
+# Fixed nonlinear human production diagnostic
+
+Frozen before fitting; RL and native trials remain off. Reuse exactly the verified forecast labels and masked state/type-status features from `production-forecast-probe-01`, with identical six repaired teaching and three previously used development games. No history, future features or reserved games. Bind all matrix/label/reference files and the verified report before fitting.
+
+Test one ExtraTreesClassifier and one ExtraTreesRegressor from the already installed external Python environment: 128 trees, max_features=1.0, min_samples_leaf=4, random_state=8158, n_jobs=2; classification class_weight='balanced'. Predict native ability and log1p seconds separately. No parameter/seed sweep. Trees test threshold interactions that the linear diagnostic cannot express directly. They are diagnostics, not controllers; full raw controls remain required.
+
+Compare the same teaching/development, equal-class, nonworker and positive-delay metrics against the previous verified baseline and state model. Saved predictions and metrics must reproduce after an independent CPU refit from bound inputs and an independent metric reconstruction. Store estimator version and configuration, not an unsafe pickle. Bound whole run at300seconds and CPU80percent on three consecutive samples, CPU-only. No promotion follows automatically. A positive result justifies considering nonlinear state conditioning for the imitation controller; a poor result shifts attention to data/observation coverage.

@@ -209,3 +209,4 @@ __marimo__/
 # Logs and replays
 logs/
 replays/
+.worktrees/

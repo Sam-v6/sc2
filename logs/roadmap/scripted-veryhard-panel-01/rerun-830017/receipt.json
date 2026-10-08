@@ -1,0 +1,30 @@
+{
+  "job": {
+    "bot": "primitives",
+    "race": "Terran",
+    "build": "Air",
+    "seed": 830017,
+    "difficulty": "VeryHard",
+    "map": "AcropolisLE",
+    "game_step": 8,
+    "game_seconds": 1200,
+    "dev": false,
+    "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/scripted-veryhard-panel-01/rerun-830017/game.SC2Replay"
+  },
+  "primitives": {
+    "worker_peak": 65,
+    "army_peak": 69,
+    "collected_minerals": 16595.0,
+    "mining_commands": 518,
+    "combat_commands": 9995,
+    "resumed_builds": 0,
+    "raw_action_errors": 1,
+    "delayed_action_errors": 0
+  },
+  "status": "completed",
+  "result": "Victory",
+  "game_seconds": 595.0,
+  "engine_wall_seconds": 42.36020444496535,
+  "replay_bytes": 92342,
+  "wall_seconds": 42.692
+}

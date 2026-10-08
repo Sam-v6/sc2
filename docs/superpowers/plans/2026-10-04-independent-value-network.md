@@ -1,0 +1,97 @@
+# Independent value-network experiment
+
+The game-held-out value-feature diagnostic passed its engineering gate and
+independent review. Test whether a separately trained value representation
+improves actual PPO learning. This is a combined value-body/optimizer-separation
+experiment; it does not isolate a single cause of previous losses.
+
+Copy the original-rate near-greedy source. Retain its5460 observations,27 actions,
+Win1000 objective, temperature0.05, rate0.0003, finite lambda1/gamma, cadence,
+worker execution and combat behavior. Do not include declared-race flags or
+any offline fitted arrays. Add a separate64-unit tanh value body, cloned from
+the untouched actor body at migration, and the existing value head. The actor
+forward path and categorical probabilities must remain numerically equivalent.
+Avoid computing the value body when only action probabilities are needed.
+
+Migrate untouched near-greedy initial03633df9… with an explicit new checkpoint
+schema. Preserve the actor parameters, Adam moments/step, RNG and game counters
+exactly. Initial value predictions are exact by cloning body and retaining head
+parameters. The independent critic has fresh moments and step0, separate from
+inherited actor Adam. Save both step counters and all eight parameter/moment
+arrays; normal loaders must reject old schema. This intentionally resets critic
+optimizer history and separates the gradient-norm budgets, so do not claim all
+optimizer state is preserved. Both budgets remain0.5; all other PPO settings
+stay fixed. A joint-loss backward must not send value gradients into the actor
+or policy gradients into the critic.
+
+Before games, test schema rejection, exact actor/value migration, save/resume
+of both optimizers, Torch/NumPy inference agreement, gradient isolation and
+bounded real train/resume/frozen checks. Independently review the source and
+migration. Keep canonical initial and source unchanged during runs.
+
+Train exactly40 Hard games with eight workers from migrated initial bytes,
+seed base30000, both maps/all races/five builds,1200 game/300 wall seconds,
+cadence1. Compare original eight-worker near-greedy control. Verify initial8
+gameplay parity rather than assuming it from seeds. Preserve infrastructure
+failures; a pre-game failure may require a whole-schedule repeat, never selective
+replacement in training. Record finite returns, optimizer-step changes and
+actual critic fit; critic MSE remains a diagnostic rather than strength proof.
+
+Freeze final and evaluate greedy30 on development banks20000 and40000 with
+four workers each. Prefer/extend only with at least14 and13 wins respectively.
+Otherwise withhold that arm. The reserved final bank50000,70% reliable Hard
+acceptance target and richer observation end-state remain unchanged.
+
+The isolated implementation passed90 tests and independent review. Four new
+architecture/schema tests failed before the edit; value-only and entropy-only
+feedback checks prove both directions of gradient isolation. Resume tests use
+different actor/critic step counters. Migration preserves actor parameters,
+moments and step676, clones initial critic predictions, and resets critic Adam
+to step0/moments0. The migrated checkpoint SHA-256 is
+`5b34eb35ab88689f8700d2863626c51290469cedc0965285522028b6c55db65b`.
+Across33,556 retained states, logits, values, same-temperature probabilities
+and greedy actions match exactly (maximum errors0). These are initial parity
+checks, not strength evidence. Actual three-game train/resume/frozen smoke
+verification is now running separately from the untouched canonical initial.
+Source: `logs/audit/ppo-independent-value-source/`; migration receipt:
+`logs/ppo-independent-value/migration.json`; tests/parity receipts:
+`logs/audit/independent-value-tests.stdout`,
+`logs/audit/independent-value-inference-parity.json`.
+
+All nine actual smoke games completed without failures (three train, three
+resume, three frozen), each reaching the120-second cutoff. Resume reached
+150 episodes/attempts,692 actor updates and16 critic updates; the inherited
+676-step offset is preserved. Frozen sampling leaves checkpoint bytes unchanged.
+Both canonical initial files remain untouched. Receipt:
+`logs/audit/independent-value-smoke-results.json`. The predeclared40-game
+Hard continuation is running from the untouched migrated canonical initial.
+
+The continuation finished15 wins/25 losses, with no failures. All21,928
+transitions and finite returns were checked (maximum error3.20e-14). Initial
+eight actual gameplay traces match the control byte for byte across4,767
+decisions. Final counters:184 episodes/attempts,1032 actor updates,356 critic
+updates; the offset676 is preserved across all five optimizer boundaries.
+Independent review verified source/behavior/frozen hashes, terminal endpoints,
+combat counters and actual critic-fit calculations. Final frozen SHA-256:
+`20d6a73cd52219d3022a20cf747cd398fcc3b71559084f58d9c1a7e7a94f664c`.
+
+Frozen greedy evaluation finished10 wins/20 losses on bank20000 and13 wins/17
+losses on bank40000, without failures or checkpoint changes. All17,536/16,622
+transitions, greedy choices and returns were reconstructed. The joint14/13
+gate fails on the first bank: do not promote or extend this arm. Post-update
+value explained variance ranges0.220–0.405 on collected training states;
+these differing trajectories do not establish held-out accuracy or a causal
+win benefit. Better critic fit did not pass the gameplay gate. Receipts:
+`logs/audit/independent-value-*-results.json`,
+`logs/audit/independent-value-first-eight-parity.json`,
+`logs/audit/independent-value-value-fit.json`.
+
+User steering now prioritizes primitives, sensory information and the overall
+RL approach over additional ungrounded training variants. Future local jobs
+use the quiet profile: at most four concurrent games, eight allowed logical
+CPUs, nice+10, numerical-library threads1, CPU-only learning/software graphics.
+This bounds this task to25% nominal logical CPU capacity on the32-thread host,
+leaving room for the user's below40% whole-machine preference. Monitor live
+load; unrelated applications are independent. The earlier GPU98% load belonged
+to Blender; the user stopped that job. Astra may be consulted for ideas if
+useful evidence stalls and concrete next steps run out; not invoked yet.

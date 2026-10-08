@@ -1,0 +1,560 @@
+{
+  "summary": {
+    "trials": 64,
+    "own_hp": 162.890625,
+    "enemy_hp": 157.6875,
+    "won": 22
+  },
+  "results": [
+    {
+      "job": {
+        "variant": "amove",
+        "scenario": "marines",
+        "seed": 500000
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 405.0,
+          "own_alive": 11,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 27.928571428571427
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 129.0,
+          "enemy_alive": 5,
+          "seconds": 29.35714285714286
+        },
+        {
+          "own_hp": 474.0,
+          "own_alive": 12,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 26.85714285714286
+        },
+        {
+          "own_hp": 249.0,
+          "own_alive": 7,
+          "enemy_hp": 81.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 225.0,
+          "own_alive": 7,
+          "enemy_hp": 45.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 342.0,
+          "own_alive": 12,
+          "enemy_hp": 24.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 417.0,
+          "enemy_alive": 13,
+          "seconds": 23.64285714285714
+        },
+        {
+          "own_hp": 204.0,
+          "own_alive": 6,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 22.571428571428584
+        }
+      ],
+      "wall_seconds": 22.001
+    },
+    {
+      "job": {
+        "variant": "amove",
+        "scenario": "marines",
+        "seed": 500001
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 462.0,
+          "enemy_alive": 14,
+          "seconds": 23.28571428571429
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 465.0,
+          "enemy_alive": 13,
+          "seconds": 22.92857142857143
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 240.0,
+          "enemy_alive": 8,
+          "seconds": 25.071428571428577
+        },
+        {
+          "own_hp": 177.0,
+          "own_alive": 5,
+          "enemy_hp": 75.0,
+          "enemy_alive": 3,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 354.0,
+          "enemy_alive": 10,
+          "seconds": 24.714285714285708
+        },
+        {
+          "own_hp": 114.0,
+          "own_alive": 4,
+          "enemy_hp": 36.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 345.0,
+          "enemy_alive": 9,
+          "seconds": 24.35714285714286
+        },
+        {
+          "own_hp": 384.0,
+          "own_alive": 10,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 28.642857142857167
+        }
+      ],
+      "wall_seconds": 22.875
+    },
+    {
+      "job": {
+        "variant": "amove",
+        "scenario": "marines",
+        "seed": 500002
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 279.0,
+          "own_alive": 7,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 29.000000000000004
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 156.0,
+          "enemy_alive": 6,
+          "seconds": 28.285714285714292
+        },
+        {
+          "own_hp": 372.0,
+          "own_alive": 10,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 27.214285714285708
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 306.0,
+          "enemy_alive": 10,
+          "seconds": 25.785714285714278
+        },
+        {
+          "own_hp": 351.0,
+          "own_alive": 9,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 29.35714285714286
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 252.0,
+          "enemy_alive": 8,
+          "seconds": 25.785714285714306
+        },
+        {
+          "own_hp": 411.0,
+          "own_alive": 11,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 27.928571428571445
+        },
+        {
+          "own_hp": 39.0,
+          "own_alive": 1,
+          "enemy_hp": 36.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 23.395
+    },
+    {
+      "job": {
+        "variant": "amove",
+        "scenario": "marines",
+        "seed": 500003
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 405.0,
+          "own_alive": 11,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 26.857142857142858
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 171.0,
+          "enemy_alive": 7,
+          "seconds": 25.785714285714292
+        },
+        {
+          "own_hp": 390.0,
+          "own_alive": 10,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 28.285714285714278
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 363.0,
+          "enemy_alive": 11,
+          "seconds": 25.071428571428584
+        },
+        {
+          "own_hp": 186.0,
+          "own_alive": 6,
+          "enemy_hp": 3.0,
+          "enemy_alive": 1,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 438.0,
+          "enemy_alive": 12,
+          "seconds": 24.35714285714286
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 447.0,
+          "enemy_alive": 13,
+          "seconds": 23.64285714285714
+        },
+        {
+          "own_hp": 27.0,
+          "own_alive": 1,
+          "enemy_hp": 15.0,
+          "enemy_alive": 1,
+          "seconds": 30.071428571428584
+        }
+      ],
+      "wall_seconds": 22.361
+    },
+    {
+      "job": {
+        "variant": "amove",
+        "scenario": "marines",
+        "seed": 500004
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 36.0,
+          "own_alive": 2,
+          "enemy_hp": 3.0,
+          "enemy_alive": 1,
+          "seconds": 30.071428571428573
+        },
+        {
+          "own_hp": 525.0,
+          "own_alive": 15,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 26.5
+        },
+        {
+          "own_hp": 222.0,
+          "own_alive": 6,
+          "enemy_hp": 24.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 339.0,
+          "own_alive": 9,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 23.64285714285714
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 159.0,
+          "enemy_alive": 7,
+          "seconds": 26.85714285714286
+        },
+        {
+          "own_hp": 381.0,
+          "own_alive": 13,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 27.571428571428584
+        },
+        {
+          "own_hp": 9.0,
+          "own_alive": 1,
+          "enemy_hp": 114.0,
+          "enemy_alive": 4,
+          "seconds": 30.071428571428584
+        },
+        {
+          "own_hp": 438.0,
+          "own_alive": 12,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 28.285714285714278
+        }
+      ],
+      "wall_seconds": 21.768
+    },
+    {
+      "job": {
+        "variant": "amove",
+        "scenario": "marines",
+        "seed": 500005
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 357.0,
+          "own_alive": 9,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 28.642857142857142
+        },
+        {
+          "own_hp": 66.0,
+          "own_alive": 2,
+          "enemy_hp": 36.0,
+          "enemy_alive": 2,
+          "seconds": 30.071428571428577
+        },
+        {
+          "own_hp": 417.0,
+          "own_alive": 11,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 26.5
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 297.0,
+          "enemy_alive": 9,
+          "seconds": 25.785714285714292
+        },
+        {
+          "own_hp": 435.0,
+          "own_alive": 11,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 26.85714285714286
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 258.0,
+          "enemy_alive": 8,
+          "seconds": 26.14285714285714
+        },
+        {
+          "own_hp": 159.0,
+          "own_alive": 5,
+          "enemy_hp": 9.0,
+          "enemy_alive": 1,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 255.0,
+          "own_alive": 7,
+          "enemy_hp": 75.0,
+          "enemy_alive": 3,
+          "seconds": 30.071428571428555
+        }
+      ],
+      "wall_seconds": 24.335
+    },
+    {
+      "job": {
+        "variant": "amove",
+        "scenario": "marines",
+        "seed": 500006
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 426.0,
+          "enemy_alive": 12,
+          "seconds": 23.642857142857146
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 486.0,
+          "enemy_alive": 14,
+          "seconds": 22.92857142857143
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 231.0,
+          "enemy_alive": 9,
+          "seconds": 25.071428571428577
+        },
+        {
+          "own_hp": 72.0,
+          "own_alive": 2,
+          "enemy_hp": 54.0,
+          "enemy_alive": 2,
+          "seconds": 30.07142857142857
+        },
+        {
+          "own_hp": 405.0,
+          "own_alive": 11,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 27.571428571428584
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 396.0,
+          "enemy_alive": 10,
+          "seconds": 24.35714285714286
+        },
+        {
+          "own_hp": 276.0,
+          "own_alive": 8,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 30.071428571428555
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 426.0,
+          "enemy_alive": 12,
+          "seconds": 24.0
+        }
+      ],
+      "wall_seconds": 20.033
+    },
+    {
+      "job": {
+        "variant": "amove",
+        "scenario": "marines",
+        "seed": 500007
+      },
+      "status": "completed",
+      "result": null,
+      "trials": [
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 483.0,
+          "enemy_alive": 15,
+          "seconds": 22.92857142857143
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 228.0,
+          "enemy_alive": 6,
+          "seconds": 25.42857142857143
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 456.0,
+          "enemy_alive": 14,
+          "seconds": 22.57142857142857
+        },
+        {
+          "own_hp": 351.0,
+          "own_alive": 9,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 29.714285714285722
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 495.0,
+          "enemy_alive": 15,
+          "seconds": 22.214285714285708
+        },
+        {
+          "own_hp": 294.0,
+          "own_alive": 8,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 29.35714285714286
+        },
+        {
+          "own_hp": 0,
+          "own_alive": 0,
+          "enemy_hp": 576.0,
+          "enemy_alive": 14,
+          "seconds": 23.285714285714306
+        },
+        {
+          "own_hp": 354.0,
+          "own_alive": 10,
+          "enemy_hp": 0,
+          "enemy_alive": 0,
+          "seconds": 29.35714285714286
+        }
+      ],
+      "wall_seconds": 21.733
+    }
+  ],
+  "bindings": {
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/micro_sandbox_01.py": "e757ac432a947dd4ccf0cc984fccd7f2ef2636b99b44ec6702f1c2d66a0103a5",
+    "src/bots/terran_primitives.py": "f270d8bf2c74ce7b8332878c94440387026d687caffd5b472b0e9be6fd9f651f",
+    "src/learning/gameplay.py": "ea2595c84270471f944759b994d6b2ffdacb34a2ba63497370b64903ab0b53c4",
+    "src/learning/live.py": "5d2921c05fed6f69f398151259a4e8080174bd6e65252285301b913a785ad8da"
+  }
+}

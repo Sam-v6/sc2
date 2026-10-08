@@ -1,0 +1,83 @@
+{
+  "wins": 11,
+  "games": 12,
+  "rows": [
+    {
+      "seed": 930000,
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 596.4285714285714
+    },
+    {
+      "seed": 930001,
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 652.1428571428572
+    },
+    {
+      "seed": 930002,
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 586.7857142857143
+    },
+    {
+      "seed": 930003,
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 655.0
+    },
+    {
+      "seed": 930004,
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 572.1428571428572
+    },
+    {
+      "seed": 930005,
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 572.1428571428572
+    },
+    {
+      "seed": 930006,
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 601.4285714285714
+    },
+    {
+      "seed": 930007,
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 702.8571428571429
+    },
+    {
+      "seed": 930008,
+      "status": "completed",
+      "result": "Defeat",
+      "seconds": 1125.0
+    },
+    {
+      "seed": 930009,
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 700.0
+    },
+    {
+      "seed": 930010,
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 586.7857142857143
+    },
+    {
+      "seed": 930011,
+      "status": "completed",
+      "result": "Victory",
+      "seconds": 596.7857142857143
+    }
+  ],
+  "bindings": {
+    "src/bots/primitive_terran.py": "3d8c2aa7e61bbc6d6e3369639a2e7e1f39660b9486a9e7bad7ba313a1a462440",
+    "src/bots/terran_primitives.py": "f270d8bf2c74ce7b8332878c94440387026d687caffd5b472b0e9be6fd9f651f",
+    "src/bots/macro_rules.py": "a82078710ad24a46ee194ac49696dac550b17bdec5634f8f1140cab09fcaf62a"
+  }
+}

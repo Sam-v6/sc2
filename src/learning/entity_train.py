@@ -1,0 +1,536 @@
+"""CPU-only supervised joint command fit on disjoint terminal human replays."""
+
+import argparse
+from collections import Counter
+import gzip
+import hashlib
+import json
+from pathlib import Path
+import time
+
+import numpy as np
+
+from src.learning.actor_selection import construction_products
+from src.learning.entity_audit import audit_commands
+from src.learning.entity_encoder import JointEntityEncoder
+from src.learning.entity_examples import replay_examples
+from src.learning.entity_policy import JointEntityPolicy
+
+DELAYS = (0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512)
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def validate_professional_source(directory, receipt, missing_fields):
+    if (
+        not missing_fields
+        or receipt.get("requires_missing_fields") is not True
+        or receipt.get("training_eligible") is not True
+        or receipt.get("teacher_kind") != "human_professional_partial"
+        or receipt.get("alignment") != "state_at_issue_loop_before_effect"
+    ):
+        raise ValueError(
+            "Partial professional demonstrations require missing-field inputs and eligibility"
+        )
+    for group in ("source_bindings", "code_bindings"):
+        if not receipt.get(group):
+            raise ValueError(
+                "Professional source requires bound inputs and producing code"
+            )
+        for path, expected in receipt[group].items():
+            if digest(Path(path)) != expected:
+                raise ValueError("Changed professional source binding: " + path)
+    proof = receipt["source_phase_proof"]
+    phase = json.loads(Path(proof).read_text())
+    if (
+        proof not in receipt["source_bindings"]
+        or phase.get("status") != "verified_native_phase_and_converter_buffer_contract"
+    ):
+        raise ValueError("Professional source requires a bound issue-loop phase proof")
+    if not phase.get("bindings"):
+        raise ValueError("Professional phase requires evidence bindings")
+    for path, expected in phase["bindings"].items():
+        if digest(Path(path)) != expected:
+            raise ValueError("Changed professional phase evidence binding: " + path)
+    if receipt["source_bindings"].get(receipt["source_replay"]) != receipt["sha256"]:
+        raise ValueError(
+            "Professional split identity must match the bound original replay"
+        )
+    for name in ("static.json", "examples.jsonl.gz"):
+        if digest(directory / name) != receipt.get("corpus_bindings", {}).get(name):
+            raise ValueError("Changed imported professional corpus binding: " + name)
+    with gzip.open(directory / "examples.jsonl.gz", "rt") as stream:
+        for row in map(json.loads, stream):
+            observation = row["observation"]
+            if (
+                observation["game_loop"] != row["action_loop"]
+                or observation.get("history_quality") != "event_slots"
+                or len(row["commands"]) != 1
+                or any(
+                    c["game_loop"] > row["action_loop"]
+                    for c in observation["recent_commands"]
+                )
+            ):
+                raise ValueError(
+                    "Professional source requires causal single-event issue-loop rows"
+                )
+
+
+def validate_datasets(train, validation, missing_fields=False):
+    sources, seen = [], set()
+    if not train:
+        raise ValueError("At least one teaching replay is required")
+    for role, paths in (("teaching", train), ("diagnostic", validation)):
+        for directory in paths:
+            receipt = json.loads((directory / "dataset.json").read_text())
+            alignment = receipt.get("alignment")
+            if (
+                alignment == "state_at_issue_loop_before_effect"
+                or receipt.get("teacher_kind") == "human_professional_partial"
+                or receipt.get("requires_missing_fields")
+            ):
+                validate_professional_source(directory, receipt, missing_fields)
+            if (
+                receipt["status"] != "completed"
+                or receipt.get("disable_fog") is not False
+                or alignment
+                not in (
+                    "state_at_action_loop_minus_one",
+                    "state_at_issue_loop_before_effect",
+                )
+                or not receipt.get("teacher_kind", "").startswith("human")
+                or receipt["player"]["player_info"]["race_actual"] != 1
+            ):
+                raise ValueError("Use complete fog-safe human Terran demonstrations")
+            unresolved = {
+                item["event"]["_gameloop"]
+                for item in receipt.get("issued_command_audit", {}).get(
+                    "unresolved_events", []
+                )
+            }
+            if unresolved:
+                with gzip.open(directory / "examples.jsonl.gz", "rt") as stream:
+                    for row in map(json.loads, stream):
+                        gap = row["next_action_delay"]
+                        if gap is not None and any(
+                            row["action_loop"] < loop < row["action_loop"] + gap
+                            for loop in unresolved
+                        ):
+                            raise ValueError(
+                                "Mask timing gaps crossing unresolved human events"
+                            )
+            identity = receipt["sha256"]
+            if identity in seen:
+                raise ValueError("A replay may occur in only one split and view")
+            seen.add(identity)
+            sources.append(
+                dict(
+                    dataset=str(directory.absolute()),
+                    replay_sha256=identity,
+                    role=role,
+                    bindings={
+                        str(directory / name): digest(directory / name)
+                        for name in ("dataset.json", "static.json", "examples.jsonl.gz")
+                    },
+                )
+            )
+    return sources
+
+
+def collect(paths, counts, spatial=False, missing_fields=False):
+    examples, reports = [], []
+    for directory in paths:
+        static = json.loads((directory / "static.json").read_text())["game_data"]
+        actual = [
+            max(x[key] for x in static[name]) + 1
+            for name, key in (
+                ("units", "unit_id"),
+                ("abilities", "ability_id"),
+                ("upgrades", "upgrade_id"),
+            )
+        ]
+        if actual != list(counts):
+            raise ValueError("All replay datasets must use the same engine vocabulary")
+        start = len(examples)
+        examples.extend(
+            replay_examples(
+                directory,
+                *counts,
+                DELAYS,
+                construction_products(static),
+                spatial=spatial,
+                missing_fields=missing_fields,
+            )
+        )
+        receipt = json.loads((directory / "dataset.json").read_text())
+        expected = receipt["issued_command_audit"]["matched_issued_commands"]
+        if len(examples) - start != expected:
+            raise ValueError(
+                "Converted command count differs from terminal replay receipt"
+            )
+        excluded = Counter(reason for _, _, _, reason in examples[start:] if reason)
+        reports.append(
+            dict(
+                dataset=str(directory),
+                commands=len(examples) - start,
+                exclusions=dict(excluded),
+            )
+        )
+    return examples, reports
+
+
+def ability_importance_weights(abilities, replay_count):
+    """Teaching-only, bounded TStarBot-X-inspired command importance."""
+    counts = Counter(abilities)
+    weights = np.array(
+        [
+            0.25
+            if ability == 1
+            else min(10.0, max(1.0, replay_count / counts[ability]))
+            for ability in abilities
+        ]
+    )
+    return weights / weights.mean()
+
+
+class Adam:
+    def __init__(self, policy, rate):
+        self.policy, self.rate, self.updates = policy, rate, 0
+        self.m = {k: np.zeros_like(v) for k, v in policy.parameters.items()}
+        self.v = {k: np.zeros_like(v) for k, v in policy.parameters.items()}
+
+    def step(self, batch, weights=None):
+        if not batch:
+            raise ValueError("A supervised batch must contain examples")
+        gradients = {k: np.zeros_like(v) for k, v in self.policy.parameters.items()}
+        loss = 0.0
+        for index, (inputs, label) in enumerate(batch):
+            value, current = self.policy.loss_and_gradients(inputs, label)
+            if weights is not None:
+                value *= weights[index]
+                current = {
+                    name: gradient * weights[index]
+                    for name, gradient in current.items()
+                }
+            loss += value / len(batch)
+            for name in gradients:
+                gradients[name] += current[name] / len(batch)
+        norm = np.sqrt(sum(float(np.square(g).sum()) for g in gradients.values()))
+        if not np.isfinite(loss) or not np.isfinite(norm):
+            raise ValueError("Nonfinite supervised loss or gradient")
+        self.updates += 1
+        scale = min(1.0, 5 / max(norm, 1e-8))
+        for name, parameter in self.policy.parameters.items():
+            gradient = gradients[name] * scale
+            self.m[name] *= 0.9
+            self.m[name] += 0.1 * gradient
+            self.v[name] *= 0.999
+            self.v[name] += 0.001 * gradient**2
+            parameter -= (
+                self.rate
+                * self.m[name]
+                / (1 - 0.9**self.updates)
+                / (np.sqrt(self.v[name] / (1 - 0.999**self.updates)) + 1e-8)
+            )
+        return loss
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--train", nargs="+", type=Path, required=True)
+    parser.add_argument("--validation", nargs="*", type=Path, default=[])
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--epochs", type=int, required=True)
+    parser.add_argument(
+        "--refinement",
+        action="store_true",
+        help="Selected-set ranking and cell-conditioned tile loss",
+    )
+    parser.add_argument(
+        "--actor-cutoff",
+        action="store_true",
+        help="Learn a context-conditioned unit-selection cutoff",
+    )
+    parser.add_argument(
+        "--actor-count",
+        action="store_true",
+        help="Learn variable unit-group size from human command labels",
+    )
+    parser.add_argument(
+        "--spatial", action="store_true", help="Learn from full-resolution map patches"
+    )
+    parser.add_argument(
+        "--missing-fields",
+        action="store_true",
+        help="Include availability indicators for partial replay observations",
+    )
+    parser.add_argument("--batch-size", type=int, default=16)
+    parser.add_argument(
+        "--ability-importance",
+        action="store_true",
+        help="Reduce Smart dominance and weight rarely taught abilities",
+    )
+    parser.add_argument(
+        "--role-pooling",
+        action="store_true",
+        help="Summarize observed own/enemy/neutral and remembered entities separately",
+    )
+    parser.add_argument("--hidden", type=int, default=32)
+    parser.add_argument(
+        "--context-layer-norm",
+        action="store_true",
+        help="Normalize the summed encoder context before its activation",
+    )
+    parser.add_argument(
+        "--actor-relative-points",
+        action="store_true",
+        help="Learn a candidate-to-selected-actor geometric point-score residual",
+    )
+    parser.add_argument("--rate", type=float, default=0.001)
+    parser.add_argument(
+        "--relational-attention",
+        action="store_true",
+        help="Use optional CPU autograd and learned unit relationships",
+    )
+    parser.add_argument(
+        "--actor-geometry",
+        action="store_true",
+        help="Learn unit-selection scores from relative position and squared distance features",
+    )
+    parser.add_argument("--seed", type=int, default=7000)
+    parser.add_argument(
+        "--actor-nonlinear",
+        action="store_true",
+        help="Learn a nonlinear unit-selection residual conditioned on game context",
+    )
+    parser.add_argument("--wall-seconds", type=float, required=True)
+    parser.add_argument(
+        "--actor-context-query",
+        action="store_true",
+        help="Learn a nonlinear context-to-selection query; requires geometry and cutoff",
+    )
+    args = parser.parse_args()
+    encoder_kind = JointEntityEncoder
+    encoder_options = {}
+    runtime = None
+    if args.relational_attention:
+        from src.learning.entity_torch_encoder import TorchEntityEncoder, torch
+
+        encoder_kind = TorchEntityEncoder
+        encoder_options["relational_attention"] = True
+        torch.set_num_threads(2)
+        runtime = dict(
+            backend="torch",
+            version=torch.__version__,
+            device="cpu",
+            threads=torch.get_num_threads(),
+        )
+    if (
+        min(args.epochs, args.batch_size, args.hidden, args.rate, args.wall_seconds)
+        <= 0
+    ):
+        parser.error("Training sizes, rate and wall bound must be positive")
+    if args.output.exists():
+        parser.error("Use a fresh output directory for a frozen experiment")
+    sources = validate_datasets(args.train, args.validation, args.missing_fields)
+    static = json.loads((args.train[0] / "static.json").read_text())["game_data"]
+    counts = [
+        max(x[key] for x in static[name]) + 1
+        for name, key in (
+            ("units", "unit_id"),
+            ("abilities", "ability_id"),
+            ("upgrades", "upgrade_id"),
+        )
+    ]
+    source_files = [
+        Path(__file__),
+        *[
+            Path(__file__).with_name(name + ".py")
+            for name in (
+                "entity_spatial",
+                "spatial_construction",
+                "global_imitation",
+                "entity_encoder",
+                "entity_examples",
+                "entity_missing",
+                "entity_policy",
+                "entity_audit",
+                "teacher_states",
+                "gameplay",
+                "actor_selection",
+                "tournament_import",
+            )
+        ],
+    ]
+    code_before = {str(p.absolute()): digest(p) for p in source_files}
+    if args.relational_attention:
+        source_files.append(Path(__file__).with_name("entity_torch_encoder.py"))
+        code_before[str(source_files[-1].absolute())] = digest(source_files[-1])
+    configuration = dict(
+        sources=sources,
+        code_before=code_before,
+        vocabulary=counts,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        ability_importance=args.ability_importance,
+        hidden=args.hidden,
+        rate=args.rate,
+        refinement=args.refinement,
+        actor_cutoff=args.actor_cutoff,
+        actor_count=args.actor_count,
+        spatial=args.spatial,
+        missing_fields=args.missing_fields,
+        role_pooling=args.role_pooling,
+        context_layer_norm=args.context_layer_norm,
+        actor_relative_points=args.actor_relative_points,
+        actor_geometry=args.actor_geometry,
+        actor_nonlinear=args.actor_nonlinear,
+        actor_context_query=args.actor_context_query,
+        relational_attention=args.relational_attention,
+        encoder_runtime=runtime,
+        seed=args.seed,
+        wall_seconds=args.wall_seconds,
+        delays=DELAYS,
+        point_tolerance=1,
+        sampling="Uniform commands, shuffled each epoch",
+        scope="Fixed human supervised experiment; no RL or native game; validation is reused diagnostic",
+    )
+    args.output.mkdir(parents=True)
+    (args.output / "configuration.json").write_text(
+        json.dumps(configuration, indent=2) + "\n"
+    )
+    start = time.monotonic()
+    teaching, teaching_reports = collect(
+        args.train, counts, spatial=args.spatial, missing_fields=args.missing_fields
+    )
+    validation, validation_reports = collect(
+        args.validation,
+        counts,
+        spatial=args.spatial,
+        missing_fields=args.missing_fields,
+    )
+    fitting = [(inputs, label) for inputs, label, _, _ in teaching if label is not None]
+    if not fitting:
+        raise ValueError("No representable teaching commands")
+    weights = None
+    if args.ability_importance:
+        abilities = [label["ability"] for _, label in fitting]
+        weights = ability_importance_weights(abilities, len(args.train))
+        ability_counts = Counter(abilities)
+        configuration["importance"] = dict(
+            rule="Smart 0.25; other max(1, teaching_replays/count) capped10; global mean1",
+            scope="Representable teaching commands only; full command losses/gradients",
+            abilities={
+                str(ability): dict(
+                    count=count, weight=float(weights[abilities.index(ability)])
+                )
+                for ability, count in ability_counts.items()
+            },
+        )
+        (args.output / "configuration.json").write_text(
+            json.dumps(configuration, indent=2) + "\n"
+        )
+    sample = fitting[0][0]["encoder"]
+    policy = JointEntityPolicy(
+        encoder_kind(
+            sample[0].shape[1],
+            len(sample[3]),
+            sample[5].shape[1],
+            counts[0],
+            counts[1],
+            hidden=args.hidden,
+            seed=args.seed,
+            role_pooling=args.role_pooling,
+            context_layer_norm=args.context_layer_norm,
+            **encoder_options,
+        ),
+        DELAYS,
+        seed=args.seed + 1,
+        refinement=args.refinement,
+        actor_cutoff=args.actor_cutoff,
+        actor_count=args.actor_count,
+        missing_fields=args.missing_fields,
+        spatial_features=fitting[0][0]["point_features"].shape[1]
+        if args.spatial
+        else 2,
+        actor_relative_points=args.actor_relative_points,
+        actor_geometry=args.actor_geometry,
+        actor_nonlinear=args.actor_nonlinear,
+        actor_context_query=args.actor_context_query,
+    )
+    optimizer = Adam(policy, args.rate)
+    rng = np.random.default_rng(args.seed + 2)
+    fit_start = time.monotonic()
+    history = []
+    status = "completed"
+    for epoch in range(args.epochs):
+        order = rng.permutation(len(fitting))
+        total_loss, processed = 0.0, 0
+        for begin in range(0, len(order), args.batch_size):
+            if time.monotonic() - fit_start >= args.wall_seconds:
+                status = "wall_bound"
+                break
+            indices = order[begin : begin + args.batch_size]
+            batch = [fitting[int(i)] for i in indices]
+            loss = optimizer.step(
+                batch, weights=None if weights is None else weights[indices]
+            )
+            total_loss += loss * len(batch)
+            processed += len(batch)
+        record = dict(
+            epoch=epoch + 1,
+            commands=processed,
+            mean_loss=total_loss / max(processed, 1),
+            updates=optimizer.updates,
+            seconds=time.monotonic() - fit_start,
+        )
+        history.append(record)
+        with (args.output / "progress.jsonl").open("a") as stream:
+            stream.write(json.dumps(record) + "\n")
+        print(json.dumps(record), flush=True)
+        if status != "completed":
+            break
+    policy.save(
+        args.output / "policy.npz",
+        dict(configuration=configuration, updates=optimizer.updates, status=status),
+    )
+    checkpoint_before = digest(args.output / "policy.npz")
+    report = dict(
+        status=status,
+        history=history,
+        optimizer_updates=optimizer.updates,
+        teaching_sources=teaching_reports,
+        validation_sources=validation_reports,
+        teaching=audit_commands(policy, teaching),
+        validation=audit_commands(policy, validation),
+        checkpoint_sha256=checkpoint_before,
+        elapsed_seconds=time.monotonic() - start,
+    )
+    after = validate_datasets(args.train, args.validation, args.missing_fields)
+    code_after = {str(p.absolute()): digest(p) for p in source_files}
+    report["bindings_unchanged"] = (
+        sources == after
+        and code_before == code_after
+        and checkpoint_before == digest(args.output / "policy.npz")
+    )
+    if not report["bindings_unchanged"]:
+        raise ValueError("Experiment inputs/code or evaluated checkpoint changed")
+    (args.output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
+    print(
+        json.dumps(
+            dict(
+                status=status,
+                updates=optimizer.updates,
+                seconds=report["elapsed_seconds"],
+                teaching_complete=report["teaching"]["predicted"]["complete"],
+                validation_complete=report["validation"]["predicted"]["complete"],
+            )
+        ),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

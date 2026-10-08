@@ -1,0 +1,4925 @@
+{
+  "results": [
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Protoss",
+        "build": "Air",
+        "seed": 872001,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Protoss-Air-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 82,
+        "army_peak": 87,
+        "collected_minerals": 28475.0,
+        "mining_commands": 4544,
+        "combat_commands": 30085,
+        "defense_commands": 4,
+        "resumed_builds": 0,
+        "raw_action_errors": 525,
+        "delayed_action_errors": 2
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 943.2142857142858,
+      "engine_wall_seconds": 132.55153031204827,
+      "replay_bytes": 259301,
+      "wall_seconds": 133.081
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Terran",
+        "build": "Air",
+        "seed": 872002,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Terran-Air-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 82,
+        "army_peak": 94,
+        "collected_minerals": 46430.0,
+        "mining_commands": 1518,
+        "combat_commands": 27985,
+        "defense_commands": 0,
+        "resumed_builds": 0,
+        "raw_action_errors": 0,
+        "delayed_action_errors": 0
+      },
+      "status": "truncated",
+      "result": "Tie",
+      "game_seconds": 1200.0,
+      "engine_wall_seconds": 153.83189240499632,
+      "replay_bytes": 253150,
+      "wall_seconds": 154.38
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Zerg",
+        "build": "Air",
+        "seed": 872003,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Zerg-Air-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 65,
+        "army_peak": 90,
+        "collected_minerals": 26205.0,
+        "mining_commands": 2761,
+        "combat_commands": 22464,
+        "defense_commands": 0,
+        "resumed_builds": 0,
+        "raw_action_errors": 86,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 924.6428571428572,
+      "engine_wall_seconds": 121.23706598696299,
+      "replay_bytes": 211615,
+      "wall_seconds": 121.753
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Protoss",
+        "build": "Macro",
+        "seed": 872004,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Protoss-Macro-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 59,
+        "army_peak": 75,
+        "collected_minerals": 23810.0,
+        "mining_commands": 746,
+        "combat_commands": 24314,
+        "defense_commands": 139,
+        "resumed_builds": 0,
+        "raw_action_errors": 1,
+        "delayed_action_errors": 1
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 951.4285714285714,
+      "engine_wall_seconds": 113.43568377400516,
+      "replay_bytes": 207607,
+      "wall_seconds": 113.978
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Terran",
+        "build": "Macro",
+        "seed": 872005,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Terran-Macro-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 67,
+        "army_peak": 89,
+        "collected_minerals": 20145.0,
+        "mining_commands": 3441,
+        "combat_commands": 17764,
+        "defense_commands": 0,
+        "resumed_builds": 0,
+        "raw_action_errors": 0,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 855.3571428571429,
+      "engine_wall_seconds": 102.85376876400551,
+      "replay_bytes": 176384,
+      "wall_seconds": 103.266
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Zerg",
+        "build": "Macro",
+        "seed": 872006,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Zerg-Macro-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 65,
+        "army_peak": 76,
+        "collected_minerals": 24735.0,
+        "mining_commands": 2301,
+        "combat_commands": 30682,
+        "defense_commands": 30,
+        "resumed_builds": 11,
+        "raw_action_errors": 13,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 1111.0714285714287,
+      "engine_wall_seconds": 137.0617188180331,
+      "replay_bytes": 263916,
+      "wall_seconds": 137.467
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Protoss",
+        "build": "Power",
+        "seed": 872007,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Protoss-Power-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 44,
+        "army_peak": 47,
+        "collected_minerals": 13800.0,
+        "mining_commands": 359,
+        "combat_commands": 13226,
+        "defense_commands": 300,
+        "resumed_builds": 3,
+        "raw_action_errors": 96,
+        "delayed_action_errors": 1
+      },
+      "status": "completed",
+      "result": "Defeat",
+      "game_seconds": 860.7142857142858,
+      "engine_wall_seconds": 85.61821740696905,
+      "replay_bytes": 116160,
+      "wall_seconds": 86.021
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Terran",
+        "build": "Power",
+        "seed": 872008,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Terran-Power-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 80,
+        "army_peak": 68,
+        "collected_minerals": 21760.0,
+        "mining_commands": 5688,
+        "combat_commands": 15499,
+        "defense_commands": 96,
+        "resumed_builds": 0,
+        "raw_action_errors": 21,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Defeat",
+      "game_seconds": 1154.2857142857144,
+      "engine_wall_seconds": 131.99614698800724,
+      "replay_bytes": 158230,
+      "wall_seconds": 132.376
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Zerg",
+        "build": "Power",
+        "seed": 872009,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Zerg-Power-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 63,
+        "army_peak": 73,
+        "collected_minerals": 21890.0,
+        "mining_commands": 3861,
+        "combat_commands": 26740,
+        "defense_commands": 3,
+        "resumed_builds": 1,
+        "raw_action_errors": 22,
+        "delayed_action_errors": 3
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 1147.5,
+      "engine_wall_seconds": 146.811577754037,
+      "replay_bytes": 260193,
+      "wall_seconds": 147.187
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Protoss",
+        "build": "Rush",
+        "seed": 872010,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Protoss-Rush-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 44,
+        "army_peak": 86,
+        "collected_minerals": 21110.0,
+        "mining_commands": 637,
+        "combat_commands": 22761,
+        "defense_commands": 177,
+        "resumed_builds": 0,
+        "raw_action_errors": 6,
+        "delayed_action_errors": 1
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 1018.2142857142858,
+      "engine_wall_seconds": 105.64263341197511,
+      "replay_bytes": 199876,
+      "wall_seconds": 106.128
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Terran",
+        "build": "Rush",
+        "seed": 872011,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Terran-Rush-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 22,
+        "army_peak": 3,
+        "collected_minerals": 2335.0,
+        "mining_commands": 36,
+        "combat_commands": 68,
+        "defense_commands": 47,
+        "resumed_builds": 15,
+        "raw_action_errors": 0,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Defeat",
+      "game_seconds": 314.2857142857143,
+      "engine_wall_seconds": 21.346168103977107,
+      "replay_bytes": 15212,
+      "wall_seconds": 21.76
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Zerg",
+        "build": "Rush",
+        "seed": 872012,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Zerg-Rush-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 37,
+        "army_peak": 67,
+        "collected_minerals": 16440.0,
+        "mining_commands": 519,
+        "combat_commands": 17516,
+        "defense_commands": 208,
+        "resumed_builds": 0,
+        "raw_action_errors": 18,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Defeat",
+      "game_seconds": 1118.5714285714287,
+      "engine_wall_seconds": 114.50470191799104,
+      "replay_bytes": 169743,
+      "wall_seconds": 115.0
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Protoss",
+        "build": "Timing",
+        "seed": 872013,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Protoss-Timing-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 51,
+        "army_peak": 83,
+        "collected_minerals": 18510.0,
+        "mining_commands": 899,
+        "combat_commands": 20301,
+        "defense_commands": 225,
+        "resumed_builds": 20,
+        "raw_action_errors": 140,
+        "delayed_action_errors": 2
+      },
+      "status": "completed",
+      "result": "Defeat",
+      "game_seconds": 1153.2142857142858,
+      "engine_wall_seconds": 114.90755581500707,
+      "replay_bytes": 171142,
+      "wall_seconds": 115.497
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Terran",
+        "build": "Timing",
+        "seed": 872014,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Terran-Timing-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 68,
+        "army_peak": 87,
+        "collected_minerals": 33370.0,
+        "mining_commands": 849,
+        "combat_commands": 24154,
+        "defense_commands": 0,
+        "resumed_builds": 17,
+        "raw_action_errors": 6,
+        "delayed_action_errors": 1
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 985.0000000000001,
+      "engine_wall_seconds": 123.14792536303867,
+      "replay_bytes": 230397,
+      "wall_seconds": 123.579
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Zerg",
+        "build": "Timing",
+        "seed": 872015,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Zerg-Timing-AbyssalReefLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 56,
+        "army_peak": 105,
+        "collected_minerals": 25390.0,
+        "mining_commands": 2109,
+        "combat_commands": 28998,
+        "defense_commands": 156,
+        "resumed_builds": 0,
+        "raw_action_errors": 16,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 1032.142857142857,
+      "engine_wall_seconds": 129.80305454100017,
+      "replay_bytes": 266363,
+      "wall_seconds": 130.19
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Protoss",
+        "build": "Air",
+        "seed": 872016,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Protoss-Air-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 35,
+        "army_peak": 67,
+        "collected_minerals": 18395.0,
+        "mining_commands": 1026,
+        "combat_commands": 13158,
+        "defense_commands": 67,
+        "resumed_builds": 20,
+        "raw_action_errors": 12,
+        "delayed_action_errors": 1
+      },
+      "status": "completed",
+      "result": "Defeat",
+      "game_seconds": 1022.1428571428572,
+      "engine_wall_seconds": 101.7703444280196,
+      "replay_bytes": 128132,
+      "wall_seconds": 102.328
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Terran",
+        "build": "Air",
+        "seed": 872017,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Terran-Air-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 70,
+        "army_peak": 86,
+        "collected_minerals": 30210.0,
+        "mining_commands": 3597,
+        "combat_commands": 23860,
+        "defense_commands": 3,
+        "resumed_builds": 0,
+        "raw_action_errors": 4,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 995.3571428571429,
+      "engine_wall_seconds": 130.70376349199796,
+      "replay_bytes": 240587,
+      "wall_seconds": 131.147
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Zerg",
+        "build": "Air",
+        "seed": 872018,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Zerg-Air-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 67,
+        "army_peak": 92,
+        "collected_minerals": 25615.0,
+        "mining_commands": 3840,
+        "combat_commands": 30103,
+        "defense_commands": 6,
+        "resumed_builds": 0,
+        "raw_action_errors": 10,
+        "delayed_action_errors": 1
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 974.6428571428572,
+      "engine_wall_seconds": 126.78588252700865,
+      "replay_bytes": 270627,
+      "wall_seconds": 127.262
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Protoss",
+        "build": "Macro",
+        "seed": 872019,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Protoss-Macro-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 80,
+        "army_peak": 85,
+        "collected_minerals": 31910.0,
+        "mining_commands": 6709,
+        "combat_commands": 30527,
+        "defense_commands": 13,
+        "resumed_builds": 0,
+        "raw_action_errors": 1,
+        "delayed_action_errors": 0
+      },
+      "status": "truncated",
+      "result": "Tie",
+      "game_seconds": 1200.0,
+      "engine_wall_seconds": 156.6938085950096,
+      "replay_bytes": 284535,
+      "wall_seconds": 157.077
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Terran",
+        "build": "Macro",
+        "seed": 872020,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Terran-Macro-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 51,
+        "army_peak": 46,
+        "collected_minerals": 15630.0,
+        "mining_commands": 1060,
+        "combat_commands": 14442,
+        "defense_commands": 5,
+        "resumed_builds": 0,
+        "raw_action_errors": 22,
+        "delayed_action_errors": 2
+      },
+      "status": "truncated",
+      "result": "Tie",
+      "game_seconds": 1200.0,
+      "engine_wall_seconds": 115.3723999299691,
+      "replay_bytes": 149442,
+      "wall_seconds": 115.853
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Zerg",
+        "build": "Macro",
+        "seed": 872021,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Zerg-Macro-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 65,
+        "army_peak": 96,
+        "collected_minerals": 28590.0,
+        "mining_commands": 4690,
+        "combat_commands": 27071,
+        "defense_commands": 5,
+        "resumed_builds": 0,
+        "raw_action_errors": 8,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 1088.9285714285716,
+      "engine_wall_seconds": 143.16534394398332,
+      "replay_bytes": 257163,
+      "wall_seconds": 143.651
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Protoss",
+        "build": "Power",
+        "seed": 872022,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Protoss-Power-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 77,
+        "army_peak": 105,
+        "collected_minerals": 27405.0,
+        "mining_commands": 1464,
+        "combat_commands": 31741,
+        "defense_commands": 476,
+        "resumed_builds": 0,
+        "raw_action_errors": 0,
+        "delayed_action_errors": 2
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 1112.142857142857,
+      "engine_wall_seconds": 138.89732822799124,
+      "replay_bytes": 253207,
+      "wall_seconds": 139.318
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Terran",
+        "build": "Power",
+        "seed": 872023,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Terran-Power-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 65,
+        "army_peak": 58,
+        "collected_minerals": 20475.0,
+        "mining_commands": 5164,
+        "combat_commands": 13311,
+        "defense_commands": 129,
+        "resumed_builds": 4,
+        "raw_action_errors": 3,
+        "delayed_action_errors": 1
+      },
+      "status": "completed",
+      "result": "Defeat",
+      "game_seconds": 1069.642857142857,
+      "engine_wall_seconds": 121.64593281201087,
+      "replay_bytes": 154388,
+      "wall_seconds": 122.21
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Zerg",
+        "build": "Power",
+        "seed": 872024,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Zerg-Power-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 69,
+        "army_peak": 92,
+        "collected_minerals": 44075.0,
+        "mining_commands": 2024,
+        "combat_commands": 42666,
+        "defense_commands": 18,
+        "resumed_builds": 0,
+        "raw_action_errors": 18,
+        "delayed_action_errors": 1
+      },
+      "status": "truncated",
+      "result": "Tie",
+      "game_seconds": 1200.0,
+      "engine_wall_seconds": 161.0688132030191,
+      "replay_bytes": 309856,
+      "wall_seconds": 161.458
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Protoss",
+        "build": "Rush",
+        "seed": 872025,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Protoss-Rush-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 61,
+        "army_peak": 104,
+        "collected_minerals": 19905.0,
+        "mining_commands": 1110,
+        "combat_commands": 18875,
+        "defense_commands": 3,
+        "resumed_builds": 0,
+        "raw_action_errors": 0,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 805.0,
+      "engine_wall_seconds": 88.41252009599702,
+      "replay_bytes": 170203,
+      "wall_seconds": 88.829
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Terran",
+        "build": "Rush",
+        "seed": 872026,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Terran-Rush-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 64,
+        "army_peak": 96,
+        "collected_minerals": 30175.0,
+        "mining_commands": 4163,
+        "combat_commands": 30529,
+        "defense_commands": 73,
+        "resumed_builds": 8,
+        "raw_action_errors": 4,
+        "delayed_action_errors": 1
+      },
+      "status": "truncated",
+      "result": "Tie",
+      "game_seconds": 1200.0,
+      "engine_wall_seconds": 142.92503810097696,
+      "replay_bytes": 266599,
+      "wall_seconds": 143.336
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Zerg",
+        "build": "Rush",
+        "seed": 872027,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Zerg-Rush-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 66,
+        "army_peak": 93,
+        "collected_minerals": 27710.0,
+        "mining_commands": 3507,
+        "combat_commands": 26623,
+        "defense_commands": 34,
+        "resumed_builds": 1,
+        "raw_action_errors": 10,
+        "delayed_action_errors": 2
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 976.4285714285714,
+      "engine_wall_seconds": 126.70915955497185,
+      "replay_bytes": 250187,
+      "wall_seconds": 127.096
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Protoss",
+        "build": "Timing",
+        "seed": 872028,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Protoss-Timing-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 33,
+        "army_peak": 126,
+        "collected_minerals": 19340.0,
+        "mining_commands": 1002,
+        "combat_commands": 23581,
+        "defense_commands": 3,
+        "resumed_builds": 9,
+        "raw_action_errors": 0,
+        "delayed_action_errors": 2
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 911.0714285714287,
+      "engine_wall_seconds": 100.45750626199879,
+      "replay_bytes": 198843,
+      "wall_seconds": 100.836
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Terran",
+        "build": "Timing",
+        "seed": 872029,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Terran-Timing-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 69,
+        "army_peak": 86,
+        "collected_minerals": 31930.0,
+        "mining_commands": 1308,
+        "combat_commands": 20212,
+        "defense_commands": 0,
+        "resumed_builds": 0,
+        "raw_action_errors": 2,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 988.9285714285714,
+      "engine_wall_seconds": 106.34989531402243,
+      "replay_bytes": 194955,
+      "wall_seconds": 106.839
+    },
+    {
+      "job": {
+        "bot": "searched-strategy",
+        "race": "Zerg",
+        "build": "Timing",
+        "seed": 872030,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/human-head-force100-panel-03-paired/Zerg-Timing-AcropolisLE/game.SC2Replay",
+        "strategy_policy": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz",
+        "strategy_offsets": {
+          "Terran": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Zerg": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          },
+          "Protoss": {
+            "offsets": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "attack": [
+              0.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "primitives": {
+        "worker_peak": 65,
+        "army_peak": 93,
+        "collected_minerals": 25545.0,
+        "mining_commands": 3189,
+        "combat_commands": 22369,
+        "defense_commands": 0,
+        "resumed_builds": 0,
+        "raw_action_errors": 12,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 926.4285714285714,
+      "engine_wall_seconds": 99.33591588697163,
+      "replay_bytes": 213206,
+      "wall_seconds": 99.709
+    }
+  ],
+  "bindings": {
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/panel.py": "293a623216d3dc2de113758ec8bbde708653402c47e9046a96b2a6b6e55b971b",
+    "src/runner.py": "c9046d70c5a471c98d9d8af108a1385655ac2b2d9bd3171f4c6f55cd591ee461",
+    "src/bots/primitive_terran.py": "24ff1d0a40eeefebdfb3dff82fbe0029dd2f6e6c124be09c1665c31d5bc6aafe",
+    "src/bots/terran_primitives.py": "f270d8bf2c74ce7b8332878c94440387026d687caffd5b472b0e9be6fd9f651f",
+    "src/bots/learned_strategy_terran.py": "1d10aadb87c89e53b02e50fade83704a4412d2709ef1956ec7fe46fc1f9761e6",
+    "src/learning/strategy_policy.py": "1e330d21aaccc9006673648caf3f4222d2f49734034f354913e17526c49c5e2a",
+    "src/learning/production_clearance.py": "0f779c5683b53c845a7a61b7ea10179cd8adfd7fd8d86b1b9373f2ac67214d97",
+    "src/learning/gameplay.py": "ea2595c84270471f944759b994d6b2ffdacb34a2ba63497370b64903ab0b53c4",
+    "src/learning/live.py": "5d2921c05fed6f69f398151259a4e8080174bd6e65252285301b913a785ad8da",
+    "src/bots/searched_strategy_terran.py": "d6d9bc9c68dc7709ec5ea665c16766e5e3906f388a704573c4254d32544edd09",
+    "src/learning/strategy_offsets.py": "661d3af8cee0cd7f4507ed559dacb81f94439574fcce2b2fb2de3d0572d21461",
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/policy.npz": "3d9403a65ab151a6ade82d5cc625748e456c0cf7b9fcbc3585c0d78b6afc6404",
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy-human-fit-01/force100.json": "ed6e52167c326daac1adf27b5e71acbe49534f94c11a5aaf75a11d195d04fdda"
+  },
+  "wins": 18,
+  "peak_cpu": 49.4,
+  "cpu_samples": [
+    49.4,
+    40.6,
+    39.5,
+    29.9,
+    29.1,
+    31.1,
+    30.3,
+    31.3,
+    30.8,
+    29.4,
+    29.7,
+    31.0,
+    29.3,
+    29.2,
+    31.2,
+    31.4,
+    29.6,
+    29.4,
+    31.3,
+    30.1,
+    29.3,
+    31.2,
+    30.1,
+    30.0,
+    29.9,
+    31.0,
+    30.5,
+    30.8,
+    31.4,
+    29.5,
+    29.6,
+    29.7,
+    30.3,
+    29.9,
+    29.6,
+    27.8,
+    32.5,
+    29.5,
+    31.3,
+    31.6,
+    30.6,
+    29.6,
+    29.7,
+    30.2,
+    29.6,
+    30.0,
+    29.6,
+    30.1,
+    31.3,
+    29.8,
+    29.7,
+    29.4,
+    29.0,
+    29.4,
+    29.2,
+    27.6,
+    30.2,
+    33.4,
+    29.7,
+    31.0,
+    30.6,
+    29.9,
+    29.6,
+    29.2,
+    31.9,
+    40.9,
+    30.7,
+    29.1,
+    30.8,
+    30.1,
+    29.4,
+    29.9,
+    30.5,
+    29.6,
+    29.8,
+    29.4,
+    29.1,
+    31.1,
+    29.2,
+    27.8,
+    33.6,
+    31.2,
+    31.3,
+    29.2,
+    29.8,
+    31.1,
+    30.9,
+    31.2,
+    30.9,
+    30.2,
+    27.1,
+    31.2,
+    30.0,
+    29.4,
+    29.3,
+    29.7,
+    31.4,
+    30.5,
+    29.2,
+    27.9,
+    31.3,
+    30.0,
+    30.5,
+    29.8,
+    31.1,
+    30.4,
+    30.5,
+    28.1,
+    26.9,
+    26.7,
+    28.5,
+    27.1,
+    27.4,
+    28.4,
+    26.6,
+    25.0,
+    29.5,
+    26.6,
+    27.7,
+    28.3,
+    26.7,
+    26.4,
+    26.1,
+    24.1,
+    26.2,
+    26.2,
+    26.2,
+    27.5,
+    26.0,
+    26.3,
+    26.3,
+    28.3,
+    26.2,
+    26.6,
+    27.2,
+    26.2,
+    26.8,
+    26.2,
+    26.3,
+    26.2,
+    26.7,
+    26.1,
+    26.2,
+    37.6,
+    27.1,
+    26.0,
+    26.3,
+    25.8,
+    29.5,
+    26.4,
+    26.3,
+    26.9,
+    26.2,
+    28.5,
+    29.7,
+    26.4,
+    26.2,
+    26.2,
+    26.3,
+    26.5,
+    26.3,
+    26.0,
+    26.7,
+    24.5,
+    26.2,
+    26.3,
+    27.0,
+    24.5,
+    24.1,
+    30.1,
+    26.1,
+    26.2,
+    24.1,
+    22.9,
+    20.0,
+    19.8,
+    19.8,
+    19.9,
+    21.5,
+    19.9,
+    20.0,
+    19.9,
+    20.3,
+    20.5,
+    17.8,
+    16.7,
+    16.8,
+    18.3,
+    16.8,
+    16.8,
+    16.9,
+    16.7
+  ]
+}

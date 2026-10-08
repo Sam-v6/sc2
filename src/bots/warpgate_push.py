@@ -13,7 +13,7 @@ from sc2.main import run_game
 from sc2.player import Bot, Computer
 
 # Local imports
-from common.void_bot_base import VoidBotBase
+from src.common.void_bot_base import VoidBotBase
 
 # pylint: disable=W0231
 class WarpGateBot(VoidBotBase):

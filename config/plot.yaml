@@ -1,0 +1,7 @@
+figure_width: 12
+figure_height: 8
+title_font_size: 14
+legend_font_size: 10
+label_font_size: 12
+dpi: 600
+downsample_sec: 5 # Data point once every x sec

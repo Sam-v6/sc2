@@ -1,0 +1,195 @@
+{
+  "results": [
+    {
+      "job": {
+        "bot": "primitives",
+        "race": "Protoss",
+        "build": "Rush",
+        "seed": 830010,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/worker-defense-rush-check-01/Protoss-Rush-AbyssalReefLE/game.SC2Replay"
+      },
+      "primitives": {
+        "worker_peak": 65,
+        "army_peak": 81,
+        "collected_minerals": 20690.0,
+        "mining_commands": 638,
+        "combat_commands": 12063,
+        "defense_commands": 55,
+        "resumed_builds": 0,
+        "raw_action_errors": 0,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 683.2142857142858,
+      "engine_wall_seconds": 64.10497585998382,
+      "replay_bytes": 120189,
+      "wall_seconds": 64.493
+    },
+    {
+      "job": {
+        "bot": "primitives",
+        "race": "Terran",
+        "build": "Rush",
+        "seed": 830011,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/worker-defense-rush-check-01/Terran-Rush-AbyssalReefLE/game.SC2Replay"
+      },
+      "primitives": {
+        "worker_peak": 24,
+        "army_peak": 5,
+        "collected_minerals": 3350.0,
+        "mining_commands": 55,
+        "combat_commands": 189,
+        "defense_commands": 30,
+        "resumed_builds": 19,
+        "raw_action_errors": 0,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Defeat",
+      "game_seconds": 345.3571428571429,
+      "engine_wall_seconds": 21.430156736983918,
+      "replay_bytes": 16835,
+      "wall_seconds": 21.795
+    },
+    {
+      "job": {
+        "bot": "primitives",
+        "race": "Zerg",
+        "build": "Rush",
+        "seed": 830012,
+        "difficulty": "VeryHard",
+        "map": "AbyssalReefLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/worker-defense-rush-check-01/Zerg-Rush-AbyssalReefLE/game.SC2Replay"
+      },
+      "primitives": {
+        "worker_peak": 65,
+        "army_peak": 79,
+        "collected_minerals": 18840.0,
+        "mining_commands": 463,
+        "combat_commands": 13386,
+        "defense_commands": 50,
+        "resumed_builds": 0,
+        "raw_action_errors": 0,
+        "delayed_action_errors": 1
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 673.5714285714287,
+      "engine_wall_seconds": 61.72385846398538,
+      "replay_bytes": 120443,
+      "wall_seconds": 62.084
+    },
+    {
+      "job": {
+        "bot": "primitives",
+        "race": "Protoss",
+        "build": "Rush",
+        "seed": 830025,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/worker-defense-rush-check-01/Protoss-Rush-AcropolisLE/game.SC2Replay"
+      },
+      "primitives": {
+        "worker_peak": 66,
+        "army_peak": 70,
+        "collected_minerals": 17680.0,
+        "mining_commands": 374,
+        "combat_commands": 9725,
+        "defense_commands": 52,
+        "resumed_builds": 0,
+        "raw_action_errors": 0,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 630.7142857142858,
+      "engine_wall_seconds": 55.76160328905098,
+      "replay_bytes": 96750,
+      "wall_seconds": 56.171
+    },
+    {
+      "job": {
+        "bot": "primitives",
+        "race": "Terran",
+        "build": "Rush",
+        "seed": 830026,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/worker-defense-rush-check-01/Terran-Rush-AcropolisLE/game.SC2Replay"
+      },
+      "primitives": {
+        "worker_peak": 24,
+        "army_peak": 4,
+        "collected_minerals": 3160.0,
+        "mining_commands": 50,
+        "combat_commands": 131,
+        "defense_commands": 48,
+        "resumed_builds": 0,
+        "raw_action_errors": 0,
+        "delayed_action_errors": 1
+      },
+      "status": "completed",
+      "result": "Defeat",
+      "game_seconds": 335.7142857142857,
+      "engine_wall_seconds": 21.19725196401123,
+      "replay_bytes": 16291,
+      "wall_seconds": 21.578
+    },
+    {
+      "job": {
+        "bot": "primitives",
+        "race": "Zerg",
+        "build": "Rush",
+        "seed": 830027,
+        "difficulty": "VeryHard",
+        "map": "AcropolisLE",
+        "game_step": 8,
+        "game_seconds": 1200,
+        "dev": false,
+        "replay": "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/worker-defense-rush-check-01/Zerg-Rush-AcropolisLE/game.SC2Replay"
+      },
+      "primitives": {
+        "worker_peak": 64,
+        "army_peak": 68,
+        "collected_minerals": 16740.0,
+        "mining_commands": 777,
+        "combat_commands": 10578,
+        "defense_commands": 40,
+        "resumed_builds": 0,
+        "raw_action_errors": 0,
+        "delayed_action_errors": 0
+      },
+      "status": "completed",
+      "result": "Victory",
+      "game_seconds": 691.0714285714287,
+      "engine_wall_seconds": 58.42458789201919,
+      "replay_bytes": 113295,
+      "wall_seconds": 58.779
+    }
+  ],
+  "bindings": {
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/worker_defense_rush_check_01.py": "d86b4ecb2c0eb77075a2210b12195eac012ce2b90ded0250e608f228968d4409",
+    "src/bots/primitive_terran.py": "a98db07aeb1b69e00fd1e0140442cf0c4587443be5b89d63a7f56554d2b33d43",
+    "src/bots/terran_primitives.py": "ebf8ef6bdc631acc19e2b84b48ff1e353356b0bebfabfb6c8b3a9fba4501a64e"
+  }
+}

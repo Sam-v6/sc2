@@ -1,0 +1,55 @@
+{
+  "train": {
+    "per_head": {
+      "workers": 1.0,
+      "bases": 1.0,
+      "barracks": 1.0,
+      "factories": 1.0,
+      "starports": 1.0,
+      "engineering_bays": 1.0,
+      "refineries": 1.0,
+      "gas_workers": 0.9992077350616455,
+      "tanks": 1.0,
+      "attack": 1.0
+    },
+    "all_heads": 0.9992077350616455,
+    "frames": 15146
+  },
+  "held_out": {
+    "per_head": {
+      "workers": 0.9966980218887329,
+      "bases": 0.9888239502906799,
+      "barracks": 1.0,
+      "factories": 0.9944120049476624,
+      "starports": 0.9989839792251587,
+      "engineering_bays": 0.9997460246086121,
+      "refineries": 0.9959359765052795,
+      "gas_workers": 0.9809499382972717,
+      "tanks": 0.947675883769989,
+      "attack": 0.998475968837738
+    },
+    "all_heads": 0.9169418215751648,
+    "frames": 3937
+  },
+  "final_loss": 0.011574001051485538,
+  "held_out_games": [
+    "Protoss-Macro-AbyssalReefLE",
+    "Protoss-Timing-AcropolisLE",
+    "Terran-Air-AbyssalReefLE",
+    "Terran-Macro-AcropolisLE",
+    "Zerg-Power-AbyssalReefLE",
+    "Zerg-Rush-AcropolisLE"
+  ],
+  "hidden": 128,
+  "epochs": 6000,
+  "gate": {
+    "threshold": 0.95,
+    "passed": false
+  },
+  "policy_sha256": "db1a6e7d8aa1de61c712b8fe1741a130cc03cf9647738f8cd2bc89b3d193cfa9",
+  "bindings": {
+    "/home/sam/repos/sc2-repos/sc2-void-bot/.worktrees/terran-rl/logs/roadmap/strategy_imitation_fit_01.py": "41b02a6b17f831d3a661100478f2b8a38177b610521453a979cdda3d7b6fe9d4",
+    "src/learning/strategy_policy.py": "1e330d21aaccc9006673648caf3f4222d2f49734034f354913e17526c49c5e2a",
+    "src/learning/strategy_imitation.py": "5f483cdd220d13bfadb3b725ab561049bae16761d5142a8cf4e3d85997a437e0"
+  }
+}

@@ -1,0 +1,16 @@
+{"status": "error", "result": null, "error": "missing build"}
+usage: python -m unittest [-h]
+                          [--bot {primitives,reaper,battlecruiser,proxy,warpgate,zergling}]
+                          [--map MAP] [--race {Terran,Protoss,Zerg}]
+                          [--difficulty {VeryEasy,Easy,Medium,MediumHard,Hard,Harder,VeryHard,CheatVision,CheatMoney,CheatInsane}]
+                          [--build {RandomBuild,Rush,Timing,Power,Macro,Air}]
+                          [--games GAMES] [--workers WORKERS]
+                          [--game-step GAME_STEP]
+                          [--game-seconds GAME_SECONDS]
+                          [--wall-seconds WALL_SECONDS] [--seed SEED] [--dev]
+                          [--output OUTPUT]
+python -m unittest: error: argument --workers: must be positive
+----------------------------------------------------------------------
+Ran 620 tests in 10.292s
+
+OK (skipped=40)

@@ -1,0 +1,21 @@
+[project]
+name = "sc2-void-bot"
+version = "0.1.0"
+description = "Headless StarCraft II bot experiments and Terran macro reinforcement learning"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "burnysc2==7.1.1",
+    "loguru==0.7.3",
+    "matplotlib==3.10.5",
+    "mpyq==0.2.5",
+    "numpy==2.3.2",
+    "pandas==2.3.1",
+    "pillow==11.3.0",
+    "protobuf==3.20.3",
+    "psutil==7.0.0",
+    "pyarrow==21.0.0",
+    "pyyaml==6.0.2",
+    "s2clientprotocol==5.0.14.93333.0",
+    "s2protocol==5.0.16.97563.0",
+]
