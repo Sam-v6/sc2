@@ -340,3 +340,24 @@ The fixes below are scripted rules (`src/bots/macro_rules.py`, `primitive_terran
   - Human head + forced attack at 100 army food (`force100.json`): **18/30** (Z 8, P 6, T 4) vs production 24/30 (Z 9, P 9, T 6).
   - First run failed on a missing offsets argument (kept as `human-head-veryhard-panel-03-paired-FAILED-missing-offsets`).
 - Decision: the human head does not replace the imitation head as production or as the CEM base. Production is unchanged.
+
+## Update: worker/gas saturation rule (commit d0857b0, scripted)
+
+`saturation()` in `src/bots/macro_rules.py`:
+- Caps SCVs at 22 per ready base + 6.
+- While gas >= 800 and minerals < 400, caps gas workers at 6.
+
+It targets late TvT losses that had 66 SCVs on two bases and 1,300–2,000 banked gas.
+
+| Check | Before | With rule |
+|---|---|---|
+| TvT training seeds 920000 (paired) | 15/20 | 16/20 |
+| Panel-03 seeds 872001 (paired, already-used eval seeds) | 24/30 (Z9 P9 T6) | 27/30 (Z10 P9 T8) |
+| Fresh familiar panel-04, seeds 876001 | — | **28/30** (Z10 P10 T8) |
+| Fresh unseen maps newmaps-06, seeds 896001 | 41/45 on 894001 (T 12/15) | **38/45** (Z15 P14 T9) |
+
+- Fresh panels combined: 66/75 with the rule vs 65/75 before. The paired evidence is mildly positive, so the rule is kept.
+- TvT is still the gap (17/25 on fresh panels). Remaining TvT losses are combat, not economy:
+  - Marine rush on Abyssal Reef at about 5:40, in 2 of 3 Abyssal panels.
+  - Army lost to widow mines, sieged tanks and Ravens at 13–15 min.
+  - Banked minerals on two bases without taking a third (Power build).
