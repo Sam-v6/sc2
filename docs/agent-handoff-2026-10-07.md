@@ -406,3 +406,17 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
 - Power/Macro TvT games are even until about 9 min. By 11 min, losses sit at 97 supply / 51 army against 139 / 74 in wins.
   Both bank 700–940 minerals, so losses come from losing mid-game fights, not from economy alone.
 - Paired 50-game TvT probes now vary by ±1–2 between small scripted changes, so single tweaks are at the noise floor.
+
+## Production confirmation (HEAD b0478a2: saturation + Bunker rally + TvT air answer), fresh seeds
+
+| Panel | Seeds | Result |
+|---|---|---|
+| Familiar maps panel-06 | 886001 | **29/30** (Z10 P10 T9; the loss is the Abyssal Rush at 332 s) |
+| Unseen maps newmaps-08 | 898001 | **39/45** (Z15 P14 T10; the P loss is Timing on Interloper) |
+
+- Last four fresh panels, all races: 27+40+29+39 = 135/150 (90%).
+  - Zerg 50/50 and Protoss 49/50 vs the four panels' Zerg and Protoss games.
+  - Terran 36/50 (72%).
+- TvT losses are Power and Macro builds at 14–19 min, plus an occasional Abyssal Reef Marine rush.
+- Next lever is combat decisions: engagement timing, tank siege before contact, Liberator answers. Small rule tweaks no
+  longer move the paired 50-game TvT probe beyond ±2.
