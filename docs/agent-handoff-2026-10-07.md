@@ -389,3 +389,10 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
     11/12 with and 11/12 without. Bunker rally alone already holds most Abyssal rushes.
 - Replay extraction finished: 5,318 receipts, 2,876 winning Terran games. The human head was not refit on the full set;
   its failure is attack timing, which more of the same labels will not fix.
+- Rejected: TvT regroup rule (commit 52be717, reverted). It called off an attack after losing 40% of its peak army food
+  and held until the army exceeded that peak.
+  - TvT training seeds 920000: 18/20 (2 games better, 2 worse).
+  - Paired 50-game TvT probe on seeds 940000+, 5 builds x 5 maps x 2 (`logs/roadmap/tvt_probe_01.py`, `tvt-probe-01/`):
+    production 40/50, regroup 39/50.
+- Production TvT by build in that probe: Rush 10/10, Timing 9/10, Air 10/10, **Power 6/10, Macro 5/10**.
+  The remaining TvT gap is late games against tank/mine/Raven/Liberator compositions.
