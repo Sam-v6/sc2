@@ -16,7 +16,7 @@ from sc2.ids.upgrade_id import UpgradeId as G
 from sc2.position import Point2
 from s2clientprotocol import sc2api_pb2 as pb
 
-from src.bots.macro_rules import depot_limit, regroup, saturation, spend_float
+from src.bots.macro_rules import depot_limit, saturation, spend_float
 from src.bots.terran_primitives import combat_command, mining_commands, scripted_targets, changes_order, scripted_attack, worker_defense_commands
 from src.learning.gameplay import Command, PlayerView, protocol_dict
 from src.learning.live import issue
@@ -35,7 +35,6 @@ class PrimitiveTerranBot(BotAI):
         self.attacking = False
         self.scouted, self.scout_tag = False, None
         self.hunt, self.hunt_points, self.last_seen = [], [], {}
-        self.regroup = {}
         self.summary = dict(worker_peak=0, army_peak=0, collected_minerals=0,
                             mining_commands=0, combat_commands=0, defense_commands=0, resumed_builds=0,
                             raw_action_errors=0, delayed_action_errors=0)
@@ -232,9 +231,6 @@ class PrimitiveTerranBot(BotAI):
             if self.is_visible(point):
                 self.last_seen[point] = self.time
         self.attacking = self.strategy_attack(state)
-        if self.enemy_race == Race.Terran:
-            # Sieged-tank positions punish repeated attacks with a shrinking army.
-            self.attacking = regroup(self.attacking, state['player']['food_army'], self.regroup)
         threats = self.enemy_units.filter(lambda e: e.is_visible and e.can_attack_ground
                                          and any(e.distance_to(b) < 22 for b in self.townhalls))
         if threats:

@@ -39,22 +39,3 @@ def saturation(targets, state):
     if player['vespene'] >= 800 and player['minerals'] < 400:
         targets['gas_workers'] = min(targets['gas_workers'], 6)
     return targets
-
-
-def regroup(attack, army_food, memory):
-    """Call off an attack that has lost 40% of its peak army; attack again only above that peak.
-
-    ``memory`` persists between calls: ``peak`` while attacking, ``regroup_at`` after a call-off.
-    """
-    if army_food < memory.get('regroup_at', 0):
-        memory.pop('peak', None)
-        return False
-    memory.pop('regroup_at', None)
-    if not attack:
-        memory.pop('peak', None)
-        return False
-    memory['peak'] = max(memory.get('peak', 0), army_food)
-    if army_food <= .6 * memory['peak']:
-        memory['regroup_at'] = memory.pop('peak') + 1
-        return False
-    return True
