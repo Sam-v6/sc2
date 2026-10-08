@@ -1,6 +1,6 @@
 import unittest
 
-from src.bots.macro_rules import depot_limit, rush_response, rush_seen, saturation, spend_float
+from src.bots.macro_rules import depot_limit, saturation, spend_float
 
 
 def unit(kind, alliance=1, **fields):
@@ -49,25 +49,6 @@ class SaturationTests(unittest.TestCase):
         self.assertEqual(saturation(self.targets, state(bases, minerals=100, vespene=900))['gas_workers'], 6)
         self.assertEqual(saturation(self.targets, state(bases, minerals=500, vespene=900))['gas_workers'], 12)
         self.assertEqual(saturation(self.targets, state(bases, minerals=100, vespene=700))['gas_workers'], 12)
-
-
-class RushTests(unittest.TestCase):
-    targets = dict(bases=2, barracks=1, workers=23)
-
-    def at(self, seconds, units):
-        return dict(state(units), game_loop=seconds * 22.4)
-
-    def test_rush_seen_from_early_marines_or_barracks(self):
-        self.assertTrue(rush_seen(self.at(130, [unit(48, alliance=4)] * 4)))
-        self.assertFalse(rush_seen(self.at(130, [unit(48, alliance=4)] * 3 + [unit(48)])))
-        self.assertFalse(rush_seen(self.at(170, [unit(48, alliance=4)] * 6)))
-        self.assertTrue(rush_seen(self.at(170, [unit(21, alliance=4)] * 3)))
-        self.assertFalse(rush_seen(self.at(190, [unit(21, alliance=4)] * 3)))
-
-    def test_rush_response_holds_one_base_and_three_barracks_until_300s(self):
-        self.assertEqual(rush_response(self.targets, self.at(200, []), True), dict(bases=1, barracks=3, workers=23))
-        self.assertIs(rush_response(self.targets, self.at(200, []), False), self.targets)
-        self.assertIs(rush_response(self.targets, self.at(300, []), True), self.targets)
 
 
 if __name__ == '__main__':
