@@ -396,3 +396,13 @@ They only walked over once it finished, which was when the enemy's 8 Marines arr
     production 40/50, regroup 39/50.
 - Production TvT by build in that probe: Rush 10/10, Timing 9/10, Air 10/10, **Power 6/10, Macro 5/10**.
   The remaining TvT gap is late games against tank/mine/Raven/Liberator compositions.
+
+## Update: TvT air answer kept, float spending rejected
+
+- Kept (commit 19e0bf5, TvT only): Vikings target 2 x the most enemy air seen at once (max 10), and a second Starport
+  after 3+ air units have been seen. Same 50 TvT seeds: 41/50 vs 40/50 (1 better, 0 worse).
+  It rarely triggers; the bot still peaked at 2–6 Vikings.
+- Rejected (commit 7ef583e, reverted): add Barracks from 500 banked minerals. 40/50 vs 41/50 (5 games shuffled both ways).
+- Power/Macro TvT games are even until about 9 min. By 11 min, losses sit at 97 supply / 51 army against 139 / 74 in wins.
+  Both bank 700–940 minerals, so losses come from losing mid-game fights, not from economy alone.
+- Paired 50-game TvT probes now vary by ±1–2 between small scripted changes, so single tweaks are at the noise floor.
