@@ -36,6 +36,7 @@ class PrimitiveTerranBot(BotAI):
         self.scouted, self.scout_tag = False, None
         self.hunt, self.hunt_points, self.last_seen = [], [], {}
         self.enemy_air_peak = 0
+        self.enemy_army = {}
         self.summary = dict(worker_peak=0, army_peak=0, collected_minerals=0,
                             mining_commands=0, combat_commands=0, defense_commands=0, resumed_builds=0,
                             raw_action_errors=0, delayed_action_errors=0)
@@ -231,13 +232,30 @@ class PrimitiveTerranBot(BotAI):
     def strategy_attack(self, state):
         return scripted_attack(state, self.attacking)
 
+    def engage(self, attack):
+        """Against Terran, attack only with 1.2x the army value of every enemy unit seen and not yet killed
+        (tanks, mines and Liberators count 1.5x: they defend in position); keep attacking down to 0.8x."""
+        if self.enemy_race != Race.Terran:
+            return attack
+        for e in self.enemy_units:
+            if e.is_visible and not e.is_structure and e.type_id not in (U.SCV, U.MULE):
+                cost = self.types[e.type_id.value]['mineral_cost'] + self.types[e.type_id.value]['vespene_cost']
+                self.enemy_army[e.tag] = cost * (1.5 if e.type_id.value in (32, 33, 498, 500, 689, 734) else 1)
+        own = sum(self.types[u.type_id.value]['mineral_cost'] + self.types[u.type_id.value]['vespene_cost']
+                  for u in self.units.of_type(ARMY_TYPES | {U.MEDIVAC}))
+        enemy = sum(self.enemy_army.values())
+        return attack and (self.supply_used >= 190 or own >= (0.8 if self.attacking else 1.2) * enemy)
+
+    async def on_unit_destroyed(self, unit_tag):
+        self.enemy_army.pop(unit_tag, None)
+
     def army_destination(self, state):
         army = self.units.of_type(ARMY_TYPES)
         self.hunt = []
         for point in self.hunt_points:
             if self.is_visible(point):
                 self.last_seen[point] = self.time
-        self.attacking = self.strategy_attack(state)
+        self.attacking = self.engage(self.strategy_attack(state))
         threats = self.enemy_units.filter(lambda e: e.is_visible and e.can_attack_ground
                                          and any(e.distance_to(b) < 22 for b in self.townhalls))
         if threats:
