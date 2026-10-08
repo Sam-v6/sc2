@@ -329,3 +329,14 @@ The fixes below are scripted rules (`src/bots/macro_rules.py`, `primitive_terran
 - Finishing: remembered snapshots are targets; with nothing known, up to six groups sweep unseen
   expansions and grid points.
 - Paired comparison tool: `logs/roadmap/offsets_ab.py`; `panel.py` takes `PANEL_MAPS`.
+
+## Update: human-label strategy head (option 3 learned route)
+
+- `logs/roadmap/strategy_human_fit_01.py` fit on 2,219 winning Terran player-games from the 3.16.1 pack1 extraction
+  (partial, ~4.1k of 5.3k receipts). Held-out exact accuracy: bases .83, barracks .74, tanks .74, workers .22.
+- Paired live check on the panel-03 seeds (872001, familiar maps, VeryHard), same seeds as production's 24/30:
+  - Human head, no offsets: **5/30**. 21 ties at 1200 s. It attacks in only 0–11% of decisions (human "attack" labels are rare)
+    and sits on 150–170 supply.
+  - Human head + forced attack at 100 army food (`force100.json`): **18/30** (Z 8, P 6, T 4) vs production 24/30 (Z 9, P 9, T 6).
+  - First run failed on a missing offsets argument (kept as `human-head-veryhard-panel-03-paired-FAILED-missing-offsets`).
+- Decision: the human head does not replace the imitation head as production or as the CEM base. Production is unchanged.
